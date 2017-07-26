@@ -23,8 +23,6 @@ const emptyLine = immutable.Map({
 const initial_state = immutable.Map({
   lines: immutable.OrderedMap(),
   view: immutable.Map({
-    editable: false,
-    collapsed: true,
   }),
 })
 
@@ -74,11 +72,6 @@ function linesReducer(lines = initial_state.get('lines'), action) {
 }
 
 function viewReducer(view = initial_state.get('view'), action) {
-  switch(action.type) {
-    case 'setEditable': {
-      return view.set('editable', action.value)
-    }
-  }
   return view
 }
 

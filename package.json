@@ -3,9 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "1-click-bom": "^1.1.3",
+    "immutable": "^3.8.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-scripts": "1.0.10"
+    "react-redux": "^5.0.5",
+    "react-scripts": "1.0.10",
+    "redux": "^3.7.2",
+    "redux-immutable": "^4.0.0",
+    "semantic-ui-css": "^2.2.11",
+    "semantic-ui-react": "^0.71.2"
   },
   "scripts": {
     "start": "react-scripts start",

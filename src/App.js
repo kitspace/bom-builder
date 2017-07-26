@@ -1,21 +1,25 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.css'
+import 'semantic-ui-css/semantic.css'
+const React = require('react')
+const semantic = require('semantic-ui-react')
+const redux = require('redux')
+const reactRedux = require('react-redux')
 
-class App extends Component {
+const {reducer, initial_state} = require('./state')
+
+const store = redux.createStore(reducer, initial_state)
+
+class App extends React.Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+      <reactRedux.Provider store={store}>
+        <div className="App">
+          <semantic.Table>
+          </semantic.Table>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
+      </reactRedux.Provider>
+    )
   }
 }
 
-export default App;
+export default App

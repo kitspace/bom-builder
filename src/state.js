@@ -97,7 +97,7 @@ function makeActions(reducers) {
 
 const actions = Object.assign(
   makeActions(linesReducers),
-  makeActions(viewReducers),
+  makeActions(viewReducers)
 )
 
-module.exports = {initialState, mainReducer, emptyLine, actions}
+module.exports = {initialState, mainReducer, linesReducer:makeMainReducer(linesReducers), emptyLine, actions}

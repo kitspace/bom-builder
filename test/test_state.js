@@ -1,6 +1,9 @@
 const assert    = require('better-assert')
 const immutable = require('immutable')
-const {initialState, linesReducer, emptyLine} = require('../src/state')
+const {initialState, makeReducer, linesActions, emptyLine} = require('../src/state')
+
+
+const linesReducer = makeReducer(linesActions)
 
 
 describe('bom_edit lines actions', () => {

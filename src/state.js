@@ -26,7 +26,7 @@ const initialState = immutable.Map({
   }),
 })
 
-const linesReducers = {
+const linesActions = {
   addLine(lines, value) {
     return lines.set(getId(), value)
   },
@@ -68,14 +68,14 @@ const linesReducers = {
   },
 }
 
-const viewReducers = {}
+const viewActions = {}
 
 const mainReducer = reduxImmutable.combineReducers({
-  lines: makeMainReducer(linesReducers),
-  view: makeMainReducer(viewReducers),
+  lines: makeReducer(linesActions),
+  view: makeReducer(viewActions),
 })
 
-function makeMainReducer(reducers) {
+function makeReducer(reducers) {
   return function reducer(state, action) {
     if (Object.keys(reducers).includes(action.type)) {
       const state2 = reducers[action.type](state, action.value)
@@ -96,8 +96,8 @@ function makeActions(reducers) {
 }
 
 const actions = Object.assign(
-  makeActions(linesReducers),
-  makeActions(viewReducers)
+  makeActions(linesActions),
+  makeActions(viewActions)
 )
 
-module.exports = {initialState, mainReducer, linesReducer:makeMainReducer(linesReducers), emptyLine, actions}
+module.exports = {initialState, mainReducer, makeReducer, linesActions, emptyLine, actions}

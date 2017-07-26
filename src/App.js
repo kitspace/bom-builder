@@ -6,10 +6,10 @@ const redux = require('redux')
 const reactRedux = require('react-redux')
 const superagent = require('superagent')
 
-const {reducer, initial_state} = require('./state')
+const {mainReducer, initialState, actions} = require('./state')
 
 const App = React.createClass({
-  store: redux.createStore(reducer),
+  store: redux.createStore(mainReducer, initialState),
   getInitialState() {
     return this.store.getState().toJS()
   },

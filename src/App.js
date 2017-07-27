@@ -9,11 +9,11 @@ const superagent  = require('superagent')
 const oneClickBom = require('1-click-bom')
 
 const {mainReducer, initialState, actions} = require('./state')
+const store = redux.createStore(mainReducer, initialState)
 
 const Bom = React.createClass({
-  store: redux.createStore(mainReducer, initialState),
   getInitialState() {
-    return this.store.getState().toJS()
+    return store.getState().toJS()
   },
   render() {
     return (
@@ -25,10 +25,10 @@ const Bom = React.createClass({
   },
   componentDidMount() {
     superagent.get('1-click-BOM.tsv').then(r => {
-      this.store.dispatch(actions.setFromTsv(r.text))
+      store.dispatch(actions.setFromTsv(r.text))
     })
-    this.store.subscribe(() => {
-      const state = this.store.getState().toJS()
+    store.subscribe(() => {
+      const state = store.getState().toJS()
       this.setState(state)
     })
   },
@@ -38,7 +38,7 @@ function Header({lines}) {
   const maxMpns = oneClickBom.lineData.maxMpns(lines)
   return (
     <semantic.Table.Header>
-      <semantic.Table.HeaderCell>
+      <semantic.Table.HeaderCell onClick={() => store.dispatch(actions.sortByReference())}>
         References
       </semantic.Table.HeaderCell>
       <semantic.Table.HeaderCell>

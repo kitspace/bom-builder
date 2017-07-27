@@ -23,7 +23,7 @@ const emptyLine = immutable.Map({
 const initialState = immutable.fromJS({
   editable: {
     lines: [],
-    sortedBy: null,
+    sortedBy: [null, null],
   },
   view: {},
 })
@@ -78,12 +78,20 @@ const linesActions = {
         }
         return ''
       })
+      header = `${header[0]}${header[1]}`
     } else if (header === 'quantity') {
       lines = lines.sortBy(line => line.get('quantity')).reverse()
     } else {
       lines = lines.sortBy(line => line.get(header).toLowerCase())
     }
-    return state.set('lines', lines)
+    let sortedBy = state.get('sortedBy')
+    if (sortedBy.get(0) === header && sortedBy.get(1) === 'forward') {
+      lines = lines.reverse()
+      sortedBy = [header, 'reverse']
+    } else {
+      sortedBy = [header, 'forward']
+    }
+    return state.merge({lines, sortedBy})
   },
   setFromTsv(state, value) {
     const {lines} = oneClickBom.parseTSV(value)

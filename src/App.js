@@ -17,8 +17,9 @@ const App = React.createClass({
   },
   render() {
     return (
-      <semantic.Table unstackable={true}>
+      <semantic.Table celled unstackable={true}>
         <Header lines={this.state.lines} />
+        <Body lines={this.state.lines} />
       </semantic.Table>
     )
   },
@@ -46,12 +47,60 @@ function Header({lines}) {
       {(() => {
         const cells = []
         for (let i = 0; i < maxMpns; ++i) {
-          cells.push(<semantic.Table.HeaderCell>Manufacturer</semantic.Table.HeaderCell>)
-          cells.push(<semantic.Table.HeaderCell>MPN</semantic.Table.HeaderCell>)
+          cells.push(
+            <semantic.Table.HeaderCell>
+              Manufacturer
+            </semantic.Table.HeaderCell>
+          )
+          cells.push(
+            <semantic.Table.HeaderCell>
+              MPN
+            </semantic.Table.HeaderCell>
+          )
         }
         return cells
       })()}
     </semantic.Table.Header>
+  )
+}
+
+function Body({lines}) {
+  const maxMpns = oneClickBom.lineData.maxMpns(lines)
+
+  return (
+    <semantic.TableBody>
+      {lines.map(line => Row({line, maxMpns}))}
+    </semantic.TableBody>
+  )
+}
+
+function Row({line, maxMpns}) {
+  return (
+    <semantic.Table.Row>
+      <semantic.Table.Cell>
+        {line.reference}
+      </semantic.Table.Cell>
+      <semantic.Table.Cell>
+        {line.quantity}
+      </semantic.Table.Cell>
+      {(() => {
+        const ps = line.partNumbers.map(mpn => {
+          return [
+            <semantic.Table.Cell>
+              {mpn.manufacturer}
+            </semantic.Table.Cell>
+           ,
+            <semantic.Table.Cell>
+              {mpn.part}
+            </semantic.Table.Cell>
+          ]
+        })
+        while (ps.length < maxMpns) {
+          ps.push([<semantic.Table.Cell />, <semantic.Table.Cell />])
+        }
+        return ps
+      })()}
+    </semantic.Table.Row>
   )
 }
 

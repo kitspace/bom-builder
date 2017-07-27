@@ -101,6 +101,7 @@ const EditInput = React.createClass({
       <input
         spellCheck={false}
         value={this.props.value}
+        onChange={this.props.onChange}
         ref={input => {this.input = input}}
       />
     )
@@ -115,6 +116,12 @@ function editingThis(editing, id, ref) {
 }
 
 function Row({editing, line, maxMpns}) {
+  function setField(field, event) {
+    store.dispatch(actions.set({
+      location: {id: line.id, field},
+      value: event.target.value
+    }))
+  }
   return (
     <semantic.Table.Row key={line.id}>
       <semantic.Table.Cell selectable={!!editing} className={`marked ${markerColor(line.reference)}`}>
@@ -128,7 +135,12 @@ function Row({editing, line, maxMpns}) {
             >
               {(() => {
                 if (editingThis(editing, line.id, 'reference')) {
-                  return <EditInput value={line.reference} />
+                  return (
+                    <EditInput
+                      onChange={setField.bind(null, ['reference'])}
+                      value={line.reference}
+                    />
+                  )
                 }
                 return line.reference
               })()}

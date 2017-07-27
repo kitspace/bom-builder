@@ -31,6 +31,19 @@ const initialState = immutable.fromJS({
 })
 
 const linesActions = {
+  set(state, {location, value}) {
+    let lines = state.get('lines')
+    const {id, field} = location
+    const line = lines.find(line => line.get('id') === id)
+    const newLine = line.setIn(field, value)
+    lines = lines.map(line => {
+      if (line.get('id') === id) {
+        return newLine
+      }
+      return line
+    })
+    return state.merge({lines})
+  },
   addLine(state, value) {
     const line = immutable.fromJS(value).set('id', makeId())
     const lines = state.get('lines').push(line)

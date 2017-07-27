@@ -10,14 +10,14 @@ const oneClickBom = require('1-click-bom')
 
 const {mainReducer, initialState, actions} = require('./state')
 
-const App = React.createClass({
+const Bom = React.createClass({
   store: redux.createStore(mainReducer, initialState),
   getInitialState() {
     return this.store.getState().toJS()
   },
   render() {
     return (
-      <semantic.Table celled unstackable={true}>
+      <semantic.Table className='Bom' celled unstackable={true}>
         <Header lines={this.state.lines} />
         <Body lines={this.state.lines} />
       </semantic.Table>
@@ -84,7 +84,7 @@ function Body({lines}) {
 function Row({line, maxMpns}) {
   return (
     <semantic.Table.Row key={line.id}>
-      <semantic.Table.Cell>
+      <semantic.Table.Cell className={`marked ${markerColor(line.reference)}`}>
         {line.reference}
       </semantic.Table.Cell>
       <semantic.Table.Cell>
@@ -118,7 +118,28 @@ function Row({line, maxMpns}) {
   )
 }
 
+function markerColor(ref) {
+  if (/^C\d/.test(ref)) {
+    return 'orange'
+  }
+  if (/^R\d/.test(ref)) {
+    return 'lightblue'
+  }
+  if (/^IC\d/.test(ref) || /^U\d/.test(ref)) {
+    return 'blue'
+  }
+  if (/^L\d/.test(ref)) {
+    return 'black'
+  }
+  if (/^D\d/.test(ref)) {
+    return 'green'
+  }
+  if (/^LED\d/.test(ref)) {
+    return 'yellow'
+  }
+  return 'purple'
+}
 
 
 
-export default App
+export default Bom

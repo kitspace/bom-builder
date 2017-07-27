@@ -126,46 +126,55 @@ const EditInput = React.createClass({
   },
 })
 
-function editingThis(editing, id, ref) {
-  return immutable.List(editing).equals(immutable.List.of(id, ref))
+function editingThis(editing, id, field) {
+  return immutable.fromJS(editing).equals(immutable.fromJS([id, field]))
+}
+
+function setField(id, field) {
+  return event => store.dispatch(actions.set({
+    id,
+    field,
+    value: event.target.value,
+  }))
+}
+
+function EditableCell({editing, line, field}) {
+  return (
+    <semantic.Table.Cell
+      selectable={!!editing}
+      className={`marked ${markerColor(line.reference)}`}
+    >
+    {(() => {
+      if (!editing) {
+        return line.reference
+      }
+      return (
+        <a
+          onClick={() => store.dispatch(actions.edit([line.id, field]))}
+        >
+          {(() => {
+            if (editingThis(editing, line.id, field)) {
+              return (
+                <EditInput
+                  onChange={setField(line.id, field)}
+                  value={line.reference}
+                />
+              )
+            }
+            return line.reference
+          })()}
+
+        </a>
+      )
+    })()}
+  </semantic.Table.Cell>
+  )
 }
 
 function Row({editing, line, maxMpns}) {
-  function setField(field) {
-    return event => store.dispatch(actions.set({
-        location: [line.id].concat(field),
-        value: event.target.value,
-      }))
-  }
   return (
     <tr key={line.id}>
-      <semantic.Table.Cell
-        selectable={!!editing}
-        className={`marked ${markerColor(line.reference)}`}
-      >
-        {(() => {
-          if (!editing) {
-            return line.reference
-          }
-          return (
-            <a
-              onClick={() => store.dispatch(actions.edit([line.id, 'reference']))}
-            >
-              {(() => {
-                if (editingThis(editing, line.id, 'reference')) {
-                  return (
-                    <EditInput
-                      onChange={setField(['reference'])}
-                      value={line.reference}
-                    />
-                  )
-                }
-                return line.reference
-              })()}
-            </a>
-          )
-        })()}
-      </semantic.Table.Cell>
+      <EditableCell editing={editing} line={line} field={['reference']}/>
       <td>
         {line.quantity}
       </td>

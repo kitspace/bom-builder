@@ -31,10 +31,8 @@ const initialState = immutable.fromJS({
 })
 
 const linesActions = {
-  set(state, {location, value}) {
+  set(state, {id, field, value}) {
     let lines = state.get('lines')
-    const id = location[0]
-    const field = location.slice(1)
     const line = lines.find(line => line.get('id') === id)
     const newLine = line.setIn(field, value)
     lines = lines.map(line => {
@@ -133,8 +131,8 @@ const linesActions = {
 }
 
 const viewActions = {
-  edit(state, field) {
-    return state.set('editing', immutable.fromJS(field))
+  edit(state, location) {
+    return state.set('editing', immutable.fromJS(location))
   },
 }
 

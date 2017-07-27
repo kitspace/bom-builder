@@ -48,12 +48,12 @@ function Header({lines}) {
         const cells = []
         for (let i = 0; i < maxMpns; ++i) {
           cells.push(
-            <semantic.Table.HeaderCell>
+            <semantic.Table.HeaderCell key={`Manufacturer${i}`}>
               Manufacturer
             </semantic.Table.HeaderCell>
           )
           cells.push(
-            <semantic.Table.HeaderCell>
+            <semantic.Table.HeaderCell key={`MPN${i}`}>
               MPN
             </semantic.Table.HeaderCell>
           )
@@ -76,7 +76,7 @@ function Body({lines}) {
 
 function Row({line, maxMpns}) {
   return (
-    <semantic.Table.Row>
+    <semantic.Table.Row key={line.id}>
       <semantic.Table.Cell>
         {line.reference}
       </semantic.Table.Cell>
@@ -86,11 +86,11 @@ function Row({line, maxMpns}) {
       {(() => {
         const ps = line.partNumbers.map(mpn => {
           return [
-            <semantic.Table.Cell>
+            <semantic.Table.Cell key={mpn.manufacturer}>
               {mpn.manufacturer}
             </semantic.Table.Cell>
            ,
-            <semantic.Table.Cell>
+            <semantic.Table.Cell key={mpn.part}>
               {mpn.part}
             </semantic.Table.Cell>
           ]

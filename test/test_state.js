@@ -15,38 +15,42 @@ describe('bom_edit lines actions', () => {
       const lines2 = linesReducer(editable.merge({lines: lines1}), {type: 'addLine', value: emptyLine}).get('lines')
       assert(lines1.size === 0)
       assert(lines2.size === 1)
+      assert(lines2.get(0).get('id') != null)
     })
     it('removes a line', () => {
       const editable = initialState.get('editable')
       const lines1 = editable.get('lines')
       assert(lines1.size === 0)
-      const lines2 = linesReducer(editable.set('lines', lines1), {type: 'addLine', value: emptyLine}).get('lines')
+      let lines2 = linesReducer(editable.set('lines', lines1), {type: 'addLine', value: emptyLine}).get('lines')
+      lines2 = linesReducer(editable.set('lines', lines2), {type: 'addLine', value: emptyLine}).get('lines')
+      lines2 = linesReducer(editable.set('lines', lines2), {type: 'addLine', value: emptyLine}).get('lines')
       assert(lines1.size === 0)
-      assert(lines2.size === 1)
-      const id = lines2.keys().next().value
+      assert(lines2.size === 3)
+      const id = lines2.get(0).get('id')
       const lines3 = linesReducer(editable.set('lines', lines2), {type: 'removeLine', value: id}).get('lines')
       assert(lines1.size === 0)
-      assert(lines2.size === 1)
-      assert(lines3.size === 0)
+      assert(lines2.size === 3)
+      assert(lines3.size === 2)
     })
   })
   describe('partNumbers and SKUs', () => {
-    const lines1 = initialState.get('editable').get('lines')
+    const editable = initialState.get('editable')
+    const lines1 = editable.get('lines')
     const partNumber = immutable.Map({
       part         : 'NE555P',
       manufacturer : 'Texas Instruments'
     })
     let lines2, id
     beforeEach(() => {
-      lines2 = linesReducer(lines1, {type: 'addLine', value: emptyLine})
+      lines2 = linesReducer(editable.set('lines', lines1), {type: 'addLine', value: emptyLine}).get('lines')
       assert(lines2.first().get('partNumbers').size === 0)
-      id = lines2.keys().next().value
+      id = lines2.get(0).get('id')
     })
     it('adds a partNumber', () => {
       const lines3 = linesReducer(
-        lines2,
+        editable.set('lines', lines2),
         {type: 'addPartNumber', value: {id, partNumber}}
-      )
+      ).get('lines')
       assert(lines3.first().get('partNumbers').size === 1)
     })
     it('removes a partNumber', () => {

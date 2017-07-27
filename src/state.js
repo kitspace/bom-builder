@@ -34,18 +34,26 @@ const linesActions = {
     const lines = state.get('lines').push(line)
     return state.merge({lines})
   },
-  removeLine(state, value) {
-    const lines = state.get('lines')
-    return state.set('lines', lines.filter((_,key) => key !== value))
+  removeLine(state, id) {
+    const lines = state.get('lines').filter(line => {
+      return line.get('id') !== id
+    })
+    return state.merge({lines})
   },
   addPartNumber(state, value) {
-    const lines = state.get('lines')
+    let lines = state.get('lines')
     const {id, partNumber} = value
-    const line = lines.get(id).update(
+    const newLine = lines.find(line => line.get('id') === id).update(
       'partNumbers',
-      ps => ps.add(partNumber)
+      ps => ps.push(partNumber)
     )
-    return state.set('lines', lines.set(id, line))
+    lines = lines.map(line => {
+      if (line.get('id') === id) {
+        return newLine
+      }
+      return line
+    })
+    return state.merge({lines})
   },
   addSku(state, value) {
     const lines = state.get('lines')

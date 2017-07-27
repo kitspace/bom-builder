@@ -57,8 +57,26 @@ const linesActions = {
     )
     return lines.set(id, line)
   },
-  sortByReference(lines, value) {
-    return lines.sortBy(line => line.get('reference'))
+  sortBy(lines, header) {
+    if (oneClickBom.lineData.retailer_list.includes(header)) {
+      return lines.sortBy(line => line.get('retailers').get(header).toLowerCase())
+    } else if (typeof header === 'object') {
+      //we can get an array meaning we want to sort by mpn or manufacturer
+      //e.g. ['manufacturer', 0]
+      return lines.sortBy(line => {
+        const field = line.get('partNumbers').get(header[1])
+        if (field) {
+          return field.get(header[0]).toLowerCase()
+        }
+        return 'z'
+      })
+    }
+    lines = lines.sortBy(line => line.get(header).toLowerCase())
+    if (header === 'quantity') {
+      return lines = lines.reverse()
+    }
+    return lines
+
   },
   setFromTsv(_, value) {
     const {lines} = oneClickBom.parseTSV(value)

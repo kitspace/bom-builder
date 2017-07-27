@@ -38,35 +38,47 @@ function Header({lines}) {
   const maxMpns = oneClickBom.lineData.maxMpns(lines)
   return (
     <semantic.Table.Header>
-      <semantic.Table.HeaderCell onClick={() => store.dispatch(actions.sortByReference())}>
-        References
-      </semantic.Table.HeaderCell>
-      <semantic.Table.HeaderCell>
-        Qty
-      </semantic.Table.HeaderCell>
-      {(() => {
-        const cells = []
-        for (let i = 0; i < maxMpns; ++i) {
-          cells.push(
-            <semantic.Table.HeaderCell key={`Manufacturer${i}`}>
-              Manufacturer
+      <tr>
+        <semantic.Table.HeaderCell >
+          <a onClick={() => store.dispatch(actions.sortBy('reference'))}>
+            References
+          </a>
+        </semantic.Table.HeaderCell>
+        <semantic.Table.HeaderCell >
+          <a onClick={() => store.dispatch(actions.sortBy('quantity'))}>
+            Qty
+          </a>
+        </semantic.Table.HeaderCell>
+        {(() => {
+          const cells = []
+          for (let i = 0; i < maxMpns; ++i) {
+            cells.push(
+              <semantic.Table.HeaderCell key={`Manufacturer${i}`}>
+                <a onClick={() => store.dispatch(actions.sortBy(['manufacturer', i]))}>
+                  Manufacturer
+                </a>
+              </semantic.Table.HeaderCell>
+            )
+            cells.push(
+              <semantic.Table.HeaderCell key={`MPN${i}`}>
+                <a onClick={() => store.dispatch(actions.sortBy(['part', i]))}>
+                  MPN
+                </a>
+              </semantic.Table.HeaderCell>
+            )
+          }
+          return cells
+        })()}
+        {oneClickBom.lineData.retailer_list.map(retailer => {
+          return (
+            <semantic.Table.HeaderCell key={retailer}>
+              <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
+                {retailer}
+              </a>
             </semantic.Table.HeaderCell>
           )
-          cells.push(
-            <semantic.Table.HeaderCell key={`MPN${i}`}>
-              MPN
-            </semantic.Table.HeaderCell>
-          )
-        }
-        return cells
-      })()}
-      {oneClickBom.lineData.retailer_list.map(retailer => {
-        return (
-          <semantic.Table.HeaderCell key={retailer}>
-            {retailer}
-          </semantic.Table.HeaderCell>
-        )
-      })}
+        })}
+      </tr>
     </semantic.Table.Header>
   )
 }

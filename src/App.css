@@ -1,3 +1,11 @@
+a {
+   color: rgba(0, 0, 0, 0.87) !important;
+}
+
+a:hover {
+   cursor: pointer !important;
+}
+
 td.marked.orange {
     border-left: 13px solid #FF9E39 !important;
 }

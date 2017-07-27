@@ -24,8 +24,8 @@ const App = React.createClass({
     )
   },
   componentDidMount() {
-    superagent.get('/1-click-BOM.tsv').then(r => {
-      this.store.dispatch({type: 'setFromTsv', value: r.text})
+    superagent.get('1-click-BOM.tsv').then(r => {
+      this.store.dispatch(actions.setFromTsv(r.text))
     })
     this.store.subscribe(() => {
       const state = this.store.getState().toJS()

@@ -10,7 +10,7 @@ function makeId() {
 const emptyLine = immutable.Map({
   reference   : '',
   quantity    : '',
-  partNumbers : immutable.Set(),
+  partNumbers : immutable.List(),
   retailers: immutable.Map({
     Digikey : '',
     Mouser  : '',
@@ -21,7 +21,7 @@ const emptyLine = immutable.Map({
 })
 
 const initialState = immutable.Map({
-  lines: immutable.OrderedMap(),
+  lines: immutable.List(),
   view: immutable.Map({
   }),
 })

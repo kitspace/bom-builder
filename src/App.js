@@ -60,6 +60,13 @@ function Header({lines}) {
         }
         return cells
       })()}
+      {oneClickBom.lineData.retailer_list.map(retailer => {
+        return (
+          <semantic.Table.HeaderCell key={retailer}>
+            {retailer}
+          </semantic.Table.HeaderCell>
+        )
+      })}
     </semantic.Table.Header>
   )
 }
@@ -86,11 +93,11 @@ function Row({line, maxMpns}) {
       {(() => {
         const ps = line.partNumbers.map(mpn => {
           return [
-            <semantic.Table.Cell key={mpn.manufacturer}>
+            <semantic.Table.Cell key={`${line.id}-${mpn.manufacturer}`}>
               {mpn.manufacturer}
             </semantic.Table.Cell>
            ,
-            <semantic.Table.Cell key={mpn.part}>
+            <semantic.Table.Cell key={`${line.id}-${mpn.part}`}>
               {mpn.part}
             </semantic.Table.Cell>
           ]
@@ -100,6 +107,13 @@ function Row({line, maxMpns}) {
         }
         return ps
       })()}
+      {oneClickBom.lineData.retailer_list.map(name => {
+        return (
+          <semantic.Table.Cell key={`${line.id}-${name}`}>
+            {line.retailers[name]}
+          </semantic.Table.Cell>
+        )
+      })}
     </semantic.Table.Row>
   )
 }

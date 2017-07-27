@@ -30,8 +30,9 @@ const initialState = immutable.fromJS({
 
 const linesActions = {
   addLine(state, value) {
-    const lines = state.get('lines')
-    return state.set('lines', lines.set(makeId(), value))
+    const line = immutable.fromJS(value).set('id', makeId())
+    const lines = state.get('lines').push(line)
+    return state.merge({lines})
   },
   removeLine(state, value) {
     const lines = state.get('lines')

@@ -9,27 +9,29 @@ const linesReducer = makeReducer(linesActions)
 describe('bom_edit lines actions', () => {
   describe('lines', () => {
     it('adds a line', () => {
-      const lines1 = initialState.get('lines')
+      const editable = initialState.get('editable')
+      const lines1 = editable.get('lines')
       assert(lines1.size === 0)
-      const lines2 = linesReducer(lines1, {type: 'addLine', value: emptyLine})
+      const lines2 = linesReducer(editable.merge({lines: lines1}), {type: 'addLine', value: emptyLine}).get('lines')
       assert(lines1.size === 0)
       assert(lines2.size === 1)
     })
     it('removes a line', () => {
-      const lines1 = initialState.get('lines')
+      const editable = initialState.get('editable')
+      const lines1 = editable.get('lines')
       assert(lines1.size === 0)
-      const lines2 = linesReducer(lines1, {type: 'addLine', value: emptyLine})
+      const lines2 = linesReducer(editable.set('lines', lines1), {type: 'addLine', value: emptyLine}).get('lines')
       assert(lines1.size === 0)
       assert(lines2.size === 1)
       const id = lines2.keys().next().value
-      const lines3 = linesReducer(lines2, {type: 'removeLine', value: id})
+      const lines3 = linesReducer(editable.set('lines', lines2), {type: 'removeLine', value: id}).get('lines')
       assert(lines1.size === 0)
       assert(lines2.size === 1)
       assert(lines3.size === 0)
     })
   })
   describe('partNumbers and SKUs', () => {
-    const lines1 = initialState.get('lines')
+    const lines1 = initialState.get('editable').get('lines')
     const partNumber = immutable.Map({
       part         : 'NE555P',
       manufacturer : 'Texas Instruments'
@@ -96,7 +98,7 @@ describe('bom_edit lines actions', () => {
     it('lets you set from TSV', () => {
       const tsv = 'References\tQty\tDigikey\ntest\t1\t8-98-989'
       const lines = linesReducer(
-        initialState.get('lines'),
+        initialState.get('editable').get('lines'),
         {type: 'setFromTsv', value: tsv}
       )
       const line      = lines.first()
@@ -109,7 +111,7 @@ describe('bom_edit lines actions', () => {
     })
   })
   describe('sorting', () => {
-    const lines1 = initialState.get('lines')
+    const lines1 = initialState.get('editable').get('lines')
     let lines2
     beforeEach('set order', () => {
       lines2 = linesReducer(

@@ -40,3 +40,11 @@ tr.selected {
 td.error {
     background: rgb(255, 246, 246) !important;
 }
+
+input {
+   border: none;
+   background: rgba(0, 0, 0, 0);
+   outline: none;
+}
+input:focus {
+}

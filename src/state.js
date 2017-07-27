@@ -25,7 +25,9 @@ const initialState = immutable.fromJS({
     lines: [],
     sortedBy: [null, null],
   },
-  view: {},
+  view: {
+    editing: [null, null],
+  },
 })
 
 const linesActions = {
@@ -116,7 +118,11 @@ const linesActions = {
   },
 }
 
-const viewActions = {}
+const viewActions = {
+  edit(state, field) {
+    return state.set('editing', immutable.fromJS(field))
+  },
+}
 
 const mainReducer = reduxImmutable.combineReducers({
   editable: makeReducer(linesActions),

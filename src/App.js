@@ -7,6 +7,7 @@ const redux       = require('redux')
 const reactRedux  = require('react-redux')
 const superagent  = require('superagent')
 const oneClickBom = require('1-click-bom')
+const immutable   = require('immutable')
 
 const {mainReducer, initialState, actions} = require('./state')
 const store = redux.createStore(mainReducer, initialState)
@@ -16,10 +17,11 @@ const Bom = React.createClass({
     return store.getState().toJS()
   },
   render() {
+    const editing = this.props.editable ? this.state.view.editing : null
     return (
       <semantic.Table className='Bom' celled unstackable={true}>
         <Header lines={this.state.editable.lines} />
-        <Body lines={this.state.editable.lines} />
+        <Body editing={editing} lines={this.state.editable.lines} />
       </semantic.Table>
     )
   },
@@ -83,21 +85,56 @@ function Header({lines}) {
   )
 }
 
-function Body({lines}) {
+function Body({editing, lines}) {
   const maxMpns = oneClickBom.lineData.maxMpns(lines)
 
   return (
     <semantic.TableBody>
-      {lines.map(line => Row({line, maxMpns}))}
+      {lines.map(line => Row({editing, line, maxMpns}))}
     </semantic.TableBody>
   )
 }
 
-function Row({line, maxMpns}) {
+const EditInput = React.createClass({
+  render() {
+    return (
+      <input
+        spellCheck={false}
+        value={this.props.value}
+        ref={input => {this.input = input}}
+      />
+    )
+  },
+  componentDidMount() {
+    this.input.focus()
+  }
+})
+
+function editingThis(editing, id, ref) {
+  return immutable.List(editing).equals(immutable.List.of(id, ref))
+}
+
+function Row({editing, line, maxMpns}) {
   return (
     <semantic.Table.Row key={line.id}>
-      <semantic.Table.Cell className={`marked ${markerColor(line.reference)}`}>
-        {line.reference}
+      <semantic.Table.Cell selectable={!!editing} className={`marked ${markerColor(line.reference)}`}>
+        {(() => {
+          if (!editing) {
+            return line.reference
+          }
+          return (
+            <a
+              onClick={() => store.dispatch(actions.edit([line.id, 'reference']))}
+            >
+              {(() => {
+                if (editingThis(editing, line.id, 'reference')) {
+                  return <EditInput value={line.reference} />
+                }
+                return line.reference
+              })()}
+            </a>
+          )
+        })()}
       </semantic.Table.Cell>
       <semantic.Table.Cell>
         {line.quantity}

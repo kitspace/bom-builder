@@ -44,7 +44,7 @@ describe('bom_edit lines actions', () => {
     beforeEach(() => {
       lines2 = linesReducer(editable.set('lines', lines1), {type: 'addLine', value: emptyLine}).get('lines')
       assert(lines2.first().get('partNumbers').size === 0)
-      id = lines2.get(0).get('id')
+      id = lines2.first().get('id')
     })
     it('adds a partNumber', () => {
       const lines3 = linesReducer(
@@ -55,14 +55,14 @@ describe('bom_edit lines actions', () => {
     })
     it('removes a partNumber', () => {
       const lines3 = linesReducer(
-        lines2,
+        editable.set('lines', lines2),
         {type: 'addPartNumber', value: {id, partNumber}}
-      )
+      ).get('lines')
       assert(lines3.first().get('partNumbers').size === 1)
       const lines4 = linesReducer(
-        lines3,
+        editable.set('lines', lines3),
         {type: 'removePartNumber', value: {id, partNumber}}
-      )
+      ).get('lines')
       assert(lines4.first().get('partNumbers').size === 0)
     })
     it('sets SKUs', () => {

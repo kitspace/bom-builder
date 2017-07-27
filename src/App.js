@@ -25,6 +25,7 @@ const Bom = React.createClass({
         celled
         compact
         unstackable={true}
+        singleLine
       >
         <Header lines={this.state.editable.lines} />
         <Body editing={editing} lines={this.state.editable.lines} />
@@ -102,19 +103,27 @@ function Body({editing, lines}) {
 }
 
 const EditInput = React.createClass({
+  getInitialState() {
+    return {value: this.props.value}
+  },
+  handleChange(event) {
+    this.setState({value: event.target.value})
+    this.props.onChange(event)
+  },
   render() {
     return (
       <input
         spellCheck={false}
-        value={this.props.value}
-        onChange={this.props.onChange}
+        value={this.state.value}
+        onChange={this.handleChange}
         ref={input => {this.input = input}}
+        size={this.state.value.length}
       />
     )
   },
   componentDidMount() {
     this.input.focus()
-  }
+  },
 })
 
 function editingThis(editing, id, ref) {
@@ -146,6 +155,7 @@ function Row({editing, line, maxMpns}) {
                 if (editingThis(editing, line.id, 'reference')) {
                   return (
                     <EditInput
+                      location={[line.id, 'reference']}
                       onChange={setField.bind(null, ['reference'])}
                       value={line.reference}
                     />

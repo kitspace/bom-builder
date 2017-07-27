@@ -2,7 +2,7 @@ a {
    color: rgba(0, 0, 0, 0.87) !important;
 }
 
-a:hover {
+th > a:hover {
    cursor: pointer !important;
 }
 
@@ -45,6 +45,6 @@ input {
    border: none;
    background: rgba(0, 0, 0, 0);
    outline: none;
+   font-family: Lato !important;
 }
-input:focus {
-}
+

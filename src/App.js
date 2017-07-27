@@ -19,7 +19,13 @@ const Bom = React.createClass({
   render() {
     const editing = this.props.editable ? this.state.view.editing : null
     return (
-      <semantic.Table className='Bom' celled unstackable={true}>
+      <semantic.Table
+        className='Bom'
+        size='small'
+        celled
+        compact
+        unstackable={true}
+      >
         <Header lines={this.state.editable.lines} />
         <Body editing={editing} lines={this.state.editable.lines} />
       </semantic.Table>
@@ -39,49 +45,49 @@ const Bom = React.createClass({
 function Header({lines}) {
   const maxMpns = oneClickBom.lineData.maxMpns(lines)
   return (
-    <semantic.Table.Header>
+    <thead>
       <tr>
-        <semantic.Table.HeaderCell >
+        <th>
           <a onClick={() => store.dispatch(actions.sortBy('reference'))}>
             References
           </a>
-        </semantic.Table.HeaderCell>
-        <semantic.Table.HeaderCell >
+        </th>
+        <th >
           <a onClick={() => store.dispatch(actions.sortBy('quantity'))}>
             Qty
           </a>
-        </semantic.Table.HeaderCell>
+        </th>
         {(() => {
           const cells = []
           for (let i = 0; i < maxMpns; ++i) {
             cells.push(
-              <semantic.Table.HeaderCell key={`Manufacturer${i}`}>
+              <th key={`Manufacturer${i}`}>
                 <a onClick={() => store.dispatch(actions.sortBy(['manufacturer', i]))}>
                   Manufacturer
                 </a>
-              </semantic.Table.HeaderCell>
+              </th>
             )
             cells.push(
-              <semantic.Table.HeaderCell key={`MPN${i}`}>
+              <th key={`MPN${i}`}>
                 <a onClick={() => store.dispatch(actions.sortBy(['part', i]))}>
                   MPN
                 </a>
-              </semantic.Table.HeaderCell>
+              </th>
             )
           }
           return cells
         })()}
         {oneClickBom.lineData.retailer_list.map(retailer => {
           return (
-            <semantic.Table.HeaderCell key={retailer}>
+            <th key={retailer}>
               <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
                 {retailer}
               </a>
-            </semantic.Table.HeaderCell>
+            </th>
           )
         })}
       </tr>
-    </semantic.Table.Header>
+    </thead>
   )
 }
 
@@ -89,9 +95,9 @@ function Body({editing, lines}) {
   const maxMpns = oneClickBom.lineData.maxMpns(lines)
 
   return (
-    <semantic.TableBody>
+    <tbody>
       {lines.map(line => Row({editing, line, maxMpns}))}
-    </semantic.TableBody>
+    </tbody>
   )
 }
 
@@ -123,8 +129,11 @@ function Row({editing, line, maxMpns}) {
     }))
   }
   return (
-    <semantic.Table.Row key={line.id}>
-      <semantic.Table.Cell selectable={!!editing} className={`marked ${markerColor(line.reference)}`}>
+    <tr key={line.id}>
+      <semantic.Table.Cell
+        selectable={!!editing}
+        className={`marked ${markerColor(line.reference)}`}
+      >
         {(() => {
           if (!editing) {
             return line.reference
@@ -148,34 +157,34 @@ function Row({editing, line, maxMpns}) {
           )
         })()}
       </semantic.Table.Cell>
-      <semantic.Table.Cell>
+      <td>
         {line.quantity}
-      </semantic.Table.Cell>
+      </td>
       {(() => {
         const ps = line.partNumbers.map(mpn => {
           return [
-            <semantic.Table.Cell key={`${line.id}-${mpn.manufacturer}`}>
+            <td key={`${line.id}-${mpn.manufacturer}`}>
               {mpn.manufacturer}
-            </semantic.Table.Cell>
+            </td>
            ,
-            <semantic.Table.Cell key={`${line.id}-${mpn.part}`}>
+            <td key={`${line.id}-${mpn.part}`}>
               {mpn.part}
-            </semantic.Table.Cell>
+            </td>
           ]
         })
         while (ps.length < maxMpns) {
-          ps.push([<semantic.Table.Cell />, <semantic.Table.Cell />])
+          ps.push([<td />, <td />])
         }
         return ps
       })()}
       {oneClickBom.lineData.retailer_list.map(name => {
         return (
-          <semantic.Table.Cell key={`${line.id}-${name}`}>
+          <td key={`${line.id}-${name}`}>
             {line.retailers[name]}
-          </semantic.Table.Cell>
+          </td>
         )
       })}
-    </semantic.Table.Row>
+    </tr>
   )
 }
 

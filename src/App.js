@@ -18,8 +18,8 @@ const Bom = React.createClass({
   render() {
     return (
       <semantic.Table className='Bom' celled unstackable={true}>
-        <Header lines={this.state.lines} />
-        <Body lines={this.state.lines} />
+        <Header lines={this.state.editable.lines} />
+        <Body lines={this.state.editable.lines} />
       </semantic.Table>
     )
   },

@@ -2,7 +2,7 @@ const immutable      = require('immutable')
 const reduxImmutable = require('redux-immutable')
 const oneClickBom = require('1-click-bom')
 
-function getId() {
+function makeId() {
   this.id = this.id || 0
   return this.id++
 }
@@ -28,7 +28,7 @@ const initialState = immutable.Map({
 
 const linesActions = {
   addLine(lines, value) {
-    return lines.set(getId(), value)
+    return lines.set(makeId(), value)
   },
   removeLine(lines, value) {
     return lines.filter((_,key) => key !== value)
@@ -63,7 +63,7 @@ const linesActions = {
   setFromTsv(_, value) {
     const {lines} = oneClickBom.parseTSV(value)
     return immutable.fromJS(lines).map(line => {
-      return line.update('partNumbers', ps => ps.toSet())
+      return line.merge({id: makeId()})
     })
   },
 }

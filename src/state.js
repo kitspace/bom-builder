@@ -33,7 +33,8 @@ const initialState = immutable.fromJS({
 const linesActions = {
   set(state, {location, value}) {
     let lines = state.get('lines')
-    const {id, field} = location
+    const id = location[0]
+    const field = location.slice(1)
     const line = lines.find(line => line.get('id') === id)
     const newLine = line.setIn(field, value)
     lines = lines.map(line => {

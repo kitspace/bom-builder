@@ -131,11 +131,11 @@ function editingThis(editing, id, ref) {
 }
 
 function Row({editing, line, maxMpns}) {
-  function setField(field, event) {
-    store.dispatch(actions.set({
-      location: {id: line.id, field},
-      value: event.target.value
-    }))
+  function setField(field) {
+    return event => store.dispatch(actions.set({
+        location: [line.id].concat(field),
+        value: event.target.value,
+      }))
   }
   return (
     <tr key={line.id}>
@@ -155,8 +155,7 @@ function Row({editing, line, maxMpns}) {
                 if (editingThis(editing, line.id, 'reference')) {
                   return (
                     <EditInput
-                      location={[line.id, 'reference']}
-                      onChange={setField.bind(null, ['reference'])}
+                      onChange={setField(['reference'])}
                       value={line.reference}
                     />
                   )

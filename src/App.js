@@ -23,7 +23,6 @@ const Bom = React.createClass({
         className='Bom'
         size='small'
         celled
-        compact
         unstackable={true}
         singleLine
       >
@@ -131,7 +130,7 @@ const EditInput = React.createClass({
 })
 
 function editingThis(editing, id, field) {
-  return immutable.fromJS(editing).equals(immutable.fromJS([id, field]))
+  return editing && immutable.fromJS(editing).equals(immutable.fromJS([id, field]))
 }
 
 function setField(id, field) {
@@ -150,34 +149,29 @@ function EditableCell({editing, line, field}) {
   }
   const id = line.get('id')
   const value = line.getIn(field)
+  const active = editingThis(editing, id, field)
   return (
     <semantic.Table.Cell
       selectable={!!editing}
-      active={editingThis(editing, id, field)}
+      active={active}
       className={className}
+      onClick={editing ? () => store.dispatch(actions.edit([id, field])) : null}
     >
-      {(() => {
-        if (!editing) {
+      <a>
+        {(() => {
+          if (active) {
+            return (
+              <EditInput
+                onChange={setField(id, field)}
+                onBlur={(event) => store.dispatch(actions.edit([null, null]))}
+                value={value}
+                type={type}
+              />
+            )
+          }
           return value
-        }
-        return (
-          <a onClick={() => store.dispatch(actions.edit([id, field]))}>
-            {(() => {
-              if (editingThis(editing, id, field)) {
-                return (
-                  <EditInput
-                    onChange={setField(id, field)}
-                    onBlur={(event) => store.dispatch(actions.edit([null, null]))}
-                    value={value}
-                    type={type}
-                  />
-                )
-              }
-              return value
-            })()}
-          </a>
-        )
-      })()}
+        })()}
+      </a>
     </semantic.Table.Cell>
   )
 }

@@ -6,32 +6,36 @@ th > a:hover {
    cursor: pointer !important;
 }
 
+td.marked {
+   width: 10px;
+}
+
 td.marked.orange {
-    border-left: 13px solid #FF9E39 !important;
+    background: #FF9E39 !important;
 }
 
 td.marked.green {
-    border-left: 13px solid #62B9A4 !important;
+    background: #62B9A4 !important;
 }
 
 td.marked.purple {
-    border-left: 13px solid #985DFF !important;
+    background: #985DFF !important;
 }
 
 td.marked.yellow {
-    border-left: 13px solid #F2EF11 !important;
+    background: #F2EF11 !important;
 }
 
 td.marked.black {
-    border-left: 13px solid #000000 !important;
+    background: #000000 !important;
 }
 
 td.marked.blue {
-    border-left: 13px solid #181887 !important;
+    background: #181887 !important;
 }
 
 td.marked.lightblue {
-    border-left: 13px solid lightblue !important;
+    background: lightblue !important;
 }
 
 tr.selected {

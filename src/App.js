@@ -47,7 +47,7 @@ function Header({lines}) {
   return (
     <thead>
       <tr>
-        <th>
+        <th colSpan={2}>
           <a onClick={() => store.dispatch(actions.sortBy('reference'))}>
             References
           </a>
@@ -159,9 +159,7 @@ function setField(id, field) {
 }
 
 function EditableCell({editing, line, field}) {
-  if (field[0] === 'reference') {
-    var className = `marked ${markerColor(line.getIn(field))}`
-  } else if (field[0] === 'quantity') {
+  if (field[0] === 'quantity') {
     var type = 'number'
   }
   const id = line.get('id')
@@ -171,7 +169,6 @@ function EditableCell({editing, line, field}) {
     <semantic.Table.Cell
       selectable={!!editing}
       active={active}
-      className={className}
       onClick={editing ? () => store.dispatch(actions.edit([id, field])) : null}
       style={{maxWidth: active ? '' : 200}}
     >
@@ -206,6 +203,10 @@ function Row({editing, line}) {
   const iLine = immutable.fromJS(line)
   return (
     <tr key={line.id}>
+      <semantic.Table.Cell
+        selectable
+        className={`marked ${markerColor(line.reference)}`}
+      />
       <EditableCell editing={editing} line={iLine} field={['reference']}/>
       <EditableCell editing={editing} line={iLine} field={['quantity']}/>
       <EditableCell editing={editing} line={iLine} field={['description']}/>

@@ -57,6 +57,11 @@ function Header({lines}) {
             Qty
           </a>
         </th>
+        <th >
+          <a onClick={() => store.dispatch(actions.sortBy('description'))}>
+            Description
+          </a>
+        </th>
         {(() => {
           const cells = []
           for (let i = 0; i < maxMpns; ++i) {
@@ -104,6 +109,7 @@ const EditInput = React.createClass({
     return {value: this.props.value}
   },
   handleChange(event) {
+    //this is to debounce the typing
     this.setState({value: event.target.value})
     clearTimeout(this.timeout)
     this.timeout = setTimeout(function(value) {
@@ -202,6 +208,7 @@ function Row({editing, line}) {
     <tr key={line.id}>
       <EditableCell editing={editing} line={iLine} field={['reference']}/>
       <EditableCell editing={editing} line={iLine} field={['quantity']}/>
+      <EditableCell editing={editing} line={iLine} field={['description']}/>
       {(() => {
         const ps = line.partNumbers.map((mpn, i) => {
           return [

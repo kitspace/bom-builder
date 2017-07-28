@@ -117,8 +117,9 @@ const EditInput = React.createClass({
         value={this.state.value}
         onChange={this.handleChange}
         ref={input => {this.input = input}}
-        size={this.state.value.length}
+        size={this.state.value.length + 5}
         type={this.props.type}
+        key={this.props.key}
       />
     )
   },
@@ -157,9 +158,7 @@ function EditableCell({editing, line, field}) {
           return value
         }
         return (
-          <a
-            onClick={() => store.dispatch(actions.edit([id, field]))}
-          >
+          <a onClick={() => store.dispatch(actions.edit([id, field]))}>
             {(() => {
               if (editingThis(editing, id, field)) {
                 return (
@@ -186,15 +185,21 @@ function Row({editing, line, maxMpns}) {
       <EditableCell editing={editing} line={iLine} field={['reference']}/>
       <EditableCell editing={editing} line={iLine} field={['quantity']}/>
       {(() => {
-        const ps = line.partNumbers.map(mpn => {
+        const ps = line.partNumbers.map((mpn, i) => {
           return [
-            <td key={`${line.id}-${mpn.manufacturer}`}>
-              {mpn.manufacturer}
-            </td>
+              <EditableCell
+                key={`${line.id}-${mpn.manufacturer}`}
+                editing={editing}
+                line={iLine}
+                field={['partNumbers', i, 'manufacturer']}
+              />
            ,
-            <td key={`${line.id}-${mpn.part}`}>
-              {mpn.part}
-            </td>
+             <EditableCell
+               key={`${line.id}-${mpn.part}`}
+               editing={editing}
+               line={iLine}
+               field={['partNumbers', i, 'part']}
+            />
           ]
         })
         while (ps.length < maxMpns) {

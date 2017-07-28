@@ -118,6 +118,7 @@ const EditInput = React.createClass({
         onChange={this.handleChange}
         ref={input => {this.input = input}}
         size={this.state.value.length}
+        type={this.props.type}
       />
     )
   },
@@ -139,45 +140,51 @@ function setField(id, field) {
 }
 
 function EditableCell({editing, line, field}) {
+  if (field[0] === 'reference') {
+    var className = `marked ${markerColor(line.getIn(field))}`
+  } else if (field[0] === 'quantity') {
+    var type = 'number'
+  }
+  const id = line.get('id')
+  const value = line.getIn(field)
   return (
     <semantic.Table.Cell
       selectable={!!editing}
-      className={`marked ${markerColor(line.reference)}`}
+      className={className}
     >
-    {(() => {
-      if (!editing) {
-        return line.reference
-      }
-      return (
-        <a
-          onClick={() => store.dispatch(actions.edit([line.id, field]))}
-        >
-          {(() => {
-            if (editingThis(editing, line.id, field)) {
-              return (
-                <EditInput
-                  onChange={setField(line.id, field)}
-                  value={line.reference}
-                />
-              )
-            }
-            return line.reference
-          })()}
-
-        </a>
-      )
-    })()}
-  </semantic.Table.Cell>
+      {(() => {
+        if (!editing) {
+          return value
+        }
+        return (
+          <a
+            onClick={() => store.dispatch(actions.edit([id, field]))}
+          >
+            {(() => {
+              if (editingThis(editing, id, field)) {
+                return (
+                  <EditInput
+                    onChange={setField(id, field)}
+                    value={value}
+                    type={type}
+                  />
+                )
+              }
+              return value
+            })()}
+          </a>
+        )
+      })()}
+    </semantic.Table.Cell>
   )
 }
 
 function Row({editing, line, maxMpns}) {
+  const iLine = immutable.fromJS(line)
   return (
     <tr key={line.id}>
-      <EditableCell editing={editing} line={line} field={['reference']}/>
-      <td>
-        {line.quantity}
-      </td>
+      <EditableCell editing={editing} line={iLine} field={['reference']}/>
+      <EditableCell editing={editing} line={iLine} field={['quantity']}/>
       {(() => {
         const ps = line.partNumbers.map(mpn => {
           return [

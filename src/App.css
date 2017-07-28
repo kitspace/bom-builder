@@ -48,3 +48,6 @@ input {
    font-family: Lato !important;
 }
 
+input[type=number]{
+    width: 50px;
+}

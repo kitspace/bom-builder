@@ -152,6 +152,7 @@ function EditableCell({editing, line, field}) {
   return (
     <semantic.Table.Cell
       selectable={!!editing}
+      active={editingThis(editing, id, field)}
       className={className}
     >
       {(() => {

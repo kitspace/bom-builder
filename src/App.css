@@ -41,6 +41,10 @@ td.error {
     background: rgb(255, 246, 246) !important;
 }
 
+td {
+   cursor: default;
+}
+
 input {
    border: none;
    background: rgba(0, 0, 0, 0);

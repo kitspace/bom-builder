@@ -161,15 +161,20 @@ function EditableCell({editing, line, field}) {
         {(() => {
           if (active) {
             return (
+              [
               <EditInput
                 onChange={setField(id, field)}
                 onBlur={(event) => store.dispatch(actions.edit([null, null]))}
                 value={value}
                 type={type}
               />
+              ,
+              //here to make sure the cell doesn't shrink
+              <div style={{visibility: 'hidden', height: 0}}>{value}</div>
+              ]
             )
           }
-          return value
+          return <div>{value}</div>
         })()}
       </a>
     </semantic.Table.Cell>

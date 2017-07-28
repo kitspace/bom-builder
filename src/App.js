@@ -156,8 +156,11 @@ function EditableCell({editing, line, field}) {
       active={active}
       className={className}
       onClick={editing ? () => store.dispatch(actions.edit([id, field])) : null}
+      style={{maxWidth: active ? '' : 200}}
     >
-      <a>
+      <a
+        style={{maxWidth: active ? '' : 200}}
+      >
         {(() => {
           if (active) {
             return (
@@ -167,14 +170,15 @@ function EditableCell({editing, line, field}) {
                 onBlur={(event) => store.dispatch(actions.edit([null, null]))}
                 value={value}
                 type={type}
+                key='EditInput'
               />
               ,
               //here to make sure the cell doesn't shrink
-              <div style={{visibility: 'hidden', height: 0}}>{value}</div>
+              <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
               ]
             )
           }
-          return <div>{value}</div>
+          return value
         })()}
       </a>
     </semantic.Table.Cell>

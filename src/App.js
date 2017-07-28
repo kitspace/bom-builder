@@ -111,26 +111,37 @@ const EditInput = React.createClass({
       this.props.onChange(value)
     }.bind(this, event.target.value), 100)
   },
+  skipInitialBlur: true,
+  handleBlur(event) {
+    //this is for firefox where we get an initial blur event on number inputs
+    //which we need to ignore
+    if (this.skipInitialBlur && this.props.type === 'number') {
+      this.skipInitialBlur = false
+    } else {
+      this.props.onBlur(event)
+    }
+  },
   render() {
     return (
       <input
         spellCheck={false}
         value={this.state.value}
         onChange={this.handleChange}
-        onBlur={this.props.onBlur}
+        onBlur={this.handleBlur}
         ref={input => {this.input = input}}
-        type={this.props.type}
-        key={this.props.key}
+        type={this.props.type || null}
       />
     )
   },
   componentDidMount() {
     this.input.focus()
+    this.skipInitialBlur = false
   },
 })
 
 function editingThis(editing, id, field) {
-  return editing && immutable.fromJS(editing).equals(immutable.fromJS([id, field]))
+  return editing &&
+    immutable.fromJS(editing).equals(immutable.fromJS([id, field]))
 }
 
 function setField(id, field) {

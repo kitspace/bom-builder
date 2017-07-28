@@ -209,9 +209,12 @@ function Row({editing, line, maxMpns}) {
       })()}
       {oneClickBom.lineData.retailer_list.map(name => {
         return (
-          <td key={`${line.id}-${name}`}>
-            {line.retailers[name]}
-          </td>
+          <EditableCell
+            key={`${line.id}-${name}`}
+            editing={editing}
+            line={iLine}
+            field={['retailers', name]}
+          />
         )
       })}
     </tr>

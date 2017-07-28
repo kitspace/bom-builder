@@ -118,6 +118,7 @@ const EditInput = React.createClass({
         spellCheck={false}
         value={this.state.value}
         onChange={this.handleChange}
+        onBlur={this.props.onBlur}
         ref={input => {this.input = input}}
         type={this.props.type}
         key={this.props.key}
@@ -166,6 +167,7 @@ function EditableCell({editing, line, field}) {
                 return (
                   <EditInput
                     onChange={setField(id, field)}
+                    onBlur={(event) => store.dispatch(actions.edit([null, null]))}
                     value={value}
                     type={type}
                   />

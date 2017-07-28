@@ -46,6 +46,7 @@ input {
    background: rgba(0, 0, 0, 0);
    outline: none;
    font-family: Lato !important;
+   width: 100%;
 }
 
 input[type=number]{

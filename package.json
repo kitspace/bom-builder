@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "1-click-bom": "^1.2.0",
+    "1-click-bom": "https://github.com/monostable/npm-1-click-bom",
     "immutable": "^3.8.1",
     "mocha": "^3.4.2",
     "react": "^15.6.1",

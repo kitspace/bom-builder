@@ -93,11 +93,9 @@ function Header({lines}) {
 }
 
 function Body({editing, lines}) {
-  const maxMpns = oneClickBom.lineData.maxMpns(lines)
-
   return (
     <tbody>
-      {lines.map(line => Row({editing, line, maxMpns}))}
+      {lines.map(line => Row({editing, line}))}
     </tbody>
   )
 }
@@ -108,7 +106,11 @@ const EditInput = React.createClass({
   },
   handleChange(event) {
     this.setState({value: event.target.value})
-    this.props.onChange(event)
+    clearTimeout(this.timeout)
+    this.timeout = setTimeout(function(value) {
+      clearTimeout(this.timeout)
+      this.props.onChange(value)
+    }.bind(this, event.target.value), 100)
   },
   render() {
     return (
@@ -117,7 +119,6 @@ const EditInput = React.createClass({
         value={this.state.value}
         onChange={this.handleChange}
         ref={input => {this.input = input}}
-        size={this.state.value.length + 5}
         type={this.props.type}
         key={this.props.key}
       />
@@ -133,10 +134,10 @@ function editingThis(editing, id, field) {
 }
 
 function setField(id, field) {
-  return event => store.dispatch(actions.set({
+  return value => store.dispatch(actions.set({
     id,
     field,
-    value: event.target.value,
+    value,
   }))
 }
 
@@ -178,7 +179,7 @@ function EditableCell({editing, line, field}) {
   )
 }
 
-function Row({editing, line, maxMpns}) {
+function Row({editing, line}) {
   const iLine = immutable.fromJS(line)
   return (
     <tr key={line.id}>
@@ -188,23 +189,20 @@ function Row({editing, line, maxMpns}) {
         const ps = line.partNumbers.map((mpn, i) => {
           return [
               <EditableCell
-                key={`${line.id}-${mpn.manufacturer}`}
+                key={`manufacturer-${i}`}
                 editing={editing}
                 line={iLine}
                 field={['partNumbers', i, 'manufacturer']}
               />
            ,
-             <EditableCell
-               key={`${line.id}-${mpn.part}`}
-               editing={editing}
-               line={iLine}
-               field={['partNumbers', i, 'part']}
-            />
+              <EditableCell
+                key={`part-${i}`}
+                editing={editing}
+                line={iLine}
+                field={['partNumbers', i, 'part']}
+              />
           ]
         })
-        while (ps.length < maxMpns) {
-          ps.push([<td />, <td />])
-        }
         return ps
       })()}
       {oneClickBom.lineData.retailer_list.map(name => {

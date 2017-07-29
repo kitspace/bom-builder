@@ -2,10 +2,6 @@
 # yarn lockfile v1
 
 
-"1-click-bom@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/1-click-bom/-/1-click-bom-1.2.0.tgz#602116ba355c7c7791b8edd33a11f95dde665ede"
-
 "1-click-bom@https://github.com/monostable/npm-1-click-bom":
   version "1.2.0"
   resolved "https://github.com/monostable/npm-1-click-bom#07e13bc69c20c81a6fb524bafc8d4dcb90384ba5"
@@ -5069,6 +5065,10 @@ react-dom@^15.6.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.0"
     prop-types "^15.5.10"
+
+react-double-scrollbar@^0.0.11:
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/react-double-scrollbar/-/react-double-scrollbar-0.0.11.tgz#0b12f67e78aedf496882bda5f9f62b57920dfa3f"
 
 react-error-overlay@^1.0.9:
   version "1.0.9"

@@ -8,6 +8,7 @@ const reactRedux  = require('react-redux')
 const superagent  = require('superagent')
 const oneClickBom = require('1-click-bom')
 const immutable   = require('immutable')
+const DoubleScrollBar = require('react-double-scrollbar')
 
 const {mainReducer, initialState, actions} = require('./state')
 const store = redux.createStore(mainReducer, initialState)
@@ -19,23 +20,25 @@ const Bom = React.createClass({
   render() {
     const editing = this.props.editable ? this.state.view.focus : null
     return (
-      <semantic.Table
-        className='Bom'
-        size='small'
-        celled
-        unstackable={true}
-        singleLine
-      >
-        <Header
-          mpnsExpanded={this.state.view.mpnsExpanded}
-          lines={this.state.editable.lines}
-        />
-        <Body
-          mpnsExpanded={this.state.view.mpnsExpanded}
-          editing={editing}
-          lines={this.state.editable.lines}
-        />
-      </semantic.Table>
+      <DoubleScrollBar>
+        <semantic.Table
+          className='Bom'
+          size='small'
+          celled
+          unstackable={true}
+          singleLine
+        >
+          <Header
+            mpnsExpanded={this.state.view.mpnsExpanded}
+            lines={this.state.editable.lines}
+          />
+          <Body
+            mpnsExpanded={this.state.view.mpnsExpanded}
+            editing={editing}
+            lines={this.state.editable.lines}
+          />
+        </semantic.Table>
+      </DoubleScrollBar>
     )
   },
   componentDidMount() {
@@ -95,6 +98,14 @@ function Header({mpnsExpanded, lines}) {
           }
           return cells
         })()}
+        <th onClick={e => store.dispatch(actions.toggleMpnsExpanded())}>
+         {(() => {
+           if (mpnsExpanded) {
+             return '<--'
+           }
+           return '...'
+         })()}
+        </th>
         {oneClickBom.lineData.retailer_list.map(retailer => {
           return (
             <th key={retailer}>
@@ -229,7 +240,7 @@ function Row({mpnsExpanded, editing, line}) {
         if (mpnsExpanded) {
           var ps = line.partNumbers
         } else {
-          var ps = line.partNumbers.slice(1)
+          var ps = line.partNumbers.slice(0, 1)
         }
         return ps.map((mpn, i) => {
           const cells = []
@@ -254,6 +265,8 @@ function Row({mpnsExpanded, editing, line}) {
           return cells
         })
       })()}
+      <td onClick={e => store.dispatch(actions.toggleMpnsExpanded())}>
+      </td>
       {oneClickBom.lineData.retailer_list.map(name => {
         return (
           <EditableCell

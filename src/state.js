@@ -135,6 +135,9 @@ const viewActions = {
   focus(state, location) {
     return state.set('focus', immutable.fromJS(location))
   },
+  toggleMpnsExpanded(state) {
+    return state.update('mpnsExpanded', expanded => !expanded)
+  },
 }
 
 const mainReducer = reduxImmutable.combineReducers({

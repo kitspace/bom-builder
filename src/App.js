@@ -26,8 +26,15 @@ const Bom = React.createClass({
         unstackable={true}
         singleLine
       >
-        <Header lines={this.state.editable.lines} />
-        <Body editing={editing} lines={this.state.editable.lines} />
+        <Header
+          mpnsExpanded={this.state.view.mpnsExpanded}
+          lines={this.state.editable.lines}
+        />
+        <Body
+          mpnsExpanded={this.state.view.mpnsExpanded}
+          editing={editing}
+          lines={this.state.editable.lines}
+        />
       </semantic.Table>
     )
   },
@@ -42,8 +49,12 @@ const Bom = React.createClass({
   },
 })
 
-function Header({lines}) {
-  const maxMpns = oneClickBom.lineData.maxMpns(lines)
+function Header({mpnsExpanded, lines}) {
+  if (mpnsExpanded) {
+    var maxMpns = oneClickBom.lineData.maxMpns(lines)
+  } else {
+    var maxMpns = 1
+  }
   return (
     <thead>
       <tr>
@@ -65,13 +76,15 @@ function Header({lines}) {
         {(() => {
           const cells = []
           for (let i = 0; i < maxMpns; ++i) {
-            cells.push(
-              <th key={`Manufacturer${i}`}>
-                <a onClick={() => store.dispatch(actions.sortBy(['manufacturer', i]))}>
-                  Manufacturer
-                </a>
-              </th>
-            )
+            if (mpnsExpanded) {
+              cells.push(
+                <th key={`Manufacturer${i}`}>
+                  <a onClick={() => store.dispatch(actions.sortBy(['manufacturer', i]))}>
+                    Manufacturer
+                  </a>
+                </th>
+              )
+            }
             cells.push(
               <th key={`MPN${i}`}>
                 <a onClick={() => store.dispatch(actions.sortBy(['part', i]))}>
@@ -96,10 +109,10 @@ function Header({lines}) {
   )
 }
 
-function Body({editing, lines}) {
+function Body({mpnsExpanded, editing, lines}) {
   return (
     <tbody>
-      {lines.map(line => Row({editing, line}))}
+      {lines.map(line => Row({mpnsExpanded, editing, line}))}
     </tbody>
   )
 }
@@ -197,7 +210,7 @@ function EditableCell({editing, line, field}) {
   )
 }
 
-function Row({editing, line}) {
+function Row({mpnsExpanded, editing, line}) {
   const iLine = immutable.fromJS(line)
   return (
     <semantic.Table.Row active={editing[0] === line.id} key={line.id}>
@@ -213,24 +226,33 @@ function Row({editing, line}) {
       <EditableCell editing={editing} line={iLine} field={['quantity']}/>
       <EditableCell editing={editing} line={iLine} field={['description']}/>
       {(() => {
-        const ps = line.partNumbers.map((mpn, i) => {
-          return [
+        if (mpnsExpanded) {
+          var ps = line.partNumbers
+        } else {
+          var ps = line.partNumbers.slice(1)
+        }
+        return ps.map((mpn, i) => {
+          const cells = []
+          if (mpnsExpanded) {
+            cells.push(
               <EditableCell
                 key={`manufacturer-${i}`}
                 editing={editing}
                 line={iLine}
                 field={['partNumbers', i, 'manufacturer']}
               />
-           ,
+            )
+          }
+          cells.push(
               <EditableCell
                 key={`part-${i}`}
                 editing={editing}
                 line={iLine}
                 field={['partNumbers', i, 'part']}
               />
-          ]
+          )
+          return cells
         })
-        return ps
       })()}
       {oneClickBom.lineData.retailer_list.map(name => {
         return (

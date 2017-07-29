@@ -26,6 +26,7 @@ const initialState = immutable.fromJS({
     sortedBy: [null, null],
   },
   view: {
+    mpnsExpanded: false,
     focus: [null, null],
   },
 })

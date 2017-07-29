@@ -17,7 +17,7 @@ const Bom = React.createClass({
     return store.getState().toJS()
   },
   render() {
-    const editing = this.props.editable ? this.state.view.editing : null
+    const editing = this.props.editable ? this.state.view.focus : null
     return (
       <semantic.Table
         className='Bom'
@@ -170,7 +170,7 @@ function EditableCell({editing, line, field}) {
     <semantic.Table.Cell
       selectable={!!editing}
       active={active}
-      onClick={editing ? () => store.dispatch(actions.edit([id, field])) : null}
+      onClick={editing ? () => store.dispatch(actions.focus([id, field])) : null}
       style={{maxWidth: active ? '' : 200}}
     >
       <a
@@ -182,7 +182,7 @@ function EditableCell({editing, line, field}) {
               [
               <EditInput
                 onChange={setField(id, field)}
-                onBlur={(event) => store.dispatch(actions.edit([null, null]))}
+                onBlur={e => store.dispatch(actions.focus([null, null]))}
                 value={value}
                 type={type}
                 key='EditInput'
@@ -207,8 +207,8 @@ function Row({editing, line}) {
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
           style={{height: 39}}
-          onFocus={e => store.dispatch(actions.edit([line.id, null]))}
-          onBlur={e => store.dispatch(actions.edit([null, null]))}
+          onFocus={e => store.dispatch(actions.focus([line.id, null]))}
+          onBlur={e => store.dispatch(actions.focus([null, null]))}
           readOnly
         />
       </td>

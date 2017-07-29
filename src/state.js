@@ -26,7 +26,7 @@ const initialState = immutable.fromJS({
     sortedBy: [null, null],
   },
   view: {
-    editing: [null, null],
+    focus: [null, null],
   },
 })
 
@@ -131,8 +131,8 @@ const linesActions = {
 }
 
 const viewActions = {
-  edit(state, location) {
-    return state.set('editing', immutable.fromJS(location))
+  focus(state, location) {
+    return state.set('focus', immutable.fromJS(location))
   },
 }
 

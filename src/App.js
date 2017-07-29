@@ -142,6 +142,7 @@ const EditInput = React.createClass({
   componentDidMount() {
     this.input.focus()
     this.skipInitialBlur = false
+    this.input.select()
   },
 })
 

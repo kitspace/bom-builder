@@ -205,7 +205,6 @@ function Row({editing, line}) {
   return (
     <tr key={line.id}>
       <semantic.Table.Cell
-        selectable
         className={`marked ${markerColor(line.reference)}`}
       />
       <EditableCell editing={editing} line={iLine} field={['reference']}/>

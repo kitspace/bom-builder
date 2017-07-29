@@ -7,7 +7,13 @@ th > a:hover {
 }
 
 td.marked {
-   width: 10px;
+   min-width: 15px;
+   max-width: 15px;
+   padding: 0px !important;
+}
+
+td.marked:hover {
+   opacity: 0.8;
 }
 
 td.marked.orange {
@@ -63,6 +69,10 @@ input {
    outline: none;
    font-family: Lato !important;
    width: 100%;
+}
+
+tr:hover {
+   background: rgba(0,0,0,.05) !important;
 }
 
 input[type=number]{

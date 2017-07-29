@@ -204,10 +204,14 @@ function Row({editing, line}) {
   const iLine = immutable.fromJS(line)
   return (
     <semantic.Table.Row active={editing[0] === line.id} key={line.id}>
-      <semantic.Table.Cell
-        onClick={event => store.dispatch(actions.edit([line.id, null]))}
-        className={`marked ${markerColor(line.reference)}`}
-      />
+      <td className={`marked ${markerColor(line.reference)}`}>
+        <input
+          style={{height: 39}}
+          onFocus={e => store.dispatch(actions.edit([line.id, null]))}
+          onBlur={e => store.dispatch(actions.edit([null, null]))}
+          readOnly
+        />
+      </td>
       <EditableCell editing={editing} line={iLine} field={['reference']}/>
       <EditableCell editing={editing} line={iLine} field={['quantity']}/>
       <EditableCell editing={editing} line={iLine} field={['description']}/>

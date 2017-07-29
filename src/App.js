@@ -115,7 +115,7 @@ const EditInput = React.createClass({
     this.timeout = setTimeout(function(value) {
       clearTimeout(this.timeout)
       this.props.onChange(value)
-    }.bind(this, event.target.value), 100)
+    }.bind(this, event.target.value), 2000)
   },
   skipInitialBlur: true,
   handleBlur(event) {
@@ -124,7 +124,7 @@ const EditInput = React.createClass({
     if (this.skipInitialBlur && this.props.type === 'number') {
       this.skipInitialBlur = false
     } else {
-      this.props.onBlur(event)
+      this.props.onBlur(event.target.value)
     }
   },
   render() {
@@ -151,14 +151,6 @@ function editingThis(editing, id, field) {
     immutable.fromJS(editing).equals(immutable.fromJS([id, field]))
 }
 
-function setField(id, field) {
-  return value => store.dispatch(actions.set({
-    id,
-    field,
-    value,
-  }))
-}
-
 function EditableCell({editing, line, field}) {
   if (field[0] === 'quantity') {
     var type = 'number'
@@ -181,8 +173,13 @@ function EditableCell({editing, line, field}) {
             return (
               [
               <EditInput
-                onChange={setField(id, field)}
-                onBlur={e => store.dispatch(actions.focus([null, null]))}
+                onChange={value => {
+                  store.dispatch(actions.set({id, field, value}))
+                }}
+                onBlur={value => {
+                  store.dispatch(actions.focus([null, null]))
+                  store.dispatch(actions.set({id, field, value}))
+                }}
                 value={value}
                 type={type}
                 key='EditInput'

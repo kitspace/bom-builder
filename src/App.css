@@ -113,3 +113,24 @@ input[type=number]{
 .collapsedRetailerColumn.retailerButton {
    width: 100% !important;
 }
+
+    div.retailerButtonCellText {
+        min-width: 102px;
+        @include breakpoint(mobile-m) {
+            width: 224px;
+        }
+    }
+    div.retailerButtonCellIcon {
+        font-size: 22px;
+    }
+
+    .storeIcons {
+        height: 16px;
+        margin-right: 2px;
+        width: 16px;
+    }
+
+    .retailerButtonCellName {
+        display: flex;
+        align-items: center;
+    }

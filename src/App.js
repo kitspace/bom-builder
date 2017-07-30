@@ -1,5 +1,6 @@
 import './App.css'
 import 'semantic-ui-css/semantic.css'
+import './fontello.css'
 
 const React       = require('react')
 const semantic    = require('semantic-ui-react')
@@ -374,20 +375,21 @@ function Row({viewState, editing, line, index, nOfRows}) {
             )})
         } else if (index === 0) {
           return (
-            <td style={{background: 'white'}} rowSpan={nOfRows}>
-              <div className='collapsedRetailerColumn'>
-                {(() => {
-                  return oneClickBom.lineData.retailer_list.map(name => {
-                    return (
-                      <div key={name} style={{width: '100%'}}>
-                        <semantic.Card
-                          header={name}
-                        />
-                      </div>
-                    )
-                  })
-                })()}
-              </div>
+            <td
+              style={{background: 'white', verticalAlign: 'top'}}
+              rowSpan={nOfRows}
+            >
+              <semantic.Table>
+                <tbody>
+                  {(() => {
+                    return oneClickBom.lineData.retailer_list.map(name => {
+                      return (
+                        <RetailerButton key={name} name={name} parts={[1]} />
+                      )
+                    })
+                  })()}
+                </tbody>
+              </semantic.Table>
             </td>
           )
         }
@@ -418,6 +420,57 @@ function markerColor(ref) {
   return 'purple'
 }
 
+function RetailerButton(props) {
+  const n = props.parts.filter(x => x !== '').length
+  if (n === 0) {
+    return null
+  }
+  const r = props.name
+  let onClick = props.buyParts
+  //if the extension is not here fallback to direct submissions
+  if ((props.extensionPresence !== 'present')
+    && (typeof document !== 'undefined')) {
+      onClick = () => {
+        const form = document.getElementById(r + 'Form')
+        if (form) {
+          form.submit()
+        } else {
+          props.buyParts()
+        }
+      }
+  }
+  const total = props.parts.length
+  return (
+    <semantic.Table.Row
+      className='compact retailerHeader'
+      error={n !== total}
+      key={r}
+      onClick={onClick}
+    >
+      <td>
+      <div className='retailerButtonCell'>
+        <div className='retailerButtonCellText'>
+          <div className='retailerButtonCellName'>
+            {/* <StoreIcon retailer={r} />*/}
+            {r}
+          </div>
+          <p style={{fontSize: 14, fontWeight: 'normal'}}>
+            {`${n}/${total}`}
+          </p>
+        </div>
+        <div className='retailerButtonCellIcon'>
+          {(() => {
+            if (props.adding) {
+              return <semantic.Loader active inline />
+            }
+            return <i style={{fontSize: 22}} className='icon-basket-3' />
+          })()}
+        </div>
+      </div>
+    </td>
+    </semantic.Table.Row>
+  )
+}
 
 
 export default Bom

@@ -4,7 +4,7 @@
 
 "1-click-bom@https://github.com/monostable/npm-1-click-bom":
   version "1.2.0"
-  resolved "https://github.com/monostable/npm-1-click-bom#07e13bc69c20c81a6fb524bafc8d4dcb90384ba5"
+  resolved "https://github.com/monostable/npm-1-click-bom#493bbc5217ac07d4569547c3b78d8a49e6e8f5ce"
 
 abab@^1.0.3:
   version "1.0.3"

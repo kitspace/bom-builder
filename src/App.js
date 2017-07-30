@@ -55,9 +55,9 @@ const Bom = React.createClass({
 
 function Header({viewState, lines}) {
   if (viewState.partNumbersExpanded) {
-    var maxMpns = oneClickBom.lineData.maxMpns(lines)
+    var maxPartNumbers = oneClickBom.lineData.maxPartNumbers(lines)
   } else {
-    var maxMpns = 1
+    var maxPartNumbers = 1
   }
   return (
     <thead>
@@ -94,7 +94,7 @@ function Header({viewState, lines}) {
               </td>
             )
           }
-          for (let i = 0; i < maxMpns; ++i) {
+          for (let i = 0; i < maxPartNumbers; ++i) {
             if (viewState.partNumbersExpanded) {
               cells.push(
                 <th className={headerClassName} key={`Manufacturer${i}`}>

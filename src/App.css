@@ -78,3 +78,11 @@ tr:hover {
 input[type=number]{
     width: 50px;
 }
+
+.expanderCell {
+}
+
+.expanderCell:hover {
+   cursor: pointer !important;
+   color:
+}

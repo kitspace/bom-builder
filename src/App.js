@@ -98,14 +98,21 @@ function Header({mpnsExpanded, lines}) {
           }
           return cells
         })()}
-        <th onClick={e => store.dispatch(actions.toggleMpnsExpanded())}>
+        <semantic.Table.HeaderCell
+          className='expanderCell'
+          onClick={e => store.dispatch(actions.toggleMpnsExpanded())}
+          textAlign='center'
+          verticalAlign='middle'
+        >
+          <semantic.Button basic size='tiny'>
          {(() => {
            if (mpnsExpanded) {
-             return '<--'
+             return '⇠'
            }
            return '...'
          })()}
-        </th>
+      </semantic.Button>
+        </semantic.Table.HeaderCell>
         {oneClickBom.lineData.retailer_list.map(retailer => {
           return (
             <th key={retailer}>
@@ -265,7 +272,12 @@ function Row({mpnsExpanded, editing, line}) {
           return cells
         })
       })()}
-      <td onClick={e => store.dispatch(actions.toggleMpnsExpanded())}>
+      <td
+        className='expanderCell'
+        onClick={e => store.dispatch(actions.toggleMpnsExpanded())}
+      >
+        {(() => {
+        })()}
       </td>
       {oneClickBom.lineData.retailer_list.map(name => {
         return (

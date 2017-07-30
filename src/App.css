@@ -87,9 +87,10 @@ input[type=number]{
 }
 
 .expanderCell {
+   border-top: none !important;
+   background: #F9FAFB !important;
 }
 
 .expanderCell:hover {
    cursor: pointer !important;
-   color:
 }

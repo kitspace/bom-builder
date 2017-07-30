@@ -78,6 +78,19 @@ function Header({viewState, lines}) {
         </th>
         {(() => {
           const cells = []
+          if (viewState.mpnsExpanded) {
+            cells.push(
+              <td className='expanderCell' key='button'>
+                <semantic.Button
+                  basic
+                  size='tiny'
+                  onClick={() => store.dispatch(actions.toggleMpnsExpanded())}
+                >
+                  ⇠ less
+                </semantic.Button>
+              </td>
+            )
+          }
           for (let i = 0; i < maxMpns; ++i) {
             if (viewState.mpnsExpanded) {
               cells.push(
@@ -89,23 +102,25 @@ function Header({viewState, lines}) {
               )
             }
             cells.push(
-              <th className={i === 0 ? 'headerWithButton' : ''} key={`MPN${i}`}>
+              <th key={`MPN${i}`}>
+                <div className='headerWithButton'>
                 <a onClick={() => store.dispatch(actions.sortBy(['part', i]))}>
                   Part Number
                 </a>
                 {(() => {
-                  if (i === 0) {
+                  if (!viewState.mpnsExpanded && i === 0) {
                     return  (
                       <semantic.Button
                         basic
                         size='tiny'
                         onClick={() => store.dispatch(actions.toggleMpnsExpanded())}
                       >
-                      {viewState.mpnsExpanded ? '⇠ less' : `more ...`}
+                      more ...
                       </semantic.Button>
                     )
                   }
                 })()}
+              </div>
               </th>
             )
           }
@@ -277,6 +292,11 @@ function Row({viewState, editing, line, index}) {
       <EditableCell editing={editing} line={iLine} field={['reference']}/>
       <EditableCell editing={editing} line={iLine} field={['quantity']}/>
       <EditableCell editing={editing} line={iLine} field={['description']}/>
+      {(() => {
+        if (viewState.mpnsExpanded) {
+          return <td className='expanderCell'/>
+        }
+      })()}
       {(() => {
         if (viewState.mpnsExpanded) {
           var ps = line.partNumbers

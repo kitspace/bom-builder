@@ -80,9 +80,6 @@ function Header({mpnsExpanded, lines}) {
           const cells = []
           for (let i = 0; i < maxMpns; ++i) {
             let cellClass = ''
-            if (i === 0 && mpnsExpanded) {
-              cellClass = 'headerWithButton'
-            }
             if (mpnsExpanded) {
               cells.push(
                 <th key={`Manufacturer${i}`}>
@@ -93,19 +90,19 @@ function Header({mpnsExpanded, lines}) {
               )
             }
             cells.push(
-              <th className={cellClass} key={`MPN${i}`}>
+              <th className={i === 0 ? 'headerWithButton' : ''} key={`MPN${i}`}>
                 <a onClick={() => store.dispatch(actions.sortBy(['part', i]))}>
                   Part Number
                 </a>
                 {(() => {
-                  if (i === 0 && mpnsExpanded) {
+                  if (i === 0) {
                     return  (
                       <semantic.Button
                         basic
                         size='tiny'
                         onClick={() => store.dispatch(actions.toggleMpnsExpanded())}
                       >
-                        {'⇠'}
+                      {mpnsExpanded ? '⇠ less' : `more ...`}
                       </semantic.Button>
                     )
                   }
@@ -115,21 +112,6 @@ function Header({mpnsExpanded, lines}) {
           }
           return cells
         })()}
-        <semantic.Table.HeaderCell
-          className='expanderCell'
-          onClick={e => store.dispatch(actions.toggleMpnsExpanded())}
-          textAlign='center'
-          verticalAlign='middle'
-        >
-          <semantic.Button basic size='tiny'>
-         {(() => {
-           if (mpnsExpanded) {
-             return '⇠'
-           }
-           return '...'
-         })()}
-      </semantic.Button>
-        </semantic.Table.HeaderCell>
         {oneClickBom.lineData.retailer_list.map(retailer => {
           return (
             <th key={retailer}>
@@ -289,13 +271,6 @@ function Row({mpnsExpanded, editing, line}) {
           return cells
         })
       })()}
-      <td
-        className='expanderCell'
-        onClick={e => store.dispatch(actions.toggleMpnsExpanded())}
-      >
-        {(() => {
-        })()}
-      </td>
       {oneClickBom.lineData.retailer_list.map(name => {
         return (
           <EditableCell

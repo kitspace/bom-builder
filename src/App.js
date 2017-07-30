@@ -195,7 +195,7 @@ function Body({viewState, editing, lines}) {
         editing,
         line,
         index,
-        nOfRows: lines.length,
+        numberOfRows: lines.length,
       }))}
     </tbody>
   )
@@ -294,7 +294,7 @@ function EditableCell({editing, line, field}) {
   )
 }
 
-function Row({viewState, editing, line, index, nOfRows}) {
+function Row({viewState, editing, line, index, numberOfRows}) {
   const iLine = immutable.fromJS(line)
   return (
     <semantic.Table.Row active={editing[0] === line.id} key={line.id}>
@@ -377,16 +377,14 @@ function Row({viewState, editing, line, index, nOfRows}) {
           return (
             <td
               style={{background: 'white', verticalAlign: 'top'}}
-              rowSpan={nOfRows}
+              rowSpan={numberOfRows}
             >
-              <semantic.Table>
+              <semantic.Table basic='very'>
                 <tbody>
                   {(() => {
-                    return oneClickBom.lineData.retailer_list.map(name => {
-                      return (
-                        <RetailerButton key={name} name={name} parts={[1]} />
-                      )
-                    })
+                    return oneClickBom.lineData.retailer_list.map(name =>
+                      <RetailerButton key={name} name={name} parts={[1]} />
+                    )
                   })()}
                 </tbody>
               </semantic.Table>

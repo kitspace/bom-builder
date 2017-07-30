@@ -1,136 +1,136 @@
 a {
-   color: rgba(0, 0, 0, 0.87) !important;
+    color: rgba(0, 0, 0, 0.87) !important;
 }
 
 th a:hover {
-   cursor: pointer !important;
+    cursor: pointer !important;
 }
 
 td.marked {
-   min-width: 15px;
-   max-width: 15px;
-   padding: 0px !important;
+    min-width: 15px;
+    max-width: 15px;
+    padding: 0px !important;
 }
 
 td.marked:hover {
-   opacity: 0.8;
+    opacity: 0.8;
 }
 
 td.marked.orange {
-    background: #FF9E39 !important;
+     background: #FF9E39 !important;
 }
 
 td.marked.green {
-    background: #62B9A4 !important;
+     background: #62B9A4 !important;
 }
 
 td.marked.purple {
-    background: #985DFF !important;
+     background: #985DFF !important;
 }
 
 td.marked.yellow {
-    background: #F2EF11 !important;
+     background: #F2EF11 !important;
 }
 
 td.marked.black {
-    background: #000000 !important;
+     background: #000000 !important;
 }
 
 td.marked.blue {
-    background: #181887 !important;
+     background: #181887 !important;
 }
 
 td.marked.lightblue {
-    background: lightblue !important;
+     background: lightblue !important;
 }
 
 tr.selected {
-    background:rgba(0,0,0,.05) !important;
+     background:rgba(0,0,0,.05) !important;
 }
 
 td.error {
-    background: rgb(255, 246, 246) !important;
+     background: rgb(255, 246, 246) !important;
 }
 
 td {
-   cursor: default;
-   overflow: hidden;
-   text-overflow: ellipsis;
+    cursor: default;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 td > a {
-   overflow: hidden;
-   text-overflow: ellipsis;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 input {
-   border: none;
-   background: rgba(0, 0, 0, 0);
-   outline: none;
-   font-family: Lato !important;
-   width: 100%;
+    border: none;
+    background: rgba(0, 0, 0, 0);
+    outline: none;
+    font-family: Lato !important;
+    width: 100%;
 }
 
 tr:hover {
-   background: rgba(0,0,0,.05) !important;
+    background: rgba(0,0,0,.05) !important;
 }
 
 input[type=number]{
-    width: 50px;
+     width: 50px;
 }
 
 .headerWithButton {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   width:100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width:100%;
 }
 
 .collapserCell {
-   border-top: none !important;
-   background: #F9FAFB !important;
-   color: #F9FAFB !important;
-   text-align: center !important;
+    border-top: none !important;
+    background: #F9FAFB !important;
+    color: #F9FAFB !important;
+    text-align: center !important;
 }
 
 .collapserCell:hover {
-   cursor: pointer !important;
-   color:  rgba(0, 0, 0, 0.6) !important;
+    cursor: pointer !important;
+    color:  rgba(0, 0, 0, 0.6) !important;
 }
 
 .expandedHeader {
-   border-left: 1px solid #f3f3f3 !important;
+    border-left: 1px solid #f3f3f3 !important;
 }
 
 .collapsedRetailerColumn {
-   display: flex;
-   flex-direction: row;
-   height: 1000px;
-   flex-wrap: wrap;
-   justify-content: flex-start;
+    display: flex;
+    flex-direction: row;
+    height: 1000px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
 }
 
 .collapsedRetailerColumn.retailerButton {
-   width: 100% !important;
+     width: 100% !important;
 }
 
-    div.retailerButtonCellText {
-        min-width: 102px;
-        @include breakpoint(mobile-m) {
-            width: 224px;
-        }
+div.retailerButtonCellText {
+    min-width: 102px;
+    @include breakpoint(mobile-m) {
+        width: 224px;
     }
-    div.retailerButtonCellIcon {
-        font-size: 22px;
-    }
+}
+div.retailerButtonCellIcon {
+    font-size: 22px;
+}
 
-    .storeIcons {
-        height: 16px;
-        margin-right: 2px;
-        width: 16px;
-    }
+.storeIcons {
+    height: 16px;
+    margin-right: 2px;
+    width: 16px;
+}
 
-    .retailerButtonCellName {
-        display: flex;
-        align-items: center;
-    }
+.retailerButtonCellName {
+    display: flex;
+    align-items: center;
+}

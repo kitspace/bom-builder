@@ -25,7 +25,7 @@ const Bom = React.createClass({
           className='Bom'
           size='small'
           celled
-          unstackable={true}
+          unstackable
           singleLine
         >
           <Header
@@ -79,7 +79,6 @@ function Header({viewState, lines}) {
         {(() => {
           const cells = []
           for (let i = 0; i < maxMpns; ++i) {
-            let cellClass = ''
             if (viewState.mpnsExpanded) {
               cells.push(
                 <th key={`Manufacturer${i}`}>
@@ -196,19 +195,19 @@ const EditInput = React.createClass({
   render() {
     return (
       <input
+        ref='input'
         spellCheck={false}
         value={this.state.value}
         onChange={this.handleChange}
         onBlur={this.handleBlur}
-        ref={input => {this.input = input}}
-        type={this.props.type || null}
+        type={this.props.type}
       />
     )
   },
   componentDidMount() {
-    this.input.focus()
+    this.refs.input.focus()
     this.skipInitialBlur = false
-    this.input.select()
+    this.refs.input.select()
   },
 })
 
@@ -270,8 +269,8 @@ function Row({viewState, editing, line, index}) {
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
           style={{height: 39}}
-          onFocus={e => store.dispatch(actions.focus([line.id, null]))}
-          onBlur={e => store.dispatch(actions.focus([null, null]))}
+          onFocus={() => store.dispatch(actions.focus([line.id, null]))}
+          onBlur={() => store.dispatch(actions.focus([null, null]))}
           readOnly
         />
       </td>

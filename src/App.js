@@ -97,7 +97,11 @@ function Header({viewState, lines}) {
             if (viewState.partNumbersExpanded) {
               cells.push(
                 <th className={headerClassName} key={`Manufacturer${i}`}>
-                  <a onClick={() => store.dispatch(actions.sortBy(['manufacturer', i]))}>
+                  <a
+                    onClick={() => {
+                      store.dispatch(actions.sortBy(['manufacturer', i]))
+                    }}
+                  >
                     Manufacturer
                   </a>
                 </th>
@@ -115,7 +119,9 @@ function Header({viewState, lines}) {
                       <semantic.Button
                         basic
                         size='tiny'
-                        onClick={() => store.dispatch(actions.toggleMpnsExpanded())}
+                        onClick={() => {
+                          store.dispatch(actions.toggleMpnsExpanded())
+                        }}
                       >
                       more ...
                       </semantic.Button>
@@ -130,27 +136,29 @@ function Header({viewState, lines}) {
         })()}
         {(() => {
           if (viewState.retailersExpanded) {
+            return (
+              <td className='expanderCell' key='button'>
+                <semantic.Button
+                  basic
+                  size='tiny'
+                  onClick={() => store.dispatch(actions.toggleSkusExpanded())}
+                >
+                  ⇠ less
+                </semantic.Button>
+              </td>
+            )
+          }
+        })()}
+        {(() => {
+          if (viewState.retailersExpanded) {
             return oneClickBom.lineData.retailer_list.map((retailer, i) => {
               return (
-                <th key={retailer}>
-                  <div className={i === 0 ? 'headerWithButton' : ''}>
-                  {(() => {
-                    if (i === 0) {
-                      return (
-                        <semantic.Button
-                          basic
-                          size='tiny'
-                          onClick={() => store.dispatch(actions.toggleSkusExpanded())}
-                        >
-                          ⇠ less
-                        </semantic.Button>
-                      )
-                    }
-                  })()}
-                  <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
-                    {retailer}
-                  </a>
-                </div>
+                <th className='expandedMpnHeader' key={retailer}>
+                  <div className='headerWithButton'>
+                    <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
+                      {retailer}
+                    </a>
+                  </div>
                 </th>
               )
             })
@@ -334,6 +342,18 @@ function Row({viewState, editing, line, index}) {
           )
           return cells
         })
+      })()}
+      {(() => {
+        if (viewState.retailersExpanded) {
+          return (
+            <td
+              className='expanderCell'
+              onClick={() => store.dispatch(actions.toggleSkusExpanded())}
+            >
+              ⇠ less
+            </td>
+          )
+        }
       })()}
       {(() => {
         if (viewState.retailersExpanded) {

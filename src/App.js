@@ -53,7 +53,7 @@ const Bom = React.createClass({
 })
 
 function Header({viewState, lines}) {
-  if (viewState.mpnsExpanded) {
+  if (viewState.partNumbersExpanded) {
     var maxMpns = oneClickBom.lineData.maxMpns(lines)
   } else {
     var maxMpns = 1
@@ -79,7 +79,7 @@ function Header({viewState, lines}) {
         {(() => {
           const cells = []
           let headerClassName = ''
-          if (viewState.mpnsExpanded) {
+          if (viewState.partNumbersExpanded) {
             headerClassName = 'expandedMpnHeader'
             cells.push(
               <td className='expanderCell' key='button'>
@@ -94,7 +94,7 @@ function Header({viewState, lines}) {
             )
           }
           for (let i = 0; i < maxMpns; ++i) {
-            if (viewState.mpnsExpanded) {
+            if (viewState.partNumbersExpanded) {
               cells.push(
                 <th className={headerClassName} key={`Manufacturer${i}`}>
                   <a onClick={() => store.dispatch(actions.sortBy(['manufacturer', i]))}>
@@ -110,7 +110,7 @@ function Header({viewState, lines}) {
                   Part Number
                 </a>
                 {(() => {
-                  if (!viewState.mpnsExpanded && i === 0) {
+                  if (!viewState.partNumbersExpanded && i === 0) {
                     return  (
                       <semantic.Button
                         basic
@@ -129,7 +129,7 @@ function Header({viewState, lines}) {
           return cells
         })()}
         {(() => {
-          if (viewState.skusExpanded) {
+          if (viewState.retailersExpanded) {
             return oneClickBom.lineData.retailer_list.map((retailer, i) => {
               return (
                 <th key={retailer}>
@@ -295,7 +295,7 @@ function Row({viewState, editing, line, index}) {
       <EditableCell editing={editing} line={iLine} field={['quantity']}/>
       <EditableCell editing={editing} line={iLine} field={['description']}/>
       {(() => {
-        if (viewState.mpnsExpanded) {
+        if (viewState.partNumbersExpanded) {
           return (
             <td
               className='expanderCell'
@@ -307,14 +307,14 @@ function Row({viewState, editing, line, index}) {
         }
       })()}
       {(() => {
-        if (viewState.mpnsExpanded) {
+        if (viewState.partNumbersExpanded) {
           var ps = line.partNumbers
         } else {
           var ps = line.partNumbers.slice(0, 1)
         }
         return ps.map((mpn, i) => {
           const cells = []
-          if (viewState.mpnsExpanded) {
+          if (viewState.partNumbersExpanded) {
             cells.push(
               <EditableCell
                 key={`manufacturer-${i}`}
@@ -336,7 +336,7 @@ function Row({viewState, editing, line, index}) {
         })
       })()}
       {(() => {
-        if (viewState.skusExpanded) {
+        if (viewState.retailersExpanded) {
           return oneClickBom.lineData.retailer_list.map(name => {
             return (
               <EditableCell

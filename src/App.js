@@ -29,11 +29,11 @@ const Bom = React.createClass({
           singleLine
         >
           <Header
-            mpnsExpanded={this.state.view.mpnsExpanded}
+            viewState={this.state.view}
             lines={this.state.editable.lines}
           />
           <Body
-            mpnsExpanded={this.state.view.mpnsExpanded}
+            viewState={this.state.view}
             editing={editing}
             lines={this.state.editable.lines}
           />
@@ -52,8 +52,8 @@ const Bom = React.createClass({
   },
 })
 
-function Header({mpnsExpanded, lines}) {
-  if (mpnsExpanded) {
+function Header({viewState, lines}) {
+  if (viewState.mpnsExpanded) {
     var maxMpns = oneClickBom.lineData.maxMpns(lines)
   } else {
     var maxMpns = 1
@@ -80,7 +80,7 @@ function Header({mpnsExpanded, lines}) {
           const cells = []
           for (let i = 0; i < maxMpns; ++i) {
             let cellClass = ''
-            if (mpnsExpanded) {
+            if (viewState.mpnsExpanded) {
               cells.push(
                 <th key={`Manufacturer${i}`}>
                   <a onClick={() => store.dispatch(actions.sortBy(['manufacturer', i]))}>
@@ -102,7 +102,7 @@ function Header({mpnsExpanded, lines}) {
                         size='tiny'
                         onClick={() => store.dispatch(actions.toggleMpnsExpanded())}
                       >
-                      {mpnsExpanded ? '⇠ less' : `more ...`}
+                      {viewState.mpnsExpanded ? '⇠ less' : `more ...`}
                       </semantic.Button>
                     )
                   }
@@ -112,24 +112,60 @@ function Header({mpnsExpanded, lines}) {
           }
           return cells
         })()}
-        {oneClickBom.lineData.retailer_list.map(retailer => {
-          return (
-            <th key={retailer}>
-              <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
-                {retailer}
-              </a>
-            </th>
-          )
-        })}
+        {(() => {
+          if (viewState.skusExpanded) {
+            return oneClickBom.lineData.retailer_list.map((retailer, i) => {
+              return (
+                <th key={retailer}>
+                  <div className={i === 0 ? 'headerWithButton' : ''}>
+                  {(() => {
+                    if (i === 0) {
+                      return (
+                        <semantic.Button
+                          basic
+                          size='tiny'
+                          onClick={() => store.dispatch(actions.toggleSkusExpanded())}
+                        >
+                          ⇠ less
+                        </semantic.Button>
+                      )
+                    }
+                  })()}
+                  <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
+                    {retailer}
+                  </a>
+                </div>
+                </th>
+              )
+            })
+          } else {
+            return (
+              <th>
+                <div className='headerWithButton'>
+                  <a>
+                    Retailers
+                  </a>
+                  <semantic.Button
+                    basic
+                    size='tiny'
+                    onClick={() => store.dispatch(actions.toggleSkusExpanded())}
+                  >
+                    more ...
+                  </semantic.Button>
+                </div>
+              </th>
+            )
+          }
+        })()}
       </tr>
     </thead>
   )
 }
 
-function Body({mpnsExpanded, editing, lines}) {
+function Body({viewState, editing, lines}) {
   return (
     <tbody>
-      {lines.map(line => Row({mpnsExpanded, editing, line}))}
+      {lines.map((line, index) => Row({viewState, editing, line, index}))}
     </tbody>
   )
 }
@@ -227,7 +263,7 @@ function EditableCell({editing, line, field}) {
   )
 }
 
-function Row({mpnsExpanded, editing, line}) {
+function Row({viewState, editing, line, index}) {
   const iLine = immutable.fromJS(line)
   return (
     <semantic.Table.Row active={editing[0] === line.id} key={line.id}>
@@ -243,14 +279,14 @@ function Row({mpnsExpanded, editing, line}) {
       <EditableCell editing={editing} line={iLine} field={['quantity']}/>
       <EditableCell editing={editing} line={iLine} field={['description']}/>
       {(() => {
-        if (mpnsExpanded) {
+        if (viewState.mpnsExpanded) {
           var ps = line.partNumbers
         } else {
           var ps = line.partNumbers.slice(0, 1)
         }
         return ps.map((mpn, i) => {
           const cells = []
-          if (mpnsExpanded) {
+          if (viewState.mpnsExpanded) {
             cells.push(
               <EditableCell
                 key={`manufacturer-${i}`}
@@ -271,16 +307,23 @@ function Row({mpnsExpanded, editing, line}) {
           return cells
         })
       })()}
-      {oneClickBom.lineData.retailer_list.map(name => {
-        return (
-          <EditableCell
-            key={`${line.id}-${name}`}
-            editing={editing}
-            line={iLine}
-            field={['retailers', name]}
-          />
-        )
-      })}
+      {(() => {
+        if (viewState.skusExpanded) {
+          return oneClickBom.lineData.retailer_list.map(name => {
+            return (
+              <EditableCell
+                key={`${line.id}-${name}`}
+                editing={editing}
+                line={iLine}
+                field={['retailers', name]}
+              />
+            )})
+        } else if (index === 0) {
+          return (
+            <td rowSpan={29}>hey</td>
+          )
+        }
+      })()}
     </semantic.Table.Row>
   )
 }

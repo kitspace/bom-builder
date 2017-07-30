@@ -27,6 +27,7 @@ const initialState = immutable.fromJS({
   },
   view: {
     mpnsExpanded: false,
+    skusExpanded: false,
     focus: [null, null],
   },
 })
@@ -137,6 +138,9 @@ const viewActions = {
   },
   toggleMpnsExpanded(state) {
     return state.update('mpnsExpanded', expanded => !expanded)
+  },
+  toggleSkusExpanded(state) {
+    return state.update('skusExpanded', expanded => !expanded)
   },
 }
 

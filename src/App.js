@@ -78,7 +78,9 @@ function Header({viewState, lines}) {
         </th>
         {(() => {
           const cells = []
+          let headerClassName = ''
           if (viewState.mpnsExpanded) {
+            headerClassName = 'expandedMpnHeader'
             cells.push(
               <td className='expanderCell' key='button'>
                 <semantic.Button
@@ -94,7 +96,7 @@ function Header({viewState, lines}) {
           for (let i = 0; i < maxMpns; ++i) {
             if (viewState.mpnsExpanded) {
               cells.push(
-                <th key={`Manufacturer${i}`}>
+                <th className={headerClassName} key={`Manufacturer${i}`}>
                   <a onClick={() => store.dispatch(actions.sortBy(['manufacturer', i]))}>
                     Manufacturer
                   </a>
@@ -102,7 +104,7 @@ function Header({viewState, lines}) {
               )
             }
             cells.push(
-              <th key={`MPN${i}`}>
+              <th className={headerClassName} key={`MPN${i}`}>
                 <div className='headerWithButton'>
                 <a onClick={() => store.dispatch(actions.sortBy(['part', i]))}>
                   Part Number
@@ -294,7 +296,14 @@ function Row({viewState, editing, line, index}) {
       <EditableCell editing={editing} line={iLine} field={['description']}/>
       {(() => {
         if (viewState.mpnsExpanded) {
-          return <td className='expanderCell'/>
+          return (
+            <td
+              className='expanderCell'
+              onClick={() => store.dispatch(actions.toggleMpnsExpanded())}
+            >
+              ⇠ less
+            </td>
+          )
         }
       })()}
       {(() => {

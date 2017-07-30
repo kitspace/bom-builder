@@ -2,7 +2,7 @@ a {
    color: rgba(0, 0, 0, 0.87) !important;
 }
 
-th > a:hover {
+th a:hover {
    cursor: pointer !important;
 }
 
@@ -99,5 +99,5 @@ input[type=number]{
 }
 
 .expandedMpnHeader {
-   border-left: none !important;
+   border-left: 1px solid #f3f3f3 !important;
 }

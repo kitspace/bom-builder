@@ -79,6 +79,12 @@ input[type=number]{
     width: 50px;
 }
 
+th.headerWithButton {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
 .expanderCell {
 }
 

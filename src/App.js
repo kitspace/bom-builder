@@ -79,6 +79,10 @@ function Header({mpnsExpanded, lines}) {
         {(() => {
           const cells = []
           for (let i = 0; i < maxMpns; ++i) {
+            let cellClass = ''
+            if (i === 0 && mpnsExpanded) {
+              cellClass = 'headerWithButton'
+            }
             if (mpnsExpanded) {
               cells.push(
                 <th key={`Manufacturer${i}`}>
@@ -89,10 +93,23 @@ function Header({mpnsExpanded, lines}) {
               )
             }
             cells.push(
-              <th key={`MPN${i}`}>
+              <th className={cellClass} key={`MPN${i}`}>
                 <a onClick={() => store.dispatch(actions.sortBy(['part', i]))}>
-                  MPN
+                  Part Number
                 </a>
+                {(() => {
+                  if (i === 0 && mpnsExpanded) {
+                    return  (
+                      <semantic.Button
+                        basic
+                        size='tiny'
+                        onClick={() => store.dispatch(actions.toggleMpnsExpanded())}
+                      >
+                        {'⇠'}
+                      </semantic.Button>
+                    )
+                  }
+                })()}
               </th>
             )
           }

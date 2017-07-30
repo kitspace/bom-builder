@@ -136,10 +136,10 @@ const viewActions = {
   focus(state, location) {
     return state.set('focus', immutable.fromJS(location))
   },
-  toggleMpnsExpanded(state) {
+  togglePartNumbersExpanded(state) {
     return state.update('partNumbersExpanded', expanded => !expanded)
   },
-  toggleSkusExpanded(state) {
+  toggleRetailersExpanded(state) {
     return state.update('retailersExpanded', expanded => !expanded)
   },
 }

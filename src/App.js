@@ -80,13 +80,13 @@ function Header({viewState, lines}) {
           const cells = []
           let headerClassName = ''
           if (viewState.partNumbersExpanded) {
-            headerClassName = 'expandedMpnHeader'
+            headerClassName = 'expandedHeader'
             cells.push(
-              <td className='expanderCell' key='button'>
+              <td className='collapserCell' key='button'>
                 <semantic.Button
                   basic
                   size='tiny'
-                  onClick={() => store.dispatch(actions.toggleMpnsExpanded())}
+                  onClick={() => store.dispatch(actions.togglePartNumbersExpanded())}
                 >
                   ⇠ less
                 </semantic.Button>
@@ -120,7 +120,7 @@ function Header({viewState, lines}) {
                         basic
                         size='tiny'
                         onClick={() => {
-                          store.dispatch(actions.toggleMpnsExpanded())
+                          store.dispatch(actions.togglePartNumbersExpanded())
                         }}
                       >
                       more ...
@@ -137,11 +137,11 @@ function Header({viewState, lines}) {
         {(() => {
           if (viewState.retailersExpanded) {
             return (
-              <td className='expanderCell' key='button'>
+              <td className='collapserCell' key='button'>
                 <semantic.Button
                   basic
                   size='tiny'
-                  onClick={() => store.dispatch(actions.toggleSkusExpanded())}
+                  onClick={() => store.dispatch(actions.toggleRetailersExpanded())}
                 >
                   ⇠ less
                 </semantic.Button>
@@ -153,7 +153,7 @@ function Header({viewState, lines}) {
           if (viewState.retailersExpanded) {
             return oneClickBom.lineData.retailer_list.map((retailer, i) => {
               return (
-                <th className='expandedMpnHeader' key={retailer}>
+                <th className='expandedHeader' key={retailer}>
                   <div className='headerWithButton'>
                     <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
                       {retailer}
@@ -172,7 +172,7 @@ function Header({viewState, lines}) {
                   <semantic.Button
                     basic
                     size='tiny'
-                    onClick={() => store.dispatch(actions.toggleSkusExpanded())}
+                    onClick={() => store.dispatch(actions.toggleRetailersExpanded())}
                   >
                     more ...
                   </semantic.Button>
@@ -306,8 +306,8 @@ function Row({viewState, editing, line, index}) {
         if (viewState.partNumbersExpanded) {
           return (
             <td
-              className='expanderCell'
-              onClick={() => store.dispatch(actions.toggleMpnsExpanded())}
+              className='collapserCell'
+              onClick={() => store.dispatch(actions.togglePartNumbersExpanded())}
             >
               ⇠ less
             </td>
@@ -347,8 +347,8 @@ function Row({viewState, editing, line, index}) {
         if (viewState.retailersExpanded) {
           return (
             <td
-              className='expanderCell'
-              onClick={() => store.dispatch(actions.toggleSkusExpanded())}
+              className='collapserCell'
+              onClick={() => store.dispatch(actions.toggleRetailersExpanded())}
             >
               ⇠ less
             </td>

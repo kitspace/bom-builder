@@ -189,7 +189,13 @@ function Header({viewState, lines}) {
 function Body({viewState, editing, lines}) {
   return (
     <tbody>
-      {lines.map((line, index) => Row({viewState, editing, line, index}))}
+      {lines.map((line, index) => Row({
+        viewState,
+        editing,
+        line,
+        index,
+        nOfRows: lines.length,
+      }))}
     </tbody>
   )
 }
@@ -287,7 +293,7 @@ function EditableCell({editing, line, field}) {
   )
 }
 
-function Row({viewState, editing, line, index}) {
+function Row({viewState, editing, line, index, nOfRows}) {
   const iLine = immutable.fromJS(line)
   return (
     <semantic.Table.Row active={editing[0] === line.id} key={line.id}>
@@ -368,7 +374,21 @@ function Row({viewState, editing, line, index}) {
             )})
         } else if (index === 0) {
           return (
-            <td rowSpan={29}>hey</td>
+            <td style={{background: 'white'}} rowSpan={nOfRows}>
+              <div className='collapsedRetailerColumn'>
+                {(() => {
+                  return oneClickBom.lineData.retailer_list.map(name => {
+                    return (
+                      <div key={name} style={{width: '100%'}}>
+                        <semantic.Card
+                          header={name}
+                        />
+                      </div>
+                    )
+                  })
+                })()}
+              </div>
+            </td>
           )
         }
       })()}

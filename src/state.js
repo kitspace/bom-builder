@@ -132,7 +132,7 @@ const linesActions = {
 }
 
 const viewActions = {
-  focus(state, location) {
+  setFocus(state, location) {
     return state.set('focus', immutable.fromJS(location))
   },
   togglePartNumbersExpanded(state) {

@@ -7,7 +7,7 @@ const immutable   = require('immutable')
 
 const {actions} = require('./state')
 
-function Body({viewState, editing, lines, setField, focus, togglePartNumbersExpanded}) {
+function Body({viewState, editing, lines, setField, setFocus, togglePartNumbersExpanded}) {
   return (
     <tbody>
       {lines.map((line, index) => Row({
@@ -17,7 +17,7 @@ function Body({viewState, editing, lines, setField, focus, togglePartNumbersExpa
         index,
         lines,
         setField,
-        focus,
+        setFocus,
         togglePartNumbersExpanded,
       }))}
     </tbody>
@@ -71,7 +71,7 @@ function editingThis(editing, id, field) {
     immutable.fromJS(editing).equals(immutable.fromJS([id, field]))
 }
 
-function EditableCell({editing, line, field, setField, focus}) {
+function EditableCell({editing, line, field, setField, setFocus}) {
   if (field[0] === 'quantity') {
     var type = 'number'
   }
@@ -82,7 +82,7 @@ function EditableCell({editing, line, field, setField, focus}) {
     <semantic.Table.Cell
       selectable={!!editing}
       active={active}
-      onClick={editing ? () => focus([id, field]) : null}
+      onClick={editing ? () => setFocus([id, field]) : null}
       style={{maxWidth: active ? '' : 200}}
     >
       <a
@@ -97,7 +97,7 @@ function EditableCell({editing, line, field, setField, focus}) {
                   setField({id, field, value})
                 }}
                 onBlur={value => {
-                  focus([null, null])
+                  setFocus([null, null])
                   setField({id, field, value})
                 }}
                 value={value}
@@ -117,7 +117,7 @@ function EditableCell({editing, line, field, setField, focus}) {
   )
 }
 
-function Row({viewState, editing, line, index, lines, setField, focus, togglePartNumbersExpanded}) {
+function Row({viewState, editing, line, index, lines, setField, setFocus, togglePartNumbersExpanded}) {
   const iLine = immutable.fromJS(line)
   const numberOfRows = lines.length
   const retailers = oneClickBom.lineData.toRetailers(lines)
@@ -126,14 +126,14 @@ function Row({viewState, editing, line, index, lines, setField, focus, togglePar
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
           style={{height: 39}}
-          onFocus={() => focus([line.id, null])}
-          onBlur={() => focus([null, null])}
+          onFocus={() => setFocus([line.id, null])}
+          onBlur={() => setFocus([null, null])}
           readOnly
         />
       </td>
-      <EditableCell setField={setField} focus={focus} editing={editing} line={iLine} field={['reference']}/>
-      <EditableCell setField={setField} focus={focus} editing={editing} line={iLine} field={['quantity']}/>
-      <EditableCell setField={setField} focus={focus} editing={editing} line={iLine} field={['description']}/>
+      <EditableCell setField={setField} setFocus={setFocus} editing={editing} line={iLine} field={['reference']}/>
+      <EditableCell setField={setField} setFocus={setFocus} editing={editing} line={iLine} field={['quantity']}/>
+      <EditableCell setField={setField} setFocus={setFocus} editing={editing} line={iLine} field={['description']}/>
       {(() => {
         if (viewState.partNumbersExpanded) {
           return (
@@ -162,7 +162,7 @@ function Row({viewState, editing, line, index, lines, setField, focus, togglePar
                 line={iLine}
                 field={['partNumbers', i, 'manufacturer']}
                 setField={setField}
-                focus={focus}
+                setFocus={setFocus}
               />
             )
           }
@@ -173,7 +173,7 @@ function Row({viewState, editing, line, index, lines, setField, focus, togglePar
                 line={iLine}
                 field={['partNumbers', i, 'part']}
                 setField={setField}
-                focus={focus}
+                setFocus={setFocus}
               />
           )
           return cells
@@ -188,7 +188,7 @@ function Row({viewState, editing, line, index, lines, setField, focus, togglePar
               line={iLine}
               field={['retailers', name]}
               setField={setField}
-              focus={focus}
+              setFocus={setFocus}
             />
           )})
       })()}

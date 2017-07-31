@@ -15,14 +15,10 @@ const {mainReducer, initialState, actions} = require('./state')
 const store = redux.createStore(mainReducer, initialState)
 
 const Header = require('./header')
-const Body = require('./body')
+const Body   = require('./body')
 
 const Bom = React.createClass({
-  getInitialState() {
-    return store.getState().toJS()
-  },
   render() {
-    const editing = this.props.editable ? this.state.view.focus : null
     return (
       <reactRedux.Provider store={store}>
         <DoubleScrollBar>
@@ -34,9 +30,7 @@ const Bom = React.createClass({
             singleLine
           >
             <Header />
-            <Body
-              editing={editing}
-            />
+            <Body />
           </semantic.Table>
         </DoubleScrollBar>
       </reactRedux.Provider>
@@ -46,10 +40,7 @@ const Bom = React.createClass({
     superagent.get('1-click-BOM.tsv').then(r => {
       store.dispatch(actions.setFromTsv(r.text))
     })
-    store.subscribe(() => {
-      const state = store.getState().toJS()
-      this.setState(state)
-    })
+    store.dispatch(actions.setEditable(this.props.editable))
   },
 })
 

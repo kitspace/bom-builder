@@ -28,6 +28,7 @@ const initialState = immutable.fromJS({
   view: {
     partNumbersExpanded: false,
     focus: [null, null],
+    editable: false,
   },
 })
 
@@ -134,6 +135,9 @@ const linesActions = {
 const viewActions = {
   setFocus(state, location) {
     return state.set('focus', immutable.fromJS(location))
+  },
+  setEditable(state, value) {
+    return state.set('editable', value)
   },
   togglePartNumbersExpanded(state) {
     return state.update('partNumbersExpanded', expanded => !expanded)

@@ -7,7 +7,8 @@ const immutable   = require('immutable')
 
 const {actions} = require('./state')
 
-function Body({viewState, editing, lines, setField, setFocus, togglePartNumbersExpanded}) {
+function Body({viewState, lines, setField, setFocus, togglePartNumbersExpanded}) {
+  const editing = viewState.editable ? viewState.focus : null
   return (
     <tbody>
       {lines.map((line, index) => Row({
@@ -122,7 +123,7 @@ function Row({viewState, editing, line, index, lines, setField, setFocus, toggle
   const numberOfRows = lines.length
   const retailers = oneClickBom.lineData.toRetailers(lines)
   return (
-    <semantic.Table.Row active={editing[0] === line.id} key={line.id}>
+    <semantic.Table.Row active={editing && editing[0] === line.id} key={line.id}>
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
           style={{height: 39}}

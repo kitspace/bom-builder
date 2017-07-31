@@ -4,5 +4,5 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App editable={true}/>, document.getElementById('root'));
+ReactDOM.render(<App editable={false}/>, document.getElementById('root'));
 registerServiceWorker();

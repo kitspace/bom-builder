@@ -132,9 +132,27 @@ function Row({viewState, editing, line, index, lines, setField, setFocus, toggle
           readOnly
         />
       </td>
-      <EditableCell setField={setField} setFocus={setFocus} editing={editing} line={iLine} field={['reference']}/>
-      <EditableCell setField={setField} setFocus={setFocus} editing={editing} line={iLine} field={['quantity']}/>
-      <EditableCell setField={setField} setFocus={setFocus} editing={editing} line={iLine} field={['description']}/>
+      <EditableCell
+        setField={setField}
+        setFocus={setFocus}
+        editing={editing}
+        line={iLine}
+        field={['reference']}
+      />
+      <EditableCell
+        setField={setField}
+        setFocus={setFocus}
+        editing={editing}
+        line={iLine}
+        field={['quantity']}
+      />
+      <EditableCell
+        setField={setField}
+        setFocus={setFocus}
+        editing={editing}
+        line={iLine}
+        field={['description']}
+      />
       {(() => {
         if (viewState.partNumbersExpanded) {
           return (

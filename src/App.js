@@ -143,6 +143,9 @@ function Header({viewState, lines}) {
                   <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
                     {retailer}
                   </a>
+                  <semantic.Button className='headerButton' basic>
+                    <i className='icon-basket-3' />
+                  </semantic.Button>
                 </div>
               </th>
             )

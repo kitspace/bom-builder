@@ -9,10 +9,13 @@ const reactRedux  = require('react-redux')
 const superagent  = require('superagent')
 const oneClickBom = require('1-click-bom')
 const immutable   = require('immutable')
+const {mouseTrap} = require('react-mousetrap')
 const DoubleScrollBar = require('react-double-scrollbar')
 
-const {mainReducer, initialState, actions} = require('./state')
+const {mainReducer, initialState} = require('./state')
 const store = redux.createStore(mainReducer, initialState)
+
+const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
 
 const Header = require('./header')
 const Body   = require('./body')
@@ -38,12 +41,13 @@ const Bom = React.createClass({
   },
   componentDidMount() {
     superagent.get('1-click-BOM.tsv').then(r => {
-      store.dispatch(actions.setFromTsv(r.text))
+      actions.setFromTsv(r.text)
     })
-    store.dispatch(actions.setEditable(this.props.editable))
+    actions.setEditable(this.props.editable)
+    this.props.bindShortcut('ctrl+z', () => actions.undo())
   },
 })
 
 
 
-export default Bom
+export default mouseTrap(Bom)

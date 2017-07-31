@@ -21,7 +21,7 @@ const emptyLine = immutable.Map({
 })
 
 const initialState = immutable.fromJS({
-  editable: {
+  data: {
     lines: [],
     sortedBy: [null, null],
   },
@@ -148,7 +148,7 @@ const viewActions = {
 }
 
 const mainReducer = reduxImmutable.combineReducers({
-  editable: makeReducer(linesActions),
+  data: makeReducer(linesActions),
   view: makeReducer(viewActions),
 })
 

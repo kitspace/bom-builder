@@ -226,7 +226,7 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     viewState: state.get('view').toJS(),
-    lines: state.get('editable').get('lines').toJS()
+    lines: state.get('data').get('lines').toJS()
   }
 }
 

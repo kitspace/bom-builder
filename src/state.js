@@ -56,45 +56,6 @@ const linesActions = {
     })
     return state.merge({lines})
   },
-  addPartNumber(state, value) {
-    let lines = state.get('lines')
-    const {id, partNumber} = value
-    const newLine = lines.find(line => line.get('id') === id).update(
-      'partNumbers',
-      ps => ps.push(partNumber)
-    )
-    lines = lines.map(line => {
-      if (line.get('id') === id) {
-        return newLine
-      }
-      return line
-    })
-    return state.merge({lines})
-  },
-  removePartNumber(state, value) {
-    let lines = state.get('lines')
-    const {id, partNumber} = value
-    const newLine = lines.find(l => l.get('id') === id).update(
-      'partNumbers',
-      ps => ps.filterNot(p => p.equals(partNumber))
-    )
-    lines = lines.map(line => {
-      if (line.get('id') === id) {
-        return newLine
-      }
-      return line
-    })
-    return state.merge({lines})
-  },
-  addSku(state, value) {
-    const lines = state.get('lines')
-    const {id, sku} = value
-    const line = lines.get(id).setIn(
-      ['retailers', sku.get('vendor')],
-      sku.get('part')
-    )
-    return state.set('lines', lines.set(id, line))
-  },
   sortBy(state, header) {
     let lines = state.get('lines')
     if (oneClickBom.lineData.retailer_list.includes(header)) {

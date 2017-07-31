@@ -9,102 +9,37 @@ const linesReducer = makeReducer(linesActions)
 describe('bom_edit lines actions', () => {
   describe('lines', () => {
     it('adds a line', () => {
-      const editable = initialState.get('editable')
-      const lines1 = editable.get('lines')
+      const data = initialState.get('data')
+      const lines1 = data.get('lines')
       assert(lines1.size === 0)
-      const lines2 = linesReducer(editable.merge({lines: lines1}), {type: 'addLine', value: emptyLine}).get('lines')
+      const lines2 = linesReducer(data.merge({lines: lines1}), {type: 'addLine', value: emptyLine}).get('lines')
       assert(lines1.size === 0)
       assert(lines2.size === 1)
       assert(lines2.get(0).get('id') != null)
     })
     it('removes a line', () => {
-      const editable = initialState.get('editable')
-      const lines1 = editable.get('lines')
+      const data = initialState.get('data')
+      const lines1 = data.get('lines')
       assert(lines1.size === 0)
-      let lines2 = linesReducer(editable.set('lines', lines1), {type: 'addLine', value: emptyLine}).get('lines')
-      lines2 = linesReducer(editable.set('lines', lines2), {type: 'addLine', value: emptyLine}).get('lines')
-      lines2 = linesReducer(editable.set('lines', lines2), {type: 'addLine', value: emptyLine}).get('lines')
+      let lines2 = linesReducer(data.set('lines', lines1), {type: 'addLine', value: emptyLine}).get('lines')
+      lines2 = linesReducer(data.set('lines', lines2), {type: 'addLine', value: emptyLine}).get('lines')
+      lines2 = linesReducer(data.set('lines', lines2), {type: 'addLine', value: emptyLine}).get('lines')
       assert(lines1.size === 0)
       assert(lines2.size === 3)
       const id = lines2.get(0).get('id')
-      const lines3 = linesReducer(editable.set('lines', lines2), {type: 'removeLine', value: id}).get('lines')
+      const lines3 = linesReducer(data.set('lines', lines2), {type: 'removeLine', value: id}).get('lines')
       assert(lines1.size === 0)
       assert(lines2.size === 3)
       assert(lines3.size === 2)
-    })
-  })
-  describe('partNumbers and SKUs', () => {
-    const editable = initialState.get('editable')
-    const lines1 = editable.get('lines')
-    const partNumber = immutable.Map({
-      part         : 'NE555P',
-      manufacturer : 'Texas Instruments'
-    })
-    let lines2, id
-    beforeEach(() => {
-      lines2 = linesReducer(editable.set('lines', lines1), {type: 'addLine', value: emptyLine}).get('lines')
-      assert(lines2.first().get('partNumbers').size === 0)
-      id = lines2.first().get('id')
-    })
-    it('adds a partNumber', () => {
-      const lines3 = linesReducer(
-        editable.set('lines', lines2),
-        {type: 'addPartNumber', value: {id, partNumber}}
-      ).get('lines')
-      assert(lines3.first().get('partNumbers').size === 1)
-    })
-    it('removes a partNumber', () => {
-      const lines3 = linesReducer(
-        editable.set('lines', lines2),
-        {type: 'addPartNumber', value: {id, partNumber}}
-      ).get('lines')
-      assert(lines3.first().get('partNumbers').size === 1)
-      const lines4 = linesReducer(
-        editable.set('lines', lines3),
-        {type: 'removePartNumber', value: {id, partNumber}}
-      ).get('lines')
-      assert(lines4.first().get('partNumbers').size === 0)
-    })
-    it('sets SKUs', () => {
-      const sku = immutable.Map({
-        part   : '2303550',
-        vendor : 'Farnell'
-      })
-      const lines3 = linesReducer(
-        lines2,
-        {type: 'addSku', value: {id, sku}}
-      )
-      const part = lines3.first().get('retailers').get('Farnell')
-      assert(part === sku.get('part'))
-    })
-    it('overwrites SKUs', () => {
-      const sku1 = immutable.Map({
-        part   : '2303550',
-        vendor : 'Farnell'
-      })
-      const sku2 = immutable.Map({
-        part   : '',
-        vendor : 'Farnell'
-      })
-      const lines3 = linesReducer(
-        lines2,
-        {type: 'addSku', value: {id, sku: sku1}}
-      )
-      const lines4 = linesReducer(
-        lines3,
-        {type: 'addSku', value: {id, sku: sku2}}
-      )
-      const part = lines4.first().get('retailers').get('Farnell')
-      assert(part === sku2.get('part'))
     })
   })
   describe('TSV', () => {
     it('lets you set from TSV', () => {
       const tsv = 'References\tQty\tDigikey\ntest\t1\t8-98-989'
       const lines = linesReducer(
-        initialState.get('editable').get('lines'),
+        initialState.get('data'),
         {type: 'setFromTsv', value: tsv}
-      )
+      ).get('lines')
       const line      = lines.first()
       const quantity  = line.get('quantity')
       const reference = line.get('reference')
@@ -115,28 +50,29 @@ describe('bom_edit lines actions', () => {
     })
   })
   describe('sorting', () => {
-    const lines1 = initialState.get('editable').get('lines')
-    let lines2
+    const data1 = initialState.get('data')
+    let data2
     beforeEach('set order', () => {
-      lines2 = linesReducer(
-        lines1,
+      data2 = linesReducer(
+        data1,
         {type: 'addLine', value: emptyLine.set('reference', 'C')}
       )
-      lines2 = linesReducer(
-        lines2,
+      data2 = linesReducer(
+        data2,
         {type: 'addLine', value: emptyLine.set('reference', 'B')}
       )
-      lines2 = linesReducer(
-        lines2,
+      data2 = linesReducer(
+        data2,
         {type: 'addLine', value: emptyLine.set('reference', 'A')}
       )
+      const lines2 = data2.get('lines')
       assert(lines2.size === 3)
-      const order = lines2.toList().map(x => x.get('reference'))
+      const order = lines2.map(x => x.get('reference'))
       assert(order.equals(immutable.List.of('C', 'B', 'A')))
     })
     it('sorts by reference', () => {
-      const lines3 = linesReducer(lines2, {type: 'sortByReference'})
-      const order = lines3.toList().map(x => x.get('reference'))
+      const lines3 = linesReducer(data2, {type: 'sortBy', value:'reference'}).get('lines')
+      const order = lines3.map(x => x.get('reference'))
       assert(order.equals(immutable.List.of('A', 'B', 'C')))
     })
   })

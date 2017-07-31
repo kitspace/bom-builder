@@ -1,6 +1,6 @@
 const immutable      = require('immutable')
-const reduxImmutable = require('redux-immutable')
-const oneClickBom = require('1-click-bom')
+const oneClickBom    = require('1-click-bom')
+const redux          = require('redux')
 
 function makeId() {
   this.id = this.id || 0
@@ -20,17 +20,17 @@ const emptyLine = immutable.Map({
   }),
 })
 
-const initialState = immutable.fromJS({
-  data: {
+const initialState = {
+  data: immutable.fromJS({
     lines: [],
     sortedBy: [null, null],
-  },
-  view: {
+  }),
+  view: immutable.fromJS({
     partNumbersExpanded: false,
     focus: [null, null],
     editable: false,
-  },
-})
+  }),
+}
 
 const linesActions = {
   setField(state, {id, field, value}) {
@@ -108,13 +108,15 @@ const viewActions = {
   },
 }
 
-const mainReducer = reduxImmutable.combineReducers({
-  data: makeReducer(linesActions),
-  view: makeReducer(viewActions),
-})
+function mainReducer (state = initialState, action) {
+  return redux.combineReducers({
+    data: makeReducer(linesActions, 'data'),
+    view: makeReducer(viewActions, 'view'),
+  })(state, action)
+}
 
-function makeReducer(reducers) {
-  return function reducer(state, action) {
+function makeReducer(reducers, key) {
+  return function reducer(state = initialState[key], action) {
     if (Object.keys(reducers).includes(action.type)) {
       const state2 = reducers[action.type](state, action.value)
       return state2

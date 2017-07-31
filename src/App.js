@@ -424,30 +424,29 @@ function markerColor(ref) {
   return 'purple'
 }
 
-function RetailerButton(props) {
-  const n = props.parts.filter(x => x !== '').length
+function RetailerButton({name, adding, parts, buyParts, extensionPresence}) {
+  const n = parts.filter(x => x !== '').length
   if (n === 0) {
     return null
   }
-  const r = props.name
-  let onClick = props.buyParts
+  let onClick = buyParts
   //if the extension is not here fallback to direct submissions
-  if ((props.extensionPresence !== 'present')
+  if ((extensionPresence !== 'present')
     && (typeof document !== 'undefined')) {
       onClick = () => {
-        const form = document.getElementById(r + 'Form')
+        const form = document.getElementById(name + 'Form')
         if (form) {
           form.submit()
         } else {
-          props.buyParts()
+          buyParts()
         }
       }
   }
-  const total = props.parts.length
+  const total = parts.length
   return (
     <semantic.Table.Row
       error={n !== total}
-      key={r}
+      key={name}
       onClick={onClick}
       unstackable
     >
@@ -456,7 +455,7 @@ function RetailerButton(props) {
         <div className='retailerButtonCellText'>
           <div className='retailerButtonCellName'>
             {/* <StoreIcon retailer={r} />*/}
-            {r}
+            {name}
           </div>
           <p style={{fontSize: 14, fontWeight: 'normal'}}>
             {`${n}/${total}`}
@@ -464,7 +463,7 @@ function RetailerButton(props) {
         </div>
         <div className='retailerButtonCellIcon'>
           {(() => {
-            if (props.adding) {
+            if (adding) {
               return <semantic.Loader active inline />
             }
             return <i style={{fontSize: 22}} className='icon-basket-3' />

@@ -32,7 +32,7 @@ const initialState = immutable.fromJS({
 })
 
 const linesActions = {
-  set(state, {id, field, value}) {
+  setField(state, {id, field, value}) {
     let lines = state.get('lines')
     const line = lines.find(line => line.get('id') === id)
     const newLine = line.setIn(field, value)

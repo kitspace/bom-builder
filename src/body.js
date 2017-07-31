@@ -38,22 +38,16 @@ const EditInput = React.createClass({
     return {value: this.props.value}
   },
   handleChange(event) {
-    //this is to debounce the typing
     this.setState({value: event.target.value})
-    clearTimeout(this.timeout)
-    this.timeout = setTimeout(function(value) {
-      clearTimeout(this.timeout)
-      this.props.onChange(value)
-    }.bind(this, event.target.value), 2000)
   },
-  skipInitialBlur: true,
+  skipInitialBlur: false,
   handleBlur(event) {
     //this is for firefox where we get an initial blur event on number inputs
     //which we need to ignore
     if (this.skipInitialBlur && this.props.type === 'number') {
       this.skipInitialBlur = false
     } else {
-      this.props.onBlur(event.target.value)
+      this.props.onBlur(this.state.value)
     }
   },
   render() {
@@ -65,6 +59,12 @@ const EditInput = React.createClass({
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         type={this.props.type}
+        onKeyDown={e => {
+          if (e.key === 'Escape') {
+            this.setState({value: this.props.value})
+            this.props.onBlur(this.props.value)
+          }
+        }}
       />
     )
   },

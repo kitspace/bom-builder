@@ -14,6 +14,8 @@ const DoubleScrollBar = require('react-double-scrollbar')
 const {mainReducer, initialState, actions} = require('./state')
 const store = redux.createStore(mainReducer, initialState)
 
+const Header = require('./header')
+
 const Bom = React.createClass({
   getInitialState() {
     return store.getState().toJS()
@@ -21,25 +23,24 @@ const Bom = React.createClass({
   render() {
     const editing = this.props.editable ? this.state.view.focus : null
     return (
-      <DoubleScrollBar>
-        <semantic.Table
-          className='Bom'
-          size='small'
-          celled
-          unstackable
-          singleLine
-        >
-          <Header
-            viewState={this.state.view}
-            lines={this.state.editable.lines}
-          />
-          <Body
-            viewState={this.state.view}
-            editing={editing}
-            lines={this.state.editable.lines}
-          />
-        </semantic.Table>
-      </DoubleScrollBar>
+      <reactRedux.Provider store={store}>
+        <DoubleScrollBar>
+          <semantic.Table
+            className='Bom'
+            size='small'
+            celled
+            unstackable
+            singleLine
+          >
+            <Header />
+            <Body
+              viewState={this.state.view}
+              editing={editing}
+              lines={this.state.editable.lines}
+            />
+          </semantic.Table>
+        </DoubleScrollBar>
+      </reactRedux.Provider>
     )
   },
   componentDidMount() {
@@ -53,108 +54,6 @@ const Bom = React.createClass({
   },
 })
 
-function Header({viewState, lines}) {
-  if (viewState.partNumbersExpanded) {
-    var maxPartNumbers = oneClickBom.lineData.maxPartNumbers(lines)
-  } else {
-    var maxPartNumbers = 1
-  }
-  return (
-    <thead>
-      <tr>
-        <th colSpan={2}>
-          <a onClick={() => store.dispatch(actions.sortBy('reference'))}>
-            References
-          </a>
-        </th>
-        <th >
-          <a onClick={() => store.dispatch(actions.sortBy('quantity'))}>
-            Qty
-          </a>
-        </th>
-        <th >
-          <a onClick={() => store.dispatch(actions.sortBy('description'))}>
-            Description
-          </a>
-        </th>
-        {(() => {
-          const cells = []
-          let headerClassName = ''
-          if (viewState.partNumbersExpanded) {
-            headerClassName = 'expandedHeader'
-            cells.push(
-              <td className='collapserCell' key='button'>
-                <semantic.Button
-                  basic
-                  size='tiny'
-                  onClick={() => store.dispatch(actions.togglePartNumbersExpanded())}
-                >
-                  ⇠ less
-                </semantic.Button>
-              </td>
-            )
-          }
-          for (let i = 0; i < maxPartNumbers; ++i) {
-            if (viewState.partNumbersExpanded) {
-              cells.push(
-                <th className={headerClassName} key={`Manufacturer${i}`}>
-                  <a
-                    onClick={() => {
-                      store.dispatch(actions.sortBy(['manufacturer', i]))
-                    }}
-                  >
-                    Manufacturer
-                  </a>
-                </th>
-              )
-            }
-            cells.push(
-              <th className={headerClassName} key={`MPN${i}`}>
-                <div className='headerWithButton'>
-                <a onClick={() => store.dispatch(actions.sortBy(['part', i]))}>
-                  Part Number
-                </a>
-                {(() => {
-                  if (!viewState.partNumbersExpanded && i === 0) {
-                    return  (
-                      <semantic.Button
-                        basic
-                        size='tiny'
-                        onClick={() => {
-                          store.dispatch(actions.togglePartNumbersExpanded())
-                        }}
-                      >
-                      more ...
-                      </semantic.Button>
-                    )
-                  }
-                })()}
-              </div>
-              </th>
-            )
-          }
-          return cells
-        })()}
-        {(() => {
-          return oneClickBom.lineData.retailer_list.map((retailer, i) => {
-            return (
-              <th key={retailer}>
-                <div className='headerWithButton'>
-                  <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
-                    {retailer}
-                  </a>
-                  <semantic.Button className='headerButton' basic>
-                    <i className='icon-basket-3' />
-                  </semantic.Button>
-                </div>
-              </th>
-            )
-          })
-        })()}
-      </tr>
-    </thead>
-  )
-}
 
 function Body({viewState, editing, lines}) {
   return (

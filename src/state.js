@@ -1,6 +1,7 @@
-const immutable      = require('immutable')
-const oneClickBom    = require('1-click-bom')
-const redux          = require('redux')
+const immutable   = require('immutable')
+const oneClickBom = require('1-click-bom')
+const redux       = require('redux')
+const reduxUndo   = require('redux-undo')
 
 function makeId() {
   this.id = this.id || 0
@@ -108,9 +109,9 @@ const viewActions = {
   },
 }
 
-function mainReducer (state = initialState, action) {
+function mainReducer(state = initialState, action) {
   return redux.combineReducers({
-    data: makeReducer(linesActions, 'data'),
+    data: reduxUndo.default(makeReducer(linesActions, 'data')),
     view: makeReducer(viewActions, 'view'),
   })(state, action)
 }
@@ -137,7 +138,8 @@ function makeActions(reducers) {
 
 const actions = Object.assign(
   makeActions(linesActions),
-  makeActions(viewActions)
+  makeActions(viewActions),
+  reduxUndo.ActionCreators,
 )
 
 module.exports = {initialState, mainReducer, makeReducer, linesActions, emptyLine, actions}

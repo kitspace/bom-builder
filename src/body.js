@@ -270,7 +270,7 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     viewState: state.view.toJS(),
-    lines: state.data.get('lines').toJS()
+    lines: state.data.present.get('lines').toJS()
   }
 }
 

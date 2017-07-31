@@ -7,7 +7,14 @@ const immutable   = require('immutable')
 
 const {actions} = require('./state')
 
-function Body({viewState, lines, setField, setFocus, togglePartNumbersExpanded}) {
+function Body(props) {
+  const {
+    viewState,
+    lines,
+    setField,
+    setFocus,
+    togglePartNumbersExpanded
+  } = props
   const editing = viewState.editable ? viewState.focus : null
   return (
     <tbody>
@@ -20,6 +27,7 @@ function Body({viewState, lines, setField, setFocus, togglePartNumbersExpanded})
         setField,
         setFocus,
         togglePartNumbersExpanded,
+        ...props
       }))}
     </tbody>
   )
@@ -118,7 +126,8 @@ function EditableCell({editing, line, field, setField, setFocus}) {
   )
 }
 
-function Row({viewState, editing, line, index, lines, setField, setFocus, togglePartNumbersExpanded}) {
+function Row(props) {
+  const {viewState, editing, line, index, lines, setField, setFocus, togglePartNumbersExpanded} = props
   const iLine = immutable.fromJS(line)
   const numberOfRows = lines.length
   const retailers = oneClickBom.lineData.toRetailers(lines)
@@ -130,6 +139,13 @@ function Row({viewState, editing, line, index, lines, setField, setFocus, toggle
           onFocus={() => setFocus([line.id, null])}
           onBlur={() => setFocus([null, null])}
           readOnly
+          onKeyDown={e => {
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+              props.removeLine(line.id)
+            } else if (e.key === 'Escape') {
+              setFocus([null, null])
+            }
+          }}
         />
       </td>
       <EditableCell

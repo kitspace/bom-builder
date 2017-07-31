@@ -35,10 +35,19 @@ function Body(props) {
 
 const EditInput = React.createClass({
   getInitialState() {
-    return {value: this.props.value}
+    return {
+      value: this.props.value,
+      initialValue: this.props.value,
+    }
   },
   handleChange(event) {
+    //this is to debounce the typing
     this.setState({value: event.target.value})
+    clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => {
+      clearTimeout(this.timeout)
+      this.props.onChange(this.state.value)
+    }, 2000)
   },
   skipInitialBlur: false,
   handleBlur(event) {
@@ -47,6 +56,7 @@ const EditInput = React.createClass({
     if (this.skipInitialBlur && this.props.type === 'number') {
       this.skipInitialBlur = false
     } else {
+      clearTimeout(this.timeout)
       this.props.onBlur(this.state.value)
     }
   },
@@ -61,8 +71,8 @@ const EditInput = React.createClass({
         type={this.props.type}
         onKeyDown={e => {
           if (e.key === 'Escape') {
-            this.setState({value: this.props.value})
-            this.props.onBlur(this.props.value)
+            clearTimeout(this.timeout)
+            this.props.onBlur(this.state.initialValue)
           }
         }}
       />

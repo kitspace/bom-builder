@@ -27,7 +27,6 @@ const initialState = immutable.fromJS({
   },
   view: {
     partNumbersExpanded: false,
-    retailersExpanded: false,
     focus: [null, null],
   },
 })

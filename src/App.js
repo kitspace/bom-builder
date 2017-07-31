@@ -136,51 +136,17 @@ function Header({viewState, lines}) {
           return cells
         })()}
         {(() => {
-          if (viewState.retailersExpanded) {
+          return oneClickBom.lineData.retailer_list.map((retailer, i) => {
             return (
-              <td className='collapserCell' key='button'>
-                <semantic.Button
-                  basic
-                  size='tiny'
-                  onClick={() => store.dispatch(actions.toggleRetailersExpanded())}
-                >
-                  ⇠ less
-                </semantic.Button>
-              </td>
-            )
-          }
-        })()}
-        {(() => {
-          if (viewState.retailersExpanded) {
-            return oneClickBom.lineData.retailer_list.map((retailer, i) => {
-              return (
-                <th className='expandedHeader' key={retailer}>
-                  <div className='headerWithButton'>
-                    <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
-                      {retailer}
-                    </a>
-                  </div>
-                </th>
-              )
-            })
-          } else {
-            return (
-              <th>
+              <th key={retailer}>
                 <div className='headerWithButton'>
-                  <a>
-                    Retailers
+                  <a onClick={() => store.dispatch(actions.sortBy(retailer))}>
+                    {retailer}
                   </a>
-                  <semantic.Button
-                    basic
-                    size='tiny'
-                    onClick={() => store.dispatch(actions.toggleRetailersExpanded())}
-                  >
-                    more ...
-                  </semantic.Button>
                 </div>
               </th>
             )
-          }
+          })
         })()}
       </tr>
     </thead>
@@ -353,50 +319,15 @@ function Row({viewState, editing, line, index, lines}) {
         })
       })()}
       {(() => {
-        if (viewState.retailersExpanded) {
+        return oneClickBom.lineData.retailer_list.map(name => {
           return (
-            <td
-              className='collapserCell'
-              onClick={() => store.dispatch(actions.toggleRetailersExpanded())}
-            >
-              ⇠ less
-            </td>
-          )
-        }
-      })()}
-      {(() => {
-        if (viewState.retailersExpanded) {
-          return oneClickBom.lineData.retailer_list.map(name => {
-            return (
-              <EditableCell
-                key={`${line.id}-${name}`}
-                editing={editing}
-                line={iLine}
-                field={['retailers', name]}
-              />
-            )})
-        } else if (index === 0) {
-          return (
-            <td
-              style={{background: 'white', verticalAlign: 'top'}}
-              rowSpan={numberOfRows}
-            >
-              <semantic.Table basic='very'>
-                <tbody>
-                  {(() => {
-                    return oneClickBom.lineData.retailer_list.map(name =>
-                      <RetailerButton
-                        key={name}
-                        name={name}
-                        parts={retailers[name]}
-                      />
-                    )
-                  })()}
-                </tbody>
-              </semantic.Table>
-            </td>
-          )
-        }
+            <EditableCell
+              key={`${line.id}-${name}`}
+              editing={editing}
+              line={iLine}
+              field={['retailers', name]}
+            />
+          )})
       })()}
     </semantic.Table.Row>
   )
@@ -422,57 +353,6 @@ function markerColor(ref) {
     return 'yellow'
   }
   return 'purple'
-}
-
-function RetailerButton({name, adding, parts, buyParts, extensionPresence}) {
-  const n = parts.filter(x => x !== '').length
-  if (n === 0) {
-    return null
-  }
-  let onClick = buyParts
-  //if the extension is not here fallback to direct submissions
-  if ((extensionPresence !== 'present')
-    && (typeof document !== 'undefined')) {
-      onClick = () => {
-        const form = document.getElementById(name + 'Form')
-        if (form) {
-          form.submit()
-        } else {
-          buyParts()
-        }
-      }
-  }
-  const total = parts.length
-  return (
-    <semantic.Table.Row
-      error={n !== total}
-      key={name}
-      onClick={onClick}
-      unstackable
-    >
-      <td className='retailerCell'>
-      <div className='retailerButtonCell'>
-        <div className='retailerButtonCellText'>
-          <div className='retailerButtonCellName'>
-            {/* <StoreIcon retailer={r} />*/}
-            {name}
-          </div>
-          <p style={{fontSize: 14, fontWeight: 'normal'}}>
-            {`${n}/${total}`}
-          </p>
-        </div>
-        <div className='retailerButtonCellIcon'>
-          {(() => {
-            if (adding) {
-              return <semantic.Loader active inline />
-            }
-            return <i style={{fontSize: 22}} className='icon-basket-3' />
-          })()}
-        </div>
-      </div>
-    </td>
-    </semantic.Table.Row>
-  )
 }
 
 

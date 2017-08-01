@@ -19,12 +19,14 @@ const actions = redux.bindActionCreators(require('./state').actions, store.dispa
 
 const Header = require('./header')
 const Body   = require('./body')
+const Menu   = require('./menu')
 
 const Bom = React.createClass({
   render() {
     return (
       <reactRedux.Provider store={store}>
         <DoubleScrollBar>
+          <Menu />
           <semantic.Table
             className='Bom'
             size='small'

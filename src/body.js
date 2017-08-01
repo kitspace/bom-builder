@@ -78,12 +78,17 @@ const EditInput = React.createClass({
         onKeyDown={e => {
           if (e.key === 'Tab') {
             e.preventDefault()
+            clearTimeout(this.timeout)
             this.props.onBlur(this.state.value)
             return this.props.focusNext()
           } else if (e.key === 'Escape') {
             clearTimeout(this.timeout)
             this.setState({keys: [], undone: 0})
             return this.props.onBlur(this.state.initialValue)
+          } else if (e.key === 'Enter') {
+            clearTimeout(this.timeout)
+            this.props.onBlur(this.state.value)
+            return this.props.focusBelow()
           }
           const keys = this.state.keys.concat([e.key])
           this.setState({keys})
@@ -154,6 +159,7 @@ function EditableCell(props) {
                 undo={props.undo}
                 redo={props.redo}
                 focusNext={props.focusNext}
+                focusBelow={props.focusBelow}
               />
               ,
               //here to make sure the cell doesn't shrink
@@ -233,6 +239,13 @@ function Row(props) {
         undo={props.undo}
         redo={props.redo}
         focusNext={() => setFocus([line.id, ['quantity']])}
+        focusBelow={() => {
+          if (index < (lines.length - 1)) {
+            setFocus([lines[index + 1].id, ['reference']])
+          } else {
+            setFocus([null, null])
+          }
+        }}
       />
       <EditableCell
         setField={setField}
@@ -243,6 +256,13 @@ function Row(props) {
         undo={props.undo}
         redo={props.redo}
         focusNext={() => setFocus([line.id, ['description']])}
+        focusBelow={() => {
+          if (index < (lines.length - 1)) {
+            setFocus([lines[index + 1].id, ['quantity']])
+          } else {
+            setFocus([null, null])
+          }
+        }}
       />
       <EditableCell
         setField={setField}
@@ -256,6 +276,13 @@ function Row(props) {
           const next = viewState.partNumbersExpanded ? 'manufacturer' : 'part'
           const field = ['partNumbers', 0, next]
           setFocus([line.id, field])
+        }}
+        focusBelow={() => {
+          if (index < (lines.length - 1)) {
+            setFocus([lines[index + 1].id, ['description']])
+          } else {
+            setFocus([null, null])
+          }
         }}
       />
       {(() => {
@@ -279,29 +306,38 @@ function Row(props) {
         return ps.map((mpn, i) => {
           const cells = []
           if (viewState.partNumbersExpanded) {
+            const field = ['partNumbers', i, 'manufacturer']
             cells.push(
               <EditableCell
                 key={`manufacturer-${i}`}
                 editing={editing}
                 line={iLine}
-                field={['partNumbers', i, 'manufacturer']}
+                field={field}
                 setField={setField}
                 setFocus={setFocus}
                 undo={props.undo}
                 redo={props.redo}
                 focusNext={() => {
-                  const field = ['partNumbers', i, 'part']
-                  setFocus([line.id, field])
+                  const nextField = ['partNumbers', i, 'part']
+                  setFocus([line.id, nextField])
+                }}
+                focusBelow={() => {
+                  if (index < (lines.length - 1)) {
+                    setFocus([lines[index + 1].id, field])
+                  } else {
+                    setFocus([null, null])
+                  }
                 }}
               />
             )
           }
+          const field = ['partNumbers', i, 'part']
           cells.push(
               <EditableCell
                 key={`part-${i}`}
                 editing={editing}
                 line={iLine}
-                field={['partNumbers', i, 'part']}
+                field={field}
                 setField={setField}
                 setFocus={setFocus}
                 undo={props.undo}
@@ -314,6 +350,13 @@ function Row(props) {
                   }
                   setFocus([line.id, field])
                 }}
+                focusBelow={() => {
+                  if (index < (lines.length - 1)) {
+                    setFocus([lines[index + 1].id, field])
+                  } else {
+                    setFocus([null, null])
+                  }
+                }}
               />
           )
           return cells
@@ -321,23 +364,33 @@ function Row(props) {
       })()}
       {(() => {
         return oneClickBom.lineData.retailer_list.map((name, i) => {
+          const field = ['retailers', name]
           return (
             <EditableCell
               key={`${line.id}-${name}`}
               editing={editing}
               line={iLine}
-              field={['retailers', name]}
+              field={field}
               setField={setField}
               setFocus={setFocus}
               undo={props.undo}
               redo={props.redo}
               focusNext={() => {
                 if (i < (oneClickBom.lineData.retailer_list.length - 1)) {
-                  const field = ['retailers', oneClickBom.lineData.retailer_list[i + 1]]
-                  setFocus([line.id, field])
+                  const nextField = ['retailers', oneClickBom.lineData.retailer_list[i + 1]]
+                  setFocus([line.id, nextField])
                 } else if (index < (lines.length - 1)) {
-                  const field = ['reference']
+                  const nextField = ['reference']
+                  setFocus([lines[index + 1].id, nextField])
+                } else {
+                  setFocus([null, null])
+                }
+              }}
+              focusBelow={() => {
+                if (index < (lines.length - 1)) {
                   setFocus([lines[index + 1].id, field])
+                } else {
+                  setFocus([null, null])
                 }
               }}
             />

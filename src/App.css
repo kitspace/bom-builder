@@ -16,6 +16,11 @@ td.marked:hover {
     opacity: 0.8;
 }
 
+td.marked input {
+    cursor: pointer !important;
+    opacity: 0;
+}
+
 td.marked.orange {
      background: #FF9E39 !important;
 }

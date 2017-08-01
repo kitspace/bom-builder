@@ -49,7 +49,7 @@ const EditInput = React.createClass({
       this.props.onChange(this.state.value)
     }, 2000)
   },
-  skipInitialBlur: false,
+  skipInitialBlur: true,
   handleBlur(event) {
     //this is for firefox where we get an initial blur event on number inputs
     //which we need to ignore

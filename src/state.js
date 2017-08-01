@@ -37,6 +37,9 @@ const linesActions = {
   setField(state, {id, field, value}) {
     let lines = state.get('lines')
     const line = lines.find(line => line.get('id') === id)
+    if (field[0] === 'quantity' && value < 1) {
+      value = 1
+    }
     const newLine = line.setIn(field, value)
     lines = lines.map(line => {
       if (line.get('id') === id) {

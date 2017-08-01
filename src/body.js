@@ -76,13 +76,18 @@ const EditInput = React.createClass({
           this.setState({keys: this.state.keys.filter(k => k !== e.key)})
         }}
         onKeyDown={e => {
-          const keys = this.state.keys.concat([e.key])
-          this.setState({keys})
-          if (keys.includes('Escape')) {
+          if (e.key === 'Tab') {
+            e.preventDefault()
+            this.props.onBlur(this.state.value)
+            return this.props.focusNext()
+          } else if (e.key === 'Escape') {
             clearTimeout(this.timeout)
             this.setState({keys: [], undone: 0})
-            this.props.onBlur(this.state.initialValue)
-          } else if (keys.includes('Control') && keys.includes('z')) {
+            return this.props.onBlur(this.state.initialValue)
+          }
+          const keys = this.state.keys.concat([e.key])
+          this.setState({keys})
+          if (keys.includes('Control') && keys.includes('z')) {
             //we only do a global undo if the text-box is untouched
             if (this.state.value === this.state.initialValue) {
               this.props.undo()
@@ -148,6 +153,7 @@ function EditableCell(props) {
                 key='EditInput'
                 undo={props.undo}
                 redo={props.redo}
+                focusNext={props.focusNext}
               />
               ,
               //here to make sure the cell doesn't shrink
@@ -223,6 +229,7 @@ function Row(props) {
         field={['reference']}
         undo={props.undo}
         redo={props.redo}
+        focusNext={() => setFocus([line.id, ['quantity']])}
       />
       <EditableCell
         setField={setField}
@@ -232,6 +239,7 @@ function Row(props) {
         field={['quantity']}
         undo={props.undo}
         redo={props.redo}
+        focusNext={() => setFocus([line.id, ['description']])}
       />
       <EditableCell
         setField={setField}
@@ -241,6 +249,11 @@ function Row(props) {
         field={['description']}
         undo={props.undo}
         redo={props.redo}
+        focusNext={() => {
+          const next = viewState.partNumbersExpanded ? 'manufacturer' : 'part'
+          const field = ['partNumbers', 0, next]
+          setFocus([line.id, field])
+        }}
       />
       {(() => {
         if (viewState.partNumbersExpanded) {
@@ -273,6 +286,10 @@ function Row(props) {
                 setFocus={setFocus}
                 undo={props.undo}
                 redo={props.redo}
+                focusNext={() => {
+                  const field = ['partNumbers', i, 'part']
+                  setFocus([line.id, field])
+                }}
               />
             )
           }
@@ -286,13 +303,21 @@ function Row(props) {
                 setFocus={setFocus}
                 undo={props.undo}
                 redo={props.redo}
+                focusNext={() => {
+                  if (!viewState.partNumbersExpanded || i === (ps.length - 1)) {
+                    var field = ['retailers', oneClickBom.lineData.retailer_list[0]]
+                  } else {
+                    var field = ['partNumbers', i + 1, 'manufacturer']
+                  }
+                  setFocus([line.id, field])
+                }}
               />
           )
           return cells
         })
       })()}
       {(() => {
-        return oneClickBom.lineData.retailer_list.map(name => {
+        return oneClickBom.lineData.retailer_list.map((name, i) => {
           return (
             <EditableCell
               key={`${line.id}-${name}`}
@@ -303,6 +328,15 @@ function Row(props) {
               setFocus={setFocus}
               undo={props.undo}
               redo={props.redo}
+              focusNext={() => {
+                if (i < oneClickBom.lineData.retailer_list.length) {
+                  var field = ['retailers', oneClickBom.lineData.retailer_list[i + 1]]
+                  setFocus([line.id, field])
+                }
+                  //} else {
+                //  var field = ['partNumbers', i + 1, 'manufacturer']
+                //}
+              }}
             />
           )})
       })()}

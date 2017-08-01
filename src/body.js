@@ -160,13 +160,16 @@ function EditableCell(props) {
   )
 }
 
-function Row(props) {
-  const {viewState, editing, line, index, lines, setField, setFocus, togglePartNumbersExpanded} = props
-  const iLine = immutable.fromJS(line)
-  const numberOfRows = lines.length
-  const retailers = oneClickBom.lineData.toRetailers(lines)
-  return (
-    <semantic.Table.Row active={editing && editing[0] === line.id} key={line.id}>
+const Handle = React.createClass({
+  getInitialState() {
+    return {
+      keys: [],
+      undone: 0,
+    }
+  },
+  render() {
+    const {line, setField, setFocus, removeLine} = this.props
+    return (
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
           style={{height: 39}}
@@ -175,13 +178,30 @@ function Row(props) {
           readOnly
           onKeyDown={e => {
             if (e.key === 'Delete' || e.key === 'Backspace') {
-              props.removeLine(line.id)
+              removeLine(line.id)
             } else if (e.key === 'Escape') {
               setFocus([null, null])
             }
           }}
         />
       </td>
+    )
+  },
+})
+
+function Row(props) {
+  const {viewState, editing, line, index, lines, setField, setFocus, togglePartNumbersExpanded} = props
+  const iLine = immutable.fromJS(line)
+  const numberOfRows = lines.length
+  const retailers = oneClickBom.lineData.toRetailers(lines)
+  return (
+    <semantic.Table.Row active={editing && editing[0] === line.id} key={line.id}>
+      <Handle
+        line={line}
+        setField={setField}
+        setFocus={setFocus}
+        removeLine={props.removeLine}
+      />
       <EditableCell
         setField={setField}
         setFocus={setFocus}

@@ -90,7 +90,7 @@ const EditInput = React.createClass({
             e.preventDefault()
             clearTimeout(this.timeout)
             this.props.onBlur(this.state.value)
-            return this.props.focusNext()
+            return this.props.setFocusNext()
           } else if (e.key === 'Escape') {
             clearTimeout(this.timeout)
             this.setState({keys: [], undone: 0})
@@ -167,7 +167,7 @@ function EditableCell(props) {
                 key='EditInput'
                 undo={props.undo}
                 redo={props.redo}
-                focusNext={props.focusNext}
+                setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
               />
               ,
@@ -247,7 +247,7 @@ function Row(props) {
         field={['reference']}
         undo={props.undo}
         redo={props.redo}
-        focusNext={() => setFocus([line.id, ['quantity']])}
+        setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
       />
       <EditableCell
@@ -258,7 +258,7 @@ function Row(props) {
         field={['quantity']}
         undo={props.undo}
         redo={props.redo}
-        focusNext={() => setFocus([line.id, ['description']])}
+        setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
       />
       <EditableCell
@@ -269,11 +269,7 @@ function Row(props) {
         field={['description']}
         undo={props.undo}
         redo={props.redo}
-        focusNext={() => {
-          const next = viewState.partNumbersExpanded ? 'manufacturer' : 'part'
-          const field = ['partNumbers', 0, next]
-          setFocus([line.id, field])
-        }}
+        setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
       />
       {(() => {
@@ -308,10 +304,7 @@ function Row(props) {
                 setFocus={setFocus}
                 undo={props.undo}
                 redo={props.redo}
-                focusNext={() => {
-                  const nextField = ['partNumbers', i, 'part']
-                  setFocus([line.id, nextField])
-                }}
+                setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
               />
             )
@@ -327,14 +320,7 @@ function Row(props) {
                 setFocus={setFocus}
                 undo={props.undo}
                 redo={props.redo}
-                focusNext={() => {
-                  if (!viewState.partNumbersExpanded || i === (ps.length - 1)) {
-                    var field = ['retailers', oneClickBom.lineData.retailer_list[0]]
-                  } else {
-                    var field = ['partNumbers', i + 1, 'manufacturer']
-                  }
-                  setFocus([line.id, field])
-                }}
+                setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
               />
           )
@@ -354,17 +340,7 @@ function Row(props) {
               setFocus={setFocus}
               undo={props.undo}
               redo={props.redo}
-              focusNext={() => {
-                if (i < (oneClickBom.lineData.retailer_list.length - 1)) {
-                  const nextField = ['retailers', oneClickBom.lineData.retailer_list[i + 1]]
-                  setFocus([line.id, nextField])
-                } else if (index < (lines.length - 1)) {
-                  const nextField = ['reference']
-                  setFocus([lines[index + 1].id, nextField])
-                } else {
-                  setFocus([null, null])
-                }
-              }}
+              setFocusNext={props.setFocusNext}
               setFocusBelow={props.setFocusBelow}
             />
           )})

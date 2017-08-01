@@ -132,6 +132,63 @@ const rootActions = {
     })
     return Object.assign({}, {data: state.data, view})
   },
+  setFocusNext(state) {
+    const lines = state.data.present.get('lines')
+    const view  = state.view.update('focus', focus => {
+      if (focus == null) {
+        return focus
+      }
+      const id = focus.get(0)
+      const field = focus.get(1)
+      if (id == null || field == null) {
+        return focus
+      }
+      const index = lines.findIndex(line => line.get('id') === id)
+      let fieldName = field.get(0)
+      const partNumbersExpanded = state.view.get('partNumbersExpanded')
+      if (fieldName === 'retailers') {
+        const rs = oneClickBom.lineData.retailer_list
+        const i = rs.indexOf(field.get(1))
+        if ((i + 1) < rs.length) {
+          return immutable.fromJS([lines.get(index).get('id'), ['retailers', rs[i + 1]]])
+        } else if ((index + 1) < lines.size) {
+          return immutable.fromJS([lines.get(index + 1).get('id'), ['reference']])
+        } else {
+          return immutable.List.of(null, null)
+        }
+      } else {
+        return focus.update(1, field => {
+          if (fieldName === 'reference') {
+            return immutable.List.of('quantity')
+          } else if (fieldName === 'quantity') {
+            return immutable.List.of('description')
+          } else if (fieldName === 'description') {
+            if (partNumbersExpanded) {
+              return immutable.List.of('partNumbers', 0, 'manufacturer')
+            } else {
+              return immutable.List.of('partNumbers', 0, 'part')
+            }
+          } else if (fieldName === 'partNumbers') {
+            const next = immutable.List.of('retailers', oneClickBom.lineData.retailer_list[0])
+            if (partNumbersExpanded) {
+              const i = field.get(1)
+              const type = field.get(2)
+              if (type === 'manufacturer') {
+                return immutable.List.of('partNumbers', i, 'part')
+              } else if ((i + 1) < lines.get(0).get('partNumbers').size) {
+                return immutable.List.of('partNumbers', i + 1, 'manufacturer')
+              } else {
+                return next
+              }
+            } else {
+              return next
+            }
+          }
+        })
+      }
+    })
+    return Object.assign({}, {data: state.data, view})
+  },
 }
 
 const rootReducer = makeReducer(rootActions, initialState)

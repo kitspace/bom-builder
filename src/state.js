@@ -202,6 +202,15 @@ const rootActions = {
     }
     return state
   },
+  ['@@redux-undo/REDO'](state) {
+    const future = state.data.future
+    if (future.length > 0) {
+      const newFocus = future[0].get('editFocus')
+      const view = state.view.set('focus', newFocus)
+      return Object.assign({}, state, {view})
+    }
+    return state
+  },
 }
 
 const rootReducer = makeReducer(rootActions, initialState)

@@ -38,6 +38,7 @@ const EditInput = React.createClass({
     return {
       value: this.props.value,
       initialValue: this.props.value,
+      keys: [],
     }
   },
   handleChange(event) {
@@ -69,11 +70,20 @@ const EditInput = React.createClass({
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         type={this.props.type}
+        onKeyUp={e => {
+          this.setState({keys: this.state.keys.filter(k => k !== e.key)})
+        }}
         onKeyDown={e => {
-          if (e.key === 'Escape') {
+          const keys = this.state.keys.concat([e.key])
+          if (keys.includes('Escape')) {
             clearTimeout(this.timeout)
             this.props.onBlur(this.state.initialValue)
+          } else if (keys.includes('Control')
+            && keys.includes('z')
+            && (this.state.value === this.state.initialValue)) {
+            this.props.undo()
           }
+          this.setState({keys})
         }}
       />
     )
@@ -90,7 +100,8 @@ function editingThis(editing, id, field) {
     immutable.fromJS(editing).equals(immutable.fromJS([id, field]))
 }
 
-function EditableCell({editing, line, field, setField, setFocus}) {
+function EditableCell(props) {
+  const {editing, line, field, setField, setFocus} = props
   if (field[0] === 'quantity') {
     var type = 'number'
   }
@@ -122,6 +133,7 @@ function EditableCell({editing, line, field, setField, setFocus}) {
                 value={value}
                 type={type}
                 key='EditInput'
+                undo={props.undo}
               />
               ,
               //here to make sure the cell doesn't shrink
@@ -164,6 +176,7 @@ function Row(props) {
         editing={editing}
         line={iLine}
         field={['reference']}
+        undo={props.undo}
       />
       <EditableCell
         setField={setField}
@@ -171,6 +184,7 @@ function Row(props) {
         editing={editing}
         line={iLine}
         field={['quantity']}
+        undo={props.undo}
       />
       <EditableCell
         setField={setField}
@@ -178,6 +192,7 @@ function Row(props) {
         editing={editing}
         line={iLine}
         field={['description']}
+        undo={props.undo}
       />
       {(() => {
         if (viewState.partNumbersExpanded) {
@@ -208,6 +223,7 @@ function Row(props) {
                 field={['partNumbers', i, 'manufacturer']}
                 setField={setField}
                 setFocus={setFocus}
+                undo={props.undo}
               />
             )
           }
@@ -219,6 +235,7 @@ function Row(props) {
                 field={['partNumbers', i, 'part']}
                 setField={setField}
                 setFocus={setFocus}
+                undo={props.undo}
               />
           )
           return cells
@@ -234,6 +251,7 @@ function Row(props) {
               field={['retailers', name]}
               setField={setField}
               setFocus={setFocus}
+              undo={props.undo}
             />
           )})
       })()}

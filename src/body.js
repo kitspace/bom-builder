@@ -39,7 +39,6 @@ const EditInput = React.createClass({
       value: this.props.value,
       initialValue: this.props.value,
       untouchedValue: this.props.value,
-      keys: [],
       undone: 0,
     }
   },
@@ -49,7 +48,7 @@ const EditInput = React.createClass({
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       this.save(this.state.value)
-    }, 2000)
+    }, 500)
   },
   skipInitialBlur: true,
   handleBlur(event) {
@@ -84,37 +83,18 @@ const EditInput = React.createClass({
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         type={this.props.type}
-        onKeyUp={e => {
-          this.setState({keys: this.state.keys.filter(k => k !== e.key)})
-        }}
+        className='mousetrap'
         onKeyDown={e => {
           if (e.key === 'Tab') {
             e.preventDefault()
             this.save(this.state.value)
-            return this.props.setFocusNext()
+            this.props.setFocusNext()
           } else if (e.key === 'Escape') {
             this.save(this.state.untouchedValue)
-            return this.props.loseFocus()
+            this.props.loseFocus()
           } else if (e.key === 'Enter') {
             this.save(this.state.value)
-            return this.props.setFocusBelow()
-          }
-          const keys = this.state.keys.concat([e.key])
-          this.setState({keys})
-          if (keys.includes('Control') && keys.includes('z')) {
-            //we only do a global undo if the text-box is untouched
-            if (this.state.value === this.state.initialValue) {
-              this.props.undo()
-            } else {
-              this.setState({undone: this.state.undone + 1})
-            }
-          } else if (keys.includes('Control') && keys.includes('y')) {
-            //we only do a global redo if there are no local undos to redo
-            if (this.state.undone === 0) {
-              this.props.redo()
-            } else {
-              this.setState({undone: this.state.undone - 1})
-            }
+            this.props.setFocusBelow()
           }
         }}
       />

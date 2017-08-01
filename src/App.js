@@ -9,7 +9,7 @@ const reactRedux  = require('react-redux')
 const superagent  = require('superagent')
 const oneClickBom = require('1-click-bom')
 const immutable   = require('immutable')
-const {mouseTrap} = require('react-mousetrap')
+const mousetrap   = require('mousetrap')
 const DoubleScrollBar = require('react-double-scrollbar')
 
 const {mainReducer, initialState} = require('./state')
@@ -44,11 +44,11 @@ const Bom = React.createClass({
       actions.setFromTsv(r.text)
     })
     actions.setEditable(this.props.editable)
-    this.props.bindShortcut('ctrl+z', actions.undo)
-    this.props.bindShortcut('ctrl+y', actions.redo)
+    mousetrap.bind('ctrl+z', actions.undo)
+    mousetrap.bind('ctrl+y', actions.redo)
   },
 })
 
 
 
-export default mouseTrap(Bom)
+export default Bom

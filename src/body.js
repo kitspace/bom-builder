@@ -39,7 +39,6 @@ const EditInput = React.createClass({
       value: this.props.value,
       initialValue: this.props.value,
       untouchedValue: this.props.value,
-      undone: 0,
     }
   },
   handleChange(event) {
@@ -70,7 +69,6 @@ const EditInput = React.createClass({
       this.setState({
         value: newProps.value,
         initialValue: newProps.value,
-        undone: 0,
       })
     }
   },
@@ -139,8 +137,6 @@ function EditableCell(props) {
                 value={value}
                 type={type}
                 key='EditInput'
-                undo={props.undo}
-                redo={props.redo}
                 loseFocus={props.loseFocus}
                 setFocusNext={props.setFocusNext}
                 loseFocus={props.loseFocus}
@@ -166,17 +162,15 @@ const Handle = React.createClass({
     }
   },
   render() {
-    const {line, setField, setFocus, removeLine, undo, redo} = this.props
+    const {line, setField, setFocus, removeLine} = this.props
     return (
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
           style={{height: 39}}
           onFocus={() => setFocus([line.id, null])}
           onBlur={() => setFocus([null, null])}
+          className='mousetrap'
           readOnly
-          onKeyUp={e => {
-            this.setState({keys: this.state.keys.filter(k => k !== e.key)})
-          }}
           onKeyDown={e => {
             if (e.key === 'Delete' || e.key === 'Backspace') {
               this.setState({keys: []})
@@ -184,14 +178,6 @@ const Handle = React.createClass({
             } else if (e.key === 'Escape') {
               this.setState({keys: []})
               setFocus([null, null])
-            } else {
-              const keys = this.state.keys.concat([e.key])
-              this.setState({keys})
-              if (keys.includes('Control') && keys.includes('z')) {
-                undo()
-              } else if (keys.includes('Control') && keys.includes('y')) {
-                redo()
-              }
             }
           }}
         />
@@ -212,8 +198,6 @@ function Row(props) {
         setField={setField}
         setFocus={setFocus}
         removeLine={props.removeLine}
-        undo={props.undo}
-        redo={props.redo}
       />
       <EditableCell
         setField={setField}
@@ -221,8 +205,6 @@ function Row(props) {
         editing={editing}
         line={iLine}
         field={['reference']}
-        undo={props.undo}
-        redo={props.redo}
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
@@ -233,8 +215,6 @@ function Row(props) {
         editing={editing}
         line={iLine}
         field={['quantity']}
-        undo={props.undo}
-        redo={props.redo}
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
@@ -245,8 +225,6 @@ function Row(props) {
         editing={editing}
         line={iLine}
         field={['description']}
-        undo={props.undo}
-        redo={props.redo}
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
@@ -281,8 +259,6 @@ function Row(props) {
                 field={field}
                 setField={setField}
                 setFocus={setFocus}
-                undo={props.undo}
-                redo={props.redo}
                 loseFocus={props.loseFocus}
                 setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
@@ -298,8 +274,6 @@ function Row(props) {
                 field={field}
                 setField={setField}
                 setFocus={setFocus}
-                undo={props.undo}
-                redo={props.redo}
                 loseFocus={props.loseFocus}
                 setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
@@ -319,8 +293,6 @@ function Row(props) {
               field={field}
               setField={setField}
               setFocus={setFocus}
-              undo={props.undo}
-              redo={props.redo}
               loseFocus={props.loseFocus}
               setFocusNext={props.setFocusNext}
               setFocusBelow={props.setFocusBelow}

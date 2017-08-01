@@ -186,7 +186,7 @@ function Row(props) {
               className='collapserCell'
               onClick={() => togglePartNumbersExpanded()}
             >
-              ⇠ less
+              ⇠ hide
             </td>
           )
         }

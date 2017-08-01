@@ -42,7 +42,7 @@ function Header({viewState, lines, sortBy, togglePartNumbersExpanded}) {
                   size='tiny'
                   onClick={() => togglePartNumbersExpanded()}
                 >
-                  ⇠ less
+                  ⇠ hide
                 </semantic.Button>
               </td>
             )

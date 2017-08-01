@@ -183,8 +183,10 @@ const Handle = React.createClass({
           onFocus={() => setFocus([line.id, null])}
           onBlur={() => setFocus([null, null])}
           readOnly
+          onKeyUp={e => {
+            this.setState({keys: this.state.keys.filter(k => k !== e.key)})
+          }}
           onKeyDown={e => {
-            const keys = this.state.keys.concat([e.key])
             if (e.key === 'Delete' || e.key === 'Backspace') {
               this.setState({keys: []})
               removeLine(line.id)
@@ -192,6 +194,7 @@ const Handle = React.createClass({
               this.setState({keys: []})
               setFocus([null, null])
             } else {
+              const keys = this.state.keys.concat([e.key])
               this.setState({keys})
               if (keys.includes('Control') && keys.includes('z')) {
                 undo()

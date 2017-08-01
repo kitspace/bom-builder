@@ -112,25 +112,56 @@ const viewActions = {
   },
 }
 
-function mainReducer(state = initialState, action) {
-  return redux.combineReducers({
-    data: reduxUndo.default(
-      makeReducer(linesActions, 'data'),
-      {
-        filter(action) {
-          if (action.type === 'setFromTsv') {
-            return false
-          }
-          return Object.keys(linesActions).includes(action.type)
-        },
+const rootActions = {
+  setFocusBelow(state) {
+    const lines = state.data.present.get('lines')
+    const view  = state.view.update('focus', focus => {
+      if (focus == null) {
+        return focus
       }
-    ),
-    view: makeReducer(viewActions, 'view'),
-  })(state, action)
+      const id = focus.get(0)
+      const field = focus.get(1)
+      if (id == null || field == null) {
+        return focus
+      }
+      const index = lines.findIndex(line => line.get('id') === id)
+      if ((index + 1) >= lines.size) {
+        return immutable.List.of(null, null)
+      }
+      return immutable.List.of(lines.get(index + 1).get('id'), field)
+    })
+    return Object.assign({}, {data: state.data, view})
+  },
 }
 
-function makeReducer(reducers, key) {
-  return function reducer(state = initialState[key], action) {
+const rootReducer = makeReducer(rootActions, initialState)
+
+const linesReducer = reduxUndo.default(
+  makeReducer(linesActions, initialState['data']),
+  {
+    filter(action) {
+      if (action.type === 'setFromTsv') {
+        return false
+      }
+      return Object.keys(linesActions).includes(action.type)
+    },
+  }
+)
+
+const viewReducer = makeReducer(viewActions, initialState['view'])
+
+const combinedReducer = redux.combineReducers({
+  data: linesReducer,
+  view: viewReducer,
+})
+
+function mainReducer(state = initialState, action) {
+  const state2 = rootReducer(state, action)
+  return combinedReducer(state2, action)
+}
+
+function makeReducer(reducers, initialState) {
+  return function reducer(state = initialState, action) {
     if (Object.keys(reducers).includes(action.type)) {
       const state2 = reducers[action.type](state, action.value)
       return state2
@@ -152,6 +183,7 @@ function makeActions(reducers) {
 const actions = Object.assign(
   makeActions(linesActions),
   makeActions(viewActions),
+  makeActions(rootActions),
   reduxUndo.ActionCreators,
 )
 

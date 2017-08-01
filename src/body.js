@@ -98,7 +98,7 @@ const EditInput = React.createClass({
           } else if (e.key === 'Enter') {
             clearTimeout(this.timeout)
             this.props.onBlur(this.state.value)
-            return this.props.focusBelow()
+            return this.props.setFocusBelow()
           }
           const keys = this.state.keys.concat([e.key])
           this.setState({keys})
@@ -160,7 +160,6 @@ function EditableCell(props) {
                   setField({id, field, value})
                 }}
                 onBlur={value => {
-                  setFocus([null, null])
                   setField({id, field, value})
                 }}
                 value={value}
@@ -169,7 +168,7 @@ function EditableCell(props) {
                 undo={props.undo}
                 redo={props.redo}
                 focusNext={props.focusNext}
-                focusBelow={props.focusBelow}
+                setFocusBelow={props.setFocusBelow}
               />
               ,
               //here to make sure the cell doesn't shrink
@@ -249,13 +248,7 @@ function Row(props) {
         undo={props.undo}
         redo={props.redo}
         focusNext={() => setFocus([line.id, ['quantity']])}
-        focusBelow={() => {
-          if (index < (lines.length - 1)) {
-            setFocus([lines[index + 1].id, ['reference']])
-          } else {
-            setFocus([null, null])
-          }
-        }}
+        setFocusBelow={props.setFocusBelow}
       />
       <EditableCell
         setField={setField}
@@ -266,13 +259,7 @@ function Row(props) {
         undo={props.undo}
         redo={props.redo}
         focusNext={() => setFocus([line.id, ['description']])}
-        focusBelow={() => {
-          if (index < (lines.length - 1)) {
-            setFocus([lines[index + 1].id, ['quantity']])
-          } else {
-            setFocus([null, null])
-          }
-        }}
+        setFocusBelow={props.setFocusBelow}
       />
       <EditableCell
         setField={setField}
@@ -287,13 +274,7 @@ function Row(props) {
           const field = ['partNumbers', 0, next]
           setFocus([line.id, field])
         }}
-        focusBelow={() => {
-          if (index < (lines.length - 1)) {
-            setFocus([lines[index + 1].id, ['description']])
-          } else {
-            setFocus([null, null])
-          }
-        }}
+        setFocusBelow={props.setFocusBelow}
       />
       {(() => {
         if (viewState.partNumbersExpanded) {
@@ -331,13 +312,7 @@ function Row(props) {
                   const nextField = ['partNumbers', i, 'part']
                   setFocus([line.id, nextField])
                 }}
-                focusBelow={() => {
-                  if (index < (lines.length - 1)) {
-                    setFocus([lines[index + 1].id, field])
-                  } else {
-                    setFocus([null, null])
-                  }
-                }}
+                setFocusBelow={props.setFocusBelow}
               />
             )
           }
@@ -360,13 +335,7 @@ function Row(props) {
                   }
                   setFocus([line.id, field])
                 }}
-                focusBelow={() => {
-                  if (index < (lines.length - 1)) {
-                    setFocus([lines[index + 1].id, field])
-                  } else {
-                    setFocus([null, null])
-                  }
-                }}
+                setFocusBelow={props.setFocusBelow}
               />
           )
           return cells
@@ -396,13 +365,7 @@ function Row(props) {
                   setFocus([null, null])
                 }
               }}
-              focusBelow={() => {
-                if (index < (lines.length - 1)) {
-                  setFocus([lines[index + 1].id, field])
-                } else {
-                  setFocus([null, null])
-                }
-              }}
+              setFocusBelow={props.setFocusBelow}
             />
           )})
       })()}

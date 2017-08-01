@@ -39,6 +39,7 @@ const EditInput = React.createClass({
       value: this.props.value,
       initialValue: this.props.value,
       keys: [],
+      undone: 0,
     }
   },
   handleChange(event) {
@@ -75,15 +76,25 @@ const EditInput = React.createClass({
         }}
         onKeyDown={e => {
           const keys = this.state.keys.concat([e.key])
+          this.setState({keys})
           if (keys.includes('Escape')) {
             clearTimeout(this.timeout)
             this.props.onBlur(this.state.initialValue)
-          } else if (keys.includes('Control')
-            && keys.includes('z')
-            && (this.state.value === this.state.initialValue)) {
-            this.props.undo()
+          } else if (keys.includes('Control') && keys.includes('z')) {
+            //we only do a global undo if the text-box is untouched
+            if (this.state.value === this.state.initialValue) {
+              this.props.undo()
+            } else {
+              this.setState({undone: this.state.undone + 1})
+            }
+          } else if (keys.includes('Control') && keys.includes('y')) {
+            //we only do a global redo if there are no local undos to redo
+            if (this.state.undone === 0) {
+              this.props.redo()
+            } else {
+              this.setState({undone: this.state.undone - 1})
+            }
           }
-          this.setState({keys})
         }}
       />
     )
@@ -134,6 +145,7 @@ function EditableCell(props) {
                 type={type}
                 key='EditInput'
                 undo={props.undo}
+                redo={props.redo}
               />
               ,
               //here to make sure the cell doesn't shrink
@@ -177,6 +189,7 @@ function Row(props) {
         line={iLine}
         field={['reference']}
         undo={props.undo}
+        redo={props.redo}
       />
       <EditableCell
         setField={setField}
@@ -185,6 +198,7 @@ function Row(props) {
         line={iLine}
         field={['quantity']}
         undo={props.undo}
+        redo={props.redo}
       />
       <EditableCell
         setField={setField}
@@ -193,6 +207,7 @@ function Row(props) {
         line={iLine}
         field={['description']}
         undo={props.undo}
+        redo={props.redo}
       />
       {(() => {
         if (viewState.partNumbersExpanded) {
@@ -224,6 +239,7 @@ function Row(props) {
                 setField={setField}
                 setFocus={setFocus}
                 undo={props.undo}
+                redo={props.redo}
               />
             )
           }
@@ -236,6 +252,7 @@ function Row(props) {
                 setField={setField}
                 setFocus={setFocus}
                 undo={props.undo}
+                redo={props.redo}
               />
           )
           return cells
@@ -252,6 +269,7 @@ function Row(props) {
               setField={setField}
               setFocus={setFocus}
               undo={props.undo}
+              redo={props.redo}
             />
           )})
       })()}

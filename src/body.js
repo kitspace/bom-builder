@@ -63,6 +63,16 @@ const EditInput = React.createClass({
       this.props.onBlur(this.state.value)
     }
   },
+  componentWillReceiveProps(newProps) {
+    if (newProps.value !== this.state.initialValue) {
+      clearTimeout(this.timeout)
+      this.setState({
+        value: newProps.value,
+        initialValue: newProps.value,
+        undone: 0,
+      })
+    }
+  },
   render() {
     return (
       <input

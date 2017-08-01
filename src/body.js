@@ -68,7 +68,6 @@ const EditInput = React.createClass({
       clearTimeout(this.timeout)
       this.setState({
         value: newProps.value,
-        initialValue: newProps.value,
       })
     }
   },
@@ -88,11 +87,13 @@ const EditInput = React.createClass({
             this.save(this.state.value)
             this.props.setFocusNext()
           } else if (e.key === 'Escape') {
-            this.save(this.state.untouchedValue)
+            this.save(this.state.initialValue)
             this.props.loseFocus()
           } else if (e.key === 'Enter') {
             this.save(this.state.value)
             this.props.setFocusBelow()
+          } else if ((e.key === 'z' || e.key === 'y') && e.ctrlKey) {
+            e.preventDefault()
           }
         }}
       />

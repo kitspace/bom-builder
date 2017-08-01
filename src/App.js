@@ -44,14 +44,8 @@ const Bom = React.createClass({
       actions.setFromTsv(r.text)
     })
     actions.setEditable(this.props.editable)
-    this.props.bindShortcut('ctrl+z', () => {
-      console.log('undo')
-      actions.undo()
-    })
-    this.props.bindShortcut('ctrl+y', () => {
-      console.log('redo')
-      actions.redo()
-    })
+    this.props.bindShortcut('ctrl+z', actions.undo)
+    this.props.bindShortcut('ctrl+y', actions.redo)
   },
 })
 

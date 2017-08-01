@@ -111,7 +111,17 @@ const viewActions = {
 
 function mainReducer(state = initialState, action) {
   return redux.combineReducers({
-    data: reduxUndo.default(makeReducer(linesActions, 'data')),
+    data: reduxUndo.default(
+      makeReducer(linesActions, 'data'),
+      {
+        filter(action) {
+          if (action.type === 'setFromTsv') {
+            return false
+          }
+          return Object.keys(linesActions).includes(action.type)
+        },
+      }
+    ),
     view: makeReducer(viewActions, 'view'),
   })(state, action)
 }

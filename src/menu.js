@@ -8,13 +8,16 @@ const {actions} = require('./state')
 function Menu(props) {
   return (
     <semantic.Menu secondary>
-      <semantic.Menu.Item>
+      <semantic.Menu.Item onClick={props.save}>
+        <semantic.Icon name='save' />
         Save
       </semantic.Menu.Item>
       <semantic.Menu.Item disabled={!props.undosAvailable} onClick={props.undo}>
+        <semantic.Icon name='undo' />
         Undo
       </semantic.Menu.Item>
       <semantic.Menu.Item disabled={!props.redosAvailable} onClick={props.redo}>
+        <semantic.Icon name='repeat' />
         Redo
       </semantic.Menu.Item>
     </semantic.Menu>

@@ -209,9 +209,15 @@ const rootReducer = makeReducer(rootActions, initialState)
 const linesReducer = reduxUndo.default(
   makeReducer(linesActions, initialState['data']),
   {
-    filter(action) {
+    filter(action, state, previous) {
       if (action.type === 'setFromTsv') {
         return false
+      }
+      else if (action.type === 'setField') {
+        const {id, field, value} = action.value
+        const index = previous.get('lines').findIndex(l => l.get('id') === id)
+        const s = previous.get('lines').getIn([index].concat(field))
+        return s !== value
       }
       return Object.keys(linesActions).includes(action.type)
     },
@@ -226,7 +232,6 @@ const combinedReducer = redux.combineReducers({
 })
 
 function mainReducer(state = initialState, action) {
-  console.log(action.type, action.value)
   const state2 = rootReducer(state, action)
   return combinedReducer(state2, action)
 }

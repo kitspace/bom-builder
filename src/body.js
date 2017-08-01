@@ -48,8 +48,7 @@ const EditInput = React.createClass({
     this.setState({value: event.target.value})
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
-      clearTimeout(this.timeout)
-      this.props.onChange(this.state.value)
+      this.save(this.state.value)
     }, 2000)
   },
   skipInitialBlur: true,
@@ -59,10 +58,12 @@ const EditInput = React.createClass({
     if (this.skipInitialBlur && this.props.type === 'number') {
       this.skipInitialBlur = false
     } else {
-      clearTimeout(this.timeout)
-      this.setState({keys: [], undone: 0})
-      this.props.onBlur(this.state.value)
+      this.save(this.state.value)
     }
+  },
+  save(value) {
+    clearTimeout(this.timeout)
+    this.props.setField(value)
   },
   componentWillReceiveProps(newProps) {
     if (newProps.value !== this.state.initialValue) {
@@ -89,22 +90,13 @@ const EditInput = React.createClass({
         onKeyDown={e => {
           if (e.key === 'Tab') {
             e.preventDefault()
-            clearTimeout(this.timeout)
-            this.props.onBlur(this.state.value)
+            this.save(this.state.value)
             return this.props.setFocusNext()
           } else if (e.key === 'Escape') {
-            clearTimeout(this.timeout)
-            this.setState({
-              keys: [],
-              undone: 0,
-              value: this.state.untouchedValue,
-              initialValue: this.state.untouchedValue,
-            })
-            this.props.setField(this.state.untouchedValue)
+            this.save(this.state.untouchedValue)
             return this.props.loseFocus()
           } else if (e.key === 'Enter') {
-            clearTimeout(this.timeout)
-            this.props.onBlur(this.state.value)
+            this.save(this.state.value)
             return this.props.setFocusBelow()
           }
           const keys = this.state.keys.concat([e.key])
@@ -163,12 +155,6 @@ function EditableCell(props) {
             return (
               [
               <EditInput
-                onChange={value => {
-                  setField({id, field, value})
-                }}
-                onBlur={value => {
-                  setField({id, field, value})
-                }}
                 setField={value => setField({id, field, value})}
                 value={value}
                 type={type}

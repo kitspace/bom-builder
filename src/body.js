@@ -332,13 +332,13 @@ function Row(props) {
               undo={props.undo}
               redo={props.redo}
               focusNext={() => {
-                if (i < oneClickBom.lineData.retailer_list.length) {
-                  var field = ['retailers', oneClickBom.lineData.retailer_list[i + 1]]
+                if (i < (oneClickBom.lineData.retailer_list.length - 1)) {
+                  const field = ['retailers', oneClickBom.lineData.retailer_list[i + 1]]
                   setFocus([line.id, field])
+                } else if (index < (lines.length - 1)) {
+                  const field = ['reference']
+                  setFocus([lines[index + 1].id, field])
                 }
-                  //} else {
-                //  var field = ['partNumbers', i + 1, 'manufacturer']
-                //}
               }}
             />
           )})

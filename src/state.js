@@ -25,6 +25,7 @@ const initialState = {
   data: immutable.fromJS({
     lines: [],
     sortedBy: [null, null],
+    editFocus: [null, null],
   }),
   view: immutable.fromJS({
     partNumbersExpanded: false,
@@ -47,7 +48,7 @@ const linesActions = {
       }
       return line
     })
-    return state.merge({lines})
+    return state.merge({lines, editFocus: immutable.List.of(id, field)})
   },
   addLine(state, value) {
     const line = immutable.fromJS(value).set('id', makeId())
@@ -190,7 +191,16 @@ const rootActions = {
         })
       }
     })
-    return Object.assign({}, {data: state.data, view})
+    return Object.assign({}, state, {view})
+  },
+  ['@@redux-undo/UNDO'](state) {
+    const past = state.data.past
+    if (past.length > 0) {
+      const newFocus = past[past.length - 1].get('editFocus')
+      const view = state.view.set('focus', newFocus)
+      return Object.assign({}, state, {view})
+    }
+    return state
   },
 }
 
@@ -216,6 +226,7 @@ const combinedReducer = redux.combineReducers({
 })
 
 function mainReducer(state = initialState, action) {
+  console.log(action.type, action.value)
   const state2 = rootReducer(state, action)
   return combinedReducer(state2, action)
 }

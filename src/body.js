@@ -38,6 +38,7 @@ const EditInput = React.createClass({
     return {
       value: this.props.value,
       initialValue: this.props.value,
+      untouchedValue: this.props.value,
       keys: [],
       undone: 0,
     }
@@ -93,8 +94,14 @@ const EditInput = React.createClass({
             return this.props.setFocusNext()
           } else if (e.key === 'Escape') {
             clearTimeout(this.timeout)
-            this.setState({keys: [], undone: 0})
-            return this.props.onBlur(this.state.initialValue)
+            this.setState({
+              keys: [],
+              undone: 0,
+              value: this.state.untouchedValue,
+              initialValue: this.state.untouchedValue,
+            })
+            this.props.setField(this.state.untouchedValue)
+            return this.props.loseFocus()
           } else if (e.key === 'Enter') {
             clearTimeout(this.timeout)
             this.props.onBlur(this.state.value)
@@ -162,12 +169,15 @@ function EditableCell(props) {
                 onBlur={value => {
                   setField({id, field, value})
                 }}
+                setField={value => setField({id, field, value})}
                 value={value}
                 type={type}
                 key='EditInput'
                 undo={props.undo}
                 redo={props.redo}
+                loseFocus={props.loseFocus}
                 setFocusNext={props.setFocusNext}
+                loseFocus={props.loseFocus}
                 setFocusBelow={props.setFocusBelow}
               />
               ,
@@ -247,6 +257,7 @@ function Row(props) {
         field={['reference']}
         undo={props.undo}
         redo={props.redo}
+        loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
       />
@@ -258,6 +269,7 @@ function Row(props) {
         field={['quantity']}
         undo={props.undo}
         redo={props.redo}
+        loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
       />
@@ -269,6 +281,7 @@ function Row(props) {
         field={['description']}
         undo={props.undo}
         redo={props.redo}
+        loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
       />
@@ -304,6 +317,7 @@ function Row(props) {
                 setFocus={setFocus}
                 undo={props.undo}
                 redo={props.redo}
+                loseFocus={props.loseFocus}
                 setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
               />
@@ -320,6 +334,7 @@ function Row(props) {
                 setFocus={setFocus}
                 undo={props.undo}
                 redo={props.redo}
+                loseFocus={props.loseFocus}
                 setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
               />
@@ -340,6 +355,7 @@ function Row(props) {
               setFocus={setFocus}
               undo={props.undo}
               redo={props.redo}
+              loseFocus={props.loseFocus}
               setFocusNext={props.setFocusNext}
               setFocusBelow={props.setFocusBelow}
             />

@@ -59,6 +59,7 @@ const EditInput = React.createClass({
       this.skipInitialBlur = false
     } else {
       clearTimeout(this.timeout)
+      this.setState({keys: [], undone: 0})
       this.props.onBlur(this.state.value)
     }
   },
@@ -79,6 +80,7 @@ const EditInput = React.createClass({
           this.setState({keys})
           if (keys.includes('Escape')) {
             clearTimeout(this.timeout)
+            this.setState({keys: [], undone: 0})
             this.props.onBlur(this.state.initialValue)
           } else if (keys.includes('Control') && keys.includes('z')) {
             //we only do a global undo if the text-box is untouched
@@ -164,11 +166,10 @@ const Handle = React.createClass({
   getInitialState() {
     return {
       keys: [],
-      undone: 0,
     }
   },
   render() {
-    const {line, setField, setFocus, removeLine} = this.props
+    const {line, setField, setFocus, removeLine, undo, redo} = this.props
     return (
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
@@ -177,10 +178,20 @@ const Handle = React.createClass({
           onBlur={() => setFocus([null, null])}
           readOnly
           onKeyDown={e => {
+            const keys = this.state.keys.concat([e.key])
             if (e.key === 'Delete' || e.key === 'Backspace') {
+              this.setState({keys: []})
               removeLine(line.id)
             } else if (e.key === 'Escape') {
+              this.setState({keys: []})
               setFocus([null, null])
+            } else {
+              this.setState({keys})
+              if (keys.includes('Control') && keys.includes('z')) {
+                undo()
+              } else if (keys.includes('Control') && keys.includes('y')) {
+                redo()
+              }
             }
           }}
         />
@@ -201,6 +212,8 @@ function Row(props) {
         setField={setField}
         setFocus={setFocus}
         removeLine={props.removeLine}
+        undo={props.undo}
+        redo={props.redo}
       />
       <EditableCell
         setField={setField}

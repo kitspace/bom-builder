@@ -113,8 +113,13 @@ const viewActions = {
   toggleRetailersExpanded(state) {
     return state.update('retailersExpanded', expanded => !expanded)
   },
-  loseFocus(state) {
-    return state.set('focus', immutable.List.of(null, null))
+  loseFocus(state, focusToLose) {
+    return state.update('focus', focus => {
+      if (focus.equals(immutable.fromJS(focusToLose))) {
+        return immutable.List.of(null, null)
+      }
+      return focus
+    })
   },
 }
 

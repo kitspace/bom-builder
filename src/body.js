@@ -138,9 +138,8 @@ function EditableCell(props) {
                 value={value}
                 type={type}
                 key='EditInput'
-                loseFocus={props.loseFocus}
                 setFocusNext={props.setFocusNext}
-                loseFocus={props.loseFocus}
+                loseFocus={() => props.loseFocus([id, field])}
                 setFocusBelow={props.setFocusBelow}
               />
               ,
@@ -162,9 +161,14 @@ const Handle = React.createClass({
     return (
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
+          ref="input"
           style={{height: 39}}
           onFocus={() => setFocus([index, null])}
-          onBlur={() => setTimeout(() => setFocus([null, null]), 100)}
+          onBlur={() => {
+            setTimeout(() => {
+              this.props.loseFocus([index, null])
+            }, 100)
+          }}
           className='mousetrap'
           readOnly
           onKeyDown={e => {
@@ -173,7 +177,7 @@ const Handle = React.createClass({
               removeLine(index)
             } else if (e.key === 'Escape') {
               this.setState({keys: []})
-              setFocus([null, null])
+              this.props.loseFocus([index, null])
             }
           }}
         />
@@ -195,6 +199,7 @@ function Row(props) {
         setFocus={setFocus}
         removeLine={props.removeLine}
         index={index}
+        loseFocus={props.loseFocus}
       />
       <EditableCell
         setField={setField}

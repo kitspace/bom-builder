@@ -218,16 +218,11 @@ const rootReducer = makeReducer(rootActions, initialState)
 const linesReducer = reduxUndo.default(
   makeReducer(linesActions, initialState['data']),
   {
-    filter(action, state, previous) {
+    filter(action, newState, previousState) {
       if (action.type === 'setFromTsv') {
         return false
       }
-      else if (action.type === 'setField') {
-        const {index, field, value} = action.value
-        const s = previous.get('lines').getIn([index].concat(field))
-        return s !== value
-      }
-      return Object.keys(linesActions).includes(action.type)
+      return !newState.equals(previousState)
     },
   }
 )

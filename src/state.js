@@ -56,22 +56,19 @@ const linesActions = {
     return state.merge({lines})
   },
   removeField(state, focus) {
-    const [id, field] = focus
-    const index = state.get('lines').findIndex(l => l.get('id') == id)
+    const [index, field] = focus
     return state.setIn(['lines', index].concat(field), '')
   },
   remove(state, focus) {
-    const [id, field] = focus
+    const [index, field] = focus
     if (field == null) {
-      return this.removeLine(state, id)
+      return this.removeLine(state, index)
     } else {
       return this.removeField(state, focus)
     }
   },
-  removeLine(state, id) {
-    const lines = state.get('lines').filter(line => {
-      return line.get('id') !== id
-    })
+  removeLine(state, index) {
+    const lines = state.get('lines').remove(index)
     return state.merge({lines})
   },
   sortBy(state, header) {

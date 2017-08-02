@@ -163,7 +163,7 @@ const Handle = React.createClass({
     }
   },
   render() {
-    const {line, setField, setFocus, removeLine} = this.props
+    const {line, setField, setFocus, removeLine, index} = this.props
     return (
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
@@ -175,7 +175,7 @@ const Handle = React.createClass({
           onKeyDown={e => {
             if (e.key === 'Delete' || e.key === 'Backspace') {
               this.setState({keys: []})
-              removeLine(line.id)
+              removeLine(index)
             } else if (e.key === 'Escape') {
               this.setState({keys: []})
               setFocus([null, null])
@@ -199,6 +199,7 @@ function Row(props) {
         setField={setField}
         setFocus={setFocus}
         removeLine={props.removeLine}
+        index={index}
       />
       <EditableCell
         setField={setField}

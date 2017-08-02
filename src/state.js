@@ -39,8 +39,12 @@ const linesActions = {
     if (field[0] === 'quantity' && value < 1) {
       value = 1
     }
-    state = state.setIn(['lines', index].concat(field),  value)
-    return state.set('editFocus', immutable.List.of(index, field))
+    const currentValue = state.getIn(['lines', index].concat(field))
+    if (currentValue !== value) {
+      state = state.setIn(['lines', index].concat(field),  value)
+      return state.set('editFocus', immutable.List.of(index, field))
+    }
+    return state
   },
   addLine(state, value) {
     const line = immutable.fromJS(value).set('id', makeId())

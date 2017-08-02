@@ -57,6 +57,7 @@ const EditInput = React.createClass({
       this.skipInitialBlur = false
     } else {
       this.save(this.state.value)
+      this.props.loseFocus()
     }
   },
   save(value) {

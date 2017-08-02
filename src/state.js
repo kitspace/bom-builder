@@ -161,7 +161,7 @@ const rootActions = {
         return focus
       }
       const index = lines.findIndex(line => line.get('id') === id)
-      let fieldName = field.get(0)
+      const fieldName = field.get(0)
       const partNumbersExpanded = state.view.get('partNumbersExpanded')
       if (fieldName === 'retailers') {
         const rs = oneClickBom.lineData.retailer_list
@@ -282,7 +282,7 @@ const actions = Object.assign(
   makeActions(linesActions),
   makeActions(viewActions),
   makeActions(rootActions),
-  reduxUndo.ActionCreators,
+  reduxUndo.ActionCreators
 )
 
 module.exports = {initialState, mainReducer, makeReducer, linesActions, emptyLine, actions}

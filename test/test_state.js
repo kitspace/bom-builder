@@ -9,7 +9,7 @@ const linesReducer = makeReducer(linesActions)
 describe('bom_edit lines actions', () => {
   describe('lines', () => {
     it('adds a line', () => {
-      const data = initialState.get('data')
+      const data = initialState.data
       const lines1 = data.get('lines')
       assert(lines1.size === 0)
       const lines2 = linesReducer(data.merge({lines: lines1}), {type: 'addLine', value: emptyLine}).get('lines')
@@ -18,7 +18,7 @@ describe('bom_edit lines actions', () => {
       assert(lines2.get(0).get('id') != null)
     })
     it('removes a line', () => {
-      const data = initialState.get('data')
+      const data = initialState.data
       const lines1 = data.get('lines')
       assert(lines1.size === 0)
       let lines2 = linesReducer(data.set('lines', lines1), {type: 'addLine', value: emptyLine}).get('lines')
@@ -37,7 +37,7 @@ describe('bom_edit lines actions', () => {
     it('lets you set from TSV', () => {
       const tsv = 'References\tQty\tDigikey\ntest\t1\t8-98-989'
       const lines = linesReducer(
-        initialState.get('data'),
+        initialState.data,
         {type: 'setFromTsv', value: tsv}
       ).get('lines')
       const line      = lines.first()
@@ -50,7 +50,7 @@ describe('bom_edit lines actions', () => {
     })
   })
   describe('sorting', () => {
-    const data1 = initialState.get('data')
+    const data1 = initialState.data
     let data2
     beforeEach('set order', () => {
       data2 = linesReducer(

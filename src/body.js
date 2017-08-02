@@ -134,7 +134,7 @@ function EditableCell(props) {
             return (
               [
               <EditInput
-                setField={value => setField({id, field, value})}
+                setField={value => setField({index, field, value})}
                 value={value}
                 type={type}
                 key='EditInput'

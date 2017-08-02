@@ -32,6 +32,7 @@ const initialState = {
     focus: [null, null],
     editable: false,
   }),
+  parts: immutable.List(),
 }
 
 const linesActions = {
@@ -96,7 +97,7 @@ const linesActions = {
     }
     return state.merge({lines, sortedBy})
   },
-  initialize(state, lines) {
+  initializeLines(state, lines) {
     return state.set('lines', immutable.fromJS(lines).map(line => {
       return line.merge({id: makeId()})
     }))
@@ -204,8 +205,8 @@ const rootActions = {
   ['@@redux-undo/UNDO'](state) {
     const past = state.data.past
     if (past.length > 0) {
-      const newFocus = past[past.length - 1].get('editFocus')
-      const view = state.view.set('focus', newFocus)
+      const editFocus = past[past.length - 1].get('editFocus')
+      const view = state.view.set('focus', editFocus)
       return Object.assign({}, state, {view})
     }
     return state
@@ -213,11 +214,14 @@ const rootActions = {
   ['@@redux-undo/REDO'](state) {
     const future = state.data.future
     if (future.length > 0) {
-      const newFocus = future[0].get('editFocus')
-      const view = state.view.set('focus', newFocus)
+      const editFocus = future[0].get('editFocus')
+      const view = state.view.set('focus', editFocus)
       return Object.assign({}, state, {view})
     }
     return state
+  },
+  initializeParts(state, parts) {
+    return Object.assign(state, {parts: immutable.fromJS(parts)})
   },
 }
 
@@ -235,11 +239,16 @@ const linesReducer = reduxUndo.default(
   }
 )
 
+const partsActions = {}
+
+const partsReducer = makeReducer(partsActions, initialState.parts)
+
 const viewReducer = makeReducer(viewActions, initialState['view'])
 
 const combinedReducer = redux.combineReducers({
   data: linesReducer,
   view: viewReducer,
+  parts: partsReducer,
 })
 
 function mainReducer(state = initialState, action) {

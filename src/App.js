@@ -41,15 +41,14 @@ const Bom = React.createClass({
       </reactRedux.Provider>
     )
   },
-  componentDidMount() {
+  componentWillMount() {
+    actions.setEditable(this.props.editable)
     superagent.get('1-click-BOM.tsv').then(r => {
       const {lines} = oneClickBom.parseTSV(r.text)
-      actions.initialize(lines)
+      actions.initializeLines(lines)
       return getPartinfo(lines)
-    }).then(parts => {
-      console.log(parts)
     })
-    actions.setEditable(this.props.editable)
+    .then(actions.initializeParts)
     mousetrap.bind('ctrl+z', actions.undo)
     mousetrap.bind('ctrl+y', actions.redo)
   },

@@ -106,24 +106,24 @@ const EditInput = React.createClass({
   },
 })
 
-function editingThis(editing, id, field) {
+function editingThis(editing, index, field) {
   return editing &&
-    immutable.fromJS(editing).equals(immutable.fromJS([id, field]))
+    immutable.fromJS(editing).equals(immutable.fromJS([index, field]))
 }
 
 function EditableCell(props) {
-  const {editing, line, field, setField, setFocus} = props
+  const {editing, line, field, setField, setFocus, index} = props
   if (field[0] === 'quantity') {
     var type = 'number'
   }
   const id = line.get('id')
   const value = line.getIn(field)
-  const active = editingThis(editing, id, field)
+  const active = editingThis(editing, index, field)
   return (
     <semantic.Table.Cell
       selectable={!!editing}
       active={active}
-      onClick={editing ? () => setFocus([id, field]) : null}
+      onClick={editing ? () => setFocus([index, field]) : null}
       style={{maxWidth: active ? '' : 200}}
     >
       <a
@@ -168,7 +168,7 @@ const Handle = React.createClass({
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
           style={{height: 39}}
-          onFocus={() => setFocus([line.id, null])}
+          onFocus={() => setFocus([index, null])}
           onBlur={() => setTimeout(() => setFocus([null, null]), 100)}
           className='mousetrap'
           readOnly
@@ -193,7 +193,7 @@ function Row(props) {
   const numberOfRows = lines.length
   const retailers = oneClickBom.lineData.toRetailers(lines)
   return (
-    <semantic.Table.Row active={editing && editing[0] === line.id} key={line.id}>
+    <semantic.Table.Row active={editing && editing[0] === index} key={line.id}>
       <Handle
         line={line}
         setField={setField}
@@ -210,6 +210,7 @@ function Row(props) {
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
+        index={index}
       />
       <EditableCell
         setField={setField}
@@ -220,6 +221,7 @@ function Row(props) {
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
+        index={index}
       />
       <EditableCell
         setField={setField}
@@ -230,6 +232,7 @@ function Row(props) {
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
+        index={index}
       />
       {(() => {
         if (viewState.partNumbersExpanded) {
@@ -264,6 +267,7 @@ function Row(props) {
                 loseFocus={props.loseFocus}
                 setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
+                index={index}
               />
             )
           }
@@ -279,6 +283,7 @@ function Row(props) {
                 loseFocus={props.loseFocus}
                 setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
+                index={index}
               />
           )
           return cells
@@ -289,7 +294,7 @@ function Row(props) {
           const field = ['retailers', name]
           return (
             <EditableCell
-              key={`${line.id}-${name}`}
+              key={name}
               editing={editing}
               line={iLine}
               field={field}
@@ -298,6 +303,7 @@ function Row(props) {
               loseFocus={props.loseFocus}
               setFocusNext={props.setFocusNext}
               setFocusBelow={props.setFocusBelow}
+              index={index}
             />
           )})
       })()}

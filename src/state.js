@@ -35,20 +35,12 @@ const initialState = {
 }
 
 const linesActions = {
-  setField(state, {id, field, value}) {
-    let lines = state.get('lines')
-    const line = lines.find(line => line.get('id') === id)
+  setField(state, {index, field, value}) {
     if (field[0] === 'quantity' && value < 1) {
       value = 1
     }
-    const newLine = line.setIn(field, value)
-    lines = lines.map(line => {
-      if (line.get('id') === id) {
-        return newLine
-      }
-      return line
-    })
-    return state.merge({lines, editFocus: immutable.List.of(id, field)})
+    state = state.setIn(['lines', index].concat(field),  value)
+    return state.set('editFocus', immutable.List.of(index, field))
   },
   addLine(state, value) {
     const line = immutable.fromJS(value).set('id', makeId())
@@ -133,16 +125,15 @@ const rootActions = {
       if (focus == null) {
         return focus
       }
-      const id = focus.get(0)
+      const index = focus.get(0)
       const field = focus.get(1)
-      if (id == null || field == null) {
+      if (index == null || field == null) {
         return focus
       }
-      const index = lines.findIndex(line => line.get('id') === id)
       if ((index + 1) >= lines.size) {
         return immutable.List.of(null, null)
       }
-      return immutable.List.of(lines.get(index + 1).get('id'), field)
+      return immutable.List.of(index + 1, field)
     })
     return Object.assign({}, {data: state.data, view})
   },
@@ -152,21 +143,20 @@ const rootActions = {
       if (focus == null) {
         return focus
       }
-      const id = focus.get(0)
+      const index = focus.get(0)
       const field = focus.get(1)
-      if (id == null || field == null) {
+      if (index == null || field == null) {
         return focus
       }
-      const index = lines.findIndex(line => line.get('id') === id)
       const fieldName = field.get(0)
       const partNumbersExpanded = state.view.get('partNumbersExpanded')
       if (fieldName === 'retailers') {
         const rs = oneClickBom.lineData.retailer_list
         const i = rs.indexOf(field.get(1))
         if ((i + 1) < rs.length) {
-          return immutable.fromJS([lines.get(index).get('id'), ['retailers', rs[i + 1]]])
+          return immutable.fromJS([index, ['retailers', rs[i + 1]]])
         } else if ((index + 1) < lines.size) {
-          return immutable.fromJS([lines.get(index + 1).get('id'), ['reference']])
+          return immutable.fromJS([index + 1, ['reference']])
         } else {
           return immutable.List.of(null, null)
         }
@@ -233,8 +223,7 @@ const linesReducer = reduxUndo.default(
         return false
       }
       else if (action.type === 'setField') {
-        const {id, field, value} = action.value
-        const index = previous.get('lines').findIndex(l => l.get('id') === id)
+        const {index, field, value} = action.value
         const s = previous.get('lines').getIn([index].concat(field))
         return s !== value
       }

@@ -138,7 +138,11 @@ function EditableCell(props) {
                 type={type}
                 key='EditInput'
                 setFocusNext={props.setFocusNext}
-                loseFocus={() => props.loseFocus([index, field])}
+                loseFocus={() => {
+                  setTimeout(() => {
+                    props.loseFocus([index, field])
+                  }, 100)
+                }}
                 setFocusBelow={props.setFocusBelow}
               />
               ,

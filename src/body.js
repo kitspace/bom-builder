@@ -127,9 +127,7 @@ function EditableCell(props) {
       onClick={editing ? () => setFocus([index, field]) : null}
       style={{maxWidth: active ? '' : 200}}
     >
-      <a
-        style={{maxWidth: active ? '' : 200}}
-      >
+      <a style={{maxWidth: active ? '' : 200}}>
         {(() => {
           if (active) {
             return (
@@ -140,11 +138,11 @@ function EditableCell(props) {
                 type={type}
                 key='EditInput'
                 setFocusNext={props.setFocusNext}
-                loseFocus={() => props.loseFocus([id, field])}
+                loseFocus={() => props.loseFocus([index, field])}
                 setFocusBelow={props.setFocusBelow}
               />
               ,
-              //here to make sure the cell doesn't shrink
+              //here to make sure the cell grows with the content
               <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
               ]
             )

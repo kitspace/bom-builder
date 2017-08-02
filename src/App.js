@@ -13,13 +13,13 @@ const mousetrap   = require('mousetrap')
 const DoubleScrollBar = require('react-double-scrollbar')
 
 const {mainReducer, initialState} = require('./state')
-const store = redux.createStore(mainReducer, initialState)
-
+const store       = redux.createStore(mainReducer, initialState)
 const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
 
-const Header = require('./header')
-const Body   = require('./body')
-const Menu   = require('./menu')
+const getPartinfo = require('./get_partinfo')
+const Header      = require('./header')
+const Body        = require('./body')
+const Menu        = require('./menu')
 
 const Bom = React.createClass({
   render() {
@@ -43,7 +43,11 @@ const Bom = React.createClass({
   },
   componentDidMount() {
     superagent.get('1-click-BOM.tsv').then(r => {
-      actions.setFromTsv(r.text)
+      const {lines} = oneClickBom.parseTSV(r.text)
+      actions.initialize(lines)
+      return getPartinfo(lines)
+    }).then(parts => {
+      console.log(parts)
     })
     actions.setEditable(this.props.editable)
     mousetrap.bind('ctrl+z', actions.undo)

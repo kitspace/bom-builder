@@ -96,8 +96,7 @@ const linesActions = {
     }
     return state.merge({lines, sortedBy})
   },
-  setFromTsv(state, value) {
-    const {lines} = oneClickBom.parseTSV(value)
+  initialize(state, lines) {
     return state.set('lines', immutable.fromJS(lines).map(line => {
       return line.merge({id: makeId()})
     }))
@@ -228,7 +227,7 @@ const linesReducer = reduxUndo.default(
   makeReducer(linesActions, initialState['data']),
   {
     filter(action, newState, previousState) {
-      if (action.type === 'setFromTsv') {
+      if (action.type === 'initialize') {
         return false
       }
       return !newState.equals(previousState)

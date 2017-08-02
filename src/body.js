@@ -157,11 +157,6 @@ function EditableCell(props) {
 }
 
 const Handle = React.createClass({
-  getInitialState() {
-    return {
-      keys: [],
-    }
-  },
   render() {
     const {line, setField, setFocus, removeLine, index} = this.props
     return (

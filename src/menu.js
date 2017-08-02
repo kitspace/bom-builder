@@ -20,6 +20,15 @@ function Menu(props) {
         <semantic.Icon name='repeat' />
         Redo
       </semantic.Menu.Item>
+      <semantic.Menu.Item
+        disabled={props.deleteFocus[0] == null}
+        onClick={() => {
+          props.remove(props.deleteFocus)
+        }}
+      >
+        <semantic.Icon name='x' />
+        Delete
+      </semantic.Menu.Item>
     </semantic.Menu>
   )
 }
@@ -32,6 +41,7 @@ function mapStateToProps(state) {
   return {
     undosAvailable: !!state.data.past.length,
     redosAvailable: !!state.data.future.length,
+    deleteFocus: state.view.get('focus').toJS(),
   }
 }
 

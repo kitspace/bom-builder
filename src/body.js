@@ -169,7 +169,7 @@ const Handle = React.createClass({
         <input
           style={{height: 39}}
           onFocus={() => setFocus([line.id, null])}
-          onBlur={() => setFocus([null, null])}
+          onBlur={() => setTimeout(() => setFocus([null, null]), 100)}
           className='mousetrap'
           readOnly
           onKeyDown={e => {

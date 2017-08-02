@@ -55,6 +55,19 @@ const linesActions = {
     const lines = state.get('lines').push(line)
     return state.merge({lines})
   },
+  removeField(state, focus) {
+    const [id, field] = focus
+    const index = state.get('lines').findIndex(l => l.get('id') == id)
+    return state.setIn(['lines', index].concat(field), '')
+  },
+  remove(state, focus) {
+    const [id, field] = focus
+    if (field == null) {
+      return this.removeLine(state, id)
+    } else {
+      return this.removeField(state, focus)
+    }
+  },
   removeLine(state, id) {
     const lines = state.get('lines').filter(line => {
       return line.get('id') !== id

@@ -148,3 +148,7 @@ div.retailerButtonCellIcon {
    margin-left: 20px !important;
    padding: 10px !important;
 }
+
+.ui.secondary.menu a.disabled:hover {
+   color: rgba(40, 40, 40, 0.3) !important;
+}

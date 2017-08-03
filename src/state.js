@@ -283,4 +283,42 @@ const actions = Object.assign(
   reduxUndo.ActionCreators
 )
 
-module.exports = {initialState, mainReducer, makeReducer, linesActions, emptyLine, actions}
+function makeImmutable({data, view, parts}) {
+  return {
+    data: {
+      present: immutable.fromJS(data.present),
+      past: data.past.map(s => immutable.fromJS(s)),
+      future: data.future.map(s => immutable.fromJS(s)),
+    },
+    view: immutable.fromJS(view),
+    parts: immutable.fromJS(parts),
+  }
+}
+
+function makeMutable({data, view, parts}) {
+  return {
+    data: {
+      present: data.present.toJS(),
+      past: data.past.map(s => s.toJS()),
+      future: data.future.map(s => s.toJS()),
+    },
+    view: view.toJS(),
+    parts: parts.toJS(),
+  }
+}
+
+function changed(state1, state2) {
+  return immutable.fromJS(state1).equals(state2)
+}
+
+module.exports = {
+  initialState,
+  mainReducer,
+  makeReducer,
+  linesActions,
+  emptyLine,
+  actions,
+  makeImmutable,
+  makeMutable,
+  changed,
+}

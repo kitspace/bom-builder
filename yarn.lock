@@ -5195,9 +5195,9 @@ react-scripts@1.0.10:
   optionalDependencies:
     fsevents "1.1.2"
 
-react-snapshot@^2.0.0-1:
+"react-snapshot@https://github.com/kasbah/react-snapshot#keep-state-v2":
   version "2.0.0-1"
-  resolved "https://registry.yarnpkg.com/react-snapshot/-/react-snapshot-2.0.0-1.tgz#de67cde8e68ee410e9cf3e79c4b5d0b3094936f1"
+  resolved "https://github.com/kasbah/react-snapshot#3f1805c83bf696b53b6686909d2bc86aa1fc19bb"
   dependencies:
     connect-history-api-fallback "^1.3.0"
     express "^4.15.2"

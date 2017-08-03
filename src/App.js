@@ -12,21 +12,34 @@ const immutable   = require('immutable')
 const mousetrap   = require('mousetrap')
 const DoubleScrollBar = require('react-double-scrollbar')
 
-const {mainReducer, initialState} = require('./state')
-const store       = redux.createStore(mainReducer, initialState)
-const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
-
 const getPartinfo = require('./get_partinfo')
 const Header      = require('./header')
 const Body        = require('./body')
 const Menu        = require('./menu')
 
+const {
+  mainReducer,
+  initialState,
+  makeImmutable,
+  makeMutable,
+} = require('./state')
+
+const snapshotState = window.snapshotState ? makeImmutable(window.snapshotState) : initialState
+
+const store   = redux.createStore(mainReducer, snapshotState)
+const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
+
+store.subscribe(() => {
+  window.snapshotState = makeMutable(store.getState())
+})
 
 superagent.get('1-click-BOM.tsv').then(r => {
   const {lines} = oneClickBom.parseTSV(r.text)
   actions.initializeLines(lines)
-  return getPartinfo(lines)
-}).then(actions.initializeParts)
+  if (store.getState().parts.size === 0) {
+    return getPartinfo(lines).then(actions.initializeParts)
+  }
+})
 
 const Bom = React.createClass({
   render() {

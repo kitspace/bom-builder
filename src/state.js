@@ -231,7 +231,7 @@ const linesReducer = reduxUndo.default(
   makeReducer(linesActions, initialState['data']),
   {
     filter(action, newState, previousState) {
-      if (action.type === 'initialize') {
+      if (action.type === 'initializeLines') {
         return false
       }
       return !newState.equals(previousState)

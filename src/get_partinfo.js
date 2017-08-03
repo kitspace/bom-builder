@@ -26,6 +26,9 @@ query MpnQuery($mpn: MpnInput!) {
 }`
 
 function post(mpn) {
+  if (!mpn.part || mpn.part === '') {
+    return Promise.resolve(null)
+  }
   return superagent
     .post(partinfoURL)
     .set('Accept', 'application/json')
@@ -38,7 +41,7 @@ function post(mpn) {
       return res.body.data.part
     }).catch(err => {
       console.error(err)
-      return {}
+      return null
     })
 
 }
@@ -48,6 +51,7 @@ function getPartinfo(lines) {
     return Promise.all(line.partNumbers.map(post))
   })
   return Promise.all(requests).then(ramda.flatten)
+    .then(parts => parts.filter(x => x != null))
 }
 
 module.exports = getPartinfo

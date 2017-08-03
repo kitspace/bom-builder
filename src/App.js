@@ -21,6 +21,13 @@ const Header      = require('./header')
 const Body        = require('./body')
 const Menu        = require('./menu')
 
+
+superagent.get('1-click-BOM.tsv').then(r => {
+  const {lines} = oneClickBom.parseTSV(r.text)
+  actions.initializeLines(lines)
+  return getPartinfo(lines)
+}).then(actions.initializeParts)
+
 const Bom = React.createClass({
   render() {
     return (
@@ -43,12 +50,6 @@ const Bom = React.createClass({
   },
   componentWillMount() {
     actions.setEditable(this.props.editable)
-    superagent.get('1-click-BOM.tsv').then(r => {
-      const {lines} = oneClickBom.parseTSV(r.text)
-      actions.initializeLines(lines)
-      return getPartinfo(lines)
-    })
-    .then(actions.initializeParts)
     mousetrap.bind('ctrl+z', actions.undo)
     mousetrap.bind('ctrl+y', actions.redo)
   },

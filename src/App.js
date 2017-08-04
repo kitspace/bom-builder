@@ -29,15 +29,15 @@ const {
 const store   = redux.createStore(mainReducer, initialState)
 const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
 
-snapshot.repeat(() => {
-  return superagent.get('1-click-BOM.tsv').then(r => {
-    const {lines} = oneClickBom.parseTSV(r.text)
-    actions.initializeLines(lines)
-    return lines
-  })
-    .then(getPartinfo)
-    .then(actions.initializeParts)
-    .then(() => store.getState())
+snapshot.repeat(async () => {
+  const r = await superagent.get('1-click-BOM.tsv')
+  const {lines} = oneClickBom.parseTSV(r.text)
+  actions.initializeLines(lines)
+
+  const parts = await getPartinfo(lines)
+  actions.initializeParts(parts)
+
+  return store.getState()
 }).then(actions.setState)
 
 const Bom = React.createClass({

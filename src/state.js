@@ -54,7 +54,11 @@ const linesActions = {
   },
   removeField(state, focus) {
     const [index, field] = focus
-    return state.setIn(['lines', index].concat(field), '')
+    let empty = ''
+    if (field[0] === 'quantity') {
+      empty = 1
+    }
+    return state.setIn(['lines', index].concat(field), empty)
   },
   remove(state, focus) {
     const [index, field] = focus

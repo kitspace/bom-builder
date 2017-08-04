@@ -65,11 +65,13 @@ const EditInput = React.createClass({
     this.props.setField(value)
   },
   componentWillReceiveProps(newProps) {
-    if (newProps.value !== this.state.initialValue) {
-      clearTimeout(this.timeout)
-      this.setState({
-        value: newProps.value,
-      })
+    if (this.props.type !== 'number') {
+      if (newProps.value !== this.state.initialValue) {
+        clearTimeout(this.timeout)
+        this.setState({
+          value: newProps.value,
+        })
+      }
     }
   },
   render() {
@@ -117,7 +119,6 @@ function EditableCell(props) {
   if (field[0] === 'quantity') {
     var type = 'number'
   }
-  const id = line.get('id')
   const value = line.getIn(field)
   const active = editingThis(editing, index, field)
   return (

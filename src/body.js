@@ -1,4 +1,5 @@
 const React       = require('react')
+const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const reactRedux  = require('react-redux')
 const redux       = require('redux')
@@ -33,7 +34,7 @@ function Body(props) {
   )
 }
 
-const EditInput = React.createClass({
+const EditInput = createClass({
   getInitialState() {
     return {
       value: this.props.value,
@@ -159,9 +160,9 @@ function EditableCell(props) {
   )
 }
 
-const Handle = React.createClass({
+const Handle = createClass({
   render() {
-    const {line, setField, setFocus, removeLine, index} = this.props
+    const {line, setFocus, removeLine, index} = this.props
     return (
       <td className={`marked ${markerColor(line.reference)}`}>
         <input
@@ -191,10 +192,8 @@ const Handle = React.createClass({
 })
 
 function Row(props) {
-  const {viewState, editing, line, index, lines, setField, setFocus, togglePartNumbersExpanded} = props
+  const {viewState, editing, line, index, setField, setFocus, togglePartNumbersExpanded} = props
   const iLine = immutable.fromJS(line)
-  const numberOfRows = lines.length
-  const retailers = oneClickBom.lineData.toRetailers(lines)
   return (
     <semantic.Table.Row active={editing && editing[0] === index} key={line.id}>
       <Handle
@@ -251,11 +250,8 @@ function Row(props) {
         }
       })()}
       {(() => {
-        if (viewState.partNumbersExpanded) {
-          var ps = line.partNumbers
-        } else {
-          var ps = line.partNumbers.slice(0, 1)
-        }
+        const ps = viewState.partNumbersExpanded ?
+          line.partNumbers : line.partNumbers.slice(0, 1)
         return ps.map((mpn, i) => {
           const cells = []
           if (viewState.partNumbersExpanded) {

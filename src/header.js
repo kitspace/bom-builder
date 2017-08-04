@@ -7,11 +7,8 @@ const oneClickBom = require('1-click-bom')
 const {actions} = require('./state')
 
 function Header({viewState, lines, sortBy, togglePartNumbersExpanded}) {
-  if (viewState.partNumbersExpanded) {
-    var maxPartNumbers = oneClickBom.lineData.maxPartNumbers(lines)
-  } else {
-    var maxPartNumbers = 1
-  }
+  const maxPartNumbers = viewState.partNumbersExpanded ?
+    oneClickBom.lineData.maxPartNumbers(lines) : 1
   return (
     <thead>
       <tr>

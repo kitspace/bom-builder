@@ -41,11 +41,8 @@ function mapStateToProps(state) {
   const focus = state.view.get('focus').toJS()
   const field = ['lines'].concat([focus[0]]).concat(focus[1])
   const value = state.data.present.getIn(field)
-  if (field[2] === 'quantity' || value === '') {
-    var deleteFocus = [null, null]
-  } else {
-    var deleteFocus = focus
-  }
+  const deleteFocus = (field[2] === 'quantity' || value === '') ?
+    [null, null] : focus
   return {
     undosAvailable: !!state.data.past.length,
     redosAvailable: !!state.data.future.length,

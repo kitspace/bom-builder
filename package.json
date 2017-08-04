@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "1-click-bom": "https://github.com/monostable/npm-1-click-bom",
+    "create-react-class": "^15.6.0",
     "immutable": "^3.8.1",
     "mocha": "^3.4.2",
     "mousetrap": "^1.6.1",

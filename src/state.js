@@ -209,7 +209,7 @@ const rootActions = {
     })
     return Object.assign({}, state, {view})
   },
-  ['@@redux-undo/UNDO'](state) {
+  '@@redux-undo/UNDO'(state) {
     const past = state.data.past
     if (past.length > 0) {
       const editFocus = past[past.length - 1].get('editFocus')
@@ -218,7 +218,7 @@ const rootActions = {
     }
     return state
   },
-  ['@@redux-undo/REDO'](state) {
+  '@@redux-undo/REDO'(state) {
     const future = state.data.future
     if (future.length > 0) {
       const editFocus = future[0].get('editFocus')

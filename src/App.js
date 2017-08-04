@@ -3,12 +3,12 @@ import 'semantic-ui-css/semantic.css'
 import './fontello.css'
 
 const React       = require('react')
+const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const redux       = require('redux')
 const reactRedux  = require('react-redux')
 const superagent  = require('superagent')
 const oneClickBom = require('1-click-bom')
-const immutable   = require('immutable')
 const mousetrap   = require('mousetrap')
 const {snapshot}  = require('react-snapshot')
 const DoubleScrollBar = require('react-double-scrollbar')
@@ -21,8 +21,6 @@ const Menu        = require('./menu')
 const {
   mainReducer,
   initialState,
-  makeImmutable,
-  makeMutable,
 } = require('./state')
 
 
@@ -40,7 +38,7 @@ snapshot.repeat(async () => {
   return store.getState()
 }).then(actions.setState)
 
-const Bom = React.createClass({
+const Bom = createClass({
   render() {
     return (
       <reactRedux.Provider store={store}>

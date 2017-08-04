@@ -128,6 +128,9 @@ const viewActions = {
 }
 
 const rootActions = {
+  setState(_, state) {
+    return makeImmutable(state)
+  },
   setFocusBelow(state) {
     const lines = state.data.present.get('lines')
     const view  = state.view.update('focus', focus => {

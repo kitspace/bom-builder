@@ -10,6 +10,7 @@ const superagent  = require('superagent')
 const oneClickBom = require('1-click-bom')
 const immutable   = require('immutable')
 const mousetrap   = require('mousetrap')
+const {snapshot}  = require('react-snapshot')
 const DoubleScrollBar = require('react-double-scrollbar')
 
 const getPartinfo = require('./get_partinfo')
@@ -24,22 +25,20 @@ const {
   makeMutable,
 } = require('./state')
 
-const snapshotState = window.snapshotState ? makeImmutable(window.snapshotState) : initialState
 
-const store   = redux.createStore(mainReducer, snapshotState)
+const store   = redux.createStore(mainReducer, initialState)
 const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
 
-store.subscribe(() => {
-  window.snapshotState = makeMutable(store.getState())
-})
-
-superagent.get('1-click-BOM.tsv').then(r => {
-  const {lines} = oneClickBom.parseTSV(r.text)
-  actions.initializeLines(lines)
-  if (store.getState().parts.size === 0) {
-    return getPartinfo(lines).then(actions.initializeParts)
-  }
-})
+snapshot.repeat(() => {
+  return superagent.get('1-click-BOM.tsv').then(r => {
+    const {lines} = oneClickBom.parseTSV(r.text)
+    actions.initializeLines(lines)
+    return lines
+  })
+    .then(getPartinfo)
+    .then(actions.initializeParts)
+    .then(() => store.getState())
+}).then(actions.setState)
 
 const Bom = React.createClass({
   render() {

@@ -10,6 +10,24 @@ function EditableCell(props) {
   }
   const value = line.getIn(field)
   const active = editingThis(editing, index, field)
+  let editInput = value
+  if (active) {
+    editInput = (
+      <EditInput
+        setField={value => setField({index, field, value})}
+        value={value}
+        type={type}
+        key='EditInput'
+        setFocusNext={props.setFocusNext}
+        loseFocus={() => {
+          setTimeout(() => {
+            props.loseFocus([index, field])
+          }, 100)
+        }}
+        setFocusBelow={props.setFocusBelow}
+      />
+    )
+  }
   return (
     <semantic.Table.Cell
       selectable={!!editing}
@@ -18,31 +36,9 @@ function EditableCell(props) {
       style={{maxWidth: active ? '' : 200}}
     >
       <a style={{maxWidth: active ? '' : 200}}>
-        {(() => {
-          if (active) {
-            return (
-              [
-              <EditInput
-                setField={value => setField({index, field, value})}
-                value={value}
-                type={type}
-                key='EditInput'
-                setFocusNext={props.setFocusNext}
-                loseFocus={() => {
-                  setTimeout(() => {
-                    props.loseFocus([index, field])
-                  }, 100)
-                }}
-                setFocusBelow={props.setFocusBelow}
-              />
-              ,
-              //here to make sure the cell grows with the content
-              <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
-              ]
-            )
-          }
-          return value
-        })()}
+        {editInput}
+        {/*here to make sure the cell grows with the content />*/}
+        <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
       </a>
     </semantic.Table.Cell>
   )

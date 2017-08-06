@@ -18,6 +18,7 @@ const Header      = require('./header')
 const Body        = require('./body')
 const Menu        = require('./menu')
 
+const {subscribeEffects} = require('./effects')
 const {
   mainReducer,
   initialState,
@@ -26,6 +27,8 @@ const {
 
 const store   = redux.createStore(mainReducer, initialState)
 const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
+
+subscribeEffects(store, actions)
 
 snapshot.repeat(async () => {
   const r = await superagent.get('1-click-BOM.tsv')

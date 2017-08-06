@@ -315,7 +315,7 @@ function makeMutable({data, view, parts}) {
 }
 
 function changed(state1, state2) {
-  return immutable.fromJS(state1).equals(state2)
+  return !immutable.fromJS(state1).equals(state2)
 }
 
 module.exports = {

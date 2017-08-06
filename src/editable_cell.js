@@ -13,11 +13,22 @@ function EditableCell(props) {
   const active = editingThis(editing, index, field)
   const popupActive = active && popupFields.includes(field[0])
   const value = line.getIn(field)
+  const popupTriggerId = `trigger-${line.get('id')}-${field.join('-')}`
   let editInput = value
   if (active) {
     editInput = (
       <EditInput
-        triggerId={`trigger-${line.get('id')}-${field.join('-')}`}
+        onMount={() => {
+          //this is a workaround due to bug in controlled popups in
+          //semantic-ui-react
+          //https://github.com/Semantic-Org/Semantic-UI-React/issues/1065
+          setImmediate(() => {
+            const trigger = document.getElementById(popupTriggerId)
+            if (trigger) {
+              trigger.click()
+            }
+          })
+        }}
         setField={value => setField({index, field, value})}
         value={value}
         type={type}
@@ -43,6 +54,13 @@ function EditableCell(props) {
         {editInput}
         {/*here to make sure the cell grows with the content />*/}
         <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
+        <semantic.Popup
+          on='click'
+          trigger={<div style={{width:'100%'}} id={popupTriggerId} />}
+          position='bottom center'
+        >
+          hey
+        </semantic.Popup>
       </a>
     </semantic.Table.Cell>
   )
@@ -121,22 +139,10 @@ const EditInput = createClass({
         }}
       />
     )
-    return (
-      <div>
-        {input}
-        <semantic.Popup
-          on='click'
-          trigger={<div style={{width:'100%'}} id={this.props.triggerId} />}
-          position='bottom center'
-          hideOnScroll
-        >
-          hey
-        </semantic.Popup>
-      </div>
-    )
+    return input
   },
   componentDidMount() {
-    document.getElementById(this.props.triggerId).click()
+    this.props.onMount()
     this.refs.input.focus()
     this.skipInitialBlur = false
     this.refs.input.select()

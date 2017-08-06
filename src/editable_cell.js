@@ -3,13 +3,32 @@ const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const immutable   = require('immutable')
 
+const popupFields = ['partNumbers', 'retailers']
+
+function PopupEditableCell(props) {
+  const {editing, field, index} = props
+  const active = editingThis(editing, index, field)
+  const popupActive = active && popupFields.includes(field[0])
+  if (!popupFields.includes(field[0])) {
+    return EditableCell({active, ...props})
+  }
+  return (
+    <semantic.Popup
+      open={popupActive}
+      trigger={EditableCell({active, ...props})}
+      position='bottom right'
+    >
+      hey
+    </semantic.Popup>
+  )
+}
+
 function EditableCell(props) {
-  const {editing, line, field, setField, setFocus, index} = props
+  const {active, editing, line, field, setField, setFocus, index} = props
   if (field[0] === 'quantity') {
     var type = 'number'
   }
   const value = line.getIn(field)
-  const active = editingThis(editing, index, field)
   let editInput = value
   if (active) {
     editInput = (
@@ -125,4 +144,4 @@ const EditInput = createClass({
   },
 })
 
-module.exports = EditableCell
+module.exports = PopupEditableCell

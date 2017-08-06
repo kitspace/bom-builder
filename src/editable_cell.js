@@ -11,7 +11,6 @@ function EditableCell(props) {
     var type = 'number'
   }
   const active = editingThis(editing, index, field)
-  const popupActive = active && popupFields.includes(field[0])
   const value = line.getIn(field)
   const popupTriggerId = `trigger-${line.get('id')}-${field.join('-')}`
   let editInput = value
@@ -43,6 +42,17 @@ function EditableCell(props) {
       />
     )
   }
+  if (popupFields.includes(field[0])) {
+    var popup = (
+      <semantic.Popup
+        on='click'
+        trigger={<div style={{width:'100%'}} id={popupTriggerId} />}
+        position='bottom center'
+      >
+        hey
+      </semantic.Popup>
+    )
+  }
   return (
     <semantic.Table.Cell
       selectable={!!editing}
@@ -54,13 +64,7 @@ function EditableCell(props) {
         {editInput}
         {/*here to make sure the cell grows with the content />*/}
         <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
-        <semantic.Popup
-          on='click'
-          trigger={<div style={{width:'100%'}} id={popupTriggerId} />}
-          position='bottom center'
-        >
-          hey
-        </semantic.Popup>
+        {popup}
       </a>
     </semantic.Table.Cell>
   )

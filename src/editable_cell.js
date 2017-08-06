@@ -5,34 +5,19 @@ const immutable   = require('immutable')
 
 const popupFields = ['partNumbers', 'retailers']
 
-function PopupEditableCell(props) {
-  const {editing, field, index} = props
-  const active = editingThis(editing, index, field)
-  const popupActive = active && popupFields.includes(field[0])
-  if (!popupFields.includes(field[0])) {
-    return EditableCell({active, ...props})
-  }
-  return (
-    <semantic.Popup
-      open={popupActive}
-      trigger={EditableCell({active, ...props})}
-      position='bottom right'
-    >
-      hey
-    </semantic.Popup>
-  )
-}
-
 function EditableCell(props) {
-  const {active, editing, line, field, setField, setFocus, index} = props
+  const {editing, line, field, setField, setFocus, index} = props
   if (field[0] === 'quantity') {
     var type = 'number'
   }
+  const active = editingThis(editing, index, field)
+  const popupActive = active && popupFields.includes(field[0])
   const value = line.getIn(field)
   let editInput = value
   if (active) {
     editInput = (
       <EditInput
+        triggerId={`trigger-${line.get('id')}-${field.join('-')}`}
         setField={value => setField({index, field, value})}
         value={value}
         type={type}
@@ -110,7 +95,7 @@ const EditInput = createClass({
     }
   },
   render() {
-    return (
+    const input = (
       <input
         ref='input'
         spellCheck={false}
@@ -136,12 +121,26 @@ const EditInput = createClass({
         }}
       />
     )
+    return (
+      <div>
+        {input}
+        <semantic.Popup
+          on='click'
+          trigger={<div style={{width:'100%'}} id={this.props.triggerId} />}
+          position='bottom center'
+          hideOnScroll
+        >
+          hey
+        </semantic.Popup>
+      </div>
+    )
   },
   componentDidMount() {
+    document.getElementById(this.props.triggerId).click()
     this.refs.input.focus()
     this.skipInitialBlur = false
     this.refs.input.select()
   },
 })
 
-module.exports = PopupEditableCell
+module.exports = EditableCell

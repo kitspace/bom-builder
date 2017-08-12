@@ -6,7 +6,6 @@
     "1-click-bom": "https://github.com/monostable/npm-1-click-bom",
     "create-react-class": "^15.6.0",
     "immutable": "^3.8.1",
-    "mocha": "^3.4.2",
     "mousetrap": "^1.6.1",
     "ramda": "^0.24.1",
     "react": "^15.6.1",
@@ -33,6 +32,7 @@
     "snapshotDelay": 10000
   },
   "devDependencies": {
-    "better-assert": "^1.0.2"
+    "better-assert": "^1.0.2",
+    "mocha": "^3.4.2"
   }
 }

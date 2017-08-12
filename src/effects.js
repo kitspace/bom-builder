@@ -4,7 +4,6 @@ const {
 } = require('./state')
 
 function effects(state, actions) {
-  console.log(state)
 }
 
 function subscribeEffects(store, actions) {

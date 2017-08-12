@@ -26,6 +26,7 @@ function Body(props) {
         setField,
         setFocus,
         togglePartNumbersExpanded,
+        //restrict this later to aide performance
         ...props
       }))}
     </tbody>

@@ -55,12 +55,14 @@ const linesActions = {
     return state.merge({lines})
   },
   removeField(state, focus) {
-    const [index, field] = focus
+    const index = focus.get(0)
+    const field = focus.get(1)
     const empty = field[0] === 'quantity' ?  1 : ''
-    return state.setIn(['lines', index].concat(field), empty)
+    return state.setIn(immutable.List.of('lines', index).concat(field), empty)
   },
   remove(state, focus) {
-    const [index, field] = focus
+    const index = focus.get(0)
+    const field = focus.get(1)
     if (field == null) {
       return this.removeLine(state, index)
     } else {

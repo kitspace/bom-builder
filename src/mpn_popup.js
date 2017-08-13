@@ -5,6 +5,7 @@ const createClass = require('create-react-class')
 const {h, a, div} = require('react-hyperscript-helpers')
 const semantic    = require('semantic-ui-react')
 const ramda       = require('ramda')
+const immutable   = require('immutable')
 
 
 const importance = [
@@ -73,17 +74,17 @@ const MpnPopup = createClass({
       on              : props.on,
     }
     const part = props.part
-    if (Object.keys(part).length === 0) {
+    if (!part) {
       return h(semantic.Popup, custom, 'Sorry, no further part information found.')
     }
-    const image  = part.image || {}
-    const mpn    = part.mpn || {}
-    const number = mpn.part
-    let specs    = reorder(part.specs || [])
+    const image  = part.get('image') || immutable.Map()
+    const mpn    = part.get('mpn') || immutable.Map()
+    const number = mpn.get('part')
+    let specs    = reorder(part.get('specs') || [])
     if (! this.state.expanded) {
       specs = specs.slice(0, 4)
     }
-    const tableData = specs.map(spec => [spec.name, spec.value])
+    const tableData = specs.map(spec => [spec.get('name'), spec.get('value')])
     const table = h(semantic.Table, {
         basic   : 'very',
         compact : true,
@@ -95,7 +96,7 @@ const MpnPopup = createClass({
         },
     })
     let button
-    if ((part.specs || []).length > 4) {
+    if (part.get('specs') && part.get('specs').size > 4) {
       button = h(div, {style:{display: 'flex', justifyContent: 'center'}}, [
         h(semantic.Button, {
           onClick : this.toggleExpanded,
@@ -109,18 +110,18 @@ const MpnPopup = createClass({
         h(div, {style:{display: 'flex', flexDirection:'column', justifyContent: 'space-between'}}, [
           div([
             div({className: 'imageContainer'}, [
-              h(semantic.Image, {src: image.url}),
+              h(semantic.Image, {src: image.get('url')}),
             ]),
-            a({style:{fontSize:9}, href: image.credit_url}, image.credit_string),
+            a({style:{fontSize:9}, href: image.get('credit_url')}, image.get('credit_string')),
           ]),
           h(div, {style:{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start'}}, [
             a({style:{fontSize: 10}, href: number ? `https://octopart.com/search?q=${number}` : 'https://octopart.com/'}, 'Powered by Octopart'),
           ]),
         ]),
         div({style:{marginLeft: 20}}, [
-          div({style: {maxWidth: 200}}, part.description),
+          div({style: {maxWidth: 200}}, part.get('description')),
           div({style: {marginTop: 15, display:'flex', justifyContent: 'center'}}, [
-            a({href: part.datasheet}, [
+            a({href: part.get('datasheet')}, [
               h(semantic.Icon, {name: 'file pdf outline'}),
               'Datasheet'
             ])

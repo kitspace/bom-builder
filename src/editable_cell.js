@@ -55,7 +55,7 @@ const EditableCell = createClass({
     if (popupFields.includes(field[0])) {
       var popup = (
         <MpnPopup
-          part={suggestion ? suggestion.toJS() : {}}
+          part={suggestion}
           on='click'
           trigger={<div style={{width:'100%'}} id={popupTriggerId} />}
           position='bottom center'

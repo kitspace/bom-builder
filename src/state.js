@@ -39,8 +39,6 @@ const linesActions = {
   setField(state, {index, field, value}) {
     if (field[0] === 'quantity' && value < 1) {
       value = 1
-    } else if (field[0] === 'partNumber') {
-      field += ['selected']
     }
     const currentValue = state.getIn(['lines', index].concat(field))
     if (currentValue !== value) {
@@ -81,7 +79,7 @@ const linesActions = {
       //header can be an array meaning we want to sort by mpn or manufacturer
       //e.g. ['manufacturer', 0]
       lines = lines.sortBy(line => {
-        const field = line.get('partNumbers').get(header[1]).get('selected')
+        const field = line.get('partNumbers').get(header[1])
         if (field) {
           return field.get(header[0]).toLowerCase()
         }
@@ -104,10 +102,7 @@ const linesActions = {
   },
   initializeLines(state, lines) {
     return state.set('lines', immutable.fromJS(lines).map(line => {
-      line = line.set('id', makeId())
-      return line.update('partNumbers', ps => {
-        return ps.map(p => immutable.fromJS({selected: p, suggestions: []}))
-      })
+      return line.set('id', makeId())
     }))
   },
 }
@@ -188,9 +183,9 @@ const rootActions = {
             return immutable.List.of('description')
           } else if (fieldName === 'description') {
             if (partNumbersExpanded) {
-              return immutable.List.of('partNumbers', 0, 'selected', 'manufacturer')
+              return immutable.List.of('partNumbers', 0, 'manufacturer')
             } else {
-              return immutable.List.of('partNumbers', 0, 'selected', 'part')
+              return immutable.List.of('partNumbers', 0, 'part')
             }
           } else if (fieldName === 'partNumbers') {
             const first = oneClickBom.lineData.retailer_list[0]

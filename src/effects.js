@@ -12,8 +12,8 @@ function effects(diff, state) {
     const value = d.get('value')
     if (path.size === 2 && op === 'add' && path.get(0) === 'lines') {
       findSuggestions(value)
-    } else if (path.size === 6 && path.includes('partNumbers')
-      && path.includes('selected') && typeof path.get(3) === 'number') {
+    } else if (path.size === 5 && path.includes('partNumbers')
+      && typeof path.get(3) === 'number') {
       const line = state.data.present.getIn(path.slice(0, 4))
       findSuggestions(line)
     }
@@ -35,7 +35,7 @@ function findSuggestions(line) {
   const partNumbers = line.get('partNumbers')
 
   const needsSuggestions = partNumbers.some(p => {
-    return p.get('selected').get('part') === ''
+    return p.get('part') === ''
   })
 
   if (needsSuggestions) {

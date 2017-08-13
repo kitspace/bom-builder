@@ -73,7 +73,7 @@ function Line(props) {
         return ps.map((mpn, i) => {
           const cells = []
           if (viewState.get('partNumbersExpanded')) {
-            const field = ['partNumbers', i, 'selected', 'manufacturer']
+            const field = ['partNumbers', i, 'manufacturer']
             cells.push(
               <EditableCell
                 key={`manufacturer-${i}`}
@@ -89,7 +89,7 @@ function Line(props) {
               />
             )
           }
-          const field = ['partNumbers', i, 'selected', 'part']
+          const field = ['partNumbers', i, 'part']
           cells.push(
               <EditableCell
                 key={`part-${i}`}

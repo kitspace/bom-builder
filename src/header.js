@@ -6,9 +6,7 @@ const oneClickBom = require('1-click-bom')
 
 const {actions} = require('./state')
 
-function Header({viewState, lines, sortBy, togglePartNumbersExpanded}) {
-  const maxPartNumbers = viewState.partNumbersExpanded ?
-    oneClickBom.lineData.maxPartNumbers(lines) : 1
+function Header({partNumbersExpanded, maxPartNumbers, sortBy, togglePartNumbersExpanded}) {
   return (
     <thead>
       <tr>
@@ -30,7 +28,7 @@ function Header({viewState, lines, sortBy, togglePartNumbersExpanded}) {
         {(() => {
           const cells = []
           let headerClassName = ''
-          if (viewState.partNumbersExpanded) {
+          if (partNumbersExpanded) {
             headerClassName = 'expandedHeader'
             cells.push(
               <td className='collapserCell' key='button'>
@@ -45,7 +43,7 @@ function Header({viewState, lines, sortBy, togglePartNumbersExpanded}) {
             )
           }
           for (let i = 0; i < maxPartNumbers; ++i) {
-            if (viewState.partNumbersExpanded) {
+            if (partNumbersExpanded) {
               cells.push(
                 <th className={headerClassName} key={`Manufacturer${i}`}>
                   <a onClick={() => sortBy(['manufacturer', i])}>
@@ -61,7 +59,7 @@ function Header({viewState, lines, sortBy, togglePartNumbersExpanded}) {
                   Part Number
                 </a>
                 {(() => {
-                  if (!viewState.partNumbersExpanded && i === 0) {
+                  if (!partNumbersExpanded && i === 0) {
                     return  (
                       <semantic.Button
                         basic
@@ -105,9 +103,12 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mapStateToProps(state) {
+  const partNumbersExpanded = state.view.get('partNumbersExpanded')
+  const first = state.data.present.getIn(['lines', 0])
   return {
-    viewState: state.view.toJS(),
-    lines: state.data.present.get('lines').toJS()
+    partNumbersExpanded,
+    maxPartNumbers:
+      partNumbersExpanded ? first ? first.get('partNumbers').size : 1 : 1
   }
 }
 

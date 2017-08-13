@@ -3,39 +3,56 @@ const ramda      = require('ramda')
 
 const partinfoURL = 'https://partinfo.kitnic.it/graphql'
 
+const part = `
+  mpn {
+    manufacturer
+    part
+  }
+  datasheet
+  description
+  image {
+    url
+    credit_string
+    credit_url
+  }
+  specs {
+    key
+    name
+    value
+  }
+`
+
 const MpnQuery = `
-query MpnQuery($mpn: MpnInput!) {
-  part(mpn: $mpn) {
-    mpn {
-      manufacturer
-      part
-    }
-    datasheet
-    description
-    image {
-      url
-      credit_string
-      credit_url
-    }
-    specs {
-      key
-      name
-      value
-    }
+query MpnQuery($input: MpnInput!) {
+  part(mpn: $input) {
+    ${part}
   }
 }`
 
-function post(mpn) {
-  if (!mpn.part || mpn.part === '') {
+const SkuQuery = `
+query SkuQuery($input: SkuInput!) {
+  part(sku: $input) {
+    ${part}
+  }
+}`
+
+function post(mpnOrSku) {
+  let query = MpnQuery
+  if (mpnOrSku.vendor) {
+    query = SkuQuery
+  }
+
+  if (!mpnOrSku.part || mpnOrSku.part === '') {
     return Promise.resolve(null)
   }
+
   return superagent
     .post(partinfoURL)
     .set('Accept', 'application/json')
     .send({
-      query: MpnQuery,
+      query,
       variables: {
-        mpn
+        input: mpnOrSku
       },
     }).then(res => {
       return res.body.data.part
@@ -54,4 +71,4 @@ function getPartinfo(lines) {
     .then(parts => parts.filter(x => x != null))
 }
 
-module.exports = getPartinfo
+module.exports = {post}

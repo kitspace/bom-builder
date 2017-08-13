@@ -106,7 +106,7 @@ const linesActions = {
     return state.set('lines', immutable.fromJS(lines).map(line => {
       line = line.set('id', makeId())
       return line.update('partNumbers', ps => {
-        return ps.map(p => immutable.fromJS({selected: p, choices: []}))
+        return ps.map(p => immutable.fromJS({selected: p, suggestions: []}))
       })
     }))
   },

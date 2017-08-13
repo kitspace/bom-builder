@@ -35,9 +35,6 @@ snapshot.repeat(async () => {
   const {lines} = oneClickBom.parseTSV(r.text)
   actions.initializeLines(lines)
 
-  const parts = await getPartinfo(lines)
-  actions.initializeParts(parts)
-
   return store.getState()
 }).then(actions.setState)
 

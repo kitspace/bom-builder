@@ -1,4 +1,5 @@
 const immutableDiff = require('immutable-diff').default
+const getPartinfo = require('./get_partinfo')
 const {
   initialState,
   changed,
@@ -31,6 +32,21 @@ function subscribeEffects(store, actions) {
 }
 
 function findSuggestions(line) {
+  const partNumbers = line.get('partNumbers')
+
+  const needsSuggestions = partNumbers.some(p => {
+    return p.get('selected').get('part') === ''
+  })
+
+  if (needsSuggestions) {
+    const skus = line.get('retailers').entrySeq().map(([vendor, part]) => {
+      if (part !== '') {
+        return {vendor, part}
+      }
+    }).filter(x => x)
+    const ps = skus.map(sku => getPartinfo.post(sku))
+    Promise.all(ps).then(ps => console.log(ps))
+  }
 }
 
 module.exports = {subscribeEffects}

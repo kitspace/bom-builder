@@ -46,7 +46,7 @@ query SkuQuery($input: SkuInput!) {
   }
 }`
 
-function post(mpnOrSku) {
+function getPartinfo(mpnOrSku) {
   let query = MpnQuery
   if (mpnOrSku.vendor) {
     query = SkuQuery
@@ -73,12 +73,4 @@ function post(mpnOrSku) {
 
 }
 
-function getPartinfo(lines) {
-  const requests = lines.map(line => {
-    return Promise.all(line.partNumbers.map(post))
-  })
-  return Promise.all(requests).then(ramda.flatten)
-    .then(parts => parts.filter(x => x != null))
-}
-
-module.exports = {post}
+module.exports = getPartinfo

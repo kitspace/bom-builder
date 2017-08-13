@@ -46,7 +46,7 @@ function findSuggestions(line, actions) {
       }
       return null
     }).filter(x => x)
-    const ps = skus.map(sku => getPartinfo.post(sku))
+    const ps = skus.map(sku => getPartinfo(sku))
       .map(p => {
         return p.then(part => {
           return actions.addSuggestion({id, part})

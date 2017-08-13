@@ -5,70 +5,76 @@ const immutable   = require('immutable')
 
 const popupFields = ['partNumbers', 'retailers']
 
-function EditableCell(props) {
-  const {editing, line, field, setField, setFocus, index} = props
-  if (field === 'quantity') {
-    var type = 'number'
-  }
-  const active = editingThis(editing, index, field)
-  const value = line.getIn(field)
-  const popupTriggerId = `trigger-${line.get('id')}-${field.join('-')}`
-  let editInput = value
-  if (active) {
-    editInput = (
-      <EditInput
-        onMount={() => {
-          //this is a workaround due to bug in controlled popups in
-          //semantic-ui-react
-          //https://github.com/Semantic-Org/Semantic-UI-React/issues/1065
-          setImmediate(() => {
-            const trigger = document.getElementById(popupTriggerId)
-            if (trigger) {
-              trigger.click()
-            }
-          })
-        }}
-        setField={value => setField({index, field, value})}
-        value={value}
-        type={type}
-        key='EditInput'
-        setFocusNext={props.setFocusNext}
-        loseFocus={() => {
-          setTimeout(() => {
-            props.loseFocus([index, field])
-          }, 100)
-        }}
-        setFocusBelow={props.setFocusBelow}
-      />
-    )
-  }
-  if (popupFields.includes(field[0])) {
-    var popup = (
-      <semantic.Popup
-        on='click'
-        trigger={<div style={{width:'100%'}} id={popupTriggerId} />}
-        position='bottom center'
+const EditableCell = createClass({
+  render() {
+    const props = this.props
+    const {editing, line, field, setField, setFocus, index} = props
+    if (field === 'quantity') {
+      var type = 'number'
+    }
+    const active = editingThis(editing, index, field)
+    const value = line.getIn(field)
+    const popupTriggerId = `trigger-${line.get('id')}-${field.join('-')}`
+    let editInput = value
+    if (active) {
+      editInput = (
+        <EditInput
+          onMount={() => {
+            //this is a workaround due to bug in controlled popups in
+            //semantic-ui-react
+            //https://github.com/Semantic-Org/Semantic-UI-React/issues/1065
+            this.immediate = setImmediate(() => {
+              const trigger = document.getElementById(popupTriggerId)
+              if (trigger) {
+                trigger.click()
+              }
+            })
+          }}
+          onUnmount={() => {
+            clearImmediate(this.immediate)
+          }}
+          setField={value => setField({index, field, value})}
+          value={value}
+          type={type}
+          key='EditInput'
+          setFocusNext={props.setFocusNext}
+          loseFocus={() => {
+            setTimeout(() => {
+              props.loseFocus([index, field])
+            }, 100)
+          }}
+          setFocusBelow={props.setFocusBelow}
+        />
+      )
+    }
+    if (popupFields.includes(field[0])) {
+      var popup = (
+        <semantic.Popup
+          on='click'
+          trigger={<div style={{width:'100%'}} id={popupTriggerId} />}
+          position='bottom center'
+        >
+          hey
+        </semantic.Popup>
+      )
+    }
+    return (
+      <semantic.Table.Cell
+        selectable={!!editing}
+        active={active}
+        onClick={editing ? () => setFocus([index, field]) : null}
+        style={{maxWidth: active ? '' : 200}}
       >
-        hey
-      </semantic.Popup>
+        <a style={{maxWidth: active ? '' : 200}}>
+          {editInput}
+          {/*here to make sure the cell grows with the content />*/}
+          <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
+          {popup}
+        </a>
+      </semantic.Table.Cell>
     )
   }
-  return (
-    <semantic.Table.Cell
-      selectable={!!editing}
-      active={active}
-      onClick={editing ? () => setFocus([index, field]) : null}
-      style={{maxWidth: active ? '' : 200}}
-    >
-      <a style={{maxWidth: active ? '' : 200}}>
-        {editInput}
-        {/*here to make sure the cell grows with the content />*/}
-        <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
-        {popup}
-      </a>
-    </semantic.Table.Cell>
-  )
-}
+})
 
 function editingThis(editing, index, field) {
   return editing && editing.equals(immutable.fromJS([index, field]))
@@ -143,6 +149,9 @@ const EditInput = createClass({
       />
     )
     return input
+  },
+  componentWillUnmount() {
+    this.props.onUnmount()
   },
   componentDidMount() {
     this.props.onMount()

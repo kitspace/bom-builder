@@ -45,7 +45,7 @@ const linesActions = {
     const currentValue = state.getIn(['lines', index].concat(field))
     if (currentValue !== value) {
       state = state.setIn(['lines', index].concat(field),  value)
-      return state.set('editFocus', immutable.List.of(index, field))
+      return state.set('editFocus', immutable.List.of(index, immutable.fromJS(field)))
     }
     return state
   },
@@ -188,12 +188,13 @@ const rootActions = {
             return immutable.List.of('description')
           } else if (fieldName === 'description') {
             if (partNumbersExpanded) {
-              return immutable.List.of('partNumbers', 0, 'manufacturer')
+              return immutable.List.of('partNumbers', 0, 'selected', 'manufacturer')
             } else {
-              return immutable.List.of('partNumbers', 0, 'part')
+              return immutable.List.of('partNumbers', 0, 'selected', 'part')
             }
           } else if (fieldName === 'partNumbers') {
-            const next = immutable.List.of('retailers', oneClickBom.lineData.retailer_list[0])
+            const first = oneClickBom.lineData.retailer_list[0]
+            const next = immutable.List.of('retailers', first)
             if (partNumbersExpanded) {
               const i = field.get(1)
               const type = field.get(2)

@@ -1,7 +1,6 @@
 const React       = require('react')
 const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
-const immutable   = require('immutable')
 const oneClickBom = require('1-click-bom')
 
 const EditableCell = require('./editable_cell')
@@ -13,9 +12,8 @@ function Line(props) {
     line,
     index,
   } = props
-  const iLine = immutable.fromJS(line)
   return (
-    <semantic.Table.Row active={editing && editing[0] === index} key={line.id}>
+    <semantic.Table.Row active={editing && editing.get(0) === index} key={line.get('id')}>
       <Handle
         line={line}
         setField={props.setField}
@@ -28,7 +26,7 @@ function Line(props) {
         setField={props.setField}
         setFocus={props.setFocus}
         editing={editing}
-        line={iLine}
+        line={line}
         field={['reference']}
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
@@ -39,7 +37,7 @@ function Line(props) {
         setField={props.setField}
         setFocus={props.setFocus}
         editing={editing}
-        line={iLine}
+        line={line}
         field={['quantity']}
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
@@ -50,7 +48,7 @@ function Line(props) {
         setField={props.setField}
         setFocus={props.setFocus}
         editing={editing}
-        line={iLine}
+        line={line}
         field={['description']}
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
@@ -58,7 +56,7 @@ function Line(props) {
         index={index}
       />
       {(() => {
-        if (viewState.partNumbersExpanded) {
+        if (viewState.get('partNumbersExpanded')) {
           return (
             <td
               className='collapserCell'
@@ -70,17 +68,17 @@ function Line(props) {
         }
       })()}
       {(() => {
-        const ps = viewState.partNumbersExpanded ?
-          line.partNumbers : line.partNumbers.slice(0, 1)
+        const ps = viewState.get('partNumbersExpanded') ?
+          line.get('partNumbers') : line.get('partNumbers').slice(0, 1)
         return ps.map((mpn, i) => {
           const cells = []
-          if (viewState.partNumbersExpanded) {
+          if (viewState.get('partNumbersExpanded')) {
             const field = ['partNumbers', i, 'selected', 'manufacturer']
             cells.push(
               <EditableCell
                 key={`manufacturer-${i}`}
                 editing={editing}
-                line={iLine}
+                line={line}
                 field={field}
                 setField={props.setField}
                 setFocus={props.setFocus}
@@ -96,7 +94,7 @@ function Line(props) {
               <EditableCell
                 key={`part-${i}`}
                 editing={editing}
-                line={iLine}
+                line={line}
                 field={field}
                 setField={props.setField}
                 setFocus={props.setFocus}
@@ -116,7 +114,7 @@ function Line(props) {
             <EditableCell
               key={name}
               editing={editing}
-              line={iLine}
+              line={line}
               field={field}
               setField={props.setField}
               setFocus={props.setFocus}
@@ -135,7 +133,7 @@ const Handle = createClass({
   render() {
     const {line, setFocus, removeLine, index} = this.props
     return (
-      <td className={`marked ${markerColor(line.reference)}`}>
+      <td className={`marked ${markerColor(line.get('reference'))}`}>
         <input
           ref="input"
           style={{height: 39}}

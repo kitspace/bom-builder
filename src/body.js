@@ -14,7 +14,7 @@ function Body(props) {
     setFocus,
     togglePartNumbersExpanded
   } = props
-  const editing = viewState.editable ? viewState.focus : null
+  const editing = viewState.get('editable') ? viewState.get('focus') : null
   return (
     <tbody>
       {lines.map((line, index) => Line({
@@ -39,8 +39,8 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
-    viewState: state.view.toJS(),
-    lines: state.data.present.get('lines').toJS()
+    viewState: state.view,
+    lines: state.data.present.get('lines')
   }
 }
 

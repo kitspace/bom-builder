@@ -7,7 +7,7 @@ const popupFields = ['partNumbers', 'retailers']
 
 function EditableCell(props) {
   const {editing, line, field, setField, setFocus, index} = props
-  if (field[0] === 'quantity') {
+  if (field === 'quantity') {
     var type = 'number'
   }
   const active = editingThis(editing, index, field)
@@ -71,8 +71,7 @@ function EditableCell(props) {
 }
 
 function editingThis(editing, index, field) {
-  return editing &&
-    immutable.fromJS(editing).equals(immutable.fromJS([index, field]))
+  return editing && editing.equals(immutable.fromJS([index, field]))
 }
 
 const EditInput = createClass({

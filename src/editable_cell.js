@@ -3,6 +3,8 @@ const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const immutable   = require('immutable')
 
+const MpnPopup = require('./mpn_popup').default
+
 const popupFields = ['partNumbers', 'retailers']
 
 const EditableCell = createClass({
@@ -47,15 +49,18 @@ const EditableCell = createClass({
         />
       )
     }
+
+    const suggestion = line.get('suggestions').first()
+
     if (popupFields.includes(field[0])) {
       var popup = (
-        <semantic.Popup
+        <MpnPopup
+          part={suggestion ? suggestion.toJS() : {}}
           on='click'
           trigger={<div style={{width:'100%'}} id={popupTriggerId} />}
           position='bottom center'
         >
-          hey
-        </semantic.Popup>
+        </MpnPopup>
       )
     }
     return (

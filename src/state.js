@@ -54,7 +54,6 @@ const linesActions = {
     return state.merge({lines})
   },
   addSuggestion(state, {id, part}) {
-    console.log('addSuggestion', part)
     let lines = state.get('lines')
     const index = lines.findIndex(l => l.get('id') === id)
     let line = lines.get(index)

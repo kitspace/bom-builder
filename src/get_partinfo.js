@@ -1,5 +1,4 @@
 const superagent = require('superagent')
-const ramda      = require('ramda')
 
 const partinfoURL = 'https://partinfo.kitnic.it/graphql'
 

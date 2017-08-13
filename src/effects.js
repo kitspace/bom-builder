@@ -41,7 +41,7 @@ function findSuggestions(line, actions) {
 
   if (needsSuggestions) {
     const suggestionSkus = line.get('suggestions').flatMap(s => {
-      return s.get('offers').map(o => o.get('sku'))
+      return s.get('offers').map(offer => offer.get('sku'))
     })
     const skus = line.get('retailers').entrySeq().map(([vendor, part]) => {
       if (vendor === 'Digikey') {

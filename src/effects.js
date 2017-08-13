@@ -5,17 +5,17 @@ const {
   changed,
 } = require('./state')
 
-function effects(diff, state) {
+function effects(diff, state, actions) {
   diff.forEach(d => {
     const op = d.get('op')
     const path = d.get('path')
     const value = d.get('value')
     if (path.size === 2 && op === 'add' && path.get(0) === 'lines') {
-      findSuggestions(value)
+      findSuggestions(value, actions)
     } else if (path.size === 5 && path.includes('partNumbers')
       && typeof path.get(3) === 'number') {
-      const line = state.data.present.getIn(path.slice(0, 4))
-      findSuggestions(line)
+      const line = state.data.present.getIn(path.slice(0, 2))
+      findSuggestions(line, actions)
     }
   })
 }
@@ -25,14 +25,15 @@ function subscribeEffects(store, actions) {
   store.subscribe(() => {
     const state = store.getState()
     if (changed(prev_state, state)) {
-      effects(immutableDiff(prev_state.data.present, state.data.present), state)
+      effects(immutableDiff(prev_state.data.present, state.data.present), state, actions)
       prev_state = state
     }
   })
 }
 
-function findSuggestions(line) {
+function findSuggestions(line, actions) {
   const partNumbers = line.get('partNumbers')
+  const id = line.get('id')
 
   const needsSuggestions = partNumbers.some(p => {
     return p.get('part') === ''
@@ -43,9 +44,15 @@ function findSuggestions(line) {
       if (part !== '') {
         return {vendor, part}
       }
+      return null
     }).filter(x => x)
     const ps = skus.map(sku => getPartinfo.post(sku))
-    Promise.all(ps).then(ps => console.log(ps))
+      .map(p => {
+        return p.then(part => {
+          return actions.addSuggestion({id, part})
+        })
+      })
+    return Promise.all(ps)
   }
 }
 

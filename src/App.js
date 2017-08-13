@@ -13,7 +13,6 @@ const mousetrap   = require('mousetrap')
 const {snapshot}  = require('react-snapshot')
 const DoubleScrollBar = require('react-double-scrollbar')
 
-const getPartinfo = require('./get_partinfo')
 const Header      = require('./header')
 const Body        = require('./body')
 const Menu        = require('./menu')

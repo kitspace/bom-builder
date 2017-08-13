@@ -20,6 +20,16 @@ const part = `
     name
     value
   }
+  offers {
+    sku {
+      vendor
+      part
+    }
+    prices {
+      USD
+      EUR
+    }
+  }
 `
 
 const MpnQuery = `

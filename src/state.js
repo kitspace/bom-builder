@@ -19,6 +19,7 @@ const emptyLine = immutable.Map({
     Farnell : '',
     Newark  : '',
   }),
+  suggestions: immutable.Set(),
 })
 
 const initialState = {
@@ -51,6 +52,18 @@ const linesActions = {
     const line = immutable.fromJS(value).set('id', makeId())
     const lines = state.get('lines').push(line)
     return state.merge({lines})
+  },
+  addSuggestion(state, {id, part}) {
+    console.log('addSuggestion', part)
+    let lines = state.get('lines')
+    const index = lines.findIndex(l => l.get('id') === id)
+    let line = lines.get(index)
+    if (line) {
+      line = line.update('suggestions', s => s.add(immutable.fromJS(part)))
+      lines = lines.set(index, line)
+      return state.set('lines', lines)
+    }
+    return state
   },
   removeField(state, focus) {
     const index = focus.get(0)
@@ -102,7 +115,8 @@ const linesActions = {
   },
   initializeLines(state, lines) {
     return state.set('lines', immutable.fromJS(lines).map(line => {
-      return line.set('id', makeId())
+      line = line.set('id', makeId())
+      return line.set('suggestions', immutable.Set())
     }))
   },
 }
@@ -234,11 +248,13 @@ const rootActions = {
 
 const rootReducer = makeReducer(rootActions, initialState)
 
+
+const ignoreTypes = immutable.List.of('initializeLines', 'addSuggestion')
 const linesReducer = reduxUndo.default(
   makeReducer(linesActions, initialState['data']),
   {
     filter(action, newState, previousState) {
-      if (action.type === 'initializeLines') {
+      if (ignoreTypes.includes(action.type)) {
         return false
       }
       return !newState.equals(previousState)
@@ -290,15 +306,30 @@ const actions = Object.assign(
   reduxUndo.ActionCreators
 )
 
-function makeImmutable({data, view, parts}) {
+function makeLineImmutable(line) {
+  return immutable.fromJS(line).update('suggestions', s => immutable.Set(s))
+}
+
+function makeDataImmutable(data) {
+  if (immutable.Iterable.isIterable(data)) {
+    return data
+  }
+  const {lines, editFocus, sortedBy} = data
+  return immutable.Map({
+    lines: immutable.List(lines).map(makeLineImmutable),
+    editFocus: immutable.List(editFocus),
+    sortedBy: immutable.List(sortedBy),
+  })
+}
+
+function makeImmutable({data, view}) {
   return {
     data: {
-      present: immutable.fromJS(data.present),
-      past: data.past.map(s => immutable.fromJS(s)),
-      future: data.future.map(s => immutable.fromJS(s)),
+      present: makeDataImmutable(data.present),
+      past: data.past.map(makeDataImmutable),
+      future: data.future.map(makeDataImmutable),
     },
     view: immutable.fromJS(view),
-    parts: immutable.fromJS(parts),
   }
 }
 

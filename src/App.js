@@ -13,11 +13,13 @@ const mousetrap   = require('mousetrap')
 const {snapshot}  = require('react-snapshot')
 const DoubleScrollBar = require('react-double-scrollbar')
 
+const getPartinfo = require('./get_partinfo')
 const Header      = require('./header')
 const Body        = require('./body')
 const Menu        = require('./menu')
 
 const {subscribeEffects} = require('./effects')
+const {findSuggestions}  = require('./suggestions')
 const {
   mainReducer,
   initialState,
@@ -27,15 +29,26 @@ const {
 const store   = redux.createStore(mainReducer, initialState)
 const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
 
+function getTsv() {
+  return superagent.get('1-click-BOM.tsv').then(r => {
+    const {lines} = oneClickBom.parseTSV(r.text)
+    actions.initializeLines(lines)
+    return store.getState()
+  })
+}
+
+snapshot(() => {
+  return getTsv().then(state => {
+    const ps = state.data.present.get('lines').map(line => {
+      return findSuggestions(line, actions)
+    })
+    return Promise.all(ps).then(() => store.getState())
+  })
+}).then(actions.setState)
+
+
 subscribeEffects(store, actions)
 
-snapshot.repeat(async () => {
-  const r = await superagent.get('1-click-BOM.tsv')
-  const {lines} = oneClickBom.parseTSV(r.text)
-  actions.initializeLines(lines)
-
-  return store.getState()
-}).then(actions.setState)
 
 const Bom = createClass({
   render() {

@@ -26,3 +26,11 @@
 }
 .tableContainer {
 }
+
+a {
+   color: black;
+}
+
+a:hover {
+   color: black;
+}

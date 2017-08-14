@@ -107,6 +107,7 @@ const MpnPopup = createClass({
     }
     return h(semantic.Popup, custom, [
       div({className: 'topAreaContainer'}, [
+        h(div, {style:{display: 'flex', alignItems: 'center', padding: 10}}, [h(semantic.Button, {basic: true, icon:'left arrow'})]),
         h(div, {style:{display: 'flex', flexDirection:'column', justifyContent: 'space-between'}}, [
           div([
             div({className: 'imageContainer'}, [
@@ -129,6 +130,7 @@ const MpnPopup = createClass({
           table,
           button,
         ]),
+        h(div, {style:{display: 'flex', alignItems: 'center', padding: 10}}, [h(semantic.Button, {basic: true, icon:'right arrow'})]),
       ]),
     ])
   },

@@ -75,7 +75,11 @@ const MpnPopup = createClass({
       renderBodyRow(args) {
         return (
           <semantic.Table.Row key={String(args)}>
-            {args.map(text => <semantic.Table.Cell>{text}</semantic.Table.Cell>)}
+            {args.map(text => (
+              <semantic.Table.Cell key={text}>
+                {text}
+              </semantic.Table.Cell>
+            ))}
           </semantic.Table.Row>
         )
       },
@@ -110,20 +114,28 @@ const MpnPopup = createClass({
         on              = {props.on}
       >
         <semantic.Button.Group style={{marginBottom: 10}} basic fluid>
-          <semantic.Button disabled={!part.size} icon='left chevron'/>
-          <semantic.Button disabled={!part.size} icon='square outline' content='Select' />
-          <semantic.Button disabled={!part.size} icon='right chevron' />
+          <semantic.Button
+            disabled={!part.size}
+            icon='left chevron'
+          />
+          <semantic.Button
+            disabled={!part.size}
+            icon='square outline'
+            content='Select'
+          />
+          <semantic.Button
+            disabled={!part.size}
+            icon='right chevron'
+          />
         </semantic.Button.Group>
         {(() => {
           if (part.size === 0) {
             return (
-              <div className='topAreaContainer'>
-                <div style={{maxWidth: 300}}>
-                  {
-                    `Sorry, could not find any matching parts. Please try adding
+              <div style={{maxWidth: 300}}>
+                {
+                  `Sorry, could not find any matching parts. Please try adding
                     more information in other fields.`
-                  }
-                </div>
+                }
               </div>
             )
           }

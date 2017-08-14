@@ -106,11 +106,12 @@ const MpnPopup = createClass({
       ])
     }
     return h(semantic.Popup, custom, [
-      div({style: {width: '100%',  display: 'flex', justifyContent: 'space-around', marginBottom: 10}}, [
-        h(semantic.Button, {icon: 'square outline', labelPosition: 'left', fluid: true, color: 'blue', content:'Select'}),
-      ]),
+    <semantic.Button.Group style={{marginBottom: 10}} basic fluid>
+      <semantic.Button icon='left chevron'/>
+      <semantic.Button icon='square outline' content='Select' />
+      <semantic.Button icon='right chevron' />
+    </semantic.Button.Group>,
       div({className: 'topAreaContainer'}, [
-        h(div, {style:{display: 'flex', alignItems: 'center', paddingRight: 10}}, [h(semantic.Button, {basic: true, icon:'left arrow'})]),
         h(div, {style:{display: 'flex', flexDirection:'column', justifyContent: 'space-between'}}, [
           div([
             div({className: 'imageContainer'}, [
@@ -133,7 +134,6 @@ const MpnPopup = createClass({
           table,
           button,
         ]),
-        h(div, {style:{display: 'flex', alignItems: 'center', paddingLeft: 10}}, [h(semantic.Button, {basic: true, icon:'right arrow'})]),
       ]),
     ])
   },

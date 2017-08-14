@@ -53,6 +53,7 @@ function Line(props) {
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
+        index={index}
         active={editingThis(editing, index, ['quantity'])}
       />
       <EditableCell

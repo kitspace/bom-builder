@@ -14,7 +14,7 @@ const EditableCell = createClass({
   render() {
     const props = this.props
     const {editing, line, field, setField, setFocus, index, active} = props
-    if (field === 'quantity') {
+    if (field[0] === 'quantity') {
       var type = 'number'
     }
     const value = line.getIn(field)

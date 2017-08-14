@@ -25,12 +25,12 @@ const EditableCell = createClass({
       editInput = (
         <EditInput
           onMount={() => {
-            //this is a workaround due to bug in controlled popups in
-            //semantic-ui-react
-            //https://github.com/Semantic-Org/Semantic-UI-React/issues/1065
             if (popupCell) {
+              //this is a workaround due to bug in controlled popups in
+              //semantic-ui-react
+              //https://github.com/Semantic-Org/Semantic-UI-React/issues/1065
               this.immediate = setImmediate(() => {
-                if (!this.state.triggered) {
+                if (!this.triggered) {
                   const trigger = document.getElementById(popupTriggerId)
                   if (trigger) {
                     trigger.click()
@@ -56,15 +56,15 @@ const EditableCell = createClass({
         />
       )
     }
-    const cell =  (
+    const cell = (
       <semantic.Table.Cell
         selectable={!!editing}
         active={active}
         onClick={e => {
           setFocus([index, field])
           if (popupCell) {
-            this.setState({triggered: true})
-            setTimeout(() => this.setState({triggered: false}), 100)
+            this.triggered = true
+            setImmediate(() => this.tiggered = false)
           }
         }}
         style={{maxWidth: active ? '' : 200}}
@@ -72,7 +72,7 @@ const EditableCell = createClass({
       >
         <a style={{maxWidth: active ? '' : 200}}>
           {editInput}
-          {/*here to make sure the cell grows with the content />*/}
+          {/* here to make sure the cell grows with the content */}
           <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
         </a>
       </semantic.Table.Cell>

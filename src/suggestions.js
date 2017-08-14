@@ -11,7 +11,6 @@ function findSuggestions(line, suggestions, actions) {
     suggestionSkus = suggestions.flatMap(s => {
       return s.get('offers').map(offer => offer.get('sku'))
     })
-    console.log(suggestionSkus)
   }
 
 

@@ -8,13 +8,15 @@ const MpnPopup = require('./mpn_popup').default
 const popupFields = ['partNumbers']
 
 const EditableCell = createClass({
+  getInitialState() {
+    return {triggered: false}
+  },
   render() {
     const props = this.props
-    const {editing, line, field, setField, setFocus, index} = props
+    const {editing, line, field, setField, setFocus, index, active} = props
     if (field === 'quantity') {
       var type = 'number'
     }
-    const active = editingThis(editing, index, field)
     const value = line.getIn(field)
     const popupTriggerId = `trigger-${line.get('id')}-${field.join('-')}`
     let editInput = value
@@ -26,9 +28,11 @@ const EditableCell = createClass({
             //semantic-ui-react
             //https://github.com/Semantic-Org/Semantic-UI-React/issues/1065
             this.immediate = setImmediate(() => {
-              const trigger = document.getElementById(popupTriggerId)
-              if (trigger) {
-                trigger.click()
+              if (!this.state.triggered) {
+                const trigger = document.getElementById(popupTriggerId)
+                if (trigger) {
+                  trigger.click()
+                }
               }
             })
           }}
@@ -49,41 +53,39 @@ const EditableCell = createClass({
         />
       )
     }
-
-
-    if (popupFields.includes(field[0])) {
-      const suggestion = props.suggestions ? props.suggestions.first() : null
-      var popup = (
-        <MpnPopup
-          part={suggestion}
-          on='click'
-          trigger={<div style={{width:'100%'}} id={popupTriggerId} />}
-          position='bottom center'
-        >
-        </MpnPopup>
-      )
-    }
-    return (
+    const cell =  (
       <semantic.Table.Cell
         selectable={!!editing}
         active={active}
-        onClick={editing ? () => setFocus([index, field]) : null}
+        onClick={e => {
+          setFocus([index, field])
+          this.setState({triggered: true})
+          setTimeout(() => this.setState({triggered: false}), 100)
+        }}
         style={{maxWidth: active ? '' : 200}}
+        id={popupTriggerId}
       >
         <a style={{maxWidth: active ? '' : 200}}>
           {editInput}
           {/*here to make sure the cell grows with the content />*/}
           <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
-          {popup}
         </a>
       </semantic.Table.Cell>
     )
+    if (popupFields.includes(field[0])) {
+      const suggestion = props.suggestions ? props.suggestions.first() : null
+      return (
+        <MpnPopup
+          part={suggestion}
+          on='click'
+          trigger={cell}
+          position='bottom center'
+        />
+      )
+    }
+    return cell
   }
 })
-
-function editingThis(editing, index, field) {
-  return editing && editing.equals(immutable.fromJS([index, field]))
-}
 
 const EditInput = createClass({
   getInitialState() {

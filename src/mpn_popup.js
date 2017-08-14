@@ -25,6 +25,7 @@ function chunkArray(arr, chunkSize) {
     return groups;
 }
 
+
 function reorder(specs) {
   const groups = specs.reduce((acc, spec) => {
     let index = importance.reduce((prev, keys, index) => {

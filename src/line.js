@@ -2,8 +2,13 @@ const React       = require('react')
 const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const oneClickBom = require('1-click-bom')
+const immutable = require('immutable')
 
 const EditableCell = require('./editable_cell')
+
+function editingThis(editing, index, field) {
+  return editing && editing.equals(immutable.fromJS([index, field]))
+}
 
 function Line(props) {
   const {
@@ -15,7 +20,10 @@ function Line(props) {
   } = props
   const id = line.get('id')
   return (
-    <semantic.Table.Row active={editing && editing.get(0) === index} key={line.get('id')}>
+    <semantic.Table.Row
+      active={editing && editing.get(0) === index}
+      key={line.get('id')}
+    >
       <Handle
         line={line}
         setField={props.setField}
@@ -34,6 +42,7 @@ function Line(props) {
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
         index={index}
+        active={editingThis(editing, index, ['reference'])}
       />
       <EditableCell
         setField={props.setField}
@@ -44,7 +53,7 @@ function Line(props) {
         loseFocus={props.loseFocus}
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
-        index={index}
+        active={editingThis(editing, index, ['quantity'])}
       />
       <EditableCell
         setField={props.setField}
@@ -56,6 +65,7 @@ function Line(props) {
         setFocusNext={props.setFocusNext}
         setFocusBelow={props.setFocusBelow}
         index={index}
+        active={editingThis(editing, index, ['description'])}
       />
       {(() => {
         if (viewState.get('partNumbersExpanded')) {
@@ -88,6 +98,7 @@ function Line(props) {
                 setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
                 index={index}
+                active={editingThis(editing, index, field)}
               />
             )
           }
@@ -105,6 +116,7 @@ function Line(props) {
                 setFocusBelow={props.setFocusBelow}
                 index={index}
                 suggestions={suggestions}
+                active={editingThis(editing, index, field)}
               />
           )
           return cells
@@ -126,6 +138,7 @@ function Line(props) {
               setFocusBelow={props.setFocusBelow}
               index={index}
               suggestions={suggestions}
+              active={editingThis(editing, index, field)}
             />
           )})
       })()}

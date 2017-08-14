@@ -12,6 +12,9 @@ function Body(props) {
     lines,
     setField,
     setFocus,
+    loseFocus,
+    setFocusBelow,
+    setFocusNext,
     togglePartNumbersExpanded
   } = props
   const editing = viewState.get('editable') ? viewState.get('focus') : null
@@ -20,8 +23,6 @@ function Body(props) {
       {lines.map((line, index) => {
         const suggestions = props.suggestions.get(line.get('id'))
         return Line({
-          //restrict this later to aide performance
-          ...props,
           viewState,
           editing,
           line,
@@ -30,6 +31,9 @@ function Body(props) {
           suggestions,
           setField,
           setFocus,
+          loseFocus,
+          setFocusBelow,
+          setFocusNext,
           togglePartNumbersExpanded,
         })
       })}

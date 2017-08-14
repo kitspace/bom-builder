@@ -143,12 +143,14 @@ const MpnPopup = createClass({
                   justifyContent: 'space-between'
                 }}
               >
-                <div className='imageContainer'>
-                  <semantic.Image src={image.get('url')} />
+                <div>
+                  <div className='imageContainer'>
+                    <semantic.Image src={image.get('url')} />
+                  </div>
+                  <a style={{fontSize: 9}} href={image.get('credit_url')}>
+                    {image.get('credit_string')}
+                  </a>
                 </div>
-                <a style={{fontSize: 9}} href={image.get('credit_url')}>
-                  {image.get('credit_string')}
-                </a>
                 <div
                   style={{
                     display: 'flex',

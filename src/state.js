@@ -151,7 +151,7 @@ const rootActions = {
       }
       return immutable.List.of(index + 1, field)
     })
-    return Object.assign({}, {data: state.data, view})
+    return Object.assign({}, state, {view})
   },
   setFocusNext(state) {
     const lines = state.data.present.get('lines')

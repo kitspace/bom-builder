@@ -19,7 +19,6 @@ const emptyLine = immutable.Map({
     Farnell : '',
     Newark  : '',
   }),
-  suggestions: immutable.Set(),
 })
 
 const initialState = {
@@ -33,7 +32,7 @@ const initialState = {
     focus: [null, null],
     editable: false,
   }),
-  parts: immutable.List(),
+  suggestions: immutable.Map(),
 }
 
 const linesActions = {
@@ -52,17 +51,6 @@ const linesActions = {
     const line = immutable.fromJS(value).set('id', makeId())
     const lines = state.get('lines').push(line)
     return state.merge({lines})
-  },
-  addSuggestion(state, {id, part}) {
-    let lines = state.get('lines')
-    const index = lines.findIndex(l => l.get('id') === id)
-    let line = lines.get(index)
-    if (line) {
-      line = line.update('suggestions', s => s.add(immutable.fromJS(part)))
-      lines = lines.set(index, line)
-      return state.set('lines', lines)
-    }
-    return state
   },
   removeField(state, focus) {
     const index = focus.get(0)
@@ -261,16 +249,22 @@ const linesReducer = reduxUndo.default(
   }
 )
 
-const partsActions = {}
+const suggestionsActions = {
+  addSuggestion(state, {id, part}) {
+    return state.update(id, s => {
+      return (s || immutable.OrderedSet()).add(immutable.fromJS(part))
+    })
+  },
+}
 
-const partsReducer = makeReducer(partsActions, initialState.parts)
+const suggestionsReducer = makeReducer(suggestionsActions, initialState.suggestions)
 
 const viewReducer = makeReducer(viewActions, initialState['view'])
 
 const combinedReducer = redux.combineReducers({
   data: linesReducer,
   view: viewReducer,
-  parts: partsReducer,
+  suggestions: suggestionsReducer,
 })
 
 function mainReducer(state = initialState, action) {
@@ -302,12 +296,9 @@ const actions = Object.assign(
   makeActions(linesActions),
   makeActions(viewActions),
   makeActions(rootActions),
+  makeActions(suggestionsActions),
   reduxUndo.ActionCreators
 )
-
-function makeLineImmutable(line) {
-  return immutable.fromJS(line).update('suggestions', s => immutable.Set(s))
-}
 
 function makeDataImmutable(data) {
   if (immutable.Iterable.isIterable(data)) {
@@ -315,13 +306,13 @@ function makeDataImmutable(data) {
   }
   const {lines, editFocus, sortedBy} = data
   return immutable.Map({
-    lines: immutable.List(lines).map(makeLineImmutable),
+    lines: immutable.List(lines).map(line => immutable.fromJS(line)),
     editFocus: immutable.List(editFocus),
     sortedBy: immutable.List(sortedBy),
   })
 }
 
-function makeImmutable({data, view}) {
+function makeImmutable({data, view, suggestions}) {
   return {
     data: {
       present: makeDataImmutable(data.present),
@@ -329,6 +320,7 @@ function makeImmutable({data, view}) {
       future: data.future.map(makeDataImmutable),
     },
     view: immutable.fromJS(view),
+    suggestions: immutable.Map(suggestions).map(v => immutable.OrderedSet(v)),
   }
 }
 

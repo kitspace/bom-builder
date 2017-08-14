@@ -11,7 +11,9 @@ function Line(props) {
     editing,
     line,
     index,
+    suggestions,
   } = props
+  const id = line.get('id')
   return (
     <semantic.Table.Row active={editing && editing.get(0) === index} key={line.get('id')}>
       <Handle
@@ -102,6 +104,7 @@ function Line(props) {
                 setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
                 index={index}
+                suggestions={suggestions}
               />
           )
           return cells
@@ -122,6 +125,7 @@ function Line(props) {
               setFocusNext={props.setFocusNext}
               setFocusBelow={props.setFocusBelow}
               index={index}
+              suggestions={suggestions}
             />
           )})
       })()}

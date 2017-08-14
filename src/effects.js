@@ -11,12 +11,10 @@ function effects(diff, state, actions) {
     const op = d.get('op')
     const path = d.get('path')
     const value = d.get('value')
-    if (path.size === 2 && op === 'add' && path.get(0) === 'lines') {
-      findSuggestions(value, actions)
-    } else if (path.size === 5 && path.includes('partNumbers')
-      && typeof path.get(3) === 'number') {
+    if (path.get(0) === 'lines' && typeof path.get(1) === 'number') {
       const line = state.data.present.getIn(path.slice(0, 2))
-      findSuggestions(line, actions)
+      const suggestions = state.suggestions.get(line.get('id'))
+      findSuggestions(line, suggestions, actions)
     }
   })
 }

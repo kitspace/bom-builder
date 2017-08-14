@@ -5,7 +5,7 @@ const immutable   = require('immutable')
 
 const MpnPopup = require('./mpn_popup').default
 
-const popupFields = ['partNumbers', 'retailers']
+const popupFields = ['partNumbers']
 
 const EditableCell = createClass({
   render() {
@@ -50,9 +50,9 @@ const EditableCell = createClass({
       )
     }
 
-    const suggestion = line.get('suggestions').first()
 
     if (popupFields.includes(field[0])) {
+      const suggestion = props.suggestions ? props.suggestions.first() : null
       var popup = (
         <MpnPopup
           part={suggestion}

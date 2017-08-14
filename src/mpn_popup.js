@@ -58,25 +58,8 @@ const MpnPopup = createClass({
     this.setState({expanded: !this.state.expanded})
   },
   render() {
-    const props = this.props
-    const custom = {
-      className       : 'MpnPopup',
-      hoverable       : true,
-      mouseLeaveDelay : 200,
-      mouseEnterDelay : 200,
-      position        : props.position,
-      trigger         : props.trigger,
-      onOpen          : props.onOpen,
-      onClose         : props.onClose,
-      flowing         : true,
-      open            : props.open,
-      offset          : props.offset,
-      on              : props.on,
-    }
-    const part = props.part
-    if (!part) {
-      return h(semantic.Popup, custom, 'Sorry, no further part information found.')
-    }
+    const props  = this.props
+    const part   = props.part || immutable.Map()
     const image  = part.get('image') || immutable.Map()
     const mpn    = part.get('mpn') || immutable.Map()
     const number = mpn.get('part')
@@ -86,75 +69,112 @@ const MpnPopup = createClass({
     }
     const tableData = specs.map(spec => [spec.get('name'), spec.get('value')])
     const table = h(semantic.Table, {
-        basic   : 'very',
-        compact : true,
-        tableData,
-        renderBodyRow(args) {
-          return h(semantic.Table.Row, {key: String(args)}, args.map(text => {
-            return h(semantic.Table.Cell, text)
-          }))
-        },
+      basic   : 'very',
+      compact : true,
+      tableData,
+      renderBodyRow(args) {
+        return (
+          <semantic.Table.Row key={String(args)}>
+            {args.map(text => <semantic.Table.Cell>{text}</semantic.Table.Cell>)}
+          </semantic.Table.Row>
+        )
+      },
     })
-    let button
+    let expandButton
     if (part.get('specs') && part.get('specs').size > 4) {
-      button = h(div, {style:{display: 'flex', justifyContent: 'center'}}, [
-        h(semantic.Button, {
-          onClick : this.toggleExpanded,
-          size    : 'tiny',
-          basic   : true,
-        }, this.state.expanded ? '⇡' : '...'),
-      ])
-    }
-    return h(semantic.Popup, custom, [
-      <semantic.Button.Group style={{marginBottom: 10}} basic fluid>
-        <semantic.Button icon='left chevron'/>
-        <semantic.Button icon='square outline' content='Select' />
-        <semantic.Button icon='right chevron' />
-      </semantic.Button.Group>,
-      <div className='topAreaContainer'>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection:'column',
-            justifyContent: 'space-between'
-          }}
-        >
-          <div className='imageContainer'>
-            <semantic.Image src={image.get('url')} />
-          </div>
-          <a style={{fontSize: 9}} href={image.get('credit_url')}>
-            {image.get('credit_string')}
-          </a>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'flex-start'
-            }}
+      expandButton = (
+        <div style={{display: 'flex', justifyContent: 'center'}}>
+          <semantic.Button
+            onClick = {this.toggleExpanded}
+            size    = 'tiny'
+            basic   = {true}
           >
-            <a
-              style={{fontSize: 10}}
-              href={'https://octopart.com' + (number ? `/search?q=${number}` : '')}
-            >
-              Powered by Octopart
-            </a>
-          </div>
+            {this.state.expanded ? '⇡' : '...'}
+          </semantic.Button>
         </div>
-        <div style={{marginLeft: 20}}>
-          <div style={{maxWidth: 200}}>
-            {part.get('description')}
-          </div>
-          <div style={{marginTop: 15, display:'flex', justifyContent: 'center'}} >
-            <a href={part.get('datasheet')}>
-              <semantic.Icon name='file pdf outline' />
-              Datasheet
-            </a>
-          </div>
-          {table}
-          {button}
-        </div>
-      </div>
-    ])
+      )
+    }
+    return (
+      <semantic.Popup
+        className       = 'MpnPopup'
+        hoverable       = {true}
+        mouseLeaveDelay = {200}
+        mouseEnterDelay = {200}
+        position        = {props.position}
+        trigger         = {props.trigger}
+        onOpen          = {props.onOpen}
+        onClose         = {props.onClose}
+        flowing         = {true}
+        open            = {props.open}
+        offset          = {props.offset}
+        on              = {props.on}
+      >
+        <semantic.Button.Group style={{marginBottom: 10}} basic fluid>
+          <semantic.Button disabled={!part.size} icon='left chevron'/>
+          <semantic.Button disabled={!part.size} icon='square outline' content='Select' />
+          <semantic.Button disabled={!part.size} icon='right chevron' />
+        </semantic.Button.Group>
+        {(() => {
+          if (part.size === 0) {
+            return (
+              <div className='topAreaContainer'>
+                <div style={{maxWidth: 300}}>
+                  {
+                    `Sorry, could not find any matching parts. Please try adding
+                    more information in other fields.`
+                  }
+                </div>
+              </div>
+            )
+          }
+          return (
+            <div className='topAreaContainer'>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection:'column',
+                  justifyContent: 'space-between'
+                }}
+              >
+                <div className='imageContainer'>
+                  <semantic.Image src={image.get('url')} />
+                </div>
+                <a style={{fontSize: 9}} href={image.get('credit_url')}>
+                  {image.get('credit_string')}
+                </a>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-start'
+                  }}
+                >
+                  <a
+                    style={{fontSize: 10}}
+                    href={'https://octopart.com' + (number ? `/search?q=${number}` : '')}
+                  >
+                    Powered by Octopart
+                  </a>
+                </div>
+              </div>
+              <div style={{marginLeft: 20}}>
+                <div style={{maxWidth: 200}}>
+                  {part.get('description')}
+                </div>
+                <div style={{marginTop: 15, display:'flex', justifyContent: 'center'}} >
+                  <a href={part.get('datasheet')}>
+                    <semantic.Icon name='file pdf outline' />
+                    Datasheet
+                  </a>
+                </div>
+                {table}
+                {expandButton}
+              </div>
+            </div>
+          )
+        })()}
+      </semantic.Popup>
+    )
   },
 })
 

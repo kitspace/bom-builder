@@ -106,35 +106,54 @@ const MpnPopup = createClass({
       ])
     }
     return h(semantic.Popup, custom, [
-    <semantic.Button.Group style={{marginBottom: 10}} basic fluid>
-      <semantic.Button icon='left chevron'/>
-      <semantic.Button icon='square outline' content='Select' />
-      <semantic.Button icon='right chevron' />
-    </semantic.Button.Group>,
-      div({className: 'topAreaContainer'}, [
-        h(div, {style:{display: 'flex', flexDirection:'column', justifyContent: 'space-between'}}, [
-          div([
-            div({className: 'imageContainer'}, [
-              h(semantic.Image, {src: image.get('url')}),
-            ]),
-            a({style:{fontSize:9}, href: image.get('credit_url')}, image.get('credit_string')),
-          ]),
-          h(div, {style:{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start'}}, [
-            a({style:{fontSize: 10}, href: number ? `https://octopart.com/search?q=${number}` : 'https://octopart.com/'}, 'Powered by Octopart'),
-          ]),
-        ]),
-        div({style:{marginLeft: 20}}, [
-          div({style: {maxWidth: 200}}, part.get('description') ),
-          div({style: {marginTop: 15, display:'flex', justifyContent: 'center'}}, [
-            a({href: part.get('datasheet')}, [
-              h(semantic.Icon, {name: 'file pdf outline'}),
-              'Datasheet'
-            ])
-          ]),
-          table,
-          button,
-        ]),
-      ]),
+      <semantic.Button.Group style={{marginBottom: 10}} basic fluid>
+        <semantic.Button icon='left chevron'/>
+        <semantic.Button icon='square outline' content='Select' />
+        <semantic.Button icon='right chevron' />
+      </semantic.Button.Group>,
+      <div className='topAreaContainer'>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection:'column',
+            justifyContent: 'space-between'
+          }}
+        >
+          <div className='imageContainer'>
+            <semantic.Image src={image.get('url')} />
+          </div>
+          <a style={{fontSize: 9}} href={image.get('credit_url')}>
+            {image.get('credit_string')}
+          </a>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'flex-start'
+            }}
+          >
+            <a
+              style={{fontSize: 10}}
+              href={'https://octopart.com' + (number ? `/search?q=${number}` : '')}
+            >
+              Powered by Octopart
+            </a>
+          </div>
+        </div>
+        <div style={{marginLeft: 20}}>
+          <div style={{maxWidth: 200}}>
+            {part.get('description')}
+          </div>
+          <div style={{marginTop: 15, display:'flex', justifyContent: 'center'}} >
+            <a href={part.get('datasheet')}>
+              <semantic.Icon name='file pdf outline' />
+              Datasheet
+            </a>
+          </div>
+          {table}
+          {button}
+        </div>
+      </div>
     ])
   },
 })

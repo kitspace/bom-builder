@@ -109,6 +109,12 @@ const MpnPopup = createClass({
       div({className: 'topAreaContainer'}, [
         h(div, {style:{display: 'flex', alignItems: 'center', padding: 10}}, [h(semantic.Button, {basic: true, icon:'left arrow'})]),
         h(div, {style:{display: 'flex', flexDirection:'column', justifyContent: 'space-between'}}, [
+          div({style: {width: '100%',  display: 'flex', justifyContent: 'space-around', marginBottom: 10}}, [
+            h(semantic.Button, {primary: true}, [
+              semantic.Icon({name: 'square outline',}),
+              'Select',
+            ])
+          ]),
           div([
             div({className: 'imageContainer'}, [
               h(semantic.Image, {src: image.get('url')}),
@@ -120,7 +126,7 @@ const MpnPopup = createClass({
           ]),
         ]),
         div({style:{marginLeft: 20}}, [
-          div({style: {maxWidth: 200}}, part.get('description')),
+          div({style: {maxWidth: 200}}, part.get('description') ),
           div({style: {marginTop: 15, display:'flex', justifyContent: 'center'}}, [
             a({href: part.get('datasheet')}, [
               h(semantic.Icon, {name: 'file pdf outline'}),

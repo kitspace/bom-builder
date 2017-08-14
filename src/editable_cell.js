@@ -19,6 +19,7 @@ const EditableCell = createClass({
     }
     const value = line.getIn(field)
     const popupTriggerId = `trigger-${line.get('id')}-${field.join('-')}`
+    const popupCell = popupFields.includes(field[0])
     let editInput = value
     if (active) {
       editInput = (
@@ -27,14 +28,16 @@ const EditableCell = createClass({
             //this is a workaround due to bug in controlled popups in
             //semantic-ui-react
             //https://github.com/Semantic-Org/Semantic-UI-React/issues/1065
-            this.immediate = setImmediate(() => {
-              if (!this.state.triggered) {
-                const trigger = document.getElementById(popupTriggerId)
-                if (trigger) {
-                  trigger.click()
+            if (popupCell) {
+              this.immediate = setImmediate(() => {
+                if (!this.state.triggered) {
+                  const trigger = document.getElementById(popupTriggerId)
+                  if (trigger) {
+                    trigger.click()
+                  }
                 }
-              }
-            })
+              })
+            }
           }}
           onUnmount={() => {
             clearImmediate(this.immediate)
@@ -59,8 +62,10 @@ const EditableCell = createClass({
         active={active}
         onClick={e => {
           setFocus([index, field])
-          this.setState({triggered: true})
-          setTimeout(() => this.setState({triggered: false}), 100)
+          if (popupCell) {
+            this.setState({triggered: true})
+            setTimeout(() => this.setState({triggered: false}), 100)
+          }
         }}
         style={{maxWidth: active ? '' : 200}}
         id={popupTriggerId}
@@ -72,7 +77,7 @@ const EditableCell = createClass({
         </a>
       </semantic.Table.Cell>
     )
-    if (popupFields.includes(field[0])) {
+    if (popupCell) {
       const suggestion = props.suggestions ? props.suggestions.first() : null
       return (
         <MpnPopup

@@ -12,7 +12,6 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-double-scrollbar": "^0.0.11",
-    "react-hyperscript-helpers": "^1.2.0",
     "react-redux": "^5.0.5",
     "react-scripts": "1.0.10",
     "react-snapshot": "^2.0.0-1",

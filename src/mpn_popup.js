@@ -2,7 +2,6 @@ import './mpn_popup.css'
 
 const React       = require('react')
 const createClass = require('create-react-class')
-const {h, a, div} = require('react-hyperscript-helpers')
 const semantic    = require('semantic-ui-react')
 const ramda       = require('ramda')
 const immutable   = require('immutable')
@@ -43,13 +42,6 @@ function reorder(specs) {
   return ramda.flatten(groups)
 }
 
-function specRow(spec) {
-  return h(semantic.Table.Row, [
-    h(semantic.Table.Cell, spec.name),
-    h(semantic.Table.Cell, spec.value),
-  ])
-}
-
 const MpnPopup = createClass({
   getInitialState() {
     return {expanded: false}
@@ -68,22 +60,24 @@ const MpnPopup = createClass({
       specs = specs.slice(0, 4)
     }
     const tableData = specs.map(spec => [spec.get('name'), spec.get('value')])
-    const table = h(semantic.Table, {
-      basic   : 'very',
-      compact : true,
-      tableData,
-      renderBodyRow(args) {
-        return (
-          <semantic.Table.Row key={String(args)}>
-            {args.map(text => (
-              <semantic.Table.Cell key={text}>
-                {text}
-              </semantic.Table.Cell>
+    const table = (
+      <semantic.Table
+        basic   ={'very'}
+        compact ={true}
+        tableData={tableData}
+        renderBodyRow={args => {
+          return (
+            <semantic.Table.Row key={String(args)}>
+              {args.map(text => (
+                <semantic.Table.Cell key={text}>
+                  {text}
+                </semantic.Table.Cell>
             ))}
           </semantic.Table.Row>
         )
-      },
-    })
+        }}
+      />
+    )
     let expandButton
     if (part.get('specs') && part.get('specs').size > 4) {
       expandButton = (

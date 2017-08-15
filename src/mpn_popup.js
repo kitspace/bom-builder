@@ -137,10 +137,8 @@ const MpnPopup = createClass({
           if (part.size === 0) {
             return (
               <div className='sorryText'>
-                {
-                  `Sorry, could not find any part suggestions. Please try adding
-                    more information.`
-                }
+                Sorry, could not find any part suggestions for this line.
+                Please try adding more information.
               </div>
             )
           }

@@ -55,7 +55,13 @@ const linesActions = {
   removeField(state, focus) {
     const index = focus.get(0)
     const field = focus.get(1)
-    const empty = field[0] === 'quantity' ?  1 : ''
+    let empty = field[0] === 'quantity' ?  1 : ''
+    if (field[0] === 'partNumbers' && field.length === 2) {
+      empty = immutable.Map({
+        part: '',
+        manufacturer: '',
+      })
+    }
     return state.setIn(immutable.List.of('lines', index).concat(field), empty)
   },
   remove(state, focus) {

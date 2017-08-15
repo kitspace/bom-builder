@@ -40,7 +40,7 @@ function reorder(specs) {
 
 const MpnPopup = createClass({
   getInitialState() {
-    const viewing = this.props.selected === -1 ? 0 : this.props.selected
+    const viewing = this.props.selected < 0 ? 0 : this.props.selected
     return {
       expanded: false,
       viewing,
@@ -50,7 +50,7 @@ const MpnPopup = createClass({
   componentWillReceiveProps(newProps) {
     if (newProps.selected !== this.props.selected
     && this.state.viewing === this.state.initialViewing) {
-      this.setState({viewing: newProps.selected})
+      this.setViewing(newProps.selected)
     }
   },
   toggleExpanded() {
@@ -160,14 +160,29 @@ const MpnPopup = createClass({
           {(() => {
             if (props.selected === this.state.viewing) {
               return (
-                <semantic.Button>
+                <semantic.Button
+                  onClick={() => {
+                    const {remove, index} = props
+                    const field = props.field.slice(0, 2)
+                    remove(immutable.List.of(index, field))
+                  }}
+                >
                   <semantic.Icon name='checkmark box' />
                   Selected
                 </semantic.Button>
               )
             }
             return (
-              <semantic.Button disabled={!suggestions.size}>
+              <semantic.Button
+                onClick={() => {
+                  const {index, setField} = props
+                  //set the intire mpn field i.e.
+                  //part -> {manufacturer, part}
+                  const field = props.field.slice(0, 2)
+                  setField({index, field, value: mpn})
+                }}
+                disabled={!suggestions.size}
+              >
                 <semantic.Icon name='square outline' />
                 Select
               </semantic.Button>

@@ -85,6 +85,7 @@ const EditableCell = createClass({
           trigger={cell}
           line={line}
           field={field}
+          index={index}
           position='bottom center'
         />
       )

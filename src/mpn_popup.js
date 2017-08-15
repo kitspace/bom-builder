@@ -1,10 +1,14 @@
 import './mpn_popup.css'
 
 const React       = require('react')
+const redux       = require('redux')
+const reactRedux  = require('react-redux')
 const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const ramda       = require('ramda')
 const immutable   = require('immutable')
+
+const {actions} = require('./state')
 
 
 const importance = [
@@ -74,9 +78,9 @@ const MpnPopup = createClass({
                 <semantic.Table.Cell key={text}>
                   {text}
                 </semantic.Table.Cell>
-            ))}
-          </semantic.Table.Row>
-        )
+              ))}
+            </semantic.Table.Row>
+          )
         }}
       />
     )
@@ -113,6 +117,7 @@ const MpnPopup = createClass({
           <semantic.Button
             disabled={!part.size}
             icon='left chevron'
+            onClick={props.previousSuggestion}
           />
           <semantic.Button
             disabled={!part.size}
@@ -124,6 +129,7 @@ const MpnPopup = createClass({
           <semantic.Button
             disabled={!part.size}
             icon='right chevron'
+            onClick={props.nextSuggestion}
           />
         </semantic.Button.Group>
         {mpnTitle}
@@ -132,8 +138,8 @@ const MpnPopup = createClass({
             return (
               <div className='sorryText'>
                 {
-                  `Sorry, could not find any matching parts. Please try adding
-                    more information in other fields.`
+                  `Sorry, could not find any part suggestions. Please try adding
+                    more information.`
                 }
               </div>
             )
@@ -181,4 +187,31 @@ const MpnPopup = createClass({
   },
 })
 
-export default MpnPopup
+function mapDispatchToProps(dispatch) {
+  return redux.bindActionCreators(actions, dispatch)
+}
+
+function mapStateToProps(state) {
+  const focus = state.view.get('focus')
+  const index = focus.get(0)
+  let suggestions
+  let selected = -1
+  if (index) {
+    const line = state.data.present.getIn(['lines', index])
+    const mpn = line.getIn(focus.get(1).slice(0, 2))
+    const id = line.get('id')
+    suggestions = state.suggestions.get(id)
+    selected = immutable.List(suggestions).findIndex(s => s.get('mpn').equals(mpn))
+  }
+  return {
+    selected,
+    suggestions,
+  }
+}
+
+const ConnectedMpnPopup = reactRedux.connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MpnPopup)
+
+export default ConnectedMpnPopup

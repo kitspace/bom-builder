@@ -253,12 +253,15 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state, ownProps) {
   const {field, line} = ownProps
-  let suggestions = immutable.Seq()
+  let suggestions = immutable.List()
   let selected = -1
   if (line && field) {
     const mpn = line.getIn(field.slice(0, 2))
+    const otherMpns = line.get('partNumbers').filter(m => !m.equals(mpn))
     suggestions = state.suggestions.get(line.get('id')) || immutable.List()
+    suggestions = suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
     selected = suggestions.findIndex(s => s.get('mpn').equals(mpn))
+
   }
   return {
     selected,

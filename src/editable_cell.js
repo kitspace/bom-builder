@@ -81,9 +81,10 @@ const EditableCell = createClass({
       const suggestion = props.suggestions ? props.suggestions.first() : null
       return (
         <MpnPopup
-          part={suggestion}
           on='click'
           trigger={cell}
+          line={line}
+          field={field}
           position='bottom center'
         />
       )

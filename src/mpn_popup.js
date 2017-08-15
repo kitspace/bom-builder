@@ -40,14 +40,37 @@ function reorder(specs) {
 
 const MpnPopup = createClass({
   getInitialState() {
-    return {expanded: false}
+    return {
+      expanded: false,
+      viewing: this.props.selected === -1 ? 0 : this.props.selected,
+    }
   },
   toggleExpanded() {
     this.setState({expanded: !this.state.expanded})
   },
+  incrementViewing() {
+    this.setViewing(this.state.viewing + 1)
+  },
+  decrementViewing() {
+    this.setViewing(this.state.viewing - 1)
+  },
+  setViewing(n) {
+    const suggestions = this.props.suggestions
+    if (n >= suggestions.size) {
+      n = 0
+    } else if (n < 0) {
+      if (suggestions.size === 0) {
+        n = 0
+      } else {
+        n = suggestions.size - 1
+      }
+    }
+    this.setState({viewing: n})
+  },
   render() {
     const props  = this.props
-    const part   = props.part || immutable.Map()
+    const suggestions = props.suggestions
+    const part   = suggestions.get(this.state.viewing) || immutable.Map()
     const image  = part.get('image') || immutable.Map()
     const mpn    = part.get('mpn') || immutable.Map()
     const number = mpn.get('part')
@@ -115,26 +138,29 @@ const MpnPopup = createClass({
       >
         <semantic.Button.Group basic fluid>
           <semantic.Button
-            disabled={!part.size}
+            disabled={!suggestions.size}
             icon='left chevron'
-            onClick={props.previousSuggestion}
+            onClick={this.decrementViewing}
           />
           <semantic.Button
-            disabled={!part.size}
+            disabled={!suggestions.size}
             color='blue'
           >
             <semantic.Icon name='square outline' />
             Select
+            <div style={{marginTop: 5}}>
+              {`${this.state.viewing + 1}/${suggestions.size}`}
+            </div>
           </semantic.Button>
           <semantic.Button
-            disabled={!part.size}
+            disabled={!suggestions.size}
             icon='right chevron'
-            onClick={props.nextSuggestion}
+            onClick={this.incrementViewing}
           />
         </semantic.Button.Group>
         {mpnTitle}
         {(() => {
-          if (part.size === 0) {
+          if (suggestions.size === 0) {
             return (
               <div className='sorryText'>
                 Sorry, could not find any part suggestions for this line.
@@ -189,17 +215,14 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-function mapStateToProps(state) {
-  const focus = state.view.get('focus')
-  const index = focus.get(0)
-  let suggestions
+function mapStateToProps(state, ownProps) {
+  const {field, line} = ownProps
+  let suggestions = immutable.Seq()
   let selected = -1
-  if (index) {
-    const line = state.data.present.getIn(['lines', index])
-    const mpn = line.getIn(focus.get(1).slice(0, 2))
-    const id = line.get('id')
-    suggestions = state.suggestions.get(id)
-    selected = immutable.List(suggestions).findIndex(s => s.get('mpn').equals(mpn))
+  if (line && field) {
+    const mpn = line.getIn(field.slice(0, 2))
+    suggestions = state.suggestions.get(line.get('id')) || immutable.List()
+    selected = suggestions.findIndex(s => s.get('mpn').equals(mpn))
   }
   return {
     selected,

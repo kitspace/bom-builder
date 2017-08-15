@@ -252,7 +252,12 @@ const linesReducer = reduxUndo.default(
 const suggestionsActions = {
   addSuggestion(state, {id, part}) {
     return state.update(id, s => {
-      return (s || immutable.OrderedSet()).add(immutable.fromJS(part))
+      const p = immutable.fromJS(part)
+      s = s || immutable.List()
+      if (s.some(x => p.get('mpn').equals(x.get('mpn')))) {
+        return s
+      }
+      return s.push(p)
     })
   },
 }
@@ -320,7 +325,7 @@ function makeImmutable({data, view, suggestions}) {
       future: data.future.map(makeDataImmutable),
     },
     view: immutable.fromJS(view),
-    suggestions: immutable.Map(suggestions).map(v => immutable.OrderedSet(v)),
+    suggestions: immutable.Map(suggestions).map(v => immutable.List(v)),
   }
 }
 

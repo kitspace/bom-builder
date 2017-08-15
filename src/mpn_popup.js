@@ -79,12 +79,18 @@ const MpnPopup = createClass({
       specs = specs.slice(0, 4)
     }
     const mpnTitle = (
-      <div className='mpnTitle'>
-        <div>
-          {mpn.get('manufacturer')}
+      <div className='titleContainer'>
+        <div />
+        <div className='mpnTitle'>
+          <div>
+            {mpn.get('manufacturer')}
+          </div>
+          <div>
+            {number}
+          </div>
         </div>
-        <div>
-          {number}
+        <div className='viewingNumber'>
+          {`${this.state.viewing + 1}/${suggestions.size}`}
         </div>
       </div>
     )
@@ -146,26 +152,16 @@ const MpnPopup = createClass({
           {(() => {
             if (props.selected === this.state.viewing) {
               return (
-                <semantic.Button
-                  disabled={!suggestions.size}
-                >
+                <semantic.Button>
                   <semantic.Icon name='checkmark box' />
                   Selected
-                  <div style={{marginTop: 5}}>
-                    {`${this.state.viewing + 1}/${suggestions.size}`}
-                  </div>
                 </semantic.Button>
               )
             }
             return (
-              <semantic.Button
-                disabled={!suggestions.size}
-              >
+              <semantic.Button disabled={!suggestions.size}>
                 <semantic.Icon name='square outline' />
                 Select
-                <div style={{marginTop: 5}}>
-                  {`${this.state.viewing + 1}/${suggestions.size}`}
-                </div>
               </semantic.Button>
             )
           })()}

@@ -38,12 +38,24 @@ a.imageCredit {
    align-items: flex-start;
 }
 
+.titleContainer {
+   display: flex;
+   border-bottom: 1px solid #e8e8e9;
+   justify-content: space-between;
+   margin: 20px;
+}
+
+.viewingNumber {
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-end;
+   margin-bottom: 5px;
+}
+
 .mpnTitle {
    display: flex;
    justify-content: center;
-   margin: 20px;
    font-weight: bold;
-   border-bottom: 1px solid #e8e8e9;
 }
 
 .mpnTitle > div {

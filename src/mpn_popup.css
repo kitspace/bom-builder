@@ -104,3 +104,8 @@ a.imageCredit {
 .specTable {
    width: 200px !important;
 }
+
+.manufacturerSmall {
+   font-size: 10px;
+   line-height: 10px;
+}

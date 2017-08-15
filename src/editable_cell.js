@@ -71,6 +71,15 @@ const EditableCell = createClass({
         id={popupTriggerId}
       >
         <a style={{maxWidth: active ? '' : 200}}>
+          {(() => {
+            if (field[0] === 'partNumbers' && field[2] === 'part') {
+              return (
+                <div className='manufacturerSmall'>
+                  {line.getIn(['partNumbers', field[1], 'manufacturer'])}
+                </div>
+              )
+            }
+          })()}
           {editInput}
           {/* here to make sure the cell grows with the content */}
           <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>

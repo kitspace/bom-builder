@@ -91,8 +91,9 @@ const MpnPopup = createClass({
     const specTableData = specs.map(spec => [spec.get('name'), spec.get('value')])
     const specTable = (
       <semantic.Table
-        basic   ='very'
-        compact ={true}
+        className='specTable'
+        basic='very'
+        compact={true}
         tableData={specTableData}
         renderBodyRow={args => {
           return (
@@ -138,13 +139,12 @@ const MpnPopup = createClass({
       >
         <semantic.Button.Group basic fluid>
           <semantic.Button
-            disabled={!suggestions.size}
+            disabled={suggestions.size < 2}
             icon='left chevron'
             onClick={this.decrementViewing}
           />
           <semantic.Button
             disabled={!suggestions.size}
-            color='blue'
           >
             <semantic.Icon name='square outline' />
             Select
@@ -153,7 +153,7 @@ const MpnPopup = createClass({
             </div>
           </semantic.Button>
           <semantic.Button
-            disabled={!suggestions.size}
+            disabled={suggestions.size < 2}
             icon='right chevron'
             onClick={this.incrementViewing}
           />

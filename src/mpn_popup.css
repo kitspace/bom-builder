@@ -88,3 +88,7 @@ a.imageCredit {
    display: flex;
    justify-content: center;
 }
+
+.specTable {
+   width: 200px !important;
+}

@@ -24,7 +24,17 @@
    justify-content: flex-start;
    align-items: flex-start;
 }
-.tableContainer {
+
+.mpnTitle {
+   display: flex;
+   justify-content: center;
+   margin: 20px;
+   font-weight: bold;
+   border-bottom: 1px solid #e8e8e9;
+}
+
+.mpnTitle > div {
+   margin: 5px;
 }
 
 a {

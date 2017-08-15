@@ -17,15 +17,6 @@ const importance = [
   ['case_package_si'],
 ]
 
-function chunkArray(arr, chunkSize) {
-    var groups = [], i;
-    for (i = 0; i < arr.length; i += chunkSize) {
-        groups.push(arr.slice(i, i + chunkSize));
-    }
-    return groups;
-}
-
-
 function reorder(specs) {
   const groups = specs.reduce((acc, spec) => {
     let index = importance.reduce((prev, keys, index) => {
@@ -60,12 +51,22 @@ const MpnPopup = createClass({
     if (! this.state.expanded) {
       specs = specs.slice(0, 4)
     }
-    const tableData = specs.map(spec => [spec.get('name'), spec.get('value')])
-    const table = (
+    const mpnTitle = (
+      <div className='mpnTitle'>
+        <div>
+          {mpn.get('manufacturer')}
+        </div>
+        <div>
+          {number}
+        </div>
+      </div>
+    )
+    const specTableData = specs.map(spec => [spec.get('name'), spec.get('value')])
+    const specTable = (
       <semantic.Table
-        basic   ={'very'}
+        basic   ='very'
         compact ={true}
-        tableData={tableData}
+        tableData={specTableData}
         renderBodyRow={args => {
           return (
             <semantic.Table.Row key={String(args)}>
@@ -108,21 +109,24 @@ const MpnPopup = createClass({
         offset          = {props.offset}
         on              = {props.on}
       >
-        <semantic.Button.Group style={{marginBottom: 10}} basic fluid>
+        <semantic.Button.Group basic fluid>
           <semantic.Button
             disabled={!part.size}
             icon='left chevron'
           />
           <semantic.Button
             disabled={!part.size}
-            icon='square outline'
-            content='Select'
-          />
+            color='blue'
+          >
+            <semantic.Icon name='square outline' />
+            Select
+          </semantic.Button>
           <semantic.Button
             disabled={!part.size}
             icon='right chevron'
           />
         </semantic.Button.Group>
+        {mpnTitle}
         {(() => {
           if (part.size === 0) {
             return (
@@ -176,7 +180,7 @@ const MpnPopup = createClass({
                     Datasheet
                   </a>
                 </div>
-                {table}
+                {specTable}
                 {expandButton}
               </div>
             </div>

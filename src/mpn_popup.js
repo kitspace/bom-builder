@@ -143,15 +143,32 @@ const MpnPopup = createClass({
             icon='left chevron'
             onClick={this.decrementViewing}
           />
-          <semantic.Button
-            disabled={!suggestions.size}
-          >
-            <semantic.Icon name='square outline' />
-            Select
-            <div style={{marginTop: 5}}>
-              {`${this.state.viewing + 1}/${suggestions.size}`}
-            </div>
-          </semantic.Button>
+          {(() => {
+            if (props.selected === this.state.viewing) {
+              return (
+                <semantic.Button
+                  disabled={!suggestions.size}
+                >
+                  <semantic.Icon name='checkmark box' />
+                  Selected
+                  <div style={{marginTop: 5}}>
+                    {`${this.state.viewing + 1}/${suggestions.size}`}
+                  </div>
+                </semantic.Button>
+              )
+            }
+            return (
+              <semantic.Button
+                disabled={!suggestions.size}
+              >
+                <semantic.Icon name='square outline' />
+                Select
+                <div style={{marginTop: 5}}>
+                  {`${this.state.viewing + 1}/${suggestions.size}`}
+                </div>
+              </semantic.Button>
+            )
+          })()}
           <semantic.Button
             disabled={suggestions.size < 2}
             icon='right chevron'

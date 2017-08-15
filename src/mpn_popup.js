@@ -40,9 +40,17 @@ function reorder(specs) {
 
 const MpnPopup = createClass({
   getInitialState() {
+    const viewing = this.props.selected === -1 ? 0 : this.props.selected
     return {
       expanded: false,
-      viewing: this.props.selected === -1 ? 0 : this.props.selected,
+      viewing,
+      initialViewing: viewing,
+    }
+  },
+  componentWillReceiveProps(newProps) {
+    if (newProps.selected !== this.props.selected
+    && this.state.viewing === this.state.initialViewing) {
+      this.setState({viewing: newProps.selected})
     }
   },
   toggleExpanded() {

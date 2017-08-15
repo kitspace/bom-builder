@@ -78,6 +78,30 @@ const MpnPopup = createClass({
   render() {
     const props  = this.props
     const suggestions = props.suggestions
+    const popupProps = {
+        className       : 'MpnPopup',
+        hoverable       : true,
+        mouseLeaveDelay : 200,
+        mouseEnterDelay : 200,
+        flowing         : true,
+        position        : props.position,
+        trigger         : props.trigger,
+        onOpen          : props.onOpen,
+        onClose         : props.onClose,
+        open            : props.open,
+        offset          : props.offset,
+        on              : props.on,
+    }
+    if (suggestions.size === 0) {
+      return (
+        <semantic.Popup {...popupProps}>
+          <div className='sorryText'>
+            Sorry, could not find any more part suggestions for this line.
+            Please try adding more information.
+          </div>
+        </semantic.Popup>
+      )
+    }
     const part   = suggestions.get(this.state.viewing) || immutable.Map()
     const image  = part.get('image') || immutable.Map()
     const mpn    = part.get('mpn') || immutable.Map()
@@ -137,20 +161,7 @@ const MpnPopup = createClass({
       )
     }
     return (
-      <semantic.Popup
-        className       = 'MpnPopup'
-        hoverable       = {true}
-        mouseLeaveDelay = {200}
-        mouseEnterDelay = {200}
-        position        = {props.position}
-        trigger         = {props.trigger}
-        onOpen          = {props.onOpen}
-        onClose         = {props.onClose}
-        flowing         = {true}
-        open            = {props.open}
-        offset          = {props.offset}
-        on              = {props.on}
-      >
+      <semantic.Popup {...popupProps} >
         <semantic.Button.Group basic fluid>
           <semantic.Button
             disabled={suggestions.size < 2}
@@ -195,53 +206,41 @@ const MpnPopup = createClass({
           />
         </semantic.Button.Group>
         {mpnTitle}
-        {(() => {
-          if (suggestions.size === 0) {
-            return (
-              <div className='sorryText'>
-                Sorry, could not find any part suggestions for this line.
-                Please try adding more information.
+        <div className='topAreaContainer'>
+          <div className='topAreaInner'>
+            <div>
+              <div className='imageContainer'>
+                <semantic.Image src={image.get('url')} />
               </div>
-            )
-          }
-          return (
-            <div className='topAreaContainer'>
-              <div className='topAreaInner'>
-                <div>
-                  <div className='imageContainer'>
-                    <semantic.Image src={image.get('url')} />
-                  </div>
-                  <a className='imageCredit' href={image.get('credit_url')}>
-                    {image.get('credit_string')}
-                  </a>
-                </div>
-                <div className='octopartLinkContainer'>
-                  <a
-                    href={
-                      'https://octopart.com' +
-                      (number ? `/search?q=${number}` : '')
-                    }
-                  >
-                    Powered by Octopart
-                  </a>
-                </div>
-              </div>
-              <div className='rightHandModule'>
-                <div className='description'>
-                  {part.get('description')}
-                </div>
-                <div className='datasheet'>
-                  <a href={part.get('datasheet')}>
-                    <semantic.Icon name='file pdf outline' />
-                    Datasheet
-                  </a>
-                </div>
-                {specTable}
-                {expandButton}
-              </div>
+              <a className='imageCredit' href={image.get('credit_url')}>
+                {image.get('credit_string')}
+              </a>
             </div>
-          )
-        })()}
+            <div className='octopartLinkContainer'>
+              <a
+                href={
+                  'https://octopart.com' +
+                  (number ? `/search?q=${number}` : '')
+                }
+              >
+                Powered by Octopart
+              </a>
+            </div>
+          </div>
+          <div className='rightHandModule'>
+            <div className='description'>
+              {part.get('description')}
+            </div>
+            <div className='datasheet'>
+              <a href={part.get('datasheet')}>
+                <semantic.Icon name='file pdf outline' />
+                Datasheet
+              </a>
+            </div>
+            {specTable}
+            {expandButton}
+          </div>
+        </div>
       </semantic.Popup>
     )
   },

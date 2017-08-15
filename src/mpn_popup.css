@@ -1,9 +1,22 @@
+a {
+   color: black;
+}
+
+a:hover {
+   color: black;
+}
+
 .imageContainer {
     display: flex;
     min-width: 160px;
     min-height: 160px;
     align-items: center;
 }
+
+a.imageCredit {
+   font-size: 9px;
+}
+
 .image {
     align-self: center;
 }
@@ -37,10 +50,41 @@
    margin: 5px;
 }
 
-a {
-   color: black;
+.expandButtonContainer {
+   display: flex;
+   justify-content: center;
 }
 
-a:hover {
-   color: black;
+.sorryText {
+   max-width: 300px;
+}
+
+.topAreaInner {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+}
+
+.octopartLinkContainer {
+   display: flex;
+   align-items: flex-end;
+   justify-content: flex-start;
+}
+
+.octopartLinkContainer a {
+   font-size: 10px;
+}
+
+.rightHandModule {
+   margin-left: 20px;
+}
+
+.description {
+   max-width: 200px;
+}
+
+.datasheet {
+   margin-top: 15px;
+   display: flex;
+   justify-content: center;
 }

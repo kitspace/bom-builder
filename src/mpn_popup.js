@@ -83,7 +83,7 @@ const MpnPopup = createClass({
     let expandButton
     if (part.get('specs') && part.get('specs').size > 4) {
       expandButton = (
-        <div style={{display: 'flex', justifyContent: 'center'}}>
+        <div className='expandButtonContainer'>
           <semantic.Button
             onClick = {this.toggleExpanded}
             size    = 'tiny'
@@ -130,7 +130,7 @@ const MpnPopup = createClass({
         {(() => {
           if (part.size === 0) {
             return (
-              <div style={{maxWidth: 300}}>
+              <div className='sorryText'>
                 {
                   `Sorry, could not find any matching parts. Please try adding
                     more information in other fields.`
@@ -140,41 +140,31 @@ const MpnPopup = createClass({
           }
           return (
             <div className='topAreaContainer'>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection:'column',
-                  justifyContent: 'space-between'
-                }}
-              >
+              <div className='topAreaInner'>
                 <div>
                   <div className='imageContainer'>
                     <semantic.Image src={image.get('url')} />
                   </div>
-                  <a style={{fontSize: 9}} href={image.get('credit_url')}>
+                  <a className='imageCredit' href={image.get('credit_url')}>
                     {image.get('credit_string')}
                   </a>
                 </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-start'
-                  }}
-                >
+                <div className='octopartLinkContainer'>
                   <a
-                    style={{fontSize: 10}}
-                    href={'https://octopart.com' + (number ? `/search?q=${number}` : '')}
+                    href={
+                      'https://octopart.com' +
+                      (number ? `/search?q=${number}` : '')
+                    }
                   >
                     Powered by Octopart
                   </a>
                 </div>
               </div>
-              <div style={{marginLeft: 20}}>
-                <div style={{maxWidth: 200}}>
+              <div className='rightHandModule'>
+                <div className='description'>
                   {part.get('description')}
                 </div>
-                <div style={{marginTop: 15, display:'flex', justifyContent: 'center'}} >
+                <div className='datasheet'>
                   <a href={part.get('datasheet')}>
                     <semantic.Icon name='file pdf outline' />
                     Datasheet

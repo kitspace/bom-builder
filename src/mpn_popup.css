@@ -92,7 +92,7 @@ a.imageCredit {
 }
 
 .description {
-   max-width: 200px;
+   max-width: 250px;
 }
 
 .datasheet {
@@ -102,7 +102,7 @@ a.imageCredit {
 }
 
 .specTable {
-   width: 200px !important;
+   width: 250px !important;
 }
 
 .manufacturerSmall {

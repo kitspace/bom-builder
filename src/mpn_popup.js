@@ -111,13 +111,13 @@ const MpnPopup = createClass({
         tableData={specTableData}
         renderBodyRow={args => {
           return (
-            <semantic.Table.Row key={String(args)}>
+            <tr key={String(args)}>
               {args.map(text => (
-                <semantic.Table.Cell key={text}>
+                <td key={text}>
                   {text}
-                </semantic.Table.Cell>
+                </td>
               ))}
-            </semantic.Table.Row>
+            </tr>
           )
         }}
       />

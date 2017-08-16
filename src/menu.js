@@ -42,8 +42,16 @@ function mapStateToProps(state) {
   const focus = state.view.get('focus')
   const field = immutable.List.of('lines', focus.get(0)).concat(focus.get(1))
   const value = state.data.present.getIn(field)
-  const deleteFocus = (field.get(2) === 'quantity' || value === '') ?
-    immutable.List.of(null, null) : focus
+  let deleteFocus = focus
+  //if partNumber is not expanded delete the whole number
+  if (field.get(2) === 'partNumbers' &&
+  !state.view.get('partNumbersExpanded').get(field.get(3))) {
+    deleteFocus = deleteFocus.update(1, f => f.slice(0, 2).toJS())
+  }
+  //don't delete quantity or empty fields
+  else if (field.get(2) === 'quantity' || value === '') {
+    deleteFocus = immutable.List.of(null, null)
+  }
   return {
     undosAvailable: !!state.data.past.length,
     redosAvailable: !!state.data.future.length,

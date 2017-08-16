@@ -21,6 +21,11 @@ const emptyLine = immutable.Map({
   }),
 })
 
+const emptyPartNumber = immutable.Map({
+  part: '',
+  manufacturer: '',
+})
+
 const initialState = {
   data: immutable.fromJS({
     lines: [],
@@ -57,10 +62,7 @@ const linesActions = {
     const field = focus.get(1)
     let empty = field[0] === 'quantity' ?  1 : ''
     if (field[0] === 'partNumbers' && field.length === 2) {
-      empty = immutable.Map({
-        part: '',
-        manufacturer: '',
-      })
+      empty = emptyPartNumber
     }
     return state.setIn(immutable.List.of('lines', index).concat(field), empty)
   },
@@ -109,7 +111,8 @@ const linesActions = {
   initializeLines(state, lines) {
     return state.set('lines', immutable.fromJS(lines).map(line => {
       line = line.set('id', makeId())
-      return line.set('suggestions', immutable.Set())
+      //add an empty part number to be filled
+      return line.update('partNumbers', ps => ps.push(emptyPartNumber))
     }))
   },
 }

@@ -72,7 +72,8 @@ const EditableCell = createClass({
       >
         <a style={{maxWidth: active ? '' : 200}}>
           {(() => {
-            if (field[0] === 'partNumbers' && field[2] === 'part') {
+            if (!props.expanded &&
+            field[0] === 'partNumbers' && field[2] === 'part') {
               return (
                 <div className='manufacturerSmall'>
                   {line.getIn(['partNumbers', field[1], 'manufacturer'])}

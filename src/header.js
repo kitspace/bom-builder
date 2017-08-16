@@ -27,47 +27,40 @@ function Header({partNumbersExpanded, maxPartNumbers, sortBy, togglePartNumbersE
         </th>
         {(() => {
           const cells = []
-          let headerClassName = ''
-          if (partNumbersExpanded) {
-            headerClassName = 'expandedHeader'
-            cells.push(
-              <td className='collapserCell' key='button'>
-                <semantic.Button
-                  basic
-                  size='tiny'
-                  onClick={() => togglePartNumbersExpanded()}
-                >
-                  ⇠ hide
-                </semantic.Button>
-              </td>
-            )
-          }
           for (let i = 0; i < maxPartNumbers; ++i) {
-            if (partNumbersExpanded) {
+            if (partNumbersExpanded.get(i)) {
               cells.push(
-                <th className={headerClassName} key={`Manufacturer${i}`}>
-                  <a onClick={() => sortBy(['manufacturer', i])}>
-                    Manufacturer
-                  </a>
+                <th style={{minWidth: 160}} key={`Manufacturer${i}`}>
+                  <div className='headerWithButton'>
+                    <semantic.Button
+                      basic
+                      size='tiny'
+                      onClick={() => togglePartNumbersExpanded(i)}
+                      content='⇢'
+                    />
+                    <a onClick={() => sortBy(['manufacturer', i])}>
+                      Manufacturer
+                    </a>
+                  </div>
                 </th>
               )
             }
             cells.push(
-              <th className={headerClassName} key={`MPN${i}`}>
+              <th style={{minWidth: 130}} key={`MPN${i}`}>
                 <div className='headerWithButton'>
                 <a onClick={() => sortBy(['part', i])}>
                   Part Number
                 </a>
                 {(() => {
-                  if (!partNumbersExpanded && i === 0) {
+                  if (!partNumbersExpanded.get(i)) {
                     return  (
                       <semantic.Button
                         basic
                         size='tiny'
-                        onClick={() => togglePartNumbersExpanded()}
-                      >
-                      more ...
-                      </semantic.Button>
+                        onClick={() => togglePartNumbersExpanded(i)}
+                        content='...'
+                      />
+
                     )
                   }
                 })()}
@@ -107,8 +100,7 @@ function mapStateToProps(state) {
   const first = state.data.present.getIn(['lines', 0])
   return {
     partNumbersExpanded,
-    maxPartNumbers:
-      partNumbersExpanded ? first ? first.get('partNumbers').size : 1 : 1
+    maxPartNumbers: first ? first.get('partNumbers').size : 1
   }
 }
 

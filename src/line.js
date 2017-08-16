@@ -19,6 +19,7 @@ function Line(props) {
     suggestions,
   } = props
   const id = line.get('id')
+  const partNumbersExpanded = viewState.get('partNumbersExpanded')
   return (
     <semantic.Table.Row
       active={editing && editing.get(0) === index}
@@ -69,23 +70,10 @@ function Line(props) {
         active={editingThis(editing, index, ['description'])}
       />
       {(() => {
-        if (viewState.get('partNumbersExpanded')) {
-          return (
-            <td
-              className='collapserCell'
-              onClick={() => props.togglePartNumbersExpanded()}
-            >
-              ⇠ hide
-            </td>
-          )
-        }
-      })()}
-      {(() => {
-        const ps = viewState.get('partNumbersExpanded') ?
-          line.get('partNumbers') : line.get('partNumbers').slice(0, 1)
+        const ps = line.get('partNumbers')
         return ps.map((mpn, i) => {
           const cells = []
-          if (viewState.get('partNumbersExpanded')) {
+          if (partNumbersExpanded.get(i)) {
             const field = ['partNumbers', i, 'manufacturer']
             cells.push(
               <EditableCell
@@ -118,6 +106,7 @@ function Line(props) {
                 index={index}
                 suggestions={suggestions}
                 active={editingThis(editing, index, field)}
+                expanded={partNumbersExpanded.get(i)}
               />
           )
           return cells

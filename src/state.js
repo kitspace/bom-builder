@@ -28,7 +28,7 @@ const initialState = {
     editFocus: [null, null],
   }),
   view: immutable.fromJS({
-    partNumbersExpanded: false,
+    partNumbersExpanded: [],
     focus: [null, null],
     editable: false,
   }),
@@ -121,11 +121,8 @@ const viewActions = {
   setEditable(state, value) {
     return state.set('editable', value)
   },
-  togglePartNumbersExpanded(state) {
-    return state.update('partNumbersExpanded', expanded => !expanded)
-  },
-  toggleRetailersExpanded(state) {
-    return state.update('retailersExpanded', expanded => !expanded)
+  togglePartNumbersExpanded(state, n) {
+    return state.updateIn(['partNumbersExpanded', n], expanded => !expanded)
   },
   loseFocus(state, focusToLose) {
     return state.update('focus', focus => {
@@ -189,26 +186,36 @@ const rootActions = {
           } else if (fieldName === 'quantity') {
             return immutable.List.of('description')
           } else if (fieldName === 'description') {
-            if (partNumbersExpanded) {
+            if (partNumbersExpanded.get(0)) {
               return immutable.List.of('partNumbers', 0, 'manufacturer')
             } else {
               return immutable.List.of('partNumbers', 0, 'part')
             }
           } else if (fieldName === 'partNumbers') {
             const first = oneClickBom.lineData.retailer_list[0]
-            const next = immutable.List.of('retailers', first)
-            if (partNumbersExpanded) {
-              const i = field.get(1)
+            const firstRetailer = immutable.List.of('retailers', first)
+            const i = field.get(1)
+            if (partNumbersExpanded.get(i)) {
               const type = field.get(2)
               if (type === 'manufacturer') {
                 return immutable.List.of('partNumbers', i, 'part')
               } else if ((i + 1) < lines.get(0).get('partNumbers').size) {
-                return immutable.List.of('partNumbers', i + 1, 'manufacturer')
+                if (partNumbersExpanded.get(i + 1)) {
+                  return immutable.List.of('partNumbers', i + 1, 'manufacturer')
+                } else {
+                  return immutable.List.of('partNumbers', i + 1, 'part')
+                }
               } else {
-                return next
+                return firstRetailer
               }
+            } else if ((i + 1) < lines.get(0).get('partNumbers').size) {
+                if (partNumbersExpanded.get(i + 1)) {
+                  return immutable.List.of('partNumbers', i + 1, 'manufacturer')
+                } else {
+                  return immutable.List.of('partNumbers', i + 1, 'part')
+                }
             } else {
-              return next
+              return firstRetailer
             }
           }
         })

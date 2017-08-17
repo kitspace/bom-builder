@@ -76,8 +76,20 @@ const MpnPopup = createClass({
     }
     this.setState({viewing: n})
   },
+  toggleSelected() {
+    const {index, selected, remove, setField, suggestions} = this.props
+    //set the entire mpn field i.e.
+    //part -> {manufacturer, part}
+    const field = this.props.field.slice(0, 2)
+    if (selected === this.state.viewing) {
+      remove(immutable.List.of(index, field))
+    } else {
+      const mpn = suggestions.getIn([this.state.viewing, 'mpn'])
+      setField({index, field, value: mpn})
+    }
+  },
   render() {
-    const props  = this.props
+    const props = this.props
     const suggestions = props.suggestions
     const popupProps = {
         className       : 'MpnPopup',
@@ -163,49 +175,12 @@ const MpnPopup = createClass({
     }
     return (
       <semantic.Popup {...popupProps} >
-        <semantic.Button.Group basic fluid>
-          <semantic.Button
-            disabled={suggestions.size < 2}
-            icon='left chevron'
-            onClick={this.decrementViewing}
-          />
-          {(() => {
-            if (props.selected === this.state.viewing) {
-              return (
-                <semantic.Button
-                  onClick={() => {
-                    const {remove, index} = props
-                    const field = props.field.slice(0, 2)
-                    remove(immutable.List.of(index, field))
-                  }}
-                >
-                  <semantic.Icon name='checkmark box' />
-                  Selected
-                </semantic.Button>
-              )
-            }
-            return (
-              <semantic.Button
-                onClick={() => {
-                  const {index, setField} = props
-                  //set the intire mpn field i.e.
-                  //part -> {manufacturer, part}
-                  const field = props.field.slice(0, 2)
-                  setField({index, field, value: mpn})
-                }}
-                disabled={!suggestions.size}
-              >
-                <semantic.Icon name='square outline' />
-                Select
-              </semantic.Button>
-            )
-          })()}
-          <semantic.Button
-            disabled={suggestions.size < 2}
-            icon='right chevron'
-            onClick={this.incrementViewing}
-          />
-        </semantic.Button.Group>
+        <Buttons
+          disabled={suggestions.size < 2}
+          onIncrement={this.incrementViewing}
+          onDecrement={this.decrementViewing}
+          onSelect={this.toggleSelected}
+        />
         {mpnTitle}
         <div className='topAreaContainer'>
           <div className='topAreaInner'>
@@ -246,6 +221,30 @@ const MpnPopup = createClass({
     )
   },
 })
+
+function Buttons(props) {
+  const {disabled, selected, onDecrement, onIncrement, onSelect} = props
+  return (
+    <semantic.Button.Group basic fluid>
+      <semantic.Button
+        disabled={disabled}
+        icon='left chevron'
+        onClick={onDecrement}
+      />
+      <semantic.Button onClick={onSelect}>
+        <semantic.Icon
+          name={selected ? 'checkmark box' : 'square outline'}
+        />
+        {selected ? 'Selected' : 'Select'}
+      </semantic.Button>
+      <semantic.Button
+        disabled={disabled}
+        icon='right chevron'
+        onClick={onIncrement}
+      />
+    </semantic.Button.Group>
+  )
+}
 
 function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)

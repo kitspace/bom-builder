@@ -106,14 +106,20 @@ const EditableCell = createClass({
   }
 })
 
-const EditInput = createClass({
-  getInitialState() {
-    return {
-      value: this.props.value,
-      initialValue: this.props.value,
-      untouchedValue: this.props.value,
+
+class EditInput extends React.PureComponent {
+  constructor(props) {
+    super(props)
+    this.skipInitialBlur = true
+    this.handleBlur = this.handleBlur.bind(this)
+    this.handleChange = this.handleChange.bind(this)
+    this.save = this.save.bind(this)
+    this.state = {
+      value: props.value,
+      initialValue: props.value,
+      untouchedValue: props.value,
     }
-  },
+  }
   handleChange(event) {
     //this is to debounce the typing
     this.setState({value: event.target.value})
@@ -121,8 +127,7 @@ const EditInput = createClass({
     this.timeout = setTimeout(() => {
       this.save(this.state.value)
     }, 500)
-  },
-  skipInitialBlur: true,
+  }
   handleBlur(event) {
     //this is for firefox where we get an initial blur event on number inputs
     //which we need to ignore
@@ -132,11 +137,11 @@ const EditInput = createClass({
       this.save(this.state.value)
       this.props.loseFocus()
     }
-  },
+  }
   save(value) {
     clearTimeout(this.timeout)
     this.props.setField(value)
-  },
+  }
   componentWillReceiveProps(newProps) {
     if (this.props.type !== 'number') {
       if (newProps.value !== this.state.initialValue) {
@@ -146,7 +151,7 @@ const EditInput = createClass({
         })
       }
     }
-  },
+  }
   render() {
     const input = (
       <input
@@ -175,17 +180,17 @@ const EditInput = createClass({
       />
     )
     return input
-  },
+  }
   componentWillUnmount() {
     this.props.onUnmount()
-  },
+  }
   componentDidMount() {
     this.props.onMount()
     this.refs.input.focus()
     this.skipInitialBlur = false
     this.refs.input.select()
-  },
-})
+  }
+}
 
 function editingThis(editing, index, field) {
   return editing && editing.equals(immutable.fromJS([index, field]))

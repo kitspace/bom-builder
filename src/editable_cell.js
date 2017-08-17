@@ -59,8 +59,11 @@ const EditableCell = createClass({
         />
       )
     }
+    if (!props.expanded && field[0] === 'partNumbers' && field[2] === 'part') {
+      var smallField = line.getIn(['partNumbers', field[1], 'manufacturer'])
+    }
     const cell = (
-      <semantic.Table.Cell
+      <Cell
         selectable={!!editing}
         active={active}
         onClick={e => {
@@ -70,25 +73,12 @@ const EditableCell = createClass({
             setImmediate(() => this.tiggered = false)
           }
         }}
-        style={{maxWidth: active ? '' : 200}}
-        id={popupTriggerId}
+        popupTriggerId={popupTriggerId}
+        smallField={smallField}
+        value={value}
       >
-        <a style={{maxWidth: active ? '' : 200}}>
-          {(() => {
-            if (!props.expanded &&
-            field[0] === 'partNumbers' && field[2] === 'part') {
-              return (
-                <div className='manufacturerSmall'>
-                  {line.getIn(['partNumbers', field[1], 'manufacturer'])}
-                </div>
-              )
-            }
-          })()}
-          {editInput}
-          {/* here to make sure the cell grows with the content */}
-          <div key='div' style={{visibility: 'hidden', height: 0}}>{value}</div>
-        </a>
-      </semantic.Table.Cell>
+        {editInput}
+      </Cell>
     )
     if (popupCell) {
       const suggestion = props.suggestions ? props.suggestions.first() : null
@@ -105,6 +95,30 @@ const EditableCell = createClass({
     return cell
   }
 })
+
+class Cell extends React.PureComponent {
+  render() {
+    const props = this.props
+    const smallField = props.smallField ?
+       (<div className='manufacturerSmall'>{props.smallField}</div>) : null
+    return (
+      <semantic.Table.Cell
+        selectable={props.selectable}
+        active={props.active}
+        style={{maxWidth: props.active ? '' : 200}}
+        id={props.popupTriggerId}
+        onClick={props.onClick}
+      >
+        <a style={{maxWidth: props.active ? '' : 200}}>
+          {smallField}
+          {props.children}
+          {/* here to make sure the cell grows with the content */}
+          <div key='div' style={{visibility: 'hidden', height: 0}}>{props.value}</div>
+        </a>
+      </semantic.Table.Cell>
+    )
+  }
+}
 
 
 class EditInput extends React.PureComponent {

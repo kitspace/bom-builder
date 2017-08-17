@@ -57,9 +57,8 @@ getTsv()
 //}).then(actions.setState)
 
 
-
-
 const Bom = createClass({
+  displayName: 'Bom',
   render() {
     return (
       <reactRedux.Provider store={store}>

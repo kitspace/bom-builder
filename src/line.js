@@ -1,5 +1,4 @@
 const React       = require('react')
-const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const oneClickBom = require('1-click-bom')
 const immutable = require('immutable')

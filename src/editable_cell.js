@@ -11,6 +11,7 @@ const MpnPopup = require('./mpn_popup').default
 const popupFields = ['partNumbers']
 
 const EditableCell = createClass({
+  displayName: 'EditableCell',
   getInitialState() {
     return {triggered: false}
   },

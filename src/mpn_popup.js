@@ -40,6 +40,7 @@ function reorder(specs) {
 }
 
 const MpnPopup = createClass({
+  displayName:'MpnPopup',
   getInitialState() {
     const viewing = this.props.selected < 0 ? 0 : this.props.selected
     return {

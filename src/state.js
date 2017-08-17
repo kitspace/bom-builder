@@ -266,6 +266,9 @@ const linesReducer = reduxUndo.default(
 )
 
 const suggestionsActions = {
+  setSuggestions(state, {id, suggestions}) {
+    return state.set(id, suggestions)
+  },
   addSuggestion(state, {id, part}) {
     return state.update(id, s => {
       s = s || immutable.List()

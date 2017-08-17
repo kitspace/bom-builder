@@ -26,31 +26,37 @@ const {
 } = require('./state')
 
 
-const store   = redux.createStore(mainReducer, initialState)
+const store = redux.createStore(
+  mainReducer,
+  initialState,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
 const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
+
+subscribeEffects(store, actions)
 
 function getTsv() {
   return superagent.get('1-click-BOM.tsv').then(r => {
     const {lines} = oneClickBom.parseTSV(r.text)
     actions.initializeLines(lines)
-    return store.getState()
   })
 }
 
-snapshot(() => {
-  return getTsv().then(state => {
-    const ps = state.data.present.get('lines').map((line, index) => {
-      const state = store.getState()
-      line = state.data.present.getIn(['lines', index])
-      const suggestions = state.suggestions.get(line.get('id'))
-      return findSuggestions(line, suggestions, actions)
-    })
-    return Promise.all(ps).then(() => store.getState())
-  })
-}).then(actions.setState)
+getTsv()
+
+//snapshot(() => {
+//  return getTsv().then(state => {
+//    const ps = state.data.present.get('lines').map((line, index) => {
+//      const state = store.getState()
+//      line = state.data.present.getIn(['lines', index])
+//      const suggestions = state.suggestions.get(line.get('id'))
+//      return findSuggestions(line, suggestions, actions)
+//    })
+//    return Promise.all(ps).then(() => store.getState())
+//  })
+//}).then(actions.setState)
 
 
-subscribeEffects(store, actions)
 
 
 const Bom = createClass({

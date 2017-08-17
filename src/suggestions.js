@@ -46,9 +46,9 @@ async function findSuggestions(line, suggestions=immutable.List(), actions) {
   let parts = await fromPartNumbers(line.get('partNumbers'), suggestions)
   suggestions = suggestions.concat(parts)
   const rs = await fromRetailers(line.get('retailers'), suggestions)
-  parts = parts.concat(rs)
-  parts = parts.concat(await fromDescription(line.get('description')))
-  parts.map(part => actions.addSuggestion({id: line.get('id'), part}))
+  suggestions = suggestions.concat(rs)
+  suggestions = suggestions.concat(await fromDescription(line.get('description')))
+  actions.setSuggestions({id: line.get('id'), suggestions: suggestions.toOrderedSet().toList()})
 }
 
 export {findSuggestions}

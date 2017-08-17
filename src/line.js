@@ -3,7 +3,10 @@ const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const oneClickBom = require('1-click-bom')
 const immutable = require('immutable')
+const reactRedux  = require('react-redux')
+const redux       = require('redux')
 
+const {actions} = require('./state')
 const EditableCell = require('./editable_cell')
 
 function editingThis(editing, index, field) {
@@ -104,7 +107,6 @@ function Line(props) {
                 setFocusNext={props.setFocusNext}
                 setFocusBelow={props.setFocusBelow}
                 index={index}
-                suggestions={suggestions}
                 active={editingThis(editing, index, field)}
                 expanded={partNumbersExpanded.get(i)}
               />
@@ -127,7 +129,6 @@ function Line(props) {
               setFocusNext={props.setFocusNext}
               setFocusBelow={props.setFocusBelow}
               index={index}
-              suggestions={suggestions}
               active={editingThis(editing, index, field)}
             />
           )})
@@ -189,4 +190,18 @@ function markerColor(ref) {
   return 'purple'
 }
 
-module.exports = Line
+function mapDispatchToProps(dispatch) {
+  return redux.bindActionCreators(actions, dispatch)
+}
+
+function mapStateToProps(state, props) {
+  return {
+    viewState: state.view,
+    editing: state.view.get('editable') ? state.view.get('focus') : null
+  }
+}
+
+module.exports = reactRedux.connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Line)

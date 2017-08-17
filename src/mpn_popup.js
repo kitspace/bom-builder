@@ -124,41 +124,13 @@ const MpnPopup = createClass({
       specs = specs.slice(0, 4)
     }
     const mpnTitle = (
-      <div className='titleContainer'>
-        <div />
-        <div className='mpnTitle'>
-          <div>
-            {mpn.get('manufacturer')}
-          </div>
-          <div>
-            {number}
-          </div>
-        </div>
-        <div className='viewingNumber'>
-          {`${this.state.viewing + 1}/${suggestions.size}`}
-        </div>
-      </div>
-    )
-    const specTableData = specs.map(spec => [spec.get('name'), spec.get('value')])
-    const specTable = (
-      <semantic.Table
-        className='specTable'
-        basic='very'
-        compact={true}
-        tableData={specTableData}
-        renderBodyRow={args => {
-          return (
-            <tr key={String(args)}>
-              {args.map(text => (
-                <td key={text}>
-                  {text}
-                </td>
-              ))}
-            </tr>
-          )
-        }}
+      <Title
+        one={mpn.get('manufacturer')}
+        two={number}
+        page={`${this.state.viewing + 1}/${suggestions.size}`}
       />
     )
+    const specTable = <SpecTable specs={specs} />
     let expandButton
     if (part.get('specs') && part.get('specs').size > 4) {
       expandButton = (
@@ -223,6 +195,54 @@ const MpnPopup = createClass({
   },
 })
 
+class SpecTable extends React.PureComponent {
+  render() {
+    const specTableData = this.props.specs.map(spec => (
+      [spec.get('name'), spec.get('value')]
+    ))
+    return (
+      <semantic.Table
+        className='specTable'
+        basic='very'
+        compact={true}
+        tableData={specTableData}
+        renderBodyRow={args => {
+          return (
+            <tr key={String(args)}>
+              {args.map(text => (
+                <td key={text}>
+                  {text}
+                </td>
+              ))}
+            </tr>
+          )
+        }}
+      />
+    )
+  }
+}
+
+class Title extends React.PureComponent {
+  render() {
+    const props = this.props
+    return (
+      <div className='titleContainer'>
+        <div />
+        <div className='mpnTitle'>
+          <div>
+            {props.one}
+          </div>
+          <div>
+            {props.two}
+          </div>
+        </div>
+        <div className='viewingNumber'>
+          {props.page}
+        </div>
+      </div>
+    )
+  }
+}
 
 class Buttons extends React.PureComponent {
   render() {

@@ -10,62 +10,32 @@ const {actions} = require('./state')
 const EditableCell = require('./editable_cell')
 const Handle = require('./handle')
 
-function editingThis(editing, index, field) {
-  return editing && editing.equals(immutable.fromJS([index, field]))
-}
-
 function Line(props) {
   const {
     viewState,
-    editing,
     line,
     index,
+    editing,
     lineId,
-    suggestions,
   } = props
   const id = lineId
   const partNumbersExpanded = viewState.get('partNumbersExpanded')
   return (
     <semantic.Table.Row
       active={editing && editing.get(0) === index}
-      key={line.get('id')}
     >
       <Handle index={index} />
       <EditableCell
-        setField={props.setField}
-        setFocus={props.setFocus}
-        editing={editing}
-        line={line}
         field={['reference']}
-        loseFocus={props.loseFocus}
-        setFocusNext={props.setFocusNext}
-        setFocusBelow={props.setFocusBelow}
         index={index}
-        active={editingThis(editing, index, ['reference'])}
       />
       <EditableCell
-        setField={props.setField}
-        setFocus={props.setFocus}
-        editing={editing}
-        line={line}
         field={['quantity']}
-        loseFocus={props.loseFocus}
-        setFocusNext={props.setFocusNext}
-        setFocusBelow={props.setFocusBelow}
         index={index}
-        active={editingThis(editing, index, ['quantity'])}
       />
       <EditableCell
-        setField={props.setField}
-        setFocus={props.setFocus}
-        editing={editing}
-        line={line}
         field={['description']}
-        loseFocus={props.loseFocus}
-        setFocusNext={props.setFocusNext}
-        setFocusBelow={props.setFocusBelow}
         index={index}
-        active={editingThis(editing, index, ['description'])}
       />
       {(() => {
         const ps = line.get('partNumbers')
@@ -76,16 +46,7 @@ function Line(props) {
             cells.push(
               <EditableCell
                 key={`manufacturer-${i}`}
-                editing={editing}
-                line={line}
                 field={field}
-                setField={props.setField}
-                setFocus={props.setFocus}
-                loseFocus={props.loseFocus}
-                setFocusNext={props.setFocusNext}
-                setFocusBelow={props.setFocusBelow}
-                index={index}
-                active={editingThis(editing, index, field)}
               />
             )
           }
@@ -93,16 +54,8 @@ function Line(props) {
           cells.push(
               <EditableCell
                 key={`part-${i}`}
-                editing={editing}
-                line={line}
                 field={field}
-                setField={props.setField}
-                setFocus={props.setFocus}
-                loseFocus={props.loseFocus}
-                setFocusNext={props.setFocusNext}
-                setFocusBelow={props.setFocusBelow}
                 index={index}
-                active={editingThis(editing, index, field)}
                 expanded={partNumbersExpanded.get(i)}
               />
           )
@@ -115,16 +68,8 @@ function Line(props) {
           return (
             <EditableCell
               key={name}
-              editing={editing}
-              line={line}
               field={field}
-              setField={props.setField}
-              setFocus={props.setFocus}
-              loseFocus={props.loseFocus}
-              setFocusNext={props.setFocusNext}
-              setFocusBelow={props.setFocusBelow}
               index={index}
-              active={editingThis(editing, index, field)}
             />
           )})
       })()}

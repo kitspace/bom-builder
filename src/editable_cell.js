@@ -2,7 +2,10 @@ const React       = require('react')
 const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const immutable   = require('immutable')
+const reactRedux  = require('react-redux')
+const redux       = require('redux')
 
+const {actions} = require('./state')
 const MpnPopup = require('./mpn_popup').default
 
 const popupFields = ['partNumbers']
@@ -13,7 +16,7 @@ const EditableCell = createClass({
   },
   render() {
     const props = this.props
-    const {editing, line, field, setField, setFocus, index, active} = props
+    const {editing, line, field, index, setField, setFocus, active} = props
     if (field[0] === 'quantity') {
       var type = 'number'
     }
@@ -185,4 +188,24 @@ const EditInput = createClass({
   },
 })
 
-module.exports = EditableCell
+function editingThis(editing, index, field) {
+  return editing && editing.equals(immutable.fromJS([index, field]))
+}
+
+function mapDispatchToProps(dispatch) {
+  return redux.bindActionCreators(actions, dispatch)
+}
+
+function mapStateToProps(state, props) {
+  const editing = state.view.get('editable') ? state.view.get('focus') : null
+  return {
+    line: state.data.present.getIn(['lines', props.index]),
+    editing,
+    active: editingThis(editing, props.index, props.field),
+  }
+}
+
+module.exports = reactRedux.connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EditableCell)

@@ -24,18 +24,28 @@ function fromRetailers(retailers, suggestions) {
     .filter(part => !suggestionSkus.includes(part))
 
   return Promise.all(skus.map(getPartinfo))
+    .then(ps => ps.filter(x => x != null))
 }
 
-function fromDescription(description, suggestions) {
+function fromPartNumbers(partNumbers) {
+  partNumbers = partNumbers
+    .filter(mpn => mpn.get('part'))
+    .map(mpn => mpn.toJS())
+  return Promise.all(partNumbers.map(getPartinfo))
+    .then(ps => ps.filter(x => x != null))
+}
+
+function fromDescription(description) {
   return getPartinfo(description)
 }
 
 async function findSuggestions(line, suggestions, actions) {
-  const id = line.get('id')
-  let parts = await fromRetailers(line.get('retailers'), suggestions)
+  let parts = await fromPartNumbers(line.get('partNumbers'))
+  parts = parts.concat(await fromRetailers(line.get('retailers'), suggestions))
   if (parts.length === 0) {
-    parts = await fromDescription(line.get('description'), suggestions)
+    parts = await fromDescription(line.get('description'))
   }
+  const id = line.get('id')
   parts.map(part => actions.addSuggestion({id, part}))
 }
 

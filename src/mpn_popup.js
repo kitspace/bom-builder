@@ -177,6 +177,7 @@ const MpnPopup = createClass({
       <semantic.Popup {...popupProps} >
         <Buttons
           disabled={suggestions.size < 2}
+          selected={this.props.selected === this.state.viewing}
           onIncrement={this.incrementViewing}
           onDecrement={this.decrementViewing}
           onSelect={this.toggleSelected}
@@ -222,28 +223,31 @@ const MpnPopup = createClass({
   },
 })
 
-function Buttons(props) {
-  const {disabled, selected, onDecrement, onIncrement, onSelect} = props
-  return (
-    <semantic.Button.Group basic fluid>
-      <semantic.Button
-        disabled={disabled}
-        icon='left chevron'
-        onClick={onDecrement}
-      />
-      <semantic.Button onClick={onSelect}>
-        <semantic.Icon
-          name={selected ? 'checkmark box' : 'square outline'}
+
+class Buttons extends React.PureComponent {
+  render() {
+    const {disabled, selected, onDecrement, onIncrement, onSelect} = this.props
+    return (
+      <semantic.Button.Group basic fluid>
+        <semantic.Button
+          disabled={disabled}
+          icon='left chevron'
+          onClick={onDecrement}
         />
-        {selected ? 'Selected' : 'Select'}
-      </semantic.Button>
-      <semantic.Button
-        disabled={disabled}
-        icon='right chevron'
-        onClick={onIncrement}
-      />
-    </semantic.Button.Group>
-  )
+        <semantic.Button onClick={onSelect}>
+          <semantic.Icon
+            name={selected ? 'checkmark box' : 'square outline'}
+          />
+          {selected ? 'Selected' : 'Select'}
+        </semantic.Button>
+        <semantic.Button
+          disabled={disabled}
+          icon='right chevron'
+          onClick={onIncrement}
+        />
+      </semantic.Button.Group>
+    )
+  }
 }
 
 function mapDispatchToProps(dispatch) {

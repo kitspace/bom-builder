@@ -1,11 +1,7 @@
 const immutable = require('immutable')
 const getPartinfo = require('./get_partinfo')
 
-function findSuggestions(line, suggestions, actions) {
-  const partNumbers = line.get('partNumbers')
-  const id = line.get('id')
-
-
+function fromRetailers(retailers, suggestions) {
   let suggestionSkus = immutable.List()
   if (suggestions) {
     suggestionSkus = suggestions.flatMap(s => {
@@ -13,10 +9,11 @@ function findSuggestions(line, suggestions, actions) {
     })
   }
 
-
-  const skus = line.get('retailers').entrySeq().map(([vendor, part]) => {
+  const skus = retailers.entrySeq().map(([vendor, part]) => {
     if (vendor === 'Digikey') {
       vendor = 'Digi-Key'
+    } else if (vendor === 'RS') {
+      vendor = 'RS Components'
     }
     if (part !== '') {
       return {vendor, part}
@@ -26,14 +23,20 @@ function findSuggestions(line, suggestions, actions) {
     .filter(x => x != null)
     .filter(part => !suggestionSkus.includes(part))
 
-  const ps = skus.map(sku => {
-    return getPartinfo(sku)
-  }).map(p => {
-    return p.then(part => {
-      return actions.addSuggestion({id, part})
-    })
-  })
-  return Promise.all(ps)
+  return Promise.all(skus.map(getPartinfo))
 }
 
-module.exports = {findSuggestions}
+function fromDescription(description, suggestions) {
+  return getPartinfo(description)
+}
+
+async function findSuggestions(line, suggestions, actions) {
+  const id = line.get('id')
+  let parts = await fromRetailers(line.get('retailers'), suggestions)
+  if (parts.length === 0) {
+    parts = await fromDescription(line.get('description'), suggestions)
+  }
+  parts.map(part => actions.addSuggestion({id, part}))
+}
+
+export {findSuggestions}

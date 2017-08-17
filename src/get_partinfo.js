@@ -1,6 +1,6 @@
 const superagent = require('superagent')
 
-const partinfoURL = 'https://partinfo.kitnic.it/graphql'
+const partinfoURL = 'http://localhost:4001/graphql'
 
 const part = `
   mpn {
@@ -45,14 +45,24 @@ query SkuQuery($input: SkuInput!) {
   }
 }`
 
-function getPartinfo(mpnOrSku) {
-  let query = MpnQuery
-  if (mpnOrSku.vendor) {
-    query = SkuQuery
+const SearchQuery = `
+query SearchQuery($input: String!) {
+  search(term: $input) {
+    ${part}
   }
+}`
 
-  if (!mpnOrSku.part || mpnOrSku.part === '') {
-    return Promise.resolve(null)
+function getPartinfo(input) {
+  let query = MpnQuery
+  if (typeof input === 'string') {
+    query = SearchQuery
+  } else  {
+    if (input.vendor) {
+      query = SkuQuery
+    }
+    if (!input.part || input.part === '') {
+      return Promise.resolve(null)
+    }
   }
 
   return superagent
@@ -61,9 +71,12 @@ function getPartinfo(mpnOrSku) {
     .send({
       query,
       variables: {
-        input: mpnOrSku
+        input
       },
     }).then(res => {
+      if (query === SearchQuery) {
+        return res.body.data.search
+      }
       return res.body.data.part
     }).catch(err => {
       console.error(err)

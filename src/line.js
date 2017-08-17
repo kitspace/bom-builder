@@ -19,9 +19,10 @@ function Line(props) {
     editing,
     line,
     index,
+    lineId,
     suggestions,
   } = props
-  const id = line.get('id')
+  const id = lineId
   const partNumbersExpanded = viewState.get('partNumbersExpanded')
   return (
     <semantic.Table.Row
@@ -196,8 +197,9 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state, props) {
   return {
+    line: state.data.present.getIn(['lines', props.index]),
     viewState: state.view,
-    editing: state.view.get('editable') ? state.view.get('focus') : null
+    editing: state.view.get('editable') ? state.view.get('focus') : null,
   }
 }
 

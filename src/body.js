@@ -9,8 +9,8 @@ const Line = require('./line')
 function Body(props) {
   return (
     <tbody>
-      {props.lines.map((line, index) => (
-        <Line key={line.get('id')} line={line} index={index} />
+      {props.lineIds.map((lineId, index) => (
+        <Line key={lineId} lineId={lineId} index={index} />
       ))}
     </tbody>
   )
@@ -18,7 +18,7 @@ function Body(props) {
 
 function mapStateToProps(state) {
   return {
-    lines: state.data.present.get('lines'),
+    lineIds: state.data.present.get('lines').map(l => l.get('id')),
   }
 }
 

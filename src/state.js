@@ -268,12 +268,11 @@ const linesReducer = reduxUndo.default(
 const suggestionsActions = {
   addSuggestion(state, {id, part}) {
     return state.update(id, s => {
-      const p = immutable.fromJS(part)
       s = s || immutable.List()
-      if (s.some(x => p.get('mpn').equals(x.get('mpn')))) {
+      if (s.some(x => part.get('mpn').equals(x.get('mpn')))) {
         return s
       }
-      return s.push(p)
+      return s.push(part)
     })
   },
 }

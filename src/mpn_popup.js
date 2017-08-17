@@ -7,6 +7,7 @@ const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const ramda       = require('ramda')
 const immutable   = require('immutable')
+const reselect    = require('reselect')
 
 const {actions} = require('./state')
 
@@ -250,21 +251,49 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-function mapStateToProps(state, ownProps) {
-  const {field, line} = ownProps
-  let suggestions = immutable.List()
-  let selected = -1
-  if (line && field) {
-    const mpn = line.getIn(field.slice(0, 2))
-    const otherMpns = line.get('partNumbers').filter(m => !m.equals(mpn))
-    suggestions = state.suggestions.get(line.get('id')) || immutable.List()
-    suggestions = suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
-    selected = suggestions.findIndex(s => s.get('mpn').equals(mpn))
+function mpnSelector(state, props) {
+  const {field, line} = props
+  return line.getIn(field.slice(0, 2))
+}
 
-  }
-  return {
-    selected,
-    suggestions,
+function suggestionsSelector(state, props) {
+  return state.suggestions.get(props.line.get('id')) || immutable.List()
+}
+
+function partNumbersSelector(state, props) {
+  return props.line.get('partNumbers')
+}
+
+const otherMpnsSelector = reselect.createSelector(
+  [partNumbersSelector, mpnSelector],
+  (partNumbers, mpn) => partNumbers.filter(m => !m.equals(mpn))
+)
+
+const applicableSuggestionsSelector = reselect.createSelector(
+  [suggestionsSelector, otherMpnsSelector],
+  (suggestions, otherMpns) => suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
+)
+
+const selectedSelector = reselect.createSelector(
+  [applicableSuggestionsSelector, mpnSelector],
+  (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
+)
+
+function makeGetSuggestions() {
+  return reselect.createSelector(
+    [applicableSuggestionsSelector, selectedSelector],
+    (suggestions, selected) => [suggestions, selected]
+  )
+}
+
+function mapStateToProps() {
+  const getSuggestions = makeGetSuggestions()
+  return (state, props) => {
+    const [suggestions, selected] = getSuggestions(state, props)
+    return {
+      selected,
+      suggestions,
+    }
   }
 }
 

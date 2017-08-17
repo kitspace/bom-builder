@@ -8,6 +8,7 @@ const redux       = require('redux')
 
 const {actions} = require('./state')
 const EditableCell = require('./editable_cell')
+const Handle = require('./handle')
 
 function editingThis(editing, index, field) {
   return editing && editing.equals(immutable.fromJS([index, field]))
@@ -29,14 +30,7 @@ function Line(props) {
       active={editing && editing.get(0) === index}
       key={line.get('id')}
     >
-      <Handle
-        line={line}
-        setField={props.setField}
-        setFocus={props.setFocus}
-        removeLine={props.removeLine}
-        index={index}
-        loseFocus={props.loseFocus}
-      />
+      <Handle index={index} />
       <EditableCell
         setField={props.setField}
         setFocus={props.setFocus}
@@ -136,59 +130,6 @@ function Line(props) {
       })()}
     </semantic.Table.Row>
   )
-}
-
-const Handle = createClass({
-  render() {
-    const {line, setFocus, removeLine, index} = this.props
-    return (
-      <td className={`marked ${markerColor(line.get('reference'))}`}>
-        <input
-          ref="input"
-          style={{height: 39}}
-          onFocus={() => setFocus([index, null])}
-          onBlur={() => {
-            setTimeout(() => {
-              this.props.loseFocus([index, null])
-            }, 100)
-          }}
-          className='mousetrap'
-          readOnly
-          onKeyDown={e => {
-            if (e.key === 'Delete' || e.key === 'Backspace') {
-              this.setState({keys: []})
-              removeLine(index)
-            } else if (e.key === 'Escape') {
-              this.setState({keys: []})
-              this.props.loseFocus([index, null])
-            }
-          }}
-        />
-      </td>
-    )
-  },
-})
-
-function markerColor(ref) {
-  if (/^C\d/.test(ref)) {
-    return 'orange'
-  }
-  if (/^R\d/.test(ref)) {
-    return 'lightblue'
-  }
-  if (/^IC\d/.test(ref) || /^U\d/.test(ref)) {
-    return 'blue'
-  }
-  if (/^L\d/.test(ref)) {
-    return 'black'
-  }
-  if (/^D\d/.test(ref)) {
-    return 'green'
-  }
-  if (/^LED\d/.test(ref)) {
-    return 'yellow'
-  }
-  return 'purple'
 }
 
 function mapDispatchToProps(dispatch) {

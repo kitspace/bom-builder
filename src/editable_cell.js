@@ -96,7 +96,6 @@ const EditableCell = createClass({
         <MpnPopup
           on='click'
           trigger={cell}
-          line={line}
           field={field}
           index={index}
           position='bottom center'

@@ -12,7 +12,7 @@ const EditableCell = require('./editable_cell')
 const Handle = require('./handle')
 
 
-//for passing shallow equal comparisons
+//for passing shallow equality
 const fields = immutable.Map({
   reference: immutable.List.of('reference'),
   quantity: immutable.List.of('quantity'),
@@ -38,6 +38,44 @@ function Line(props) {
   } = props
   const id = lineId
   const partNumbersExpanded = viewState.get('partNumbersExpanded')
+  const ps = line.get('partNumbers')
+  const partNumberCells = ps.flatMap((mpn, i) => {
+    const cells = []
+    if (partNumbersExpanded.get(i)) {
+      const get = immutable.List.of('partNumbers', i, 'manufacturer')
+      //just in case we have more partNumbers than we prepared in fields
+      const field = fields.getIn(get) || get
+      cells.push(
+        <EditableCell
+          key={`manufacturer-${i}`}
+          field={field}
+          index={index}
+        />
+      )
+    }
+    const get = immutable.List.of('partNumbers', i, 'part')
+    //just in case we have more partNumbers than we prepared in fields
+    const field = fields.getIn(get) || get
+    cells.push(
+      <EditableCell
+        key={`part-${i}`}
+        field={field}
+        index={index}
+        expanded={partNumbersExpanded.get(i)}
+      />
+    )
+    return cells
+  })
+  const retailerCells = oneClickBom.lineData.retailer_list.map((name, i) => {
+    const field = fields.getIn(['retailers', name])
+    return (
+      <EditableCell
+        key={name}
+        field={field}
+        index={index}
+      />
+    )
+  })
   return (
     <semantic.Table.Row active={editing && editing.get(0) === index}>
       <Handle index={index} />
@@ -46,7 +84,6 @@ function Line(props) {
         index={index}
       />
       <EditableCell
-        field={['quantity']}
         field={fields.get('quantity')}
         index={index}
       />
@@ -54,43 +91,8 @@ function Line(props) {
         field={fields.get('description')}
         index={index}
       />
-      {(() => {
-        const ps = line.get('partNumbers')
-        return ps.map((mpn, i) => {
-          const cells = []
-          if (partNumbersExpanded.get(i)) {
-            const field = fields.getIn(['partNumbers', i, 'manufacturer'])
-            cells.push(
-              <EditableCell
-                key={`manufacturer-${i}`}
-                field={field}
-                index={index}
-              />
-            )
-          }
-          const field = fields.getIn(['partNumbers', i, 'part'])
-          cells.push(
-              <EditableCell
-                key={`part-${i}`}
-                field={field}
-                index={index}
-                expanded={partNumbersExpanded.get(i)}
-              />
-          )
-          return cells
-        })
-      })()}
-      {(() => {
-        return oneClickBom.lineData.retailer_list.map((name, i) => {
-          const field = fields.getIn(['retailers', name])
-          return (
-            <EditableCell
-              key={name}
-              field={field}
-              index={index}
-            />
-          )})
-      })()}
+      {partNumberCells}
+      {retailerCells}
     </semantic.Table.Row>
   )
 }

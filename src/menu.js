@@ -47,7 +47,7 @@ function mapStateToProps(state) {
   //if partNumber is not expanded delete the whole number
   if (field.get(2) === 'partNumbers' && !partNumbersExpanded) {
     const mpn = state.data.present.getIn(field.pop())
-    if (mpn.get('part') === '' && mpn.get('manufacturer') === '') {
+    if (!mpn || (!mpn.get('part') && !mpn.get('manufacturer'))) {
       deleteFocus = immutable.List.of(null)
     } else {
       deleteFocus = deleteFocus.update(1, f => f.slice(0, 2).toJS())

@@ -56,7 +56,7 @@ const MpnPopup = createClass({
       selected,
       remove,
       setState,
-      selectPartNumberSuggestion,
+      setField,
       suggestions,
     } = this.props
     //set the entire mpn field i.e.
@@ -66,7 +66,7 @@ const MpnPopup = createClass({
       remove(immutable.List.of(index, field))
     } else {
       const mpn = suggestions.getIn([this.state.viewing, 'mpn'])
-      selectPartNumberSuggestion({index, value: mpn})
+      setField({index, field, value: mpn})
     }
   },
   render() {

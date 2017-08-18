@@ -40,6 +40,21 @@ const initialState = {
   suggestions: immutable.Map(),
 }
 
+function ensurePartNumberSpace(lines) {
+  const requiredSize = lines.map(line => {
+    const partNumbers = line.get('partNumbers')
+    return partNumbers.findLastIndex(p =>! p.equals(emptyPartNumber)) + 2
+  }).max()
+  return lines.map(line => {
+    return line.update('partNumbers', ps => {
+      while (ps.size < requiredSize) {
+        ps = ps.push(emptyPartNumber)
+      }
+      return ps.slice(0, requiredSize)
+    })
+  })
+}
+
 const linesActions = {
   setField(state, {index, field, value}) {
     if (field[0] === 'quantity' && value < 1) {
@@ -48,17 +63,19 @@ const linesActions = {
     const currentValue = state.getIn(['lines', index].concat(field))
     if (currentValue !== value) {
       state = state.setIn(['lines', index].concat(field),  value)
+      state = state.update('lines', ensurePartNumberSpace)
       return state.set('editFocus', immutable.List.of(index, immutable.fromJS(field)))
     }
-    return state
+    return state.update('lines', ensurePartNumberSpace)
   },
   selectPartNumberSuggestion(state, {index, value}) {
     return state.update('lines', lines => {
-      return lines.update(index, line => {
+      lines = lines.update(index, line => {
         const firstEmpty = line.get('partNumbers')
           .findIndex(mpn => mpn.equals(emptyPartNumber))
         return line.setIn(['partNumbers', firstEmpty], value)
       })
+      return ensurePartNumberSpace(lines)
     })
   },
   addLine(state, value) {
@@ -73,7 +90,8 @@ const linesActions = {
     if (field[0] === 'partNumbers' && field.length === 2) {
       empty = emptyPartNumber
     }
-    return state.setIn(immutable.List.of('lines', index).concat(field), empty)
+    state = state.setIn(immutable.List.of('lines', index).concat(field), empty)
+    return state.update('lines', ensurePartNumberSpace)
   },
   remove(state, focus) {
     const index = focus.get(0)
@@ -85,7 +103,8 @@ const linesActions = {
     }
   },
   removeLine(state, index) {
-    const lines = state.get('lines').remove(index)
+    let lines = state.get('lines').remove(index)
+    lines = ensurePartNumberSpace(lines)
     return state.merge({lines})
   },
   sortBy(state, header) {
@@ -118,11 +137,9 @@ const linesActions = {
     return state.merge({lines, sortedBy})
   },
   initializeLines(state, lines) {
-    return state.set('lines', immutable.fromJS(lines).map(line => {
-      line = line.set('id', makeId())
-      //add an empty part number to be filled
-      return line.update('partNumbers', ps => ps.push(emptyPartNumber))
-    }))
+    return state.set('lines', ensurePartNumberSpace(immutable.fromJS(lines).map(line => {
+      return line.set('id', makeId())
+    })))
   },
 }
 
@@ -260,7 +277,6 @@ const rootActions = {
 
 const rootReducer = makeReducer(rootActions, initialState)
 
-
 const ignoreTypes = immutable.List.of('initializeLines', 'addSuggestion')
 const linesReducer = reduxUndo.default(
   makeReducer(linesActions, initialState['data']),
@@ -289,7 +305,10 @@ const suggestionsActions = {
   },
 }
 
-const suggestionsReducer = makeReducer(suggestionsActions, initialState.suggestions)
+const suggestionsReducer = makeReducer(
+  suggestionsActions,
+  initialState.suggestions
+)
 
 const viewReducer = makeReducer(viewActions, initialState['view'])
 

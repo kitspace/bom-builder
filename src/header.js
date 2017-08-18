@@ -27,7 +27,7 @@ function Header({partNumbersExpanded, maxPartNumbers, sortBy, togglePartNumbersE
         </th>
         {(() => {
           const cells = []
-          for (let i = 0; i < maxPartNumbers; ++i) {
+          for (let i = 0; i < (maxPartNumbers - 1); ++i) {
             if (partNumbersExpanded.get(i)) {
               cells.push(
                 <th style={{minWidth: 160}} key={`Manufacturer${i}`}>
@@ -68,6 +68,9 @@ function Header({partNumbersExpanded, maxPartNumbers, sortBy, togglePartNumbersE
               </th>
             )
           }
+          cells.push(
+            <th key='MPN-last'>...</th>
+          )
           return cells
         })()}
         {(() => {

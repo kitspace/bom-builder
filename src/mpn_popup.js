@@ -78,7 +78,14 @@ const MpnPopup = createClass({
     this.setState({viewing: n})
   },
   toggleSelected() {
-    const {index, selected, remove, setField, suggestions} = this.props
+    const {
+      index,
+      selected,
+      remove,
+      setState,
+      selectPartNumberSuggestion,
+      suggestions,
+    } = this.props
     //set the entire mpn field i.e.
     //part -> {manufacturer, part}
     const field = this.props.field.slice(0, 2)
@@ -86,7 +93,7 @@ const MpnPopup = createClass({
       remove(immutable.List.of(index, field))
     } else {
       const mpn = suggestions.getIn([this.state.viewing, 'mpn'])
-      setField({index, field, value: mpn})
+      selectPartNumberSuggestion({index, value: mpn})
     }
   },
   render() {

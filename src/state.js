@@ -52,6 +52,15 @@ const linesActions = {
     }
     return state
   },
+  selectPartNumberSuggestion(state, {index, value}) {
+    return state.update('lines', lines => {
+      return lines.update(index, line => {
+        const firstEmpty = line.get('partNumbers')
+          .findIndex(mpn => mpn.equals(emptyPartNumber))
+        return line.setIn(['partNumbers', firstEmpty], value)
+      })
+    })
+  },
   addLine(state, value) {
     const line = immutable.fromJS(value).set('id', makeId())
     const lines = state.get('lines').push(line)

@@ -48,6 +48,7 @@ function Line(props) {
               <EditableCell
                 key={`manufacturer-${i}`}
                 field={field}
+                index={index}
               />
             )
           }

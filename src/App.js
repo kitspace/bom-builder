@@ -39,22 +39,21 @@ function getTsv() {
   return superagent.get('1-click-BOM.tsv').then(r => {
     const {lines} = oneClickBom.parseTSV(r.text)
     actions.initializeLines(lines)
+    return store.getState()
   })
 }
 
-getTsv()
-
-//snapshot(() => {
-//  return getTsv().then(state => {
-//    const ps = state.data.present.get('lines').map((line, index) => {
-//      const state = store.getState()
-//      line = state.data.present.getIn(['lines', index])
-//      const suggestions = state.suggestions.get(line.get('id'))
-//      return findSuggestions(line, suggestions, actions)
-//    })
-//    return Promise.all(ps).then(() => store.getState())
-//  })
-//}).then(actions.setState)
+snapshot(() => {
+  return getTsv().then(state => {
+    const ps = state.data.present.get('lines').map((line, index) => {
+      const state = store.getState()
+      line = state.data.present.getIn(['lines', index])
+      const suggestions = state.suggestions.get(line.get('id'))
+      return findSuggestions(line, suggestions, actions)
+    })
+    return Promise.all(ps).then(() => store.getState())
+  })
+}).then(actions.setState)
 
 
 class Bom extends React.Component {

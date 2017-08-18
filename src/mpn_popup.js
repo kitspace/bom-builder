@@ -158,12 +158,7 @@ const MpnPopup = createClass({
             <div className='description'>
               {part.get('description')}
             </div>
-            <div className='datasheet'>
-              <a href={part.get('datasheet')}>
-                <semantic.Icon name='file pdf outline' />
-                Datasheet
-              </a>
-            </div>
+            <Datasheet href={part.get('datasheet')} />
             {specTable}
             {expandButton}
           </div>
@@ -172,6 +167,21 @@ const MpnPopup = createClass({
     )
   },
 })
+
+class Datasheet extends React.PureComponent {
+  render() {
+    const link = this.props.href ?
+      <a href={this.props.href} >
+        <semantic.Icon name='file pdf outline' />
+        Datasheet
+      </a> : null
+    return (
+      <div className='datasheet'>
+        {link}
+      </div>
+    )
+  }
+}
 
 class SpecTable extends React.PureComponent {
   render() {

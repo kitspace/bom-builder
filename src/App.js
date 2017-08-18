@@ -57,8 +57,7 @@ getTsv()
 //}).then(actions.setState)
 
 
-const Bom = createClass({
-  displayName: 'Bom',
+class Bom extends React.Component {
   render() {
     return (
       <reactRedux.Provider store={store}>
@@ -77,13 +76,13 @@ const Bom = createClass({
         </DoubleScrollBar>
       </reactRedux.Provider>
     )
-  },
+  }
   componentWillMount() {
     actions.setEditable(this.props.editable)
     mousetrap.bind('ctrl+z', actions.undo)
     mousetrap.bind('ctrl+y', actions.redo)
-  },
-})
+  }
+}
 
 
 

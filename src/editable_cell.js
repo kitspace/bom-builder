@@ -4,9 +4,11 @@ const semantic    = require('semantic-ui-react')
 const immutable   = require('immutable')
 const reactRedux  = require('react-redux')
 const redux       = require('redux')
+const reselect    = require('reselect')
 
 const {actions} = require('./state')
-const MpnPopup = require('./mpn_popup').default
+const MpnPopup  = require('./mpn_popup').default
+const selectors = require('./selectors')
 
 const popupFields = ['partNumbers']
 
@@ -215,12 +217,33 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-function mapStateToProps(state, props) {
-  const editing = state.view.get('editable') ? state.view.get('focus') : null
-  return {
-    line: state.data.present.getIn(['lines', props.index]),
-    editing,
-    active: editingThis(editing, props.index, props.field),
+function editingSelector(state) {
+  return state.view.get('editable') ? state.view.get('focus') : null
+}
+
+function indexSelector(_, props) {
+  return props.index
+}
+
+function fieldSelector(_, props) {
+  return props.field
+}
+
+function makeActiveSelector() {
+  return reselect.createSelector(
+    [editingSelector, indexSelector, fieldSelector],
+    editingThis
+  )
+}
+
+function mapStateToProps() {
+  const activeSelector = makeActiveSelector()
+  return (state, props) => {
+    return {
+      line: selectors.line(state, props),
+      editing: editingSelector(state),
+      active: activeSelector(state, props)
+    }
   }
 }
 

@@ -10,7 +10,7 @@ const immutable   = require('immutable')
 const reselect    = require('reselect')
 
 const {actions} = require('./state')
-
+const selectors = require('./selectors')
 
 const importance = [
   ['color', 'capacitance', 'resistance'],
@@ -275,21 +275,14 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-function lineSelector(state, props) {
-  return state.data.present.getIn(['lines', props.index])
-}
-
 function mpnSelector(state, props) {
-  const line = lineSelector(state, props)
+  const line = selectors.line(state, props)
   return line.getIn(props.field.slice(0, 2))
 }
 
-function suggestionsSelector(state) {
-  return state.suggestions
-}
 
 const partNumbersSelector = reselect.createSelector(
-  [lineSelector],
+  [selectors.line],
   line => line.get('partNumbers')
 )
 
@@ -299,7 +292,7 @@ const otherMpnsSelector = reselect.createSelector(
 )
 
 const applicableSuggestionsSelector = reselect.createSelector(
-  [suggestionsSelector, otherMpnsSelector, lineSelector],
+  [selectors.suggestions, otherMpnsSelector, selectors.line],
   (suggestions, otherMpns, line) => {
     suggestions = suggestions.get(line.get('id')) || immutable.List()
     return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
@@ -318,14 +311,21 @@ function makeGetSuggestions() {
   )
 }
 
+function makeLineSelector() {
+  return reselect.createSelector(
+    [selectors.line], line => line
+  )
+}
+
 function mapStateToProps() {
   const getSuggestions = makeGetSuggestions()
+  const getLine = makeLineSelector()
   return (state, props) => {
     const [suggestions, selected] = getSuggestions(state, props)
     return {
       selected,
       suggestions,
-      line: lineSelector(state, props),
+      line: getLine(state, props),
     }
   }
 }

@@ -1,10 +1,12 @@
 const React       = require('react')
 const semantic    = require('semantic-ui-react')
 const oneClickBom = require('1-click-bom')
-const immutable = require('immutable')
+const immutable   = require('immutable')
 const reactRedux  = require('react-redux')
 const redux       = require('redux')
+const reselect    = require('reselect')
 
+const selectors = require('./selectors')
 const {actions} = require('./state')
 const EditableCell = require('./editable_cell')
 const Handle = require('./handle')
@@ -80,12 +82,19 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-function mapStateToProps(state, props) {
-  return {
-    line: state.data.present.getIn(['lines', props.index]),
-    viewState: state.view,
-    editing: state.view.get('editable') ? state.view.get('focus') : null,
-  }
+function editingSelector(state) {
+  return state.view.get('editable') ? state.view.get('focus') : null
+}
+
+function mapStateToProps() {
+  return reselect.createSelector(
+    [selectors.line, selectors.view, editingSelector],
+    (line, viewState, editing) => ({
+      line,
+      viewState,
+      editing,
+    })
+  )
 }
 
 module.exports = reactRedux.connect(

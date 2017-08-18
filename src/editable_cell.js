@@ -20,12 +20,12 @@ const EditableCell = createClass({
   render() {
     const props = this.props
     const {editing, line, field, index, setField, setFocus, active} = props
-    if (field[0] === 'quantity') {
+    if (field.get(0) === 'quantity') {
       var type = 'number'
     }
     const value = line.getIn(field)
     const popupTriggerId = `trigger-${line.get('id')}-${field.join('-')}`
-    const popupCell = popupFields.includes(field[0])
+    const popupCell = popupFields.includes(field.get(0))
     let editInput = value
     if (active) {
       editInput = (
@@ -62,8 +62,8 @@ const EditableCell = createClass({
         />
       )
     }
-    if (!props.expanded && field[0] === 'partNumbers' && field[2] === 'part') {
-      var smallField = line.getIn(['partNumbers', field[1], 'manufacturer'])
+    if (!props.expanded && field.get(0) === 'partNumbers' && field.get(2) === 'part') {
+      var smallField = line.getIn(['partNumbers', field.get(1), 'manufacturer'])
     }
     const cell = (
       <Cell

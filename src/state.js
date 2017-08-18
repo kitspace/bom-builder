@@ -57,12 +57,12 @@ function ensurePartNumberSpace(lines) {
 
 const linesActions = {
   setField(state, {index, field, value}) {
-    if (field[0] === 'quantity' && value < 1) {
+    if (field.get(0) === 'quantity' && value < 1) {
       value = 1
     }
-    const currentValue = state.getIn(['lines', index].concat(field))
+    const currentValue = state.getIn(immutable.List.of('lines', index).concat(field))
     if (currentValue !== value) {
-      state = state.setIn(['lines', index].concat(field),  value)
+      state = state.setIn(immutable.List.of('lines', index).concat(field),  value)
       state = state.update('lines', ensurePartNumberSpace)
       return state.set('editFocus', immutable.List.of(index, immutable.fromJS(field)))
     }
@@ -86,8 +86,8 @@ const linesActions = {
   removeField(state, focus) {
     const index = focus.get(0)
     const field = focus.get(1)
-    let empty = field[0] === 'quantity' ?  1 : ''
-    if (field[0] === 'partNumbers' && field.length === 2) {
+    let empty = field.get(0) === 'quantity' ?  1 : ''
+    if (field.get(0) === 'partNumbers' && field.size === 2) {
       empty = emptyPartNumber
     }
     state = state.setIn(immutable.List.of('lines', index).concat(field), empty)

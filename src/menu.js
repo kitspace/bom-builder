@@ -50,7 +50,7 @@ function mapStateToProps(state) {
     if (!mpn || (!mpn.get('part') && !mpn.get('manufacturer'))) {
       deleteFocus = immutable.List.of(null)
     } else {
-      deleteFocus = deleteFocus.update(1, f => f.slice(0, 2).toJS())
+      deleteFocus = deleteFocus.update(1, f => f.slice(0, 2))
     }
   }
   //don't delete quantity or empty fields

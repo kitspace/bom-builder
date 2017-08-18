@@ -61,7 +61,7 @@ const MpnPopup = createClass({
     } = this.props
     //set the entire mpn field i.e.
     //part -> {manufacturer, part}
-    const field = this.props.field.slice(0, 2)
+    const field = this.props.field.pop()
     if (selected === this.state.viewing) {
       remove(immutable.List.of(index, field))
     } else {

@@ -14,9 +14,6 @@ const popupFields = ['partNumbers']
 
 const EditableCell = createClass({
   displayName: 'EditableCell',
-  getInitialState() {
-    return {triggered: false}
-  },
   render() {
     const props = this.props
     const {editing, line, field, index, setField, setFocus, active} = props
@@ -51,11 +48,12 @@ const EditableCell = createClass({
           setField={value => setField({index, field, value})}
           value={value}
           type={type}
-          key='EditInput'
           setFocusNext={props.setFocusNext}
           loseFocus={() => {
             setTimeout(() => {
-              props.loseFocus([index, field])
+              if (!this.popupOpen) {
+                props.loseFocus([index, field])
+              }
             }, 100)
           }}
           setFocusBelow={props.setFocusBelow}
@@ -90,6 +88,8 @@ const EditableCell = createClass({
           trigger={cell}
           field={field}
           index={index}
+          onOpen={e => this.popupOpen = true}
+          onClose={e => this.popupOpen = false}
           position='bottom center'
         />
       )

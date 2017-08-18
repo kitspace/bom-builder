@@ -236,13 +236,29 @@ function makeActiveSelector() {
   )
 }
 
+function makeEditingSelector() {
+  return reselect.createSelector(
+    [editingSelector],
+    editing => editing
+  )
+}
+
+function makeLineSelector() {
+  return reselect.createSelector(
+    [selectors.line],
+    line => line
+  )
+}
+
 function mapStateToProps() {
-  const activeSelector = makeActiveSelector()
+  const activeSelector  = makeActiveSelector()
+  const lineSelector    = makeLineSelector()
+  const editingSelector = makeEditingSelector()
   return (state, props) => {
     return {
-      line: selectors.line(state, props),
+      line: lineSelector(state, props),
       editing: editingSelector(state),
-      active: activeSelector(state, props)
+      active: activeSelector(state, props),
     }
   }
 }

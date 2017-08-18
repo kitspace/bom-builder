@@ -12,33 +12,6 @@ const reselect    = require('reselect')
 const {actions} = require('./state')
 const selectors = require('./selectors')
 
-const importance = [
-  ['color', 'capacitance', 'resistance'],
-  ['case_package'],
-  ['dielectric_characteristic'],
-  ['resistance_tolerance', 'capacitance_tolerance'],
-  ['voltage_rating', 'power_rating'],
-  ['pin_count'],
-  ['case_package_si'],
-]
-
-function reorder(specs) {
-  const groups = specs.reduce((acc, spec) => {
-    let index = importance.reduce((prev, keys, index) => {
-      if (keys.indexOf(spec.key) >= 0) {
-        return index
-      }
-      return prev
-    }, null)
-    if (index == null) {
-      index = acc.length - 1
-    }
-    acc[index].push(spec)
-    return acc
-  }, importance.map(x => []).concat([[]]))
-  return ramda.flatten(groups)
-}
-
 const MpnPopup = createClass({
   displayName:'MpnPopup',
   getInitialState() {
@@ -124,7 +97,7 @@ const MpnPopup = createClass({
     const image  = part.get('image') || immutable.Map()
     const mpn    = part.get('mpn') || immutable.Map()
     const number = mpn.get('part')
-    let specs    = reorder(part.get('specs') || [])
+    let specs    = part.get('specs') || immutable.List()
     if (! this.state.expanded) {
       specs = specs.slice(0, 4)
     }
@@ -210,7 +183,7 @@ class SpecTable extends React.PureComponent {
         className='specTable'
         basic='very'
         compact={true}
-        tableData={specTableData}
+        tableData={specTableData.toArray()}
         renderBodyRow={args => {
           return (
             <tr key={String(args)}>

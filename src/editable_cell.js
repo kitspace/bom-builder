@@ -79,9 +79,8 @@ const EditableCell = createClass({
         popupTriggerId={popupTriggerId}
         smallField={smallField}
         value={value}
-      >
-        {editInput}
-      </Cell>
+        contents={editInput}
+      />
     )
     if (popupCell) {
       const suggestion = props.suggestions ? props.suggestions.first() : null
@@ -114,7 +113,7 @@ class Cell extends React.PureComponent {
       >
         <a style={{maxWidth: props.active ? '' : 200}}>
           {smallField}
-          {props.children}
+          {props.contents}
           {/* here to make sure the cell grows with the content */}
           <div key='div' style={{visibility: 'hidden', height: 0}}>{props.value}</div>
         </a>

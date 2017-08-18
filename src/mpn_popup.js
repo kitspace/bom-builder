@@ -94,9 +94,6 @@ const MpnPopup = createClass({
     const suggestions = props.suggestions
     const popupProps = {
         className       : 'MpnPopup',
-        hoverable       : true,
-        mouseLeaveDelay : 200,
-        mouseEnterDelay : 200,
         flowing         : true,
         position        : props.position,
         trigger         : props.trigger,

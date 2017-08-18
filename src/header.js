@@ -32,12 +32,6 @@ function Header({partNumbersExpanded, maxPartNumbers, sortBy, togglePartNumbersE
               cells.push(
                 <th style={{minWidth: 160}} key={`Manufacturer${i}`}>
                   <div className='headerWithButton'>
-                    <semantic.Button
-                      basic
-                      size='tiny'
-                      onClick={() => togglePartNumbersExpanded(i)}
-                      content='⇢'
-                    />
                     <a onClick={() => sortBy(['manufacturer', i])}>
                       Manufacturer
                     </a>
@@ -48,22 +42,34 @@ function Header({partNumbersExpanded, maxPartNumbers, sortBy, togglePartNumbersE
             cells.push(
               <th style={{minWidth: 130}} key={`MPN${i}`}>
                 <div className='headerWithButton'>
-                <a onClick={() => sortBy(['part', i])}>
-                  Part Number
-                </a>
                 {(() => {
                   if (!partNumbersExpanded.get(i)) {
                     return  (
-                      <semantic.Button
+                      <semantic.Label
                         basic
-                        size='tiny'
                         onClick={() => togglePartNumbersExpanded(i)}
-                        content='...'
-                      />
-
+                        className='expandLabel'
+                      >
+                        <semantic.Icon name='angle double left' />
+                        <semantic.Icon name='angle double right' />
+                      </semantic.Label>
+                    )
+                  } else {
+                    return  (
+                      <semantic.Label
+                        basic
+                        onClick={() => togglePartNumbersExpanded(i)}
+                        className='expandLabel'
+                      >
+                        <semantic.Icon name='angle double right' />
+                        <semantic.Icon name='angle double left' />
+                      </semantic.Label>
                     )
                   }
                 })()}
+                <a onClick={() => sortBy(['part', i])}>
+                  Part Number
+                </a>
               </div>
               </th>
             )

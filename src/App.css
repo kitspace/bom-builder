@@ -153,3 +153,12 @@ div.retailerButtonCellIcon {
 .ui.secondary.menu a.disabled:hover {
    color: rgba(40, 40, 40, 0.3) !important;
 }
+
+.expandLabel {
+   padding: 1px !important;
+   cursor: pointer
+}
+
+.expandLabel > i {
+   margin: 2px !important
+}

@@ -73,15 +73,15 @@ const MpnPopup = createClass({
     const props = this.props
     const suggestions = props.suggestions
     const popupProps = {
-        className : 'MpnPopup',
-        flowing   : true,
-        position  : props.position,
-        trigger   : props.trigger,
-        onOpen    : props.onOpen,
-        onClose   : props.onClose,
-        open      : props.open,
-        offset    : props.offset,
-        on        : props.on,
+        className       : 'MpnPopup',
+        flowing         : true,
+        position        : props.position,
+        trigger         : props.trigger,
+        onOpen          : props.onOpen,
+        onClose         : props.onClose,
+        open            : props.open,
+        offset          : props.offset,
+        on              : props.on,
     }
     if (suggestions.size === 0) {
       return (

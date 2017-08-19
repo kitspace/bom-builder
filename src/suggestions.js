@@ -38,7 +38,7 @@ function fromPartNumbers(partNumbers, suggestions) {
 
 function fromDescription(description) {
   return getPartinfo(description)
-    .then(ps => ps.filter(x => x != null))
+    .then(ps => ps && ps.filter(x => x != null))
     .then(ps => immutable.fromJS(ps))
 }
 
@@ -47,8 +47,15 @@ async function findSuggestions(line, suggestions=immutable.List(), actions) {
   suggestions = suggestions.concat(parts)
   const rs = await fromRetailers(line.get('retailers'), suggestions)
   suggestions = suggestions.concat(rs)
-  suggestions = suggestions.concat(await fromDescription(line.get('description')))
-  actions.setSuggestions({id: line.get('id'), suggestions: suggestions.toOrderedSet().toList()})
+  const ds = await fromDescription(line.get('description'))
+  if (ds) {
+    suggestions = suggestions.concat(ds)
+  }
+  actions.setSuggestions({
+    id: line.get('id'),
+    //make unique
+    suggestions: suggestions.toOrderedSet().toList(),
+  })
 }
 
 export {findSuggestions}

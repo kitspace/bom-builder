@@ -44,8 +44,8 @@ const initialState = {
 function fitPartNumbers(lines) {
   const requiredSize = lines.map(line => {
     const partNumbers = line.get('partNumbers')
-    return partNumbers.findLastIndex(p => !p.equals(emptyPartNumber)) + 2
-  }).max()
+    return partNumbers.findLastIndex(p => !p.equals(emptyPartNumber))
+  }).max() + 2
   return lines.map(line => {
     return line.update('partNumbers', ps => {
       while (ps.size < requiredSize) {
@@ -95,8 +95,9 @@ const linesActions = {
   },
   removeLine(state, lineId) {
     let lines = state.get('lines').remove(lineId)
+    const order = state.get('order').filter(x => x !== lineId)
     lines = fitPartNumbers(lines)
-    return state.merge({lines})
+    return state.merge({lines, order})
   },
   sortBy(state, header) {
     let lines = immutable.List(state.get('lines').map((l,k) => l.set('id', k)).values())

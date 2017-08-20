@@ -65,6 +65,7 @@ const EditableCell = createClass({
     if (!props.expanded && field.get(0) === 'partNumbers' && field.get(2) === 'part') {
       var smallField = line.getIn(['partNumbers', field.get(1), 'manufacturer'])
     }
+    const suggestion = props.suggestions.first()
     const cell = (
       <Cell
         selectable={!!editing}
@@ -80,10 +81,10 @@ const EditableCell = createClass({
         smallField={smallField}
         value={value}
         contents={editInput}
-        suggestion={props.suggestions.first()}
+        suggestion={suggestion}
       />
     )
-    if (popupCell) {
+    if (popupCell && suggestion) {
       return (
         <MpnPopup
           on='click'

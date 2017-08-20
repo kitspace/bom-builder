@@ -83,19 +83,9 @@ const MpnPopup = createClass({
         offset          : props.offset,
         on              : props.on,
     }
-    if (suggestions.size === 0) {
-      return (
-        <semantic.Popup {...popupProps}>
-          <div className='sorryText'>
-            Sorry, could not find any more part suggestions for this line.
-            Please try adding more information.
-          </div>
-        </semantic.Popup>
-      )
-    }
-    const part   = suggestions.get(this.state.viewing) || immutable.Map()
+    const part   = suggestions.get(this.state.viewing)
     const image  = part.get('image') || immutable.Map()
-    const mpn    = part.get('mpn') || immutable.Map()
+    const mpn    = part.get('mpn')
     const number = mpn.get('part')
     let specs    = part.get('specs') || immutable.List()
     if (! this.state.expanded) {
@@ -106,6 +96,7 @@ const MpnPopup = createClass({
         one={mpn.get('manufacturer')}
         two={number}
         page={`${this.state.viewing + 1}/${suggestions.size}`}
+        wandColor={part.get('type') === 'match' ? 'green' : 'orange'}
       />
     )
     const specTable = <SpecTable specs={specs} />
@@ -215,7 +206,14 @@ class Title extends React.PureComponent {
     const props = this.props
     return (
       <div className='titleContainer'>
-        <div />
+        <div>
+          <semantic.Icon
+            style={{opacity: 0.8}}
+            size='large'
+            color={props.wandColor}
+            name='magic'
+          />
+        </div>
         <div className='mpnTitle'>
           <div>
             {props.one}

@@ -23,7 +23,6 @@ function fromRetailers(retailers, suggestions) {
   return Promise.all(skus.map(getPartinfo))
     .then(ps => ps.filter(x => x != null))
     .then(ps => immutable.fromJS(ps))
-    .then(ps => ps.map(p => p.set('type', 'match')))
 }
 
 function fromPartNumbers(partNumbers, suggestions) {
@@ -35,7 +34,6 @@ function fromPartNumbers(partNumbers, suggestions) {
   return Promise.all(partNumbers.map(getPartinfo))
     .then(ps => ps.filter(x => x != null))
     .then(ps => immutable.fromJS(ps))
-    .then(ps => ps.map(p => p.set('type', 'match')))
 }
 
 function fromDescription(description) {

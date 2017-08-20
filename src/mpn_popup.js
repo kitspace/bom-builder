@@ -96,7 +96,7 @@ const MpnPopup = createClass({
         one={mpn.get('manufacturer')}
         two={number}
         page={`${this.state.viewing + 1}/${suggestions.size}`}
-        wandColor={part.get('type') === 'match' ? 'green' : 'orange'}
+        wandColor={part.get('type') === 'match' ? 'green' : 'grey'}
       />
     )
     const specTable = <SpecTable specs={specs} />
@@ -204,11 +204,12 @@ class SpecTable extends React.PureComponent {
 class Title extends React.PureComponent {
   render() {
     const props = this.props
+    const opacity = props.wandColor === 'green' ? 1.0 : 0.3
     return (
       <div className='titleContainer'>
         <div>
           <semantic.Icon
-            style={{opacity: 0.8}}
+            style={{opacity}}
             size='large'
             color={props.wandColor}
             name='magic'

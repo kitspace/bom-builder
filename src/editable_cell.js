@@ -106,10 +106,11 @@ class Cell extends React.PureComponent {
     const smallField = props.smallField ?
        (<div className='manufacturerSmall'>{props.smallField}</div>) : null
     if (!props.active && props.suggestion) {
-      const color = props.suggestion.get('type') === 'match' ? 'green' : 'orange'
+      const color = props.suggestion.get('type') === 'match' ? 'green' : 'grey'
+      const opacity = props.suggestion.get('type') === 'match' ? 1.0 : 0.3
       var icon = (
         <semantic.Icon
-          style={{opacity: 0.8}}
+          style={{opacity}}
           size='large'
           color={color}
           name='magic'

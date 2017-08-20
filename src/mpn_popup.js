@@ -262,11 +262,14 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-function mpnSelector(state, props) {
-  const line = selectors.line(state, props)
-  return line.getIn(props.field.slice(0, 2))
+function parentField(_, props) {
+  return props.field.pop()
 }
 
+const mpnSelector = reselect.createSelector(
+  [selectors.line, parentField],
+  (line, field) => line.getIn(field)
+)
 
 const partNumbersSelector = reselect.createSelector(
   [selectors.line],
@@ -278,22 +281,35 @@ const otherMpnsSelector = reselect.createSelector(
   (partNumbers, mpn) => partNumbers.filter(m => !m.equals(mpn))
 )
 
-const applicableSuggestionsSelector = reselect.createSelector(
-  [selectors.suggestions, otherMpnsSelector, selectors.line],
-  (suggestions, otherMpns, line) => {
-    suggestions = suggestions.get(line.get('id')) || immutable.List()
-    return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
-  }
-)
+function makeLineSelector() {
+  return reselect.createSelector(
+    [selectors.line], line => line
+  )
+}
 
-const selectedSelector = reselect.createSelector(
-  [applicableSuggestionsSelector, mpnSelector],
-  (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
-)
+function makeApplicableSuggestions() {
+  return reselect.createSelector(
+    [selectors.suggestions, otherMpnsSelector, selectors.line],
+    (suggestions, otherMpns, line) => {
+      suggestions = suggestions.get(line.get('id')) || immutable.List()
+      return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
+    }
+  )
+}
+
+function makeSelectedSelector() {
+  const applicableSuggestions = makeApplicableSuggestions()
+  return reselect.createSelector(
+    [applicableSuggestions, mpnSelector],
+    (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
+  )
+}
 
 function makeGetSuggestions() {
+  const applicableSuggestions = makeApplicableSuggestions()
+  const selectedSelector = makeSelectedSelector()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, selectedSelector],
+    [applicableSuggestions, selectedSelector],
     (suggestions, selected) => [suggestions, selected]
   )
 }
@@ -305,16 +321,13 @@ function makeLineSelector() {
 }
 
 function mapStateToProps() {
-  const getSuggestions = makeGetSuggestions()
-  const getLine = makeLineSelector()
-  return (state, props) => {
-    const [suggestions, selected] = getSuggestions(state, props)
-    return {
-      selected,
-      suggestions,
-      line: getLine(state, props),
-    }
-  }
+  const suggestions = makeApplicableSuggestions()
+  const selected = makeSelectedSelector()
+  const line = makeLineSelector()
+  return reselect.createSelector(
+    [suggestions, selected, line],
+    (suggestions, selected, line) => ({selected, suggestions, line})
+  )
 }
 
 const ConnectedMpnPopup = reactRedux.connect(

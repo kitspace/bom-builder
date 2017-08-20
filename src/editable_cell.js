@@ -83,7 +83,6 @@ const EditableCell = createClass({
       />
     )
     if (popupCell) {
-      const suggestion = props.suggestions ? props.suggestions.first() : null
       return (
         <MpnPopup
           on='click'

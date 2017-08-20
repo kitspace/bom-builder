@@ -5,24 +5,24 @@ const redux      = require('redux')
 const {actions} = require('./state')
 
 function Handle(props) {
-  const {reference, index, setFocus, removeLine} = props
+  const {reference, lineId, setFocus, removeLine} = props
   return (
     <td className={`marked ${markerColor(reference)}`}>
       <input
         style={{height: 39}}
-        onFocus={() => setFocus([index, null])}
+        onFocus={() => setFocus([lineId, null])}
         onBlur={() => {
           setTimeout(() => {
-            props.loseFocus([index, null])
+            props.loseFocus([lineId, null])
           }, 100)
         }}
         className='mousetrap'
         readOnly
         onKeyDown={e => {
           if (e.key === 'Delete' || e.key === 'Backspace') {
-            removeLine(index)
+            removeLine(lineId)
           } else if (e.key === 'Escape') {
-            props.loseFocus([index, null])
+            props.loseFocus([lineId, null])
           }
         }}
       />
@@ -58,7 +58,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state, props) {
   return {
-    reference: state.data.present.getIn(['lines', props.index, 'reference']),
+    reference: state.data.present.getIn(['lines', props.lineId, 'reference']),
   }
 }
 

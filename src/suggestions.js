@@ -42,7 +42,7 @@ function fromDescription(description) {
     .then(ps => immutable.fromJS(ps))
 }
 
-async function findSuggestions(line, suggestions=immutable.List(), actions) {
+async function findSuggestions(lineId, line, suggestions=immutable.List(), actions) {
   let parts = await fromPartNumbers(line.get('partNumbers'), suggestions)
   suggestions = suggestions.concat(parts)
   const rs = await fromRetailers(line.get('retailers'), suggestions)
@@ -59,7 +59,7 @@ async function findSuggestions(line, suggestions=immutable.List(), actions) {
     return prev.push(p)
   }, immutable.List())
   actions.setSuggestions({
-    id: line.get('id'),
+    lineId,
     suggestions,
   })
 }

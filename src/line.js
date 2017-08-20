@@ -32,11 +32,9 @@ function Line(props) {
   const {
     viewState,
     line,
-    index,
     editing,
     lineId,
   } = props
-  const id = lineId
   const partNumbersExpanded = viewState.get('partNumbersExpanded')
   const ps = line.get('partNumbers')
   const partNumberCells = ps.flatMap((mpn, i) => {
@@ -49,7 +47,7 @@ function Line(props) {
         <EditableCell
           key={`manufacturer-${i}`}
           field={field}
-          index={index}
+          lineId={lineId}
           partNumberIndex={i}
         />
       )
@@ -61,7 +59,7 @@ function Line(props) {
       <EditableCell
         key={`part-${i}`}
         field={field}
-        index={index}
+        lineId={lineId}
         expanded={partNumbersExpanded.get(i)}
         partNumberIndex={i}
       />
@@ -74,24 +72,24 @@ function Line(props) {
       <EditableCell
         key={name}
         field={field}
-        index={index}
+        lineId={lineId}
       />
     )
   })
   return (
-    <semantic.Table.Row active={editing && editing.get(0) === index}>
-      <Handle index={index} />
+    <semantic.Table.Row active={editing && editing.get(0) === lineId}>
+      <Handle lineId={lineId} />
       <EditableCell
         field={fields.get('reference')}
-        index={index}
+        lineId={lineId}
       />
       <EditableCell
         field={fields.get('quantity')}
-        index={index}
+        lineId={lineId}
       />
       <EditableCell
         field={fields.get('description')}
-        index={index}
+        lineId={lineId}
       />
       {partNumberCells}
       {retailerCells}

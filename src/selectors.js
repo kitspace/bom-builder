@@ -3,7 +3,7 @@ function suggestions(state) {
 }
 
 function line(state, props) {
-  return state.data.present.getIn(['lines', props.index])
+  return state.data.present.getIn(['lines', props.lineId])
 }
 
 function view(state) {

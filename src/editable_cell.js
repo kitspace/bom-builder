@@ -19,12 +19,12 @@ const EditableCell = createClass({
   },
   render() {
     const props = this.props
-    const {editing, line, field, index, setField, setFocus, active} = props
+    const {editing, line, lineId, field, setField, setFocus, active} = props
     if (field.get(0) === 'quantity') {
       var type = 'number'
     }
     const value = line.getIn(field)
-    const popupTriggerId = `trigger-${line.get('id')}-${field.join('-')}`
+    const popupTriggerId = `trigger-${lineId}-${field.join('-')}`
     const popupCell = popupFields.includes(field.get(0))
     let editInput = value
     if (active) {
@@ -48,14 +48,14 @@ const EditableCell = createClass({
           onUnmount={() => {
             clearImmediate(this.immediate)
           }}
-          setField={value => setField({index, field, value})}
+          setField={value => setField({lineId, field, value})}
           value={value}
           type={type}
           key='EditInput'
           setFocusNext={props.setFocusNext}
           loseFocus={() => {
             setTimeout(() => {
-              props.loseFocus([index, field])
+              props.loseFocus([lineId, field])
             }, 100)
           }}
           setFocusBelow={props.setFocusBelow}
@@ -71,7 +71,7 @@ const EditableCell = createClass({
         selectable={!!editing}
         active={active}
         onClick={e => {
-          setFocus([index, field])
+          setFocus([lineId, field])
           if (popupCell) {
             this.triggered = true
             setImmediate(() => this.tiggered = false)
@@ -90,7 +90,7 @@ const EditableCell = createClass({
           on='click'
           trigger={cell}
           field={field}
-          index={index}
+          lineId={props.lineId}
           position='bottom center'
           suggestions={props.suggestions}
         />
@@ -223,8 +223,8 @@ class EditInput extends React.PureComponent {
   }
 }
 
-function editingThis(editing, index, field) {
-  return editing && editing.equals(immutable.fromJS([index, field]))
+function editingThis(editing, lineId, field) {
+  return editing && editing.equals(immutable.fromJS([lineId, field]))
 }
 
 function mapDispatchToProps(dispatch) {
@@ -235,8 +235,8 @@ function editingSelector(state) {
   return state.view.get('editable') ? state.view.get('focus') : null
 }
 
-function indexSelector(_, props) {
-  return props.index
+function lineIdSelector(_, props) {
+  return props.lineId
 }
 
 function fieldSelector(_, props) {
@@ -245,7 +245,7 @@ function fieldSelector(_, props) {
 
 function makeActiveSelector() {
   return reselect.createSelector(
-    [editingSelector, indexSelector, fieldSelector],
+    [editingSelector, lineIdSelector, fieldSelector],
     editingThis
   )
 }
@@ -297,8 +297,8 @@ function makeSuggestionNumberSelector() {
   const emptyPartNumbers = makeEmptyMpnsSelector()
   return reselect.createSelector(
     [emptyPartNumbers, partNumberIndexSelector],
-    (empty, index) => {
-      return empty.findIndex(x => x === index)
+    (empty, partIndex) => {
+      return empty.indexOf(partIndex)
     }
   )
 }
@@ -306,12 +306,12 @@ function makeSuggestionNumberSelector() {
 function makeApplicableSuggestions() {
   const suggestionNumber = makeSuggestionNumberSelector()
   return reselect.createSelector(
-    [selectors.suggestions, otherMpnsSelector, selectors.line, suggestionNumber],
-    (suggestions, otherMpns, line, suggestionNumber) => {
+    [selectors.suggestions, otherMpnsSelector, lineIdSelector, suggestionNumber],
+    (suggestions, otherMpns, lineId, suggestionNumber) => {
       if (suggestionNumber < 0) {
         return immutable.List()
       }
-      suggestions = suggestions.get(line.get('id')) || immutable.List()
+      suggestions = suggestions.get(lineId) || immutable.List()
       suggestions = suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
       return suggestions.slice(suggestionNumber)
     }

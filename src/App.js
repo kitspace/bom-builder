@@ -45,11 +45,11 @@ function getTsv() {
 
 snapshot(() => {
   return getTsv().then(state => {
-    const ps = state.data.present.get('lines').map((line, index) => {
+    const ps = state.data.present.get('lines').map((line, lineId) => {
       const state = store.getState()
-      line = state.data.present.getIn(['lines', index])
-      const suggestions = state.suggestions.get(line.get('id'))
-      return findSuggestions(line, suggestions, actions)
+      line = state.data.present.getIn(['lines', lineId])
+      const suggestions = state.suggestions.get(lineId)
+      return findSuggestions(lineId, line, suggestions, actions)
     })
     return Promise.all(ps).then(() => store.getState())
   })

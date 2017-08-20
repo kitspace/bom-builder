@@ -52,21 +52,21 @@ const MpnPopup = createClass({
   },
   toggleSelected() {
     const {
-      index,
       selected,
       remove,
       setState,
       setField,
       suggestions,
+      lineId
     } = this.props
     //set the entire mpn field i.e.
     //part -> {manufacturer, part}
     const field = this.props.field.pop()
     if (selected === this.state.viewing) {
-      remove(immutable.List.of(index, field))
+      remove(immutable.List.of(lineId, field))
     } else {
       const mpn = suggestions.getIn([this.state.viewing, 'mpn'])
-      setField({index, field, value: mpn})
+      setField({lineId, field, value: mpn})
     }
   },
   render() {

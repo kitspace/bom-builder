@@ -23,6 +23,7 @@ function fromRetailers(retailers, suggestions) {
   return Promise.all(skus.map(getPartinfo))
     .then(ps => ps.filter(x => x != null))
     .then(ps => immutable.fromJS(ps))
+    .then(ps => ps.map(p => p.set('type', 'match')))
 }
 
 function fromPartNumbers(partNumbers, suggestions) {
@@ -34,6 +35,7 @@ function fromPartNumbers(partNumbers, suggestions) {
   return Promise.all(partNumbers.map(getPartinfo))
     .then(ps => ps.filter(x => x != null))
     .then(ps => immutable.fromJS(ps))
+    .then(ps => ps.map(p => p.set('type', 'match')))
 }
 
 function fromDescription(description) {
@@ -51,10 +53,16 @@ async function findSuggestions(line, suggestions=immutable.List(), actions) {
   if (ds) {
     suggestions = suggestions.concat(ds)
   }
+  //make unique
+  suggestions = suggestions.reduce((prev, p) => {
+    if (prev.map(p => p.get('mpn')).includes(p.get('mpn'))) {
+      return prev
+    }
+    return prev.push(p)
+  }, immutable.List())
   actions.setSuggestions({
     id: line.get('id'),
-    //make unique
-    suggestions: suggestions.toOrderedSet().toList(),
+    suggestions,
   })
 }
 

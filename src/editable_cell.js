@@ -80,7 +80,7 @@ const EditableCell = createClass({
         smallField={smallField}
         value={value}
         contents={editInput}
-        hasSuggestion={!active && !!props.suggestions.size}
+        suggestion={props.suggestions.first()}
       />
     )
     if (popupCell) {
@@ -104,8 +104,16 @@ class Cell extends React.PureComponent {
     const props = this.props
     const smallField = props.smallField ?
        (<div className='manufacturerSmall'>{props.smallField}</div>) : null
-    if (props.hasSuggestion) {
-      var icon = <semantic.Icon size='large' color='grey' name='magic' />
+    if (!props.active && props.suggestion) {
+      const color = props.suggestion.get('type') === 'match' ? 'green' : 'orange'
+      var icon = (
+        <semantic.Icon
+          style={{opacity: 0.8}}
+          size='large'
+          color={color}
+          name='magic'
+        />
+      )
     }
     return (
       <semantic.Table.Cell

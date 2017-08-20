@@ -75,7 +75,7 @@ function Header({partNumbersExpanded, maxPartNumbers, sortBy, togglePartNumbersE
             )
           }
           cells.push(
-            <th key='MPN-last'>...</th>
+            <th key='MPN-last'><span style={{width: 100}}>{'\  ...\   '}</span></th>
           )
           return cells
         })()}

@@ -287,20 +287,13 @@ function makeLineSelector() {
   )
 }
 
-function makeApplicableSuggestions() {
-  return reselect.createSelector(
-    [selectors.suggestions, otherMpnsSelector, selectors.line],
-    (suggestions, otherMpns, line) => {
-      suggestions = suggestions.get(line.get('id')) || immutable.List()
-      return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
-    }
-  )
+function suggestionsSelector(_, props) {
+  return props.suggestions
 }
 
 function makeSelectedSelector() {
-  const applicableSuggestions = makeApplicableSuggestions()
   return reselect.createSelector(
-    [applicableSuggestions, mpnSelector],
+    [suggestionsSelector, mpnSelector],
     (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
   )
 }
@@ -312,12 +305,11 @@ function makeLineSelector() {
 }
 
 function mapStateToProps() {
-  const suggestions = makeApplicableSuggestions()
   const selected = makeSelectedSelector()
   const line = makeLineSelector()
   return reselect.createSelector(
-    [suggestions, selected, line],
-    (suggestions, selected, line) => ({selected, suggestions, line})
+    [selected, line],
+    (selected, line) => ({selected, line})
   )
 }
 

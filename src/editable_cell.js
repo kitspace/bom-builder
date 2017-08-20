@@ -80,7 +80,7 @@ const EditableCell = createClass({
         smallField={smallField}
         value={value}
         contents={editInput}
-        hasSuggestion={props.hasSuggestion}
+        hasSuggestion={!!props.suggestions.size}
       />
     )
     if (popupCell) {
@@ -91,6 +91,7 @@ const EditableCell = createClass({
           field={field}
           index={index}
           position='bottom center'
+          suggestions={props.suggestions}
         />
       )
     }
@@ -282,28 +283,27 @@ function makeLineSelector() {
   )
 }
 
-function makeHasSuggestionsSelector() {
-  const applicableSuggestions = makeApplicableSuggestions()
+function makeSuggestionNumberSelector() {
   const emptyPartNumbers = makeEmptyMpnsSelector()
-
   return reselect.createSelector(
-    [applicableSuggestions, emptyPartNumbers, partNumberIndexSelector],
-    (suggestions, empty, index) => {
-      const n = empty.findIndex(x => x === index)
-      if (n < 0) {
-        return false
-      }
-      return !!suggestions.get(n)
+    [emptyPartNumbers, partNumberIndexSelector],
+    (empty, index) => {
+      return empty.findIndex(x => x === index)
     }
   )
 }
 
 function makeApplicableSuggestions() {
+  const suggestionNumber = makeSuggestionNumberSelector()
   return reselect.createSelector(
-    [selectors.suggestions, otherMpnsSelector, selectors.line],
-    (suggestions, otherMpns, line) => {
+    [selectors.suggestions, otherMpnsSelector, selectors.line, suggestionNumber],
+    (suggestions, otherMpns, line, suggestionNumber) => {
+      if (suggestionNumber < 0) {
+        return immutable.List()
+      }
       suggestions = suggestions.get(line.get('id')) || immutable.List()
-      return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
+      suggestions = suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
+      return suggestions.slice(suggestionNumber)
     }
   )
 }
@@ -325,11 +325,11 @@ function mapStateToProps() {
   const active      = makeActiveSelector()
   const line        = makeLineSelector()
   const editing     = makeEditingSelector()
-  const hasSuggestion = makeHasSuggestionsSelector()
+  const suggestions = makeApplicableSuggestions()
   return reselect.createSelector(
-    [line, editing, active, hasSuggestion],
-    (line, editing, active, hasSuggestion) => ({
-      line, editing, active, hasSuggestion
+    [line, editing, active, suggestions],
+    (line, editing, active, suggestions) => ({
+      line, editing, active, suggestions
     })
   )
 }

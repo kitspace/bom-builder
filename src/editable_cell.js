@@ -80,7 +80,7 @@ const EditableCell = createClass({
         smallField={smallField}
         value={value}
         contents={editInput}
-        hasSuggestion={!!props.suggestions.size}
+        hasSuggestion={!active && !!props.suggestions.size}
       />
     )
     if (popupCell) {

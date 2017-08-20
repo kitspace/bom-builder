@@ -305,15 +305,6 @@ function makeSelectedSelector() {
   )
 }
 
-function makeGetSuggestions() {
-  const applicableSuggestions = makeApplicableSuggestions()
-  const selectedSelector = makeSelectedSelector()
-  return reselect.createSelector(
-    [applicableSuggestions, selectedSelector],
-    (suggestions, selected) => [suggestions, selected]
-  )
-}
-
 function makeLineSelector() {
   return reselect.createSelector(
     [selectors.line], line => line

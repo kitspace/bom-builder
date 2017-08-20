@@ -50,6 +50,7 @@ function Line(props) {
           key={`manufacturer-${i}`}
           field={field}
           index={index}
+          partNumberIndex={i}
         />
       )
     }
@@ -62,6 +63,7 @@ function Line(props) {
         field={field}
         index={index}
         expanded={partNumbersExpanded.get(i)}
+        partNumberIndex={i}
       />
     )
     return cells

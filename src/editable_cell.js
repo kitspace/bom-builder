@@ -80,6 +80,7 @@ const EditableCell = createClass({
         smallField={smallField}
         value={value}
         contents={editInput}
+        hasSuggestion={props.hasSuggestion}
       />
     )
     if (popupCell) {
@@ -102,6 +103,9 @@ class Cell extends React.PureComponent {
     const props = this.props
     const smallField = props.smallField ?
        (<div className='manufacturerSmall'>{props.smallField}</div>) : null
+    if (props.hasSuggestion) {
+      var icon = <semantic.Icon size='large' color='grey' name='magic' />
+    }
     return (
       <semantic.Table.Cell
         selectable={props.selectable}
@@ -112,6 +116,7 @@ class Cell extends React.PureComponent {
       >
         <a style={{maxWidth: props.active ? '' : 200}}>
           {smallField}
+          {icon}
           {props.contents}
           {/* here to make sure the cell grows with the content */}
           <div key='div' style={{visibility: 'hidden', height: 0}}>{props.value}</div>
@@ -241,24 +246,92 @@ function makeEditingSelector() {
   )
 }
 
+function parentField(_, props) {
+  return props.field.pop()
+}
+
+const mpnSelector = reselect.createSelector(
+  [selectors.line, parentField],
+  (line, field) => line.getIn(field)
+)
+
+const partNumbersSelector = reselect.createSelector(
+  [selectors.line],
+  line => line.get('partNumbers')
+)
+
+const otherMpnsSelector = reselect.createSelector(
+  [partNumbersSelector, mpnSelector],
+  (partNumbers, mpn) => partNumbers.filter(m => !m.equals(mpn))
+)
+
+function makeEmptyMpnsSelector() {
+  return reselect.createSelector(
+    [partNumbersSelector],
+    partNumbers => partNumbers.map((m, index) => {
+      if(!m.get('part') || !m.get('manufacturer')) {
+        return index
+      }
+    }).filter(x => x != null)
+  )
+}
+
 function makeLineSelector() {
   return reselect.createSelector(
-    [selectors.line],
-    line => line
+    [selectors.line], line => line
+  )
+}
+
+function makeHasSuggestionsSelector() {
+  const applicableSuggestions = makeApplicableSuggestions()
+  const emptyPartNumbers = makeEmptyMpnsSelector()
+
+  return reselect.createSelector(
+    [applicableSuggestions, emptyPartNumbers, partNumberIndexSelector],
+    (suggestions, empty, index) => {
+      const n = empty.findIndex(x => x === index)
+      if (n < 0) {
+        return false
+      }
+      return !!suggestions.get(n)
+    }
+  )
+}
+
+function makeApplicableSuggestions() {
+  return reselect.createSelector(
+    [selectors.suggestions, otherMpnsSelector, selectors.line],
+    (suggestions, otherMpns, line) => {
+      suggestions = suggestions.get(line.get('id')) || immutable.List()
+      return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
+    }
+  )
+}
+
+function partNumberIndexSelector(_, props) {
+  return props.partNumberIndex
+}
+
+
+function makeSelectedSelector() {
+  const applicableSuggestions = makeApplicableSuggestions()
+  return reselect.createSelector(
+    [applicableSuggestions, mpnSelector],
+    (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
   )
 }
 
 function mapStateToProps() {
-  const activeSelector  = makeActiveSelector()
-  const lineSelector    = makeLineSelector()
-  const editingSelector = makeEditingSelector()
-  return (state, props) => {
-    return {
-      line: lineSelector(state, props),
-      editing: editingSelector(state),
-      active: activeSelector(state, props),
-    }
-  }
+  const active      = makeActiveSelector()
+  const line        = makeLineSelector()
+  const editing     = makeEditingSelector()
+  const hasSuggestion = makeHasSuggestionsSelector()
+  return reselect.createSelector(
+    [line, editing, active, hasSuggestion],
+    (line, editing, active, hasSuggestion) => ({
+      line, editing, active, hasSuggestion
+    })
+  )
 }
 
 module.exports = reactRedux.connect(

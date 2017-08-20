@@ -128,12 +128,6 @@ const linesActions = {
     const order = lines.map(l => l.get('id'))
     return state.merge({order, sortedBy})
   },
-  initializeLines(state, lines) {
-    lines = immutable.Map(lines.map(l => [makeId(), immutable.fromJS(l)]))
-    lines = fitPartNumbers(lines)
-    const order = immutable.List(lines.keys())
-    return state.merge({lines, order})
-  },
 }
 
 const viewActions = {
@@ -159,6 +153,19 @@ const viewActions = {
 const rootActions = {
   setState(_, state) {
     return makeImmutable(state)
+  },
+  initializeLines(state, lines) {
+    lines = immutable.Map(lines.map(l => [makeId(), immutable.fromJS(l)]))
+    lines = fitPartNumbers(lines)
+    const order = immutable.List(lines.keys())
+    const present = state.data.present.merge({lines, order})
+    const suggestions = immutable.Map(order.map(lineId => (
+      [lineId, immutable.List()]
+    )))
+    return Object.assign({}, state, {
+      suggestions,
+      data: Object.assign({}, state.data, {present})
+    })
   },
   setFocusBelow(state) {
     const order = state.data.present.get('order')

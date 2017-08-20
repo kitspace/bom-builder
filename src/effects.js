@@ -11,12 +11,13 @@ function effects(diff, state, actions) {
     const op = d.get('op')
     const path = d.get('path')
     const value = d.get('value')
-    //if (path.get(0) === 'lines' && typeof path.get(1) === 'number') {
-    //  const line = state.data.present.getIn(path.slice(0, 2))
-    //  console.log(line.get('reference'))
-    //  const suggestions = state.suggestions.get(line.get('id'))
-    //  findSuggestions(line, suggestions, actions)
-    //}
+    const lineId = path.get(1)
+    if (path.get(0) === 'lines' && typeof lineId === 'number') {
+      const line = state.data.present.getIn(path.slice(0, 2))
+      const suggestions = state.suggestions.get(lineId)
+        .filter(p => !p.get('from').equals(path.slice(2)))
+      findSuggestions(lineId, line, suggestions, actions)
+    }
   })
 }
 

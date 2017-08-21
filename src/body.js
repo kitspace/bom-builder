@@ -1,8 +1,5 @@
 const React       = require('react')
 const reactRedux  = require('react-redux')
-const redux       = require('redux')
-
-const {actions} = require('./state')
 
 const Line = require('./line')
 

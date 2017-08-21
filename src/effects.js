@@ -8,9 +8,7 @@ const {
 
 function effects(diff, state, actions) {
   diff.forEach(d => {
-    const op = d.get('op')
     const path = d.get('path')
-    const value = d.get('value')
     const lineId = path.get(1)
     if (path.get(0) === 'lines' && typeof lineId === 'number') {
       const line = state.data.present.getIn(path.slice(0, 2))

@@ -3,7 +3,6 @@ import 'semantic-ui-css/semantic.css'
 import './fontello.css'
 
 const React       = require('react')
-const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const redux       = require('redux')
 const reactRedux  = require('react-redux')
@@ -13,7 +12,6 @@ const mousetrap   = require('mousetrap')
 const {snapshot}  = require('react-snapshot')
 const DoubleScrollBar = require('react-double-scrollbar')
 
-const getPartinfo = require('./get_partinfo')
 const Header      = require('./header')
 const Body        = require('./body')
 const Menu        = require('./menu')

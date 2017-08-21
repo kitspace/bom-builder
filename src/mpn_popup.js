@@ -5,7 +5,6 @@ const redux       = require('redux')
 const reactRedux  = require('react-redux')
 const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
-const ramda       = require('ramda')
 const immutable   = require('immutable')
 const reselect    = require('reselect')
 
@@ -54,7 +53,6 @@ const MpnPopup = createClass({
     const {
       selected,
       remove,
-      setState,
       setField,
       suggestions,
       lineId
@@ -270,16 +268,6 @@ const mpnSelector = reselect.createSelector(
   (line, field) => line.getIn(field)
 )
 
-const partNumbersSelector = reselect.createSelector(
-  [selectors.line],
-  line => line.get('partNumbers')
-)
-
-const otherMpnsSelector = reselect.createSelector(
-  [partNumbersSelector, mpnSelector],
-  (partNumbers, mpn) => partNumbers.filter(m => !m.equals(mpn))
-)
-
 function makeLineSelector() {
   return reselect.createSelector(
     [selectors.line], line => line
@@ -294,12 +282,6 @@ function makeSelectedSelector() {
   return reselect.createSelector(
     [suggestionsSelector, mpnSelector],
     (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
-  )
-}
-
-function makeLineSelector() {
-  return reselect.createSelector(
-    [selectors.line], line => line
   )
 }
 

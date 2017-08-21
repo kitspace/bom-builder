@@ -283,6 +283,7 @@ function makeEmptyMpnsSelector() {
       if(!m.get('part') || !m.get('manufacturer')) {
         return index
       }
+      return null
     }).filter(x => x != null)
   )
 }
@@ -322,14 +323,6 @@ function partNumberIndexSelector(_, props) {
   return props.partNumberIndex
 }
 
-
-function makeSelectedSelector() {
-  const applicableSuggestions = makeApplicableSuggestions()
-  return reselect.createSelector(
-    [applicableSuggestions, mpnSelector],
-    (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
-  )
-}
 
 function mapStateToProps() {
   const active      = makeActiveSelector()

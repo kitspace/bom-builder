@@ -6,9 +6,9 @@ const reactRedux  = require('react-redux')
 const redux       = require('redux')
 const reselect    = require('reselect')
 
-const {actions} = require('./state')
-const SuggestionPopup  = require('./suggestion_popup').default
-const selectors = require('./selectors')
+const {actions}  = require('./state')
+const {MpnPopup} = require('./suggestion_popup')
+const selectors  = require('./selectors')
 
 const popupFields = ['partNumbers']
 
@@ -85,10 +85,10 @@ const EditableCell = createClass({
     )
     if (popupCell && (props.wand || props.selected > -1)) {
       return (
-        <SuggestionPopup
+        <MpnPopup
           on='click'
           trigger={cell}
-          field={field.get(0) === 'partNumbers' ? field.pop() : field}
+          field={field.pop()}
           lineId={props.lineId}
           position='bottom center'
           suggestions={props.suggestions}

@@ -17,7 +17,6 @@ class SuggestionPopup extends React.PureComponent {
     this.incrementViewing = this.incrementViewing.bind(this)
     this.decrementViewing = this.decrementViewing.bind(this)
     this.setViewing = this.setViewing.bind(this)
-    this.toggleSelected = this.toggleSelected.bind(this)
   }
   componentWillReceiveProps(newProps) {
     if (newProps.selected !== this.props.selected
@@ -46,6 +45,13 @@ class SuggestionPopup extends React.PureComponent {
       }
     }
     this.setState({viewing: n})
+  }
+}
+
+class MpnPopup extends SuggestionPopup {
+  constructor(props) {
+    super(props)
+    this.toggleSelected = this.toggleSelected.bind(this)
   }
   toggleSelected() {
     const {
@@ -251,4 +257,4 @@ class Buttons extends React.PureComponent {
   }
 }
 
-export default SuggestionPopup
+export {MpnPopup}

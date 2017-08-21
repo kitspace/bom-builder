@@ -93,6 +93,8 @@ const EditableCell = createClass({
           position='bottom center'
           suggestions={props.suggestions}
           selected={props.selected}
+          setField={setField}
+          remove={props.remove}
         />
       )
     }

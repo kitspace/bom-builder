@@ -1,41 +1,39 @@
 import './mpn_popup.css'
 
 const React       = require('react')
-const redux       = require('redux')
-const reactRedux  = require('react-redux')
-const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 const immutable   = require('immutable')
-const reselect    = require('reselect')
 
-const {actions} = require('./state')
-const selectors = require('./selectors')
-
-const MpnPopup = createClass({
-  displayName:'MpnPopup',
-  getInitialState() {
-    const viewing = this.props.selected < 0 ? 0 : this.props.selected
-    return {
+class MpnPopup extends React.PureComponent {
+  constructor(props) {
+    super(props)
+    const viewing = props.selected < 0 ? 0 : props.selected
+    this.state = {
       expanded: false,
       viewing,
       initialViewing: viewing,
     }
-  },
+    this.toggleExpanded = this.toggleExpanded.bind(this)
+    this.incrementViewing = this.incrementViewing.bind(this)
+    this.decrementViewing = this.decrementViewing.bind(this)
+    this.setViewing = this.setViewing.bind(this)
+    this.toggleSelected = this.toggleSelected.bind(this)
+  }
   componentWillReceiveProps(newProps) {
     if (newProps.selected !== this.props.selected
     && this.state.viewing === this.state.initialViewing) {
       this.setViewing(newProps.selected)
     }
-  },
+  }
   toggleExpanded() {
     this.setState({expanded: !this.state.expanded})
-  },
+  }
   incrementViewing() {
     this.setViewing(this.state.viewing + 1)
-  },
+  }
   decrementViewing() {
     this.setViewing(this.state.viewing - 1)
-  },
+  }
   setViewing(n) {
     const suggestions = this.props.suggestions
     if (n >= suggestions.size) {
@@ -48,7 +46,7 @@ const MpnPopup = createClass({
       }
     }
     this.setState({viewing: n})
-  },
+  }
   toggleSelected() {
     const {
       selected,
@@ -66,7 +64,7 @@ const MpnPopup = createClass({
       const mpn = suggestions.getIn([this.state.viewing, 'mpn'])
       setField({lineId, field, value: mpn})
     }
-  },
+  }
   render() {
     const props = this.props
     const suggestions = props.suggestions
@@ -154,8 +152,8 @@ const MpnPopup = createClass({
         </div>
       </semantic.Popup>
     )
-  },
-})
+  }
+}
 
 class Datasheet extends React.PureComponent {
   render() {
@@ -255,13 +253,4 @@ class Buttons extends React.PureComponent {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return redux.bindActionCreators(actions, dispatch)
-}
-
-const ConnectedMpnPopup = reactRedux.connect(
-  () => ({}),
-  mapDispatchToProps
-)(MpnPopup)
-
-export default ConnectedMpnPopup
+export default MpnPopup

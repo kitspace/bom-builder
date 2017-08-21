@@ -6,7 +6,7 @@ const reselect    = require('reselect')
 const immutable   = require('immutable')
 
 const {actions}    = require('./state')
-const {MpnPopup}   = require('./suggestion_popup')
+const {MpnPopup}   = require('./popup')
 const selectors    = require('./selectors')
 const EditableCell = require('./editable_cell')
 

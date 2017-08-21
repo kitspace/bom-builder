@@ -6,7 +6,7 @@ const reselect    = require('reselect')
 const immutable   = require('immutable')
 
 const {actions}    = require('./state')
-const {MpnPopup}   = require('./suggestion_popup')
+const {SkuPopup}   = require('./popup')
 const selectors    = require('./selectors')
 const EditableCell = require('./editable_cell')
 
@@ -37,21 +37,21 @@ const SkuCell = createClass({
         setFocusNext={props.setFocusNext}
       />
     )
-    //if (props.wand || props.selected > -1) {
-    //  return (
-    //    <MpnPopup
-    //      on='click'
-    //      trigger={cell}
-    //      field={field.pop()}
-    //      lineId={props.lineId}
-    //      position='bottom center'
-    //      suggestions={props.suggestions}
-    //      selected={props.selected}
-    //      setField={setField}
-    //      remove={props.remove}
-    //    />
-    //  )
-    //}
+    if (props.wand || props.selected > -1) {
+      return (
+        <SkuPopup
+          on='click'
+          trigger={cell}
+          field={field.pop()}
+          lineId={props.lineId}
+          position='bottom center'
+          suggestions={props.suggestions}
+          selected={props.selected}
+          setField={setField}
+          remove={props.remove}
+        />
+      )
+    }
     return cell
   }
 })

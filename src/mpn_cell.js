@@ -5,13 +5,13 @@ const redux       = require('redux')
 const reselect    = require('reselect')
 const immutable   = require('immutable')
 
-const {actions}  = require('./state')
-const {MpnPopup} = require('./suggestion_popup')
-const selectors  = require('./selectors')
+const {actions}    = require('./state')
+const {MpnPopup}   = require('./suggestion_popup')
+const selectors    = require('./selectors')
 const EditableCell = require('./editable_cell')
 
 const MpnCell = createClass({
-  displayName: 'EditableCell',
+  displayName: 'MpnCell',
   getInitialState() {
     return {triggered: false}
   },
@@ -55,10 +55,6 @@ const MpnCell = createClass({
     return cell
   }
 })
-
-function mapDispatchToProps(dispatch) {
-  return redux.bindActionCreators(actions, dispatch)
-}
 
 function parentField(_, props) {
   return props.field.pop()
@@ -152,6 +148,10 @@ function mapStateToProps() {
       line, editing, active, suggestions, wand, selected
     })
   )
+}
+
+function mapDispatchToProps(dispatch) {
+  return redux.bindActionCreators(actions, dispatch)
 }
 
 module.exports = reactRedux.connect(

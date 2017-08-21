@@ -10,6 +10,7 @@ const selectors = require('./selectors')
 const {actions} = require('./state')
 const SimpleCell = require('./simple_cell')
 const MpnCell = require('./mpn_cell')
+const SkuCell = require('./sku_cell')
 const Handle = require('./handle')
 
 
@@ -70,7 +71,7 @@ function Line(props) {
   const retailerCells = oneClickBom.lineData.retailer_list.map((name, i) => {
     const field = fields.getIn(['retailers', name])
     return (
-      <SimpleCell
+      <SkuCell
         key={name}
         field={field}
         lineId={lineId}

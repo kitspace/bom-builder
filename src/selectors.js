@@ -21,6 +21,14 @@ function field(_, props) {
   return props.field
 }
 
+
+function makeValueSelector() {
+  return reselect.createSelector(
+    [line, field],
+    (line, field) => line.getIn(field)
+  )
+}
+
 function editingThis(editing, lineId, field) {
   return editing && editing.equals(immutable.fromJS([lineId, field]))
 }
@@ -62,4 +70,5 @@ module.exports = {
   makeEditingSelector,
   makeLineSelector,
   makeActiveSelector,
+  makeValueSelector,
 }

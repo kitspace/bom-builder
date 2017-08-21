@@ -1,6 +1,5 @@
 const React       = require('react')
 const createClass = require('create-react-class')
-const semantic    = require('semantic-ui-react')
 const reactRedux  = require('react-redux')
 const redux       = require('redux')
 const reselect    = require('reselect')
@@ -9,9 +8,9 @@ const immutable   = require('immutable')
 const {actions}  = require('./state')
 const {MpnPopup} = require('./suggestion_popup')
 const selectors  = require('./selectors')
-const {EditableCell} = require('./editable_cell')
+const EditableCell = require('./editable_cell')
 
-const MpnEditableCell = createClass({
+const MpnCell = createClass({
   displayName: 'EditableCell',
   getInitialState() {
     return {triggered: false}
@@ -19,8 +18,6 @@ const MpnEditableCell = createClass({
   render() {
     const props = this.props
     const {editing, line, lineId, field, setField, setFocus, active} = props
-    const value = line.getIn(field)
-    const popupTriggerId = `trigger-${lineId}-${field.join('-')}`
     if (!props.expanded && field.get(0) === 'partNumbers' && field.get(2) === 'part') {
       var smallField = line.getIn(['partNumbers', field.get(1), 'manufacturer'])
     }
@@ -160,4 +157,4 @@ function mapStateToProps() {
 module.exports = reactRedux.connect(
   mapStateToProps,
   mapDispatchToProps
-)(MpnEditableCell)
+)(MpnCell)

@@ -8,8 +8,8 @@ const reselect    = require('reselect')
 
 const selectors = require('./selectors')
 const {actions} = require('./state')
-const {ConnectedEditableCell} = require('./editable_cell')
-const MpnEditableCell = require('./mpn_editable_cell')
+const SimpleCell = require('./simple_cell')
+const MpnCell = require('./mpn_cell')
 const Handle = require('./handle')
 
 
@@ -45,7 +45,7 @@ function Line(props) {
       //just in case we have more partNumbers than we prepared in fields
       const field = fields.getIn(get) || get
       cells.push(
-        <MpnEditableCell
+        <MpnCell
           key={`manufacturer-${i}`}
           field={field}
           lineId={lineId}
@@ -57,7 +57,7 @@ function Line(props) {
     //just in case we have more partNumbers than we prepared in fields
     const field = fields.getIn(get) || get
     cells.push(
-      <MpnEditableCell
+      <MpnCell
         key={`part-${i}`}
         field={field}
         lineId={lineId}
@@ -70,7 +70,7 @@ function Line(props) {
   const retailerCells = oneClickBom.lineData.retailer_list.map((name, i) => {
     const field = fields.getIn(['retailers', name])
     return (
-      <ConnectedEditableCell
+      <SimpleCell
         key={name}
         field={field}
         lineId={lineId}
@@ -80,15 +80,15 @@ function Line(props) {
   return (
     <semantic.Table.Row active={editing && editing.get(0) === lineId}>
       <Handle lineId={lineId} />
-      <ConnectedEditableCell
+      <SimpleCell
         field={fields.get('reference')}
         lineId={lineId}
       />
-      <ConnectedEditableCell
+      <SimpleCell
         field={fields.get('quantity')}
         lineId={lineId}
       />
-      <ConnectedEditableCell
+      <SimpleCell
         field={fields.get('description')}
         lineId={lineId}
       />

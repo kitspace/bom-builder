@@ -1,16 +1,6 @@
 const React       = require('react')
 const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
-const immutable   = require('immutable')
-const reactRedux  = require('react-redux')
-const redux       = require('redux')
-const reselect    = require('reselect')
-
-const {actions}  = require('./state')
-const {MpnPopup} = require('./suggestion_popup')
-const selectors  = require('./selectors')
-
-const popupFields = ['partNumbers']
 
 const EditableCell = createClass({
   render() {
@@ -42,7 +32,6 @@ const EditableCell = createClass({
       <Cell
         selectable={!!editing}
         active={active}
-        popupTriggerId={props.popupTriggerId}
         onClick={e => {
           setFocus([lineId, field])
           props.onClick && props.onClick(e)
@@ -79,7 +68,6 @@ class Cell extends React.PureComponent {
         selectable={props.selectable}
         active={props.active}
         style={{maxWidth: props.active ? '' : 200}}
-        id={props.popupTriggerId}
         onClick={props.onClick}
       >
         <a style={{maxWidth: props.active ? '' : 200}}>
@@ -180,25 +168,4 @@ class EditInput extends React.PureComponent {
   }
 }
 
-function mapStateToProps() {
-  const active  = selectors.makeActiveSelector()
-  const line    = selectors.makeLineSelector()
-  const editing = selectors.makeEditingSelector()
-  return reselect.createSelector(
-    [line, editing, active],
-    (line, editing, active) => ({
-      line, editing, active
-    })
-  )
-}
-
-function mapDispatchToProps(dispatch) {
-  return redux.bindActionCreators(actions, dispatch)
-}
-
-const ConnectedEditableCell = reactRedux.connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EditableCell)
-
-module.exports = {ConnectedEditableCell, EditableCell}
+module.exports = EditableCell

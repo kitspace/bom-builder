@@ -1,10 +1,10 @@
-import './mpn_popup.css'
+import './suggestion_popup.css'
 
 const React       = require('react')
 const semantic    = require('semantic-ui-react')
 const immutable   = require('immutable')
 
-class MpnPopup extends React.PureComponent {
+class SuggestionPopup extends React.PureComponent {
   constructor(props) {
     super(props)
     const viewing = props.selected < 0 ? 0 : props.selected
@@ -53,11 +53,9 @@ class MpnPopup extends React.PureComponent {
       remove,
       setField,
       suggestions,
-      lineId
+      lineId,
+      field,
     } = this.props
-    //set the entire mpn field i.e.
-    //part -> {manufacturer, part}
-    const field = this.props.field.pop()
     if (selected === this.state.viewing) {
       remove(immutable.List.of(lineId, field))
     } else {
@@ -69,35 +67,35 @@ class MpnPopup extends React.PureComponent {
     const props = this.props
     const suggestions = props.suggestions
     const popupProps = {
-        className       : 'MpnPopup',
-        flowing         : true,
-        position        : props.position,
-        trigger         : props.trigger,
-        onOpen          : props.onOpen,
-        onClose         : props.onClose,
-        open            : props.open,
-        offset          : props.offset,
-        on              : props.on,
+        className : 'SuggestionPopup',
+        flowing   : true,
+        position  : props.position,
+        trigger   : props.trigger,
+        onOpen    : props.onOpen,
+        onClose   : props.onClose,
+        open      : props.open,
+        offset    : props.offset,
+        on        : props.on,
     }
-    const part   = suggestions.get(this.state.viewing) || immutable.Map()
-    const image  = part.get('image') || immutable.Map()
-    const mpn    = part.get('mpn') || immutable.Map()
-    const number = mpn.get('part') || ''
-    let specs    = part.get('specs') || immutable.List()
+    const suggestion = suggestions.get(this.state.viewing) || immutable.Map()
+    const image      = suggestion.get('image') || immutable.Map()
+    const mpn        = suggestion.get('mpn') || immutable.Map()
+    const part       = mpn.get('part') || ''
+    let specs        = suggestion.get('specs') || immutable.List()
     if (! this.state.expanded) {
       specs = specs.slice(0, 4)
     }
     const mpnTitle = (
       <Title
         one={mpn.get('manufacturer')}
-        two={number}
+        two={part}
         page={`${this.state.viewing + 1}/${suggestions.size}`}
-        wandColor={part.get('type') === 'match' ? 'green' : 'grey'}
+        wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
       />
     )
     const specTable = <SpecTable specs={specs} />
     let expandButton
-    if (part.get('specs') && part.get('specs').size > 4) {
+    if (suggestion.get('specs') && suggestion.get('specs').size > 4) {
       expandButton = (
         <div className='expandButtonContainer'>
           <semantic.Button
@@ -134,7 +132,7 @@ class MpnPopup extends React.PureComponent {
               <a
                 href={
                   'https://octopart.com' +
-                  (number ? `/search?q=${number}` : '')
+                  (part ? `/search?q=${part}` : '')
                 }
               >
                 Powered by Octopart
@@ -143,9 +141,9 @@ class MpnPopup extends React.PureComponent {
           </div>
           <div className='rightHandModule'>
             <div className='description'>
-              {part.get('description')}
+              {suggestion.get('description')}
             </div>
-            <Datasheet href={part.get('datasheet')} />
+            <Datasheet href={suggestion.get('datasheet')} />
             {specTable}
             {expandButton}
           </div>
@@ -253,4 +251,4 @@ class Buttons extends React.PureComponent {
   }
 }
 
-export default MpnPopup
+export default SuggestionPopup

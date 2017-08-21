@@ -81,10 +81,10 @@ const MpnPopup = createClass({
         offset          : props.offset,
         on              : props.on,
     }
-    const part   = suggestions.get(this.state.viewing)
+    const part   = suggestions.get(this.state.viewing) || immutable.Map()
     const image  = part.get('image') || immutable.Map()
-    const mpn    = part.get('mpn')
-    const number = mpn.get('part')
+    const mpn    = part.get('mpn') || immutable.Map()
+    const number = mpn.get('part') || ''
     let specs    = part.get('specs') || immutable.List()
     if (! this.state.expanded) {
       specs = specs.slice(0, 4)
@@ -259,43 +259,8 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-function parentField(_, props) {
-  return props.field.pop()
-}
-
-const mpnSelector = reselect.createSelector(
-  [selectors.line, parentField],
-  (line, field) => line.getIn(field)
-)
-
-function makeLineSelector() {
-  return reselect.createSelector(
-    [selectors.line], line => line
-  )
-}
-
-function suggestionsSelector(_, props) {
-  return props.suggestions
-}
-
-function makeSelectedSelector() {
-  return reselect.createSelector(
-    [suggestionsSelector, mpnSelector],
-    (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
-  )
-}
-
-function mapStateToProps() {
-  const selected = makeSelectedSelector()
-  const line = makeLineSelector()
-  return reselect.createSelector(
-    [selected, line],
-    (selected, line) => ({selected, line})
-  )
-}
-
 const ConnectedMpnPopup = reactRedux.connect(
-  mapStateToProps,
+  () => ({}),
   mapDispatchToProps
 )(MpnPopup)
 

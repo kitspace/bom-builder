@@ -65,7 +65,6 @@ const EditableCell = createClass({
     if (!props.expanded && field.get(0) === 'partNumbers' && field.get(2) === 'part') {
       var smallField = line.getIn(['partNumbers', field.get(1), 'manufacturer'])
     }
-    const suggestion = props.suggestions.first()
     const cell = (
       <Cell
         selectable={!!editing}
@@ -81,10 +80,10 @@ const EditableCell = createClass({
         smallField={smallField}
         value={value}
         contents={editInput}
-        suggestion={suggestion}
+        wand={props.wand}
       />
     )
-    if (popupCell && suggestion) {
+    if (popupCell && (props.wand || props.selected > -1)) {
       return (
         <MpnPopup
           on='click'
@@ -93,6 +92,7 @@ const EditableCell = createClass({
           lineId={props.lineId}
           position='bottom center'
           suggestions={props.suggestions}
+          selected={props.selected}
         />
       )
     }
@@ -105,9 +105,9 @@ class Cell extends React.PureComponent {
     const props = this.props
     const smallField = props.smallField ?
        (<div className='manufacturerSmall'>{props.smallField}</div>) : null
-    if (!props.active && props.suggestion) {
-      const color = props.suggestion.get('type') === 'match' ? 'green' : 'grey'
-      const opacity = props.suggestion.get('type') === 'match' ? 1.0 : 0.3
+    if (!props.active && props.wand) {
+      const color = props.wand === 'match' ? 'green' : 'grey'
+      const opacity = props.wand === 'match' ? 1.0 : 0.3
       var icon = (
         <semantic.Icon
           style={{opacity}}
@@ -305,16 +305,28 @@ function makeSuggestionNumberSelector() {
 }
 
 function makeApplicableSuggestions() {
+  return reselect.createSelector(
+    [selectors.suggestions, otherMpnsSelector, lineIdSelector],
+    (suggestions, otherMpns, lineId, suggestionNumber) => {
+      suggestions = suggestions.get(lineId) || immutable.List()
+      return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
+    }
+  )
+}
+
+function makeWandSelector(applicableSuggestionsSelector) {
   const suggestionNumber = makeSuggestionNumberSelector()
   return reselect.createSelector(
-    [selectors.suggestions, otherMpnsSelector, lineIdSelector, suggestionNumber],
-    (suggestions, otherMpns, lineId, suggestionNumber) => {
+    [applicableSuggestionsSelector, suggestionNumber],
+    (suggestions, suggestionNumber) => {
       if (suggestionNumber < 0) {
-        return immutable.List()
+        return false
       }
-      suggestions = suggestions.get(lineId) || immutable.List()
-      suggestions = suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
-      return suggestions.slice(suggestionNumber)
+      const suggestion = suggestions.slice(suggestionNumber).first()
+      if (suggestion) {
+        return suggestion.get('type')
+      }
+      return false
     }
   )
 }
@@ -323,16 +335,24 @@ function partNumberIndexSelector(_, props) {
   return props.partNumberIndex
 }
 
+function makeSelectedSelector(suggestions) {
+  return reselect.createSelector(
+    [suggestions, mpnSelector],
+    (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
+  )
+}
 
 function mapStateToProps() {
   const active      = makeActiveSelector()
   const line        = makeLineSelector()
   const editing     = makeEditingSelector()
   const suggestions = makeApplicableSuggestions()
+  const wand        = makeWandSelector(suggestions)
+  const selected    = makeSelectedSelector(suggestions)
   return reselect.createSelector(
-    [line, editing, active, suggestions],
-    (line, editing, active, suggestions) => ({
-      line, editing, active, suggestions
+    [line, editing, active, suggestions, wand, selected],
+    (line, editing, active, suggestions, wand, selected) => ({
+      line, editing, active, suggestions, wand, selected
     })
   )
 }

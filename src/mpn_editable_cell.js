@@ -1,12 +1,63 @@
-const reactRedux = require('react-redux')
-const redux      = require('redux')
-const reselect   = require('reselect')
-const immutable  = require('immutable')
+const React       = require('react')
+const createClass = require('create-react-class')
+const semantic    = require('semantic-ui-react')
+const reactRedux  = require('react-redux')
+const redux       = require('redux')
+const reselect    = require('reselect')
+const immutable   = require('immutable')
 
 const {actions}  = require('./state')
 const {MpnPopup} = require('./suggestion_popup')
 const selectors  = require('./selectors')
 const {EditableCell} = require('./editable_cell')
+
+const MpnEditableCell = createClass({
+  displayName: 'EditableCell',
+  getInitialState() {
+    return {triggered: false}
+  },
+  render() {
+    const props = this.props
+    const {editing, line, lineId, field, setField, setFocus, active} = props
+    const value = line.getIn(field)
+    const popupTriggerId = `trigger-${lineId}-${field.join('-')}`
+    if (!props.expanded && field.get(0) === 'partNumbers' && field.get(2) === 'part') {
+      var smallField = line.getIn(['partNumbers', field.get(1), 'manufacturer'])
+    }
+    const cell = (
+      <EditableCell
+        field={field}
+        line={line}
+        lineId={lineId}
+        setField={setField}
+        setFocus={setFocus}
+        loseFocus={props.loseFocus}
+        active={active}
+        editing={editing}
+        wand={props.wand}
+        smallField={smallField}
+        setFocusBelow={props.setFocusBelow}
+        setFocusNext={props.setFocusNext}
+      />
+    )
+    if (props.wand || props.selected > -1) {
+      return (
+        <MpnPopup
+          on='click'
+          trigger={cell}
+          field={field.pop()}
+          lineId={props.lineId}
+          position='bottom center'
+          suggestions={props.suggestions}
+          selected={props.selected}
+          setField={setField}
+          remove={props.remove}
+        />
+      )
+    }
+    return cell
+  }
+})
 
 function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
@@ -109,4 +160,4 @@ function mapStateToProps() {
 module.exports = reactRedux.connect(
   mapStateToProps,
   mapDispatchToProps
-)(EditableCell)
+)(MpnEditableCell)

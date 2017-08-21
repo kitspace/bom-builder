@@ -13,10 +13,6 @@ const selectors  = require('./selectors')
 const popupFields = ['partNumbers']
 
 const EditableCell = createClass({
-  displayName: 'EditableCell',
-  getInitialState() {
-    return {triggered: false}
-  },
   render() {
     const props = this.props
     const {editing, line, lineId, field, setField, setFocus, active} = props
@@ -24,30 +20,10 @@ const EditableCell = createClass({
       var type = 'number'
     }
     const value = line.getIn(field)
-    const popupTriggerId = `trigger-${lineId}-${field.join('-')}`
-    const popupCell = popupFields.includes(field.get(0))
     let editInput = value
     if (active) {
       editInput = (
         <EditInput
-          onMount={() => {
-            if (popupCell) {
-              //this is a workaround due to bug in controlled popups in
-              //semantic-ui-react
-              //https://github.com/Semantic-Org/Semantic-UI-React/issues/1065
-              this.immediate = setImmediate(() => {
-                if (!this.triggered) {
-                  const trigger = document.getElementById(popupTriggerId)
-                  if (trigger) {
-                    trigger.click()
-                  }
-                }
-              })
-            }
-          }}
-          onUnmount={() => {
-            clearImmediate(this.immediate)
-          }}
           setField={value => setField({lineId, field, value})}
           value={value}
           type={type}
@@ -62,45 +38,24 @@ const EditableCell = createClass({
         />
       )
     }
-    if (!props.expanded && field.get(0) === 'partNumbers' && field.get(2) === 'part') {
-      var smallField = line.getIn(['partNumbers', field.get(1), 'manufacturer'])
-    }
-    const cell = (
+    return (
       <Cell
         selectable={!!editing}
         active={active}
+        popupTriggerId={props.popupTriggerId}
         onClick={e => {
           setFocus([lineId, field])
-          if (popupCell) {
-            this.triggered = true
-            setImmediate(() => this.tiggered = false)
-          }
+          props.onClick && props.onClick(e)
         }}
-        popupTriggerId={popupTriggerId}
-        smallField={smallField}
         value={value}
         contents={editInput}
+        smallField={props.smallField}
         wand={props.wand}
       />
     )
-    if (popupCell && (props.wand || props.selected > -1)) {
-      return (
-        <MpnPopup
-          on='click'
-          trigger={cell}
-          field={field.pop()}
-          lineId={props.lineId}
-          position='bottom center'
-          suggestions={props.suggestions}
-          selected={props.selected}
-          setField={setField}
-          remove={props.remove}
-        />
-      )
-    }
-    return cell
   }
 })
+
 
 class Cell extends React.PureComponent {
   render() {
@@ -215,10 +170,10 @@ class EditInput extends React.PureComponent {
     return input
   }
   componentWillUnmount() {
-    this.props.onUnmount()
+    this.props.onUnmount && this.props.onUnmount()
   }
   componentDidMount() {
-    this.props.onMount()
+    this.props.onMount && this.props.onMount()
     this.refs.input.focus()
     this.skipInitialBlur = false
     this.refs.input.select()

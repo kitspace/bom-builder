@@ -50,7 +50,7 @@ class Cell extends React.PureComponent {
   render() {
     const props = this.props
     const smallField = props.smallField ?
-       (<div className='manufacturerSmall'>{props.smallField}</div>) : null
+       (<div className='smallField'>{props.smallField}</div>) : null
     if (!props.active && props.wand) {
       const color = props.wand === 'match' ? 'green' : 'grey'
       const opacity = props.wand === 'match' ? 1.0 : 0.3

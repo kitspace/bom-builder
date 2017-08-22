@@ -42,7 +42,7 @@ const SkuCell = createClass({
         <SkuPopup
           on='click'
           trigger={cell}
-          field={field.pop()}
+          field={field}
           lineId={props.lineId}
           position='bottom center'
           suggestions={props.suggestions}

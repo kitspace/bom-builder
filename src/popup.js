@@ -1,10 +1,10 @@
-import './suggestion_popup.css'
+import './popup.css'
 
-const React       = require('react')
-const semantic    = require('semantic-ui-react')
-const immutable   = require('immutable')
+const React     = require('react')
+const semantic  = require('semantic-ui-react')
+const immutable = require('immutable')
 
-class SuggestionPopup extends React.PureComponent {
+class Popup extends React.PureComponent {
   constructor(props) {
     super(props)
     const viewing = props.selected < 0 ? 0 : props.selected
@@ -48,7 +48,114 @@ class SuggestionPopup extends React.PureComponent {
   }
 }
 
-class MpnPopup extends SuggestionPopup {
+class SkuPopup extends Popup {
+  constructor(props) {
+    super(props)
+    this.toggleSelected = this.toggleSelected.bind(this)
+  }
+  toggleSelected() {
+    const {
+      selected,
+      remove,
+      setField,
+      suggestions,
+      lineId,
+      field,
+    } = this.props
+    if (selected === this.state.viewing) {
+      remove(immutable.List.of(lineId, field))
+    } else {
+      const value = suggestions.getIn([this.state.viewing, 'sku', 'part'])
+      setField({lineId, field, value})
+    }
+  }
+  render() {
+    const props = this.props
+    const suggestions = props.suggestions
+    const popupProps = {
+        className : 'Popup',
+        flowing   : true,
+        position  : props.position,
+        trigger   : props.trigger,
+        onOpen    : props.onOpen,
+        onClose   : props.onClose,
+        open      : props.open,
+        offset    : props.offset,
+        on        : props.on,
+    }
+    const suggestion = suggestions.get(this.state.viewing) || immutable.Map()
+    const image      = suggestion.get('image') || immutable.Map()
+    const sku        = suggestion.get('sku') || immutable.Map()
+    const part       = sku.get('part') || ''
+    const skuTitle = (
+      <Title
+        one={sku.get('vendor')}
+        two={part}
+        page={`${this.state.viewing + 1}/${suggestions.size}`}
+        wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
+      />
+    )
+    const priceTable = <PriceTable prices={suggestion.get('prices')} />
+    let expandButton
+    if (suggestion.get('specs') && suggestion.get('specs').size > 4) {
+      expandButton = (
+        <div className='expandButtonContainer'>
+          <semantic.Button
+            onClick = {this.toggleExpanded}
+            size    = 'tiny'
+            basic   = {true}
+          >
+            {this.state.expanded ? '⇡' : '...'}
+          </semantic.Button>
+        </div>
+      )
+    }
+    return (
+      <semantic.Popup {...popupProps} >
+        <Buttons
+          disabled={suggestions.size < 2}
+          selected={this.props.selected === this.state.viewing}
+          onIncrement={this.incrementViewing}
+          onDecrement={this.decrementViewing}
+          onSelect={this.toggleSelected}
+        />
+        {skuTitle}
+        <div className='topAreaContainer'>
+          <div className='topAreaInner'>
+            <div>
+              <div className='imageContainer'>
+                <semantic.Image src={image.get('url')} />
+              </div>
+              <a className='imageCredit' href={image.get('credit_url')}>
+                {image.get('credit_string')}
+              </a>
+            </div>
+            <div className='octopartLinkContainer'>
+              <a
+                href={
+                  'https://octopart.com' +
+                  (part ? `/search?q=${part}` : '')
+                }
+              >
+                Powered by Octopart
+              </a>
+            </div>
+          </div>
+          <div className='rightHandModule'>
+            <div className='description'>
+              {suggestion.get('description')}
+            </div>
+            <Datasheet href={suggestion.get('datasheet')} />
+            {priceTable}
+            {expandButton}
+          </div>
+        </div>
+      </semantic.Popup>
+    )
+  }
+}
+
+class MpnPopup extends Popup {
   constructor(props) {
     super(props)
     this.toggleSelected = this.toggleSelected.bind(this)
@@ -73,7 +180,7 @@ class MpnPopup extends SuggestionPopup {
     const props = this.props
     const suggestions = props.suggestions
     const popupProps = {
-        className : 'SuggestionPopup',
+        className : 'Popup',
         flowing   : true,
         position  : props.position,
         trigger   : props.trigger,
@@ -201,6 +308,32 @@ class SpecTable extends React.PureComponent {
   }
 }
 
+class PriceTable extends React.PureComponent {
+  render() {
+    const tableData = this.props.prices.get('GBP') || immutable.List()
+    return (
+      <semantic.Table
+        className='specTable'
+        basic='very'
+        compact={true}
+        tableData={tableData.toArray()}
+        renderBodyRow={args => {
+          return (
+            <tr key={String(args)}>
+              <td >
+                {args.get(0)}
+              </td>
+              <td >
+                {`£${args.get(1)}`}
+              </td>
+            </tr>
+          )
+        }}
+      />
+    )
+  }
+}
+
 class Title extends React.PureComponent {
   render() {
     const props = this.props
@@ -257,4 +390,4 @@ class Buttons extends React.PureComponent {
   }
 }
 
-export {MpnPopup}
+export {MpnPopup, SkuPopup}

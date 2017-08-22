@@ -32,14 +32,12 @@ const fields = immutable.Map({
 
 function Line(props) {
   const {
-    viewState,
-    line,
-    editing,
+    partNumbersExpanded,
+    partNumbers,
+    editingLine,
     lineId,
   } = props
-  const partNumbersExpanded = viewState.get('partNumbersExpanded')
-  const ps = line.get('partNumbers')
-  const partNumberCells = ps.flatMap((mpn, i) => {
+  const partNumberCells = partNumbers.flatMap((mpn, i) => {
     const cells = []
     if (partNumbersExpanded.get(i)) {
       const get = immutable.List.of('partNumbers', i, 'manufacturer')
@@ -79,7 +77,7 @@ function Line(props) {
     )
   })
   return (
-    <semantic.Table.Row active={editing && editing.get(0) === lineId}>
+    <semantic.Table.Row active={editingLine}>
       <Handle lineId={lineId} />
       <SimpleCell
         field={fields.get('reference')}
@@ -107,14 +105,27 @@ function editingSelector(state) {
   return state.view.get('editable') ? state.view.get('focus') : null
 }
 
-function mapStateToProps() {
+function makeEditingLineSelector() {
   return reselect.createSelector(
-    [selectors.line, selectors.view, editingSelector],
-    (line, viewState, editing) => ({
-      line,
-      viewState,
-      editing,
-    })
+    [editingSelector, selectors.lineId],
+    (editing, lineId) => editing && editing.get(0) === lineId
+  )
+}
+
+function mapStateToProps() {
+  const line = selectors.makeLineSelector()
+  const editingLine = makeEditingLineSelector()
+  return reselect.createSelector(
+    [line, selectors.view, editingLine],
+    (line, viewState, editingLine) => {
+      const partNumbers = line.get('partNumbers')
+      const partNumbersExpanded = viewState.get('partNumbersExpanded')
+      return {
+        partNumbers,
+        partNumbersExpanded,
+        editingLine,
+      }
+    }
   )
 }
 

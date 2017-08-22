@@ -1,0 +1,111 @@
+a {
+   color: black;
+}
+
+a:hover {
+   color: black;
+}
+
+.imageContainer {
+    display: flex;
+    min-width: 160px;
+    min-height: 160px;
+    align-items: center;
+}
+
+a.imageCredit {
+   font-size: 9px;
+}
+
+.image {
+    align-self: center;
+}
+.topAreaContainer {
+    display: flex;
+    align-items: stretch;
+}
+.linkContainer {
+   flex-grow: 1;
+   display: flex;
+   justify-content: flex-end;
+   padding-right: 10px;
+   align-items: flex-end;
+   flex-direction: column;
+}
+.octopartLinkContainer {
+   font-size: 10px;
+   justify-content: flex-start;
+   align-items: flex-start;
+}
+
+.titleContainer {
+   display: flex;
+   border-bottom: 1px solid #e8e8e9;
+   justify-content: space-between;
+   margin: 20px;
+}
+
+.viewingNumber {
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-end;
+   margin-bottom: 5px;
+}
+
+.mpnTitle {
+   display: flex;
+   justify-content: center;
+   font-weight: bold;
+}
+
+.mpnTitle > div {
+   margin: 5px;
+}
+
+.expandButtonContainer {
+   display: flex;
+   justify-content: center;
+}
+
+.sorryText {
+   max-width: 300px;
+}
+
+.topAreaInner {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+}
+
+.octopartLinkContainer {
+   display: flex;
+   align-items: flex-end;
+   justify-content: flex-start;
+}
+
+.octopartLinkContainer a {
+   font-size: 10px;
+}
+
+.rightHandModule {
+   margin-left: 20px;
+}
+
+.description {
+   max-width: 250px;
+}
+
+.datasheet {
+   margin-top: 15px;
+   display: flex;
+   justify-content: center;
+}
+
+.specTable {
+   width: 250px !important;
+}
+
+.smallField {
+   font-size: 10px;
+   line-height: 10px;
+}

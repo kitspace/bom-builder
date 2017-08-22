@@ -8,12 +8,12 @@ const {actions}    = require('./state')
 
 function mapStateToProps() {
   const active  = selectors.makeActiveSelector()
-  const line    = selectors.makeLineSelector()
+  const value   = selectors.makeValueSelector()
   const editing = selectors.makeEditingSelector()
   return reselect.createSelector(
-    [line, editing, active],
-    (line, editing, active) => ({
-      line, editing, active
+    [value, editing, active],
+    (value, editing, active) => ({
+      value, editing, active
     })
   )
 }

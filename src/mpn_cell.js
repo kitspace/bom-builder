@@ -17,14 +17,20 @@ const MpnCell = createClass({
   },
   render() {
     const props = this.props
-    const {editing, line, lineId, field, setField, setFocus, active} = props
-    if (!props.expanded && field.get(0) === 'partNumbers' && field.get(2) === 'part') {
-      var smallField = line.getIn(['partNumbers', field.get(1), 'manufacturer'])
-    }
+    const {
+      editing,
+      value,
+      smallValue,
+      lineId,
+      field,
+      setField,
+      setFocus,
+      active,
+    } = props
     const cell = (
       <EditableCell
         field={field}
-        line={line}
+        value={value}
         lineId={lineId}
         setField={setField}
         setFocus={setFocus}
@@ -32,7 +38,7 @@ const MpnCell = createClass({
         active={active}
         editing={editing}
         wand={props.wand}
-        smallField={smallField}
+        smallField={smallValue}
         setFocusBelow={props.setFocusBelow}
         setFocusNext={props.setFocusNext}
       />
@@ -135,17 +141,25 @@ function makeSelectedSelector(suggestions) {
   )
 }
 
+function makeSmallValueSelector() {
+  return reselect.createSelector(
+    [mpnSelector],
+    mpn => mpn.get('manufacturer')
+  )
+}
+
 function mapStateToProps() {
   const active      = selectors.makeActiveSelector()
-  const line        = selectors.makeLineSelector()
+  const value       = selectors.makeValueSelector()
   const editing     = selectors.makeEditingSelector()
   const suggestions = makeApplicableSuggestions()
   const wand        = makeWandSelector(suggestions)
   const selected    = makeSelectedSelector(suggestions)
+  const smallValue  = makeSmallValueSelector()
   return reselect.createSelector(
-    [line, editing, active, suggestions, wand, selected],
-    (line, editing, active, suggestions, wand, selected) => ({
-      line, editing, active, suggestions, wand, selected
+    [value, editing, active, suggestions, wand, selected, smallValue],
+    (value, editing, active, suggestions, wand, selected, smallValue) => ({
+      value, editing, active, suggestions, wand, selected, smallValue
     })
   )
 }

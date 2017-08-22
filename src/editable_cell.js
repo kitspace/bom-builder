@@ -5,11 +5,10 @@ const semantic    = require('semantic-ui-react')
 const EditableCell = createClass({
   render() {
     const props = this.props
-    const {editing, line, lineId, field, setField, setFocus, active} = props
+    const {editing, value, lineId, field, setField, setFocus, active} = props
     if (field.get(0) === 'quantity') {
       var type = 'number'
     }
-    const value = line.getIn(field)
     let editInput = value
     if (active) {
       editInput = (

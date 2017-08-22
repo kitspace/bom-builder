@@ -17,14 +17,11 @@ const SkuCell = createClass({
   },
   render() {
     const props = this.props
-    const {editing, line, lineId, field, setField, setFocus, active} = props
-    if (!props.expanded && field.get(0) === 'partNumbers' && field.get(2) === 'part') {
-      var smallField = line.getIn(['partNumbers', field.get(1), 'manufacturer'])
-    }
+    const {editing, value, lineId, field, setField, setFocus, active} = props
     const cell = (
       <EditableCell
         field={field}
-        line={line}
+        value={value}
         lineId={lineId}
         setField={setField}
         setFocus={setFocus}
@@ -32,7 +29,6 @@ const SkuCell = createClass({
         active={active}
         editing={editing}
         wand={props.wand}
-        smallField={smallField}
         setFocusBelow={props.setFocusBelow}
         setFocusNext={props.setFocusNext}
       />
@@ -101,16 +97,15 @@ function makeSelectedSelector(suggestions) {
 
 function mapStateToProps() {
   const active      = selectors.makeActiveSelector()
-  const line        = selectors.makeLineSelector()
   const editing     = selectors.makeEditingSelector()
   const value       = selectors.makeValueSelector()
   const suggestions = makeApplicableSuggestions()
   const wand        = makeWandSelector(suggestions, value)
   const selected    = makeSelectedSelector(suggestions)
   return reselect.createSelector(
-    [line, editing, active, suggestions, wand, selected],
-    (line, editing, active, suggestions, wand, selected) => ({
-      line, editing, active, suggestions, wand, selected
+    [value, editing, active, suggestions, wand, selected],
+    (value, editing, active, suggestions, wand, selected) => ({
+      value, editing, active, suggestions, wand, selected
     })
   )
 }

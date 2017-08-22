@@ -22,7 +22,8 @@ function fromPartNumber(partNumber, suggestions) {
 
 function fromDescription(description) {
   return getPartinfo(description)
-    .then(ps => ps && ps.filter(x => x != null))
+    .then(ps => ps || [])
+    .then(ps => ps.filter(x => x != null))
     .then(ps => immutable.fromJS(ps))
     .then(ps => ps.map(p => p.set('from', immutable.List.of('description'))))
 }
@@ -52,11 +53,24 @@ async function findSuggestions(lineId, line, suggestions=immutable.List(), actio
   }
   //make unique
   suggestions = suggestions.reduce((prev, p) => {
-    if (prev.map(p => p.get('mpn')).includes(p.get('mpn'))) {
+    if (prev.map(s => s.get('mpn')).includes(p.get('mpn'))) {
+      if (p.get('type') === 'match') {
+        prev = prev.filter(s => !s.get('mpn').equals(p.get('mpn')))
+        return prev.push(p)
+      }
       return prev
     }
     return prev.push(p)
   }, immutable.List())
+
+  //put all matches at the start and searches at the end
+  suggestions = suggestions.sort(s => {
+    if (s.get('type') === 'match') {
+      return -1
+    }
+    return 1
+  })
+
   actions.setSuggestions({lineId, suggestions})
 }
 

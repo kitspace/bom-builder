@@ -24,9 +24,19 @@ const part = `
       vendor
       part
     }
+    description
+    image {
+      url
+      credit_string
+      credit_url
+    }
+    specs {
+      key
+      name
+      value
+    }
     prices {
-      USD
-      EUR
+      GBP
     }
   }
 `

@@ -3,9 +3,26 @@ const createClass = require('create-react-class')
 const semantic    = require('semantic-ui-react')
 
 const EditableCell = createClass({
+  displayName: 'EditableCell',
+  setFieldHandler(value) {
+    const {lineId, field, setField} = this.props
+    setField({lineId, field, value})
+  },
+  loseFocus() {
+    const {lineId, field, loseFocus} = this.props
+    loseFocus([lineId, field])
+  },
+  loseFocusHandler() {
+    setTimeout(this.loseFocus, 100)
+  },
+  clickHandler(e) {
+    const {lineId, field, setFocus, onClick} = this.props
+    setFocus([lineId, field])
+    onClick && onClick(e)
+  },
   render() {
     const props = this.props
-    const {editing, value, lineId, field, setField, setFocus, active} = props
+    const {editing, value, field, active} = props
     if (field.get(0) === 'quantity') {
       var type = 'number'
     }
@@ -13,16 +30,12 @@ const EditableCell = createClass({
     if (active) {
       editInput = (
         <EditInput
-          setField={value => setField({lineId, field, value})}
+          setField={this.setFieldHandler}
           value={value}
           type={type}
           key='EditInput'
           setFocusNext={props.setFocusNext}
-          loseFocus={() => {
-            setTimeout(() => {
-              props.loseFocus([lineId, field])
-            }, 100)
-          }}
+          loseFocus={this.loseFocusHandler}
           setFocusBelow={props.setFocusBelow}
         />
       )
@@ -31,10 +44,7 @@ const EditableCell = createClass({
       <Cell
         selectable={!!editing}
         active={active}
-        onClick={e => {
-          setFocus([lineId, field])
-          props.onClick && props.onClick(e)
-        }}
+        onClick={this.clickHandler}
         value={value}
         contents={editInput}
         smallField={props.smallField}

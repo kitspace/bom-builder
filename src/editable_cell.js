@@ -8,12 +8,13 @@ const EditableCell = createClass({
     const {lineId, field, setField} = this.props
     setField({lineId, field, value})
   },
-  loseFocus() {
+  loseFocusCallback() {
     const {lineId, field, loseFocus} = this.props
     loseFocus([lineId, field])
   },
   loseFocusHandler() {
-    setTimeout(this.loseFocus, 100)
+    //give it some time so we can get to the delete button before losing focus
+    setTimeout(this.loseFocusCallback, 100)
   },
   clickHandler(e) {
     const {lineId, field, setFocus, onClick} = this.props
@@ -30,12 +31,11 @@ const EditableCell = createClass({
     if (active) {
       editInput = (
         <EditInput
-          setField={this.setFieldHandler}
           value={value}
           type={type}
-          key='EditInput'
-          setFocusNext={props.setFocusNext}
+          setField={this.setFieldHandler}
           loseFocus={this.loseFocusHandler}
+          setFocusNext={props.setFocusNext}
           setFocusBelow={props.setFocusBelow}
         />
       )
@@ -44,11 +44,11 @@ const EditableCell = createClass({
       <Cell
         selectable={!!editing}
         active={active}
-        onClick={this.clickHandler}
         value={value}
         contents={editInput}
         smallField={props.smallField}
         wand={props.wand}
+        onClick={this.clickHandler}
       />
     )
   }
@@ -102,7 +102,6 @@ class EditInput extends React.PureComponent {
     this.state = {
       value: props.value,
       initialValue: props.value,
-      untouchedValue: props.value,
     }
   }
   handleChange(event) {
@@ -146,6 +145,7 @@ class EditInput extends React.PureComponent {
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         type={this.props.type}
+        //needed for grabbing shortcuts while editing
         className='mousetrap'
         onKeyDown={e => {
           if (e.key === 'Tab') {

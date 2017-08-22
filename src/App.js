@@ -60,6 +60,7 @@ class Bom extends React.Component {
       <reactRedux.Provider store={store}>
         <DoubleScrollBar>
           <Menu />
+          <div style={{display: 'flex'}}>
           <semantic.Table
             className='Bom'
             size='small'
@@ -70,6 +71,8 @@ class Bom extends React.Component {
             <Header />
             <Body />
           </semantic.Table>
+          <span style={{minWidth: 500}}></span>
+        </div>
         </DoubleScrollBar>
       </reactRedux.Provider>
     )

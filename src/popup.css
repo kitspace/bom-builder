@@ -10,6 +10,8 @@ a:hover {
     display: flex;
     min-width: 160px;
     min-height: 160px;
+    max-width: 160px;
+    max-height: 160px;
     align-items: center;
 }
 

@@ -92,11 +92,12 @@ class SkuPopup extends Popup {
     const suggestion = suggestions.get(this.state.viewing) || immutable.Map()
     const image      = suggestion.get('image') || immutable.Map()
     const sku        = suggestion.get('sku') || immutable.Map()
+    const mpn        = suggestion.get('mpn') || immutable.Map()
     const part       = sku.get('part') || ''
     const skuTitle = (
       <Title
-        one={sku.get('vendor')}
-        two={part}
+        one={mpn.get('manufacturer')}
+        two={mpn.get('part')}
         page={`${this.state.viewing + 1}/${suggestions.size}`}
         wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
       />

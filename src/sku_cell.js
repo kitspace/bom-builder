@@ -63,8 +63,9 @@ function makeApplicableSuggestions() {
       suggestions = suggestions.get(lineId) || immutable.List()
       return suggestions.flatMap(s => {
         const type = s.get('type')
+        const mpn = s.get('mpn')
         const offers = s.get('offers').filter(o => o.getIn(['sku', 'vendor']) === retailer)
-        return offers.map(o => o.set('type', type))
+        return offers.map(o => o.merge({type, mpn}))
       })
     }
   )

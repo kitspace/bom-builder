@@ -17,12 +17,18 @@ class Popup extends React.PureComponent {
     this.incrementViewing = this.incrementViewing.bind(this)
     this.decrementViewing = this.decrementViewing.bind(this)
     this.setViewing = this.setViewing.bind(this)
+    this.handleClose = this.handleClose.bind(this)
   }
   componentWillReceiveProps(newProps) {
     if (newProps.selected !== this.props.selected
     && this.state.viewing === this.state.initialViewing) {
       this.setViewing(newProps.selected)
     }
+  }
+  handleClose() {
+    const viewing = this.props.selected < 0 ? 0 : this.props.selected
+    this.setState({viewing, initialViewing: viewing})
+    this.props.onClose && this.props.onClose()
   }
   toggleExpanded() {
     this.setState({expanded: !this.state.expanded})
@@ -78,7 +84,7 @@ class SkuPopup extends Popup {
         position  : props.position,
         trigger   : props.trigger,
         onOpen    : props.onOpen,
-        onClose   : props.onClose,
+        onClose   : this.handleClose,
         open      : props.open,
         offset    : props.offset,
         on        : props.on,
@@ -185,7 +191,7 @@ class MpnPopup extends Popup {
         position  : props.position,
         trigger   : props.trigger,
         onOpen    : props.onOpen,
-        onClose   : props.onClose,
+        onClose   : this.handleClose,
         open      : props.open,
         offset    : props.offset,
         on        : props.on,

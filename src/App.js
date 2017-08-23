@@ -11,10 +11,11 @@ const oneClickBom = require('1-click-bom')
 const mousetrap   = require('mousetrap')
 const {snapshot}  = require('react-snapshot')
 const DoubleScrollBar = require('react-double-scrollbar')
+const copyToClipboard = require('copy-to-clipboard')
 
-const Header      = require('./header')
-const Body        = require('./body')
-const Menu        = require('./menu')
+const Header = require('./header')
+const Body   = require('./body')
+const Menu   = require('./menu')
 
 const {subscribeEffects} = require('./effects')
 const {findSuggestions}  = require('./suggestions')
@@ -30,6 +31,19 @@ const store = redux.createStore(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
 const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
+
+function copyBom() {
+  const state = store.getState()
+  const lines = state.data.present.get('lines').valueSeq().toJS()
+  const tsv = oneClickBom.writeTSV(lines)
+  const copyHandler = e => {
+    e.clipboardData.setData('text/plain', tsv)
+    e.preventDefault()
+  }
+  document.addEventListener('copy', copyHandler)
+  copyToClipboard(tsv)
+  document.removeEventListener('copy', copyHandler)
+}
 
 subscribeEffects(store, actions)
 
@@ -59,7 +73,7 @@ class Bom extends React.Component {
     return (
       <reactRedux.Provider store={store}>
         <DoubleScrollBar>
-          <Menu />
+          <Menu copyBom={copyBom} />
           <div style={{display: 'flex'}}>
           <semantic.Table
             className='Bom'

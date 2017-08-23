@@ -30,6 +30,12 @@ function Menu(props) {
         <semantic.Icon name='x' />
         Delete
       </semantic.Menu.Item>
+      <semantic.Menu.Item
+        onClick={props.copyBom}
+      >
+        <semantic.Icon name='clipboard' />
+        Copy to clipboard
+      </semantic.Menu.Item>
     </semantic.Menu>
   )
 }

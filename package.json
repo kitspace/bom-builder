@@ -5,6 +5,7 @@
   "homepage": "http://cloud.monostable.co.uk/bom-builder/",
   "dependencies": {
     "1-click-bom": "https://github.com/monostable/npm-1-click-bom",
+    "copy-to-clipboard": "^3.0.8",
     "create-react-class": "^15.6.0",
     "immutable": "^3.8.1",
     "immutable-diff": "^0.1.1",

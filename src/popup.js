@@ -317,9 +317,16 @@ class SpecTable extends React.PureComponent {
 
 class PriceTable extends React.PureComponent {
   render() {
-    const tableData = this.props.prices
-      ? this.props.prices.get('GBP') || immutable.List()
-      : immutable.List()
+    let tableData, symbol
+    const prices = this.props.prices
+    if (prices) {
+      const gbp = prices.get('GBP')
+      const eur = prices.get('EUR')
+      const usd = prices.get('USD')
+      symbol = gbp ? '£' : eur ? '€' : usd ? '$' : ''
+      tableData = gbp || eur || usd
+    }
+    tableData = tableData || immutable.List()
     return (
       <semantic.Table
         className='specTable'
@@ -333,7 +340,7 @@ class PriceTable extends React.PureComponent {
                 {args.get(0)}
               </td>
               <td >
-                {`£${args.get(1)}`}
+                {`${symbol}${args.get(1)}`}
               </td>
             </tr>
           )

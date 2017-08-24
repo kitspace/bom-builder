@@ -37,6 +37,8 @@ const part = `
     }
     prices {
       GBP
+      EUR
+      USD
     }
   }
 `

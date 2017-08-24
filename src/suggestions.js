@@ -29,6 +29,9 @@ function fromDescription(description) {
 }
 
 async function findSuggestions(lineId, line, suggestions=immutable.List(), actions) {
+  if (line == null) {
+    return
+  }
   await Promise.all(line.get('partNumbers').map(async (partNumber, i) => {
     const part = await fromPartNumber(partNumber, suggestions)
     if (part != null) {
@@ -37,7 +40,7 @@ async function findSuggestions(lineId, line, suggestions=immutable.List(), actio
     }
   }))
   await Promise.all(line.get('retailers').entrySeq().map(async ([vendor, part]) => {
-    if (!part) {
+    if (part == null) {
       return
     }
     const result = await fromRetailer(immutable.Map({vendor, part}), suggestions)

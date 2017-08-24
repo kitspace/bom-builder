@@ -317,7 +317,9 @@ class SpecTable extends React.PureComponent {
 
 class PriceTable extends React.PureComponent {
   render() {
-    const tableData = this.props.prices.get('GBP') || immutable.List()
+    const tableData = this.props.prices
+      ? this.props.prices.get('GBP') || immutable.List()
+      : immutable.List()
     return (
       <semantic.Table
         className='specTable'

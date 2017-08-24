@@ -34,7 +34,11 @@ const actions = redux.bindActionCreators(require('./state').actions, store.dispa
 
 function copyBom() {
   const state = store.getState()
-  const lines = state.data.present.get('lines').valueSeq().toJS()
+  const linesMap = state.data.present.get('lines').map(line => (
+    line.update('partNumbers', ps => ps.slice(0, -1))
+  ))
+  const order = state.data.present.get('order')
+  const lines = order.map(lineId => linesMap.get(lineId)).toJS()
   const tsv = oneClickBom.writeTSV(lines)
   const copyHandler = e => {
     e.clipboardData.setData('text/plain', tsv)

@@ -9,7 +9,7 @@ function Handle(props) {
   return (
     <td className={`marked ${markerColor(reference)}`}>
       <input
-        style={{height: 39}}
+        style={{height: 17}}
         onFocus={() => setFocus([lineId, null])}
         onBlur={() => {
           setTimeout(() => {

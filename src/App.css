@@ -162,3 +162,29 @@ div.retailerButtonCellIcon {
 .expandLabel > i {
    margin: 2px !important
 }
+
+table {
+  font-size: 12px !important;
+}
+
+td {
+   padding: 0px !important;
+}
+
+th {
+   padding: 0px !important;
+   padding-left: 3px !important;
+   padding-right: 3px !important;
+}
+
+th > a {
+   margin: 0px !important;
+   padding: 0px !important;
+}
+
+td > a {
+   margin: 0px !important;
+   padding: 0px !important;
+   padding-left: 3px !important;
+   padding-top: 1px !important;
+}

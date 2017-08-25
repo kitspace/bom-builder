@@ -5142,10 +5142,6 @@ react-dom@^15.3.0, react-dom@^15.6.1:
     object-assign "^4.1.0"
     prop-types "^15.5.10"
 
-react-double-scrollbar@^0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/react-double-scrollbar/-/react-double-scrollbar-0.0.11.tgz#0b12f67e78aedf496882bda5f9f62b57920dfa3f"
-
 react-error-overlay@^1.0.9:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-1.0.9.tgz#988e48f6f343afa97a719c4ddae51b8fe8ccfee8"

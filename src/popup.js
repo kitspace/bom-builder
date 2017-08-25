@@ -13,11 +13,11 @@ class Popup extends React.PureComponent {
       viewing,
       initialViewing: viewing,
     }
-    this.toggleExpanded = this.toggleExpanded.bind(this)
+    this.toggleExpanded   = this.toggleExpanded.bind(this)
     this.incrementViewing = this.incrementViewing.bind(this)
     this.decrementViewing = this.decrementViewing.bind(this)
-    this.setViewing = this.setViewing.bind(this)
-    this.handleClose = this.handleClose.bind(this)
+    this.setViewing       = this.setViewing.bind(this)
+    this.handleClose      = this.handleClose.bind(this)
   }
   componentWillReceiveProps(newProps) {
     if (newProps.selected !== this.props.selected
@@ -94,6 +94,7 @@ class SkuPopup extends Popup {
     const sku        = suggestion.get('sku') || immutable.Map()
     const mpn        = suggestion.get('mpn') || immutable.Map()
     const part       = sku.get('part') || ''
+    let specs        = suggestion.get('specs') || immutable.List()
     const skuTitle = (
       <Title
         one={mpn.get('manufacturer')}
@@ -103,6 +104,7 @@ class SkuPopup extends Popup {
       />
     )
     const priceTable = <PriceTable prices={suggestion.get('prices')} />
+    const specTable = <SpecTable specs={specs.take(3)} />
     let expandButton
     if (suggestion.get('specs') && suggestion.get('specs').size > 4) {
       expandButton = (
@@ -296,6 +298,7 @@ class SpecTable extends React.PureComponent {
     return (
       <semantic.Table
         className='specTable'
+        unstackable
         basic='very'
         compact={true}
         tableData={specTableData.toArray()}
@@ -330,9 +333,10 @@ class PriceTable extends React.PureComponent {
     return (
       <semantic.Table
         className='specTable'
+        unstackable
         basic='very'
         compact={true}
-        tableData={tableData.toArray()}
+        tableData={tableData.take(3).toArray()}
         renderBodyRow={args => {
           return (
             <tr key={String(args)}>
@@ -384,7 +388,7 @@ class Buttons extends React.PureComponent {
   render() {
     const {disabled, selected, onDecrement, onIncrement, onSelect} = this.props
     return (
-      <semantic.Button.Group basic fluid>
+      <semantic.Button.Group size='tiny' basic fluid>
         <semantic.Button
           disabled={disabled}
           icon='left chevron'

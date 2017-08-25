@@ -10,7 +10,6 @@ const superagent  = require('superagent')
 const oneClickBom = require('1-click-bom')
 const mousetrap   = require('mousetrap')
 const {snapshot}  = require('react-snapshot')
-const DoubleScrollBar = require('react-double-scrollbar')
 const copyToClipboard = require('copy-to-clipboard')
 
 const Header = require('./header')
@@ -76,7 +75,7 @@ class Bom extends React.Component {
   render() {
     return (
       <reactRedux.Provider store={store}>
-        <DoubleScrollBar>
+        <div style={{height: window.innerHeight}} className='tableScroller'>
           <Menu copyBom={copyBom} />
           <div style={{display: 'flex'}}>
           <semantic.Table
@@ -89,9 +88,8 @@ class Bom extends React.Component {
             <Header />
             <Body />
           </semantic.Table>
-          <span style={{minWidth: 500}}></span>
         </div>
-        </DoubleScrollBar>
+      </div>
       </reactRedux.Provider>
     )
   }

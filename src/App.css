@@ -188,3 +188,7 @@ td > a {
    padding-left: 3px !important;
    padding-top: 1px !important;
 }
+
+.tableScroller {
+    overflow: scroll;
+}

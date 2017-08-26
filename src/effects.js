@@ -1,4 +1,5 @@
 const immutableDiff = require('immutable-diff').default
+const immutable = require('immutable')
 
 const {findSuggestions} = require('./suggestions')
 const {
@@ -13,22 +14,21 @@ function effects(diff, state, actions) {
     if (path.get(0) === 'lines' && typeof lineId === 'number') {
       const line = state.data.present.getIn(path.slice(0, 2))
       const suggestions = state.suggestions.getIn([lineId, 'data'])
-        .filter(p => {
-          console.log('from', p.get('from'), path.slice(2))
-          return !p.get('from').equals(path.slice(2))
-        })
+        .filter(p => !p.get('from').equals(path.slice(2)))
       findSuggestions(lineId, line, suggestions, actions)
     }
   })
 }
 
 function subscribeEffects(store, actions) {
-  let prev_state = initialState
+  let past = initialState.data
   store.subscribe(() => {
     const state = store.getState()
-    if (changed(prev_state, state)) {
-      effects(immutableDiff(prev_state.data.present, state.data.present), state, actions)
-      prev_state = state
+    const present = state.data.present
+    if (present !== past) {
+      const diff = immutableDiff(present, past)
+      past = present
+      effects(diff, state, actions)
     }
   })
 }

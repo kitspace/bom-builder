@@ -1,7 +1,7 @@
 const immutable   = require('immutable')
 const oneClickBom = require('1-click-bom')
 const redux       = require('redux')
-const reduxUndo   = require('redux-undo')
+const reduxUndo   = require('redux-undo-immutable-js')
 
 function makeId() {
   this.id = this.id || 0
@@ -302,7 +302,7 @@ const suggestionsActions = {
     const s = immutable.Map({status: 'done', data: suggestions})
     return state.set(lineId, s)
   },
-  setStatus(state, {lineId, status}) {
+  setSuggestionsStatus(state, {lineId, status}) {
     return state.setIn([lineId, 'status'], status)
   },
   addSuggestion(state, {id, part}) {

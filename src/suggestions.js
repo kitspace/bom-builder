@@ -32,6 +32,7 @@ async function findSuggestions(lineId, line, suggestions=immutable.List(), actio
   if (line == null) {
     return
   }
+  actions.setSuggestionsStatus({lineId, status: 'loading'})
   await Promise.all(line.get('partNumbers').map(async (partNumber, i) => {
     const part = await fromPartNumber(partNumber, suggestions)
     if (part != null) {

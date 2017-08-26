@@ -58,8 +58,12 @@ function makeEditingSelector() {
   )
 }
 
-
-
+function makeSuggestionsLoading() {
+  return reselect.createSelector(
+    [suggestions, lineId],
+    (suggestions, lineId) => suggestions.getIn([lineId, 'status']) === 'loading'
+  )
+}
 
 module.exports = {
   line,
@@ -71,4 +75,5 @@ module.exports = {
   makeLineSelector,
   makeActiveSelector,
   makeValueSelector,
+  makeSuggestionsLoading,
 }

@@ -60,17 +60,22 @@ class Cell extends React.PureComponent {
     const props = this.props
     const smallField = props.smallField ?
        (<div className='smallField'>{props.smallField}</div>) : null
+    let icon
     if (!props.active && props.wand) {
-      const color = props.wand === 'match' ? 'green' : 'grey'
-      const opacity = props.wand === 'match' ? 1.0 : 0.3
-      var icon = (
-        <semantic.Icon
-          style={{opacity}}
-          size='large'
-          color={color}
-          name='magic'
-        />
-      )
+      if (props.wand === 'loading') {
+        icon = <semantic.Loader active inline size='mini' />
+      } else {
+        const color = props.wand === 'match' ? 'green' : 'grey'
+        const opacity = props.wand === 'match' ? 1.0 : 0.3
+        icon = (
+          <semantic.Icon
+            style={{opacity}}
+            size='large'
+            color={color}
+            name='magic'
+          />
+        )
+      }
     }
     return (
       <semantic.Table.Cell

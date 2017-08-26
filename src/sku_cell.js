@@ -72,9 +72,13 @@ function makeApplicableSuggestions() {
 }
 
 function makeWandSelector(applicableSuggestionsSelector, valueSelector) {
+  const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, valueSelector],
-    (suggestions, value) => {
+    [applicableSuggestionsSelector, valueSelector, loading],
+    (suggestions, value, loading) => {
+      if (loading) {
+        return 'loading'
+      }
       return !value && suggestions.getIn([0, 'type'])
     }
   )

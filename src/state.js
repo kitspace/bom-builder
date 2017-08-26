@@ -161,10 +161,13 @@ const rootActions = {
     const order = immutable.List(lines.keys())
     const present = state.data.present.merge({lines, order})
     const suggestions = immutable.Map(order.map(lineId => (
-      [lineId, immutable.Map({
-        status: 'done',
-        data: immutable.List(),
-      })]
+      [
+        lineId,
+        immutable.Map({
+          status: 'done',
+          data: immutable.List(),
+        }),
+      ]
     )))
     return Object.assign({}, state, {
       suggestions,
@@ -300,7 +303,7 @@ const suggestionsActions = {
     return state.set(lineId, s)
   },
   setStatus(state, {lineId, status}) {
-    state.setIn([lineId, 'status'], status)
+    return state.setIn([lineId, 'status'], status)
   },
   addSuggestion(state, {id, part}) {
     return state.update(id, s => {

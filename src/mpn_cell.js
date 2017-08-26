@@ -115,9 +115,13 @@ function makeApplicableSuggestions() {
 
 function makeWandSelector(applicableSuggestionsSelector) {
   const suggestionNumber = makeSuggestionNumberSelector()
+  const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, suggestionNumber],
-    (suggestions, suggestionNumber) => {
+    [applicableSuggestionsSelector, suggestionNumber, loading],
+    (suggestions, suggestionNumber, loading) => {
+      if (loading) {
+        return 'loading'
+      }
       if (suggestionNumber < 0) {
         return false
       }

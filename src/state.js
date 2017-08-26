@@ -161,7 +161,10 @@ const rootActions = {
     const order = immutable.List(lines.keys())
     const present = state.data.present.merge({lines, order})
     const suggestions = immutable.Map(order.map(lineId => (
-      [lineId, immutable.List()]
+      [lineId, immutable.Map({
+        status: 'done',
+        data: immutable.List(),
+      })]
     )))
     return Object.assign({}, state, {
       suggestions,
@@ -293,7 +296,11 @@ const linesReducer = reduxUndo.default(
 
 const suggestionsActions = {
   setSuggestions(state, {lineId, suggestions}) {
-    return state.set(lineId, suggestions)
+    const s = immutable.Map({status: 'done', data: suggestions})
+    return state.set(lineId, s)
+  },
+  setStatus(state, {lineId, status}) {
+    state.setIn([lineId, 'status'], status)
   },
   addSuggestion(state, {id, part}) {
     return state.update(id, s => {

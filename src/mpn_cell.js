@@ -107,7 +107,7 @@ function makeApplicableSuggestions() {
   return reselect.createSelector(
     [selectors.suggestions, otherMpnsSelector, selectors.lineId],
     (suggestions, otherMpns, lineId, suggestionNumber) => {
-      suggestions = suggestions.get(lineId) || immutable.List()
+      suggestions = suggestions.getIn([lineId, 'data']) || immutable.List()
       return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
     }
   )

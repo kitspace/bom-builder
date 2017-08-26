@@ -12,8 +12,11 @@ function effects(diff, state, actions) {
     const lineId = path.get(1)
     if (path.get(0) === 'lines' && typeof lineId === 'number') {
       const line = state.data.present.getIn(path.slice(0, 2))
-      const suggestions = state.suggestions.get(lineId)
-        .filter(p => !p.get('from').equals(path.slice(2)))
+      const suggestions = state.suggestions.getIn([lineId, 'data'])
+        .filter(p => {
+          console.log('from', p.get('from'), path.slice(2))
+          return !p.get('from').equals(path.slice(2))
+        })
       findSuggestions(lineId, line, suggestions, actions)
     }
   })

@@ -60,7 +60,7 @@ function makeApplicableSuggestions() {
   return reselect.createSelector(
     [selectors.suggestions, selectors.lineId, retailerSelector],
     (suggestions, lineId, retailer) => {
-      suggestions = suggestions.get(lineId) || immutable.List()
+      suggestions = suggestions.getIn([lineId, 'data']) || immutable.List()
       return suggestions.flatMap(s => {
         const type = s.get('type')
         const mpn = s.get('mpn')

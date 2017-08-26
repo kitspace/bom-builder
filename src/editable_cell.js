@@ -110,7 +110,7 @@ class EditInput extends React.PureComponent {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       this.save(this.state.value)
-    }, 500)
+    }, 5000)
   }
   handleBlur(event) {
     //this is for firefox where we get an initial blur event on number inputs

@@ -412,4 +412,5 @@ module.exports = {
   makeImmutable,
   makeMutable,
   changed,
+  emptyPartNumber,
 }

@@ -72,10 +72,14 @@ snapshot(() => {
 
 
 class Bom extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {height: window.innerHeight}
+  }
   render() {
     return (
       <reactRedux.Provider store={store}>
-        <div style={{height: window.innerHeight}} className='tableScroller'>
+        <div style={{height: this.state.height}} className='tableScroller'>
           <Menu copyBom={copyBom} />
           <div style={{display: 'flex'}}>
           <semantic.Table
@@ -94,6 +98,9 @@ class Bom extends React.Component {
     )
   }
   componentWillMount() {
+    window.onresize = e => {
+      this.setState({height: window.innerHeight})
+    }
     actions.setEditable(this.props.editable)
     mousetrap.bind('ctrl+z', actions.undo)
     mousetrap.bind('ctrl+y', actions.redo)

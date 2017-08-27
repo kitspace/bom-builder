@@ -66,20 +66,24 @@ function parentField(_, props) {
   return props.field.pop()
 }
 
-const mpnSelector = reselect.createSelector(
-  [selectors.line, parentField],
-  (line, field) => line.getIn(field)
-)
+function makeMpnSelector() {
+  return reselect.createSelector(
+    [selectors.line, parentField],
+    (line, field) => line.getIn(field)
+  )
+}
 
 const partNumbersSelector = reselect.createSelector(
   [selectors.line],
   line => line.get('partNumbers')
 )
 
-const otherMpnsSelector = reselect.createSelector(
-  [partNumbersSelector, mpnSelector],
-  (partNumbers, mpn) => partNumbers.filter(m => !m.equals(mpn))
-)
+function makeOtherMpnsSelector(mpn)  {
+  return reselect.createSelector(
+    [partNumbersSelector, mpn],
+    (partNumbers, mpn) => partNumbers.filter(m => !m.equals(mpn))
+  )
+}
 
 function makeEmptyMpnsSelector() {
   return reselect.createSelector(
@@ -103,9 +107,10 @@ function makeSuggestionNumberSelector() {
   )
 }
 
-function makeApplicableSuggestions() {
+function makeApplicableSuggestions(mpn) {
+  const otherMpns = makeOtherMpnsSelector(mpn)
   return reselect.createSelector(
-    [selectors.suggestions, otherMpnsSelector, selectors.lineId],
+    [selectors.suggestions, otherMpns, selectors.lineId],
     (suggestions, otherMpns, lineId, suggestionNumber) => {
       suggestions = suggestions.getIn([lineId, 'data']) || immutable.List()
       return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
@@ -113,12 +118,15 @@ function makeApplicableSuggestions() {
   )
 }
 
-function makeWandSelector(applicableSuggestionsSelector) {
+function makeWandSelector(applicableSuggestionsSelector, mpn) {
   const suggestionNumber = makeSuggestionNumberSelector()
   const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, suggestionNumber, loading],
-    (suggestions, suggestionNumber, loading) => {
+    [applicableSuggestionsSelector, suggestionNumber, loading, mpn],
+    (suggestions, suggestionNumber, loading, mpn) => {
+      if (mpn.get('part') && mpn.get('manufacturer')) {
+        return false
+      }
       if (loading) {
         return 'loading'
       }
@@ -138,17 +146,21 @@ function partNumberIndexSelector(_, props) {
   return props.partNumberIndex
 }
 
-function makeSelectedSelector(suggestions) {
+function isManufacturer(_, props) {
+  return props.field.last() === 'manufacturer'
+}
+
+function makeSelectedSelector(suggestions, mpn) {
   return reselect.createSelector(
-    [suggestions, mpnSelector],
+    [suggestions, mpn],
     (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
   )
 }
 
-function makeSmallValueSelector() {
+function makeSmallValueSelector(mpn) {
   return reselect.createSelector(
-    [mpnSelector],
-    mpn => mpn.get('manufacturer')
+    [mpn, isManufacturer],
+    (mpn, isManufacturer) => !isManufacturer && mpn.get('manufacturer')
   )
 }
 
@@ -156,10 +168,11 @@ function mapStateToProps() {
   const active      = selectors.makeActiveSelector()
   const value       = selectors.makeValueSelector()
   const editing     = selectors.makeEditingSelector()
-  const suggestions = makeApplicableSuggestions()
-  const wand        = makeWandSelector(suggestions)
-  const selected    = makeSelectedSelector(suggestions)
-  const smallValue  = makeSmallValueSelector()
+  const mpn         = makeMpnSelector()
+  const suggestions = makeApplicableSuggestions(mpn)
+  const wand        = makeWandSelector(suggestions, mpn)
+  const selected    = makeSelectedSelector(suggestions, mpn)
+  const smallValue  = makeSmallValueSelector(mpn)
   return reselect.createSelector(
     [value, editing, active, suggestions, wand, selected, smallValue],
     (value, editing, active, suggestions, wand, selected, smallValue) => ({

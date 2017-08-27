@@ -76,6 +76,9 @@ function makeWandSelector(applicableSuggestionsSelector, valueSelector) {
   return reselect.createSelector(
     [applicableSuggestionsSelector, valueSelector, loading],
     (suggestions, value, loading) => {
+      if (value) {
+        return false
+      }
       if (loading) {
         return 'loading'
       }

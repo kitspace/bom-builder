@@ -2,13 +2,21 @@ const immutable = require('immutable')
 const getPartinfo = require('./get_partinfo')
 
 function fromRetailer(sku, suggestions) {
-  const suggestionSkus = suggestions.flatMap(s => {
-    return s.get('offers').map(offer => offer.get('sku'))
-  })
+  const existing = suggestions.find(s => (
+    s.get('offers').some(offer => offer.get('sku').equals(sku))
+  ))
 
-  if (suggestionSkus.includes(sku)) {
-    return Promise.resolve(null)
+  if (existing) {
+    if (existing.get('type') === 'match') {
+      return Promise.resolve(existing)
+    } else {
+      return Promise.resolve(
+        existing.set('type', 'match')
+          .set('from', immutable.List.of('retailers', sku.get('vendor')))
+      )
+    }
   }
+
   return getPartinfo(sku.toJS())
 }
 

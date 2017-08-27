@@ -28,7 +28,7 @@ function effects(diff, state, actions) {
     if (needsSuggestions(path)) {
       const line = state.data.present.getIn(path.take(2))
       const suggestions = state.suggestions.getIn([lineId, 'data'])
-        .filter(p => !p.get('from').equals(path.slice(2)))
+        .filter(p => !p.get('from').equals(path.slice(2, 4)))
       findSuggestions(lineId, line, suggestions, actions)
     }
   })

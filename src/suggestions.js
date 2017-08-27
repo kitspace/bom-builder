@@ -36,7 +36,7 @@ async function findSuggestions(lineId, line, suggestions=immutable.List(), actio
   await Promise.all(line.get('partNumbers').map(async (partNumber, i) => {
     const part = await fromPartNumber(partNumber, suggestions)
     if (part != null) {
-      part.from = ['partNumbers', i, 'part']
+      part.from = ['partNumbers', i]
       suggestions = suggestions.push(immutable.fromJS(part))
     }
   }))

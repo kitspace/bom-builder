@@ -20,14 +20,15 @@ class Popup extends React.PureComponent {
     this.handleClose      = this.handleClose.bind(this)
   }
   componentWillReceiveProps(newProps) {
-    if (newProps.suggestions && !newProps.suggestions.equals(this.props.suggestions)) {
+    if (newProps.suggestions
+      && !newProps.suggestions.equals(this.props.suggestions)) {
       const viewing = newProps.selected < 0 ? 0 : newProps.selected
       this.setViewing(viewing)
     }
   }
   handleClose() {
     const viewing = this.props.selected < 0 ? 0 : this.props.selected
-    this.setState({viewing, initialViewing: viewing})
+    this.setState({viewing})
     this.props.onClose && this.props.onClose()
   }
   toggleExpanded() {
@@ -95,6 +96,7 @@ class SkuPopup extends Popup {
     const mpn        = suggestion.get('mpn') || immutable.Map()
     const part       = sku.get('part') || ''
     let specs        = suggestion.get('specs') || immutable.List()
+    let stockInfo    = suggestion.get('stock_info')
     const skuTitle = (
       <Title
         one={mpn.get('manufacturer')}
@@ -104,7 +106,10 @@ class SkuPopup extends Popup {
       />
     )
     const priceTable = <PriceTable prices={suggestion.get('prices')} />
-    const specTable = <SpecTable specs={specs.take(3)} />
+    if (stockInfo) {
+      console.log(stockInfo)
+      var stockTable = <SpecTable specs={stockInfo.take(3)} />
+    }
     let expandButton
     if (suggestion.get('specs') && suggestion.get('specs').size > 4) {
       expandButton = (
@@ -155,6 +160,7 @@ class SkuPopup extends Popup {
               {suggestion.get('description')}
             </div>
             <Datasheet href={suggestion.get('datasheet')} />
+            {stockTable}
             {priceTable}
             {expandButton}
           </div>

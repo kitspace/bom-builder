@@ -30,6 +30,11 @@ const part = `
       credit_string
       credit_url
     }
+    stock_info {
+      key
+      name
+      value
+    }
     specs {
       key
       name

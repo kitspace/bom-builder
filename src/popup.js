@@ -20,9 +20,9 @@ class Popup extends React.PureComponent {
     this.handleClose      = this.handleClose.bind(this)
   }
   componentWillReceiveProps(newProps) {
-    if (newProps.selected !== this.props.selected
-    && this.state.viewing === this.state.initialViewing) {
-      this.setViewing(newProps.selected)
+    if (newProps.suggestions && !newProps.suggestions.equals(this.props.suggestions)) {
+      const viewing = newProps.selected < 0 ? 0 : newProps.selected
+      this.setViewing(viewing)
     }
   }
   handleClose() {

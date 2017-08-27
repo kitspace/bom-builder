@@ -55,6 +55,7 @@ async function findSuggestions(lineId, line, suggestions=immutable.List(), actio
   if (ds) {
     suggestions = suggestions.concat(ds)
   }
+
   //make unique
   suggestions = suggestions.reduce((prev, p) => {
     if (prev.map(s => s.get('mpn')).includes(p.get('mpn'))) {
@@ -67,13 +68,33 @@ async function findSuggestions(lineId, line, suggestions=immutable.List(), actio
     return prev.push(p)
   }, immutable.List())
 
-  //put all matches at the start and searches at the end
-  suggestions = suggestions.sort(s => {
-    if (s.get('type') === 'match') {
+  //try and and minimize changes in the order by sorting according to part
+  suggestions = suggestions.sort((a, b) => {
+    const [p1, p2] = [a.getIn(['mpn', 'part']), b.getIn(['mpn', 'part'])]
+    if (p1 > p2) {
+      return 1
+    }
+    if (p1 < p2) {
       return -1
     }
-    return 1
+    return 0
   })
+
+  //put all matches at the start and searches at the end
+  suggestions = suggestions.sort((a, b) => {
+    const [t1, t2] = [a.get('type'), b.get('type')]
+    if (t1 === 'match' && t2 === 'match') {
+      return 0
+    }
+    if (t1 === 'match') {
+      return -1
+    }
+    if (t2 === 'match') {
+      return 1
+    }
+    return 0
+  })
+
 
   actions.setSuggestions({lineId, suggestions})
 }

@@ -157,10 +157,16 @@ function makeSelectedSelector(suggestions, mpn) {
   )
 }
 
+function isExpanded(_, props) {
+  return props.expanded
+}
+
 function makeSmallValueSelector(mpn) {
   return reselect.createSelector(
-    [mpn, isManufacturer],
-    (mpn, isManufacturer) => !isManufacturer && mpn.get('manufacturer')
+    [mpn, isManufacturer, isExpanded],
+    (mpn, isManufacturer, isExpanded) => (
+      !isExpanded && !isManufacturer && mpn.get('manufacturer')
+    )
   )
 }
 

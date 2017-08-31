@@ -8,10 +8,10 @@ a:hover {
 
 .imageContainer {
     display: flex;
-    min-width: 160px;
-    min-height: 160px;
-    max-width: 160px;
-    max-height: 160px;
+    min-width: 120px;
+    min-height: 120px;
+    max-width: 120px;
+    max-height: 120px;
     align-items: center;
 }
 
@@ -94,6 +94,7 @@ a.imageCredit {
 }
 
 .description {
+   font-size: 12px;
    max-width: 250px;
 }
 

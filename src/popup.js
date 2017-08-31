@@ -107,7 +107,6 @@ class SkuPopup extends Popup {
     )
     const priceTable = <PriceTable prices={suggestion.get('prices')} />
     if (stockInfo) {
-      console.log(stockInfo)
       var stockTable = <SpecTable specs={stockInfo.take(3)} />
     }
     let expandButton

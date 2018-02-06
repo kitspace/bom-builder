@@ -1,0 +1,3 @@
+- [ ] Indicate "vetted status"
+- [ ] Merge lines?
+- [ ] Use colored bar instead of wand icon 

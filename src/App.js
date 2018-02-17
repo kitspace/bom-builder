@@ -2,40 +2,39 @@ import './App.css'
 import 'semantic-ui-css/semantic.css'
 import './fontello.css'
 
-const React       = require('react')
-const semantic    = require('semantic-ui-react')
-const redux       = require('redux')
-const reactRedux  = require('react-redux')
-const superagent  = require('superagent')
+const React = require('react')
+const semantic = require('semantic-ui-react')
+const redux = require('redux')
+const reactRedux = require('react-redux')
+const superagent = require('superagent')
 const oneClickBom = require('1-click-bom')
-const mousetrap   = require('mousetrap')
-const {snapshot}  = require('react-snapshot')
+const mousetrap = require('mousetrap')
+const {snapshot} = require('react-snapshot')
 const copyToClipboard = require('copy-to-clipboard')
 
 const Header = require('./header')
-const Body   = require('./body')
-const Menu   = require('./menu')
+const Body = require('./body')
+const Menu = require('./menu')
 
 const {subscribeEffects} = require('./effects')
-const {findSuggestions}  = require('./suggestions')
-const {
-  mainReducer,
-  initialState,
-} = require('./state')
-
+const {findSuggestions} = require('./suggestions')
+const {mainReducer, initialState} = require('./state')
 
 const store = redux.createStore(
   mainReducer,
   initialState,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
-const actions = redux.bindActionCreators(require('./state').actions, store.dispatch)
+const actions = redux.bindActionCreators(
+  require('./state').actions,
+  store.dispatch
+)
 
 function copyBom() {
   const state = store.getState()
-  const linesMap = state.data.present.get('lines').map(line => (
-    line.update('partNumbers', ps => ps.slice(0, -1))
-  ))
+  const linesMap = state.data.present
+    .get('lines')
+    .map(line => line.update('partNumbers', ps => ps.slice(0, -1)))
   const order = state.data.present.get('order')
   const lines = order.map(lineId => linesMap.get(lineId)).toJS()
   const tsv = oneClickBom.writeTSV(lines)
@@ -70,7 +69,6 @@ snapshot(() => {
   })
 }).then(actions.setState)
 
-
 class Bom extends React.Component {
   constructor(props) {
     super(props)
@@ -79,21 +77,21 @@ class Bom extends React.Component {
   render() {
     return (
       <reactRedux.Provider store={store}>
-        <div style={{height: this.state.height}} className='tableScroller'>
+        <div style={{height: this.state.height}} className="tableScroller">
           <Menu copyBom={copyBom} />
           <div style={{display: 'flex'}}>
-          <semantic.Table
-            className='Bom'
-            size='small'
-            celled
-            unstackable
-            singleLine
-          >
-            <Header />
-            <Body />
-          </semantic.Table>
+            <semantic.Table
+              className="Bom"
+              size="small"
+              celled
+              unstackable
+              singleLine
+            >
+              <Header />
+              <Body />
+            </semantic.Table>
+          </div>
         </div>
-      </div>
       </reactRedux.Provider>
     )
   }
@@ -106,7 +104,5 @@ class Bom extends React.Component {
     mousetrap.bind('ctrl+y', actions.redo)
   }
 }
-
-
 
 export default Bom

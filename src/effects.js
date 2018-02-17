@@ -2,23 +2,21 @@ const immutableDiff = require('immutable-diff').default
 const immutable = require('immutable')
 
 const {findSuggestions} = require('./suggestions')
-const {
-  initialState,
-  changed,
-  emptyPartNumber,
-} = require('./state')
+const {initialState, changed, emptyPartNumber} = require('./state')
 
 const suggestionFields = immutable.List([
   'description',
   'partNumbers',
-  'retailers',
+  'retailers'
 ])
 
 function needsSuggestions(path) {
   const lineId = path.get(1)
-  return path.get(0) === 'lines'
-    && typeof lineId === 'number'
-    && suggestionFields.some(f => path.includes(f))
+  return (
+    path.get(0) === 'lines' &&
+    typeof lineId === 'number' &&
+    suggestionFields.some(f => path.includes(f))
+  )
 }
 
 function effects(diff, state, actions) {
@@ -27,7 +25,8 @@ function effects(diff, state, actions) {
     const lineId = path.get(1)
     if (needsSuggestions(path)) {
       const line = state.data.present.getIn(path.take(2))
-      const suggestions = state.suggestions.getIn([lineId, 'data'])
+      const suggestions = state.suggestions
+        .getIn([lineId, 'data'])
         .filter(p => !p.get('from').equals(path.slice(2, 4)))
       findSuggestions(lineId, line, suggestions, actions)
     }

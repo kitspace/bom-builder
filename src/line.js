@@ -1,10 +1,10 @@
-const React       = require('react')
-const semantic    = require('semantic-ui-react')
+const React = require('react')
+const semantic = require('semantic-ui-react')
 const oneClickBom = require('1-click-bom')
-const immutable   = require('immutable')
-const reactRedux  = require('react-redux')
-const redux       = require('redux')
-const reselect    = require('reselect')
+const immutable = require('immutable')
+const reactRedux = require('react-redux')
+const redux = require('redux')
+const reselect = require('reselect')
 
 const selectors = require('./selectors')
 const {actions} = require('./state')
@@ -13,30 +13,27 @@ const MpnCell = require('./mpn_cell')
 const SkuCell = require('./sku_cell')
 const Handle = require('./handle')
 
-
 //for passing shallow equality
 const fields = immutable.Map({
   reference: immutable.List.of('reference'),
   quantity: immutable.List.of('quantity'),
   description: immutable.List.of('description'),
-  partNumbers: immutable.Range(0, 100).map(i => (
+  partNumbers: immutable.Range(0, 100).map(i =>
     immutable.Map({
       part: immutable.List.of('partNumbers', i, 'part'),
-      manufacturer: immutable.List.of('partNumbers', i, 'manufacturer'),
+      manufacturer: immutable.List.of('partNumbers', i, 'manufacturer')
     })
-  )),
-  retailers: immutable.Map(oneClickBom.lineData.retailer_list.map(r => (
-    [r, immutable.List.of('retailers', r)]
-  ))),
+  ),
+  retailers: immutable.Map(
+    oneClickBom.lineData.retailer_list.map(r => [
+      r,
+      immutable.List.of('retailers', r)
+    ])
+  )
 })
 
 function Line(props) {
-  const {
-    partNumbersExpanded,
-    partNumbers,
-    editingLine,
-    lineId,
-  } = props
+  const {partNumbersExpanded, partNumbers, editingLine, lineId} = props
   const partNumberCells = partNumbers.flatMap((mpn, i) => {
     const cells = []
     if (partNumbersExpanded.get(i)) {
@@ -68,29 +65,14 @@ function Line(props) {
   })
   const retailerCells = oneClickBom.lineData.retailer_list.map((name, i) => {
     const field = fields.getIn(['retailers', name])
-    return (
-      <SkuCell
-        key={name}
-        field={field}
-        lineId={lineId}
-      />
-    )
+    return <SkuCell key={name} field={field} lineId={lineId} />
   })
   return (
     <semantic.Table.Row active={editingLine}>
       <Handle lineId={lineId} />
-      <SimpleCell
-        field={fields.get('reference')}
-        lineId={lineId}
-      />
-      <SimpleCell
-        field={fields.get('quantity')}
-        lineId={lineId}
-      />
-      <SimpleCell
-        field={fields.get('description')}
-        lineId={lineId}
-      />
+      <SimpleCell field={fields.get('reference')} lineId={lineId} />
+      <SimpleCell field={fields.get('quantity')} lineId={lineId} />
+      <SimpleCell field={fields.get('description')} lineId={lineId} />
       {partNumberCells}
       {retailerCells}
     </semantic.Table.Row>
@@ -123,13 +105,10 @@ function mapStateToProps() {
       return {
         partNumbers,
         partNumbersExpanded,
-        editingLine,
+        editingLine
       }
     }
   )
 }
 
-module.exports = reactRedux.connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Line)
+module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(Line)

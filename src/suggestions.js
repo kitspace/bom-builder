@@ -2,16 +2,17 @@ const immutable = require('immutable')
 const getPartinfo = require('./get_partinfo')
 
 function fromRetailer(sku, suggestions) {
-  const existing = suggestions.find(s => (
+  const existing = suggestions.find(s =>
     s.get('offers').some(offer => offer.get('sku').equals(sku))
-  ))
+  )
 
   if (existing) {
     if (existing.get('type') === 'match') {
       return Promise.resolve(existing)
     } else {
       return Promise.resolve(
-        existing.set('type', 'match')
+        existing
+          .set('type', 'match')
           .set('from', immutable.List.of('retailers', sku.get('vendor')))
       )
     }
@@ -36,28 +37,43 @@ function fromDescription(description) {
     .then(ps => ps.map(p => p.set('from', immutable.List.of('description'))))
 }
 
-async function findSuggestions(lineId, line, suggestions=immutable.List(), actions) {
+async function findSuggestions(
+  lineId,
+  line,
+  suggestions = immutable.List(),
+  actions
+) {
   if (line == null) {
     return
   }
   actions.setSuggestionsStatus({lineId, status: 'loading'})
-  await Promise.all(line.get('partNumbers').map(async (partNumber, i) => {
-    const part = await fromPartNumber(partNumber, suggestions)
-    if (part != null) {
-      part.from = ['partNumbers', i]
-      suggestions = suggestions.push(immutable.fromJS(part))
-    }
-  }))
-  await Promise.all(line.get('retailers').entrySeq().map(async ([vendor, part]) => {
-    if (part == null) {
-      return
-    }
-    const result = await fromRetailer(immutable.Map({vendor, part}), suggestions)
-    if (result != null) {
-      result.from = ['retailers', vendor]
-      suggestions = suggestions.push(immutable.fromJS(result))
-    }
-  }))
+  await Promise.all(
+    line.get('partNumbers').map(async (partNumber, i) => {
+      const part = await fromPartNumber(partNumber, suggestions)
+      if (part != null) {
+        part.from = ['partNumbers', i]
+        suggestions = suggestions.push(immutable.fromJS(part))
+      }
+    })
+  )
+  await Promise.all(
+    line
+      .get('retailers')
+      .entrySeq()
+      .map(async ([vendor, part]) => {
+        if (part == null) {
+          return
+        }
+        const result = await fromRetailer(
+          immutable.Map({vendor, part}),
+          suggestions
+        )
+        if (result != null) {
+          result.from = ['retailers', vendor]
+          suggestions = suggestions.push(immutable.fromJS(result))
+        }
+      })
+  )
 
   const ds = await fromDescription(line.get('description'))
   if (ds) {
@@ -102,7 +118,6 @@ async function findSuggestions(lineId, line, suggestions=immutable.List(), actio
     }
     return 0
   })
-
 
   actions.setSuggestions({lineId, suggestions})
 }

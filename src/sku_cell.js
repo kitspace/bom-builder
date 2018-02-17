@@ -1,13 +1,13 @@
-const React       = require('react')
+const React = require('react')
 const createClass = require('create-react-class')
-const reactRedux  = require('react-redux')
-const redux       = require('redux')
-const reselect    = require('reselect')
-const immutable   = require('immutable')
+const reactRedux = require('react-redux')
+const redux = require('redux')
+const reselect = require('reselect')
+const immutable = require('immutable')
 
-const {actions}    = require('./state')
-const {SkuPopup}   = require('./popup')
-const selectors    = require('./selectors')
+const {actions} = require('./state')
+const {SkuPopup} = require('./popup')
+const selectors = require('./selectors')
 const EditableCell = require('./editable_cell')
 
 const SkuCell = createClass({
@@ -36,11 +36,11 @@ const SkuCell = createClass({
     if (props.wand || props.selected > -1) {
       return (
         <SkuPopup
-          on='click'
+          on="click"
           trigger={cell}
           field={field}
           lineId={props.lineId}
-          position='bottom center'
+          position="bottom center"
           suggestions={props.suggestions}
           selected={props.selected}
           setField={setField}
@@ -64,7 +64,9 @@ function makeApplicableSuggestions() {
       return suggestions.flatMap(s => {
         const type = s.get('type')
         const mpn = s.get('mpn')
-        const offers = s.get('offers').filter(o => o.getIn(['sku', 'vendor']) === retailer)
+        const offers = s
+          .get('offers')
+          .filter(o => o.getIn(['sku', 'vendor']) === retailer)
         return offers.map(o => o.merge({type, mpn}))
       })
     }
@@ -89,9 +91,8 @@ function makeWandSelector(applicableSuggestionsSelector, valueSelector) {
 
 function makeSkuSelector() {
   const value = selectors.makeValueSelector()
-  return reselect.createSelector(
-    [retailerSelector, value],
-    (vendor, part) => immutable.Map({vendor, part})
+  return reselect.createSelector([retailerSelector, value], (vendor, part) =>
+    immutable.Map({vendor, part})
   )
 }
 
@@ -104,16 +105,21 @@ function makeSelectedSelector(suggestions) {
 }
 
 function mapStateToProps() {
-  const active      = selectors.makeActiveSelector()
-  const editing     = selectors.makeEditingSelector()
-  const value       = selectors.makeValueSelector()
+  const active = selectors.makeActiveSelector()
+  const editing = selectors.makeEditingSelector()
+  const value = selectors.makeValueSelector()
   const suggestions = makeApplicableSuggestions()
-  const wand        = makeWandSelector(suggestions, value)
-  const selected    = makeSelectedSelector(suggestions)
+  const wand = makeWandSelector(suggestions, value)
+  const selected = makeSelectedSelector(suggestions)
   return reselect.createSelector(
     [value, editing, active, suggestions, wand, selected],
     (value, editing, active, suggestions, wand, selected) => ({
-      value, editing, active, suggestions, wand, selected
+      value,
+      editing,
+      active,
+      suggestions,
+      wand,
+      selected
     })
   )
 }
@@ -122,7 +128,6 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-module.exports = reactRedux.connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SkuCell)
+module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(
+  SkuCell
+)

@@ -1,8 +1,8 @@
-const React      = require('react')
-const semantic   = require('semantic-ui-react')
+const React = require('react')
+const semantic = require('semantic-ui-react')
 const reactRedux = require('react-redux')
-const redux      = require('redux')
-const immutable  = require('immutable')
+const redux = require('redux')
+const immutable = require('immutable')
 
 const {actions} = require('./state')
 
@@ -10,15 +10,15 @@ function Menu(props) {
   return (
     <semantic.Menu secondary>
       <semantic.Menu.Item onClick={props.save}>
-        <semantic.Icon name='save' />
+        <semantic.Icon name="save" />
         Save
       </semantic.Menu.Item>
       <semantic.Menu.Item disabled={!props.undosAvailable} onClick={props.undo}>
-        <semantic.Icon name='undo' />
+        <semantic.Icon name="undo" />
         Undo
       </semantic.Menu.Item>
       <semantic.Menu.Item disabled={!props.redosAvailable} onClick={props.redo}>
-        <semantic.Icon name='repeat' />
+        <semantic.Icon name="repeat" />
         Redo
       </semantic.Menu.Item>
       <semantic.Menu.Item
@@ -27,13 +27,11 @@ function Menu(props) {
           props.remove(props.deleteFocus)
         }}
       >
-        <semantic.Icon name='x' />
+        <semantic.Icon name="x" />
         Delete
       </semantic.Menu.Item>
-      <semantic.Menu.Item
-        onClick={props.copyBom}
-      >
-        <semantic.Icon name='clipboard' />
+      <semantic.Menu.Item onClick={props.copyBom}>
+        <semantic.Icon name="clipboard" />
         Copy to clipboard
       </semantic.Menu.Item>
     </semantic.Menu>
@@ -48,7 +46,9 @@ function mapStateToProps(state) {
   const focus = state.view.get('focus')
   const field = immutable.List.of('lines', focus.get(0)).concat(focus.get(1))
   const value = state.data.present.getIn(field)
-  const partNumbersExpanded = state.view.get('partNumbersExpanded').get(field.get(3))
+  const partNumbersExpanded = state.view
+    .get('partNumbersExpanded')
+    .get(field.get(3))
   let deleteFocus = focus
   //if partNumber is not expanded delete the whole number
   if (field.get(2) === 'partNumbers' && !partNumbersExpanded) {
@@ -58,15 +58,14 @@ function mapStateToProps(state) {
     } else {
       deleteFocus = deleteFocus.update(1, f => f.slice(0, 2))
     }
-  }
-  //don't delete quantity or empty fields
-  else if (field.get(2) === 'quantity' || value === '') {
+  } else if (field.get(2) === 'quantity' || value === '') {
+    //don't delete quantity or empty fields
     deleteFocus = immutable.List.of(null)
   }
   return {
     undosAvailable: !!state.data.past.length,
     redosAvailable: !!state.data.future.length,
-    deleteFocus,
+    deleteFocus
   }
 }
 

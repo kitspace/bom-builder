@@ -1,7 +1,7 @@
 import './popup.css'
 
-const React     = require('react')
-const semantic  = require('semantic-ui-react')
+const React = require('react')
+const semantic = require('semantic-ui-react')
 const immutable = require('immutable')
 
 class Popup extends React.PureComponent {
@@ -11,17 +11,19 @@ class Popup extends React.PureComponent {
     this.state = {
       expanded: false,
       viewing,
-      initialViewing: viewing,
+      initialViewing: viewing
     }
-    this.toggleExpanded   = this.toggleExpanded.bind(this)
+    this.toggleExpanded = this.toggleExpanded.bind(this)
     this.incrementViewing = this.incrementViewing.bind(this)
     this.decrementViewing = this.decrementViewing.bind(this)
-    this.setViewing       = this.setViewing.bind(this)
-    this.handleClose      = this.handleClose.bind(this)
+    this.setViewing = this.setViewing.bind(this)
+    this.handleClose = this.handleClose.bind(this)
   }
   componentWillReceiveProps(newProps) {
-    if (newProps.suggestions
-      && !newProps.suggestions.equals(this.props.suggestions)) {
+    if (
+      newProps.suggestions &&
+      !newProps.suggestions.equals(this.props.suggestions)
+    ) {
       const viewing = newProps.selected < 0 ? 0 : newProps.selected
       this.setViewing(viewing)
     }
@@ -61,14 +63,7 @@ class SkuPopup extends Popup {
     this.toggleSelected = this.toggleSelected.bind(this)
   }
   toggleSelected() {
-    const {
-      selected,
-      remove,
-      setField,
-      suggestions,
-      lineId,
-      field,
-    } = this.props
+    const {selected, remove, setField, suggestions, lineId, field} = this.props
     if (selected === this.state.viewing) {
       remove(immutable.List.of(lineId, field))
     } else {
@@ -80,23 +75,23 @@ class SkuPopup extends Popup {
     const props = this.props
     const suggestions = props.suggestions
     const popupProps = {
-        className : 'Popup',
-        flowing   : true,
-        position  : props.position,
-        trigger   : props.trigger,
-        onOpen    : props.onOpen,
-        onClose   : this.handleClose,
-        open      : props.open,
-        offset    : props.offset,
-        on        : props.on,
+      className: 'Popup',
+      flowing: true,
+      position: props.position,
+      trigger: props.trigger,
+      onOpen: props.onOpen,
+      onClose: this.handleClose,
+      open: props.open,
+      offset: props.offset,
+      on: props.on
     }
     const suggestion = suggestions.get(this.state.viewing) || immutable.Map()
-    const image      = suggestion.get('image') || immutable.Map()
-    const sku        = suggestion.get('sku') || immutable.Map()
-    const mpn        = suggestion.get('mpn') || immutable.Map()
-    const part       = sku.get('part') || ''
-    let specs        = suggestion.get('specs') || immutable.List()
-    let stockInfo    = suggestion.get('stock_info')
+    const image = suggestion.get('image') || immutable.Map()
+    const sku = suggestion.get('sku') || immutable.Map()
+    const mpn = suggestion.get('mpn') || immutable.Map()
+    const part = sku.get('part') || ''
+    let specs = suggestion.get('specs') || immutable.List()
+    let stockInfo = suggestion.get('stock_info')
     const skuTitle = (
       <Title
         one={mpn.get('manufacturer')}
@@ -112,11 +107,11 @@ class SkuPopup extends Popup {
     let expandButton
     if (suggestion.get('specs') && suggestion.get('specs').size > 4) {
       expandButton = (
-        <div className='expandButtonContainer'>
+        <div className="expandButtonContainer">
           <semantic.Button
-            onClick = {this.toggleExpanded}
-            size    = 'tiny'
-            basic   = {true}
+            onClick={this.toggleExpanded}
+            size="tiny"
+            basic={true}
           >
             {this.state.expanded ? '⇡' : '...'}
           </semantic.Button>
@@ -124,7 +119,7 @@ class SkuPopup extends Popup {
       )
     }
     return (
-      <semantic.Popup {...popupProps} >
+      <semantic.Popup {...popupProps}>
         <Buttons
           disabled={suggestions.size < 2}
           selected={this.props.selected === this.state.viewing}
@@ -133,31 +128,28 @@ class SkuPopup extends Popup {
           onSelect={this.toggleSelected}
         />
         {skuTitle}
-        <div className='topAreaContainer'>
-          <div className='topAreaInner'>
+        <div className="topAreaContainer">
+          <div className="topAreaInner">
             <div>
-              <div className='imageContainer'>
+              <div className="imageContainer">
                 <semantic.Image src={image.get('url')} />
               </div>
-              <a className='imageCredit' href={image.get('credit_url')}>
+              <a className="imageCredit" href={image.get('credit_url')}>
                 {image.get('credit_string')}
               </a>
             </div>
-            <div className='octopartLinkContainer'>
+            <div className="octopartLinkContainer">
               <a
                 href={
-                  'https://octopart.com' +
-                  (part ? `/search?q=${part}` : '')
+                  'https://octopart.com' + (part ? `/search?q=${part}` : '')
                 }
               >
                 Powered by Octopart
               </a>
             </div>
           </div>
-          <div className='rightHandModule'>
-            <div className='description'>
-              {suggestion.get('description')}
-            </div>
+          <div className="rightHandModule">
+            <div className="description">{suggestion.get('description')}</div>
             <Datasheet href={suggestion.get('datasheet')} />
             {stockTable}
             {priceTable}
@@ -175,14 +167,7 @@ class MpnPopup extends Popup {
     this.toggleSelected = this.toggleSelected.bind(this)
   }
   toggleSelected() {
-    const {
-      selected,
-      remove,
-      setField,
-      suggestions,
-      lineId,
-      field,
-    } = this.props
+    const {selected, remove, setField, suggestions, lineId, field} = this.props
     if (selected === this.state.viewing) {
       remove(immutable.List.of(lineId, field))
     } else {
@@ -194,22 +179,22 @@ class MpnPopup extends Popup {
     const props = this.props
     const suggestions = props.suggestions
     const popupProps = {
-        className : 'Popup',
-        flowing   : true,
-        position  : props.position,
-        trigger   : props.trigger,
-        onOpen    : props.onOpen,
-        onClose   : this.handleClose,
-        open      : props.open,
-        offset    : props.offset,
-        on        : props.on,
+      className: 'Popup',
+      flowing: true,
+      position: props.position,
+      trigger: props.trigger,
+      onOpen: props.onOpen,
+      onClose: this.handleClose,
+      open: props.open,
+      offset: props.offset,
+      on: props.on
     }
     const suggestion = suggestions.get(this.state.viewing) || immutable.Map()
-    const image      = suggestion.get('image') || immutable.Map()
-    const mpn        = suggestion.get('mpn') || immutable.Map()
-    const part       = mpn.get('part') || ''
-    let specs        = suggestion.get('specs') || immutable.List()
-    if (! this.state.expanded) {
+    const image = suggestion.get('image') || immutable.Map()
+    const mpn = suggestion.get('mpn') || immutable.Map()
+    const part = mpn.get('part') || ''
+    let specs = suggestion.get('specs') || immutable.List()
+    if (!this.state.expanded) {
       specs = specs.slice(0, 4)
     }
     const mpnTitle = (
@@ -224,11 +209,11 @@ class MpnPopup extends Popup {
     let expandButton
     if (suggestion.get('specs') && suggestion.get('specs').size > 4) {
       expandButton = (
-        <div className='expandButtonContainer'>
+        <div className="expandButtonContainer">
           <semantic.Button
-            onClick = {this.toggleExpanded}
-            size    = 'tiny'
-            basic   = {true}
+            onClick={this.toggleExpanded}
+            size="tiny"
+            basic={true}
           >
             {this.state.expanded ? '⇡' : '...'}
           </semantic.Button>
@@ -236,7 +221,7 @@ class MpnPopup extends Popup {
       )
     }
     return (
-      <semantic.Popup {...popupProps} >
+      <semantic.Popup {...popupProps}>
         <Buttons
           disabled={suggestions.size < 2}
           selected={this.props.selected === this.state.viewing}
@@ -245,31 +230,28 @@ class MpnPopup extends Popup {
           onSelect={this.toggleSelected}
         />
         {mpnTitle}
-        <div className='topAreaContainer'>
-          <div className='topAreaInner'>
+        <div className="topAreaContainer">
+          <div className="topAreaInner">
             <div>
-              <div className='imageContainer'>
+              <div className="imageContainer">
                 <semantic.Image src={image.get('url')} />
               </div>
-              <a className='imageCredit' href={image.get('credit_url')}>
+              <a className="imageCredit" href={image.get('credit_url')}>
                 {image.get('credit_string')}
               </a>
             </div>
-            <div className='octopartLinkContainer'>
+            <div className="octopartLinkContainer">
               <a
                 href={
-                  'https://octopart.com' +
-                  (part ? `/search?q=${part}` : '')
+                  'https://octopart.com' + (part ? `/search?q=${part}` : '')
                 }
               >
                 Powered by Octopart
               </a>
             </div>
           </div>
-          <div className='rightHandModule'>
-            <div className='description'>
-              {suggestion.get('description')}
-            </div>
+          <div className="rightHandModule">
+            <div className="description">{suggestion.get('description')}</div>
             <Datasheet href={suggestion.get('datasheet')} />
             {specTable}
             {expandButton}
@@ -282,39 +264,33 @@ class MpnPopup extends Popup {
 
 class Datasheet extends React.PureComponent {
   render() {
-    const link = this.props.href ?
-      <a href={this.props.href} >
-        <semantic.Icon name='file pdf outline' />
+    const link = this.props.href ? (
+      <a href={this.props.href}>
+        <semantic.Icon name="file pdf outline" />
         Datasheet
-      </a> : null
-    return (
-      <div className='datasheet'>
-        {link}
-      </div>
-    )
+      </a>
+    ) : null
+    return <div className="datasheet">{link}</div>
   }
 }
 
 class SpecTable extends React.PureComponent {
   render() {
-    const specTableData = this.props.specs.map(spec => (
-      [spec.get('name'), spec.get('value')]
-    ))
+    const specTableData = this.props.specs.map(spec => [
+      spec.get('name'),
+      spec.get('value')
+    ])
     return (
       <semantic.Table
-        className='specTable'
+        className="specTable"
         unstackable
-        basic='very'
+        basic="very"
         compact={true}
         tableData={specTableData.toArray()}
         renderBodyRow={args => {
           return (
             <tr key={String(args)}>
-              {args.map(text => (
-                <td key={text}>
-                  {text}
-                </td>
-              ))}
+              {args.map(text => <td key={text}>{text}</td>)}
             </tr>
           )
         }}
@@ -337,20 +313,16 @@ class PriceTable extends React.PureComponent {
     tableData = tableData || immutable.List()
     return (
       <semantic.Table
-        className='specTable'
+        className="specTable"
         unstackable
-        basic='very'
+        basic="very"
         compact={true}
         tableData={tableData.take(3).toArray()}
         renderBodyRow={args => {
           return (
             <tr key={String(args)}>
-              <td >
-                {args.get(0)}
-              </td>
-              <td >
-                {`${symbol}${args.get(1)}`}
-              </td>
+              <td>{args.get(0)}</td>
+              <td>{`${symbol}${args.get(1)}`}</td>
             </tr>
           )
         }}
@@ -364,26 +336,20 @@ class Title extends React.PureComponent {
     const props = this.props
     const opacity = props.wandColor === 'green' ? 1.0 : 0.3
     return (
-      <div className='titleContainer'>
+      <div className="titleContainer">
         <div>
           <semantic.Icon
             style={{opacity}}
-            size='large'
+            size="large"
             color={props.wandColor}
-            name='magic'
+            name="magic"
           />
         </div>
-        <div className='mpnTitle'>
-          <div>
-            {props.one}
-          </div>
-          <div>
-            {props.two}
-          </div>
+        <div className="mpnTitle">
+          <div>{props.one}</div>
+          <div>{props.two}</div>
         </div>
-        <div className='viewingNumber'>
-          {props.page}
-        </div>
+        <div className="viewingNumber">{props.page}</div>
       </div>
     )
   }
@@ -393,21 +359,19 @@ class Buttons extends React.PureComponent {
   render() {
     const {disabled, selected, onDecrement, onIncrement, onSelect} = this.props
     return (
-      <semantic.Button.Group size='tiny' basic fluid>
+      <semantic.Button.Group size="tiny" basic fluid>
         <semantic.Button
           disabled={disabled}
-          icon='left chevron'
+          icon="left chevron"
           onClick={onDecrement}
         />
         <semantic.Button onClick={onSelect}>
-          <semantic.Icon
-            name={selected ? 'checkmark box' : 'square outline'}
-          />
+          <semantic.Icon name={selected ? 'checkmark box' : 'square outline'} />
           {selected ? 'Selected' : 'Select'}
         </semantic.Button>
         <semantic.Button
           disabled={disabled}
-          icon='right chevron'
+          icon="right chevron"
           onClick={onIncrement}
         />
       </semantic.Button.Group>

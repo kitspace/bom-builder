@@ -21,11 +21,9 @@ function field(_, props) {
   return props.field
 }
 
-
 function makeValueSelector() {
-  return reselect.createSelector(
-    [line, field],
-    (line, field) => line.getIn(field)
+  return reselect.createSelector([line, field], (line, field) =>
+    line.getIn(field)
   )
 }
 
@@ -34,10 +32,7 @@ function editingThis(editing, lineId, field) {
 }
 
 function makeActiveSelector() {
-  return reselect.createSelector(
-    [editingSelector, lineId, field],
-    editingThis
-  )
+  return reselect.createSelector([editingSelector, lineId, field], editingThis)
 }
 
 function editingSelector(state) {
@@ -45,17 +40,11 @@ function editingSelector(state) {
 }
 
 function makeLineSelector() {
-  return reselect.createSelector(
-    [line], line => line
-  )
+  return reselect.createSelector([line], line => line)
 }
 
-
 function makeEditingSelector() {
-  return reselect.createSelector(
-    [editingSelector],
-    editing => editing
-  )
+  return reselect.createSelector([editingSelector], editing => editing)
 }
 
 function makeSuggestionsLoading() {
@@ -75,5 +64,5 @@ module.exports = {
   makeLineSelector,
   makeActiveSelector,
   makeValueSelector,
-  makeSuggestionsLoading,
+  makeSuggestionsLoading
 }

@@ -1,7 +1,7 @@
-const immutable   = require('immutable')
+const immutable = require('immutable')
 const oneClickBom = require('1-click-bom')
-const redux       = require('redux')
-const reduxUndo   = require('redux-undo-immutable-js')
+const redux = require('redux')
+const reduxUndo = require('redux-undo-immutable-js')
 
 function makeId() {
   this.id = this.id || 0
@@ -9,21 +9,21 @@ function makeId() {
 }
 
 const emptyLine = immutable.Map({
-  reference   : '',
-  quantity    : '',
-  partNumbers : immutable.List(),
+  reference: '',
+  quantity: '',
+  partNumbers: immutable.List(),
   retailers: immutable.Map({
-    Digikey : '',
-    Mouser  : '',
-    RS      : '',
-    Farnell : '',
-    Newark  : '',
-  }),
+    Digikey: '',
+    Mouser: '',
+    RS: '',
+    Farnell: '',
+    Newark: ''
+  })
 })
 
 const emptyPartNumber = immutable.Map({
   part: '',
-  manufacturer: '',
+  manufacturer: ''
 })
 
 const initialState = {
@@ -31,21 +31,24 @@ const initialState = {
     lines: {},
     order: [],
     sortedBy: [null, null],
-    editFocus: [null, null],
+    editFocus: [null, null]
   }),
   view: immutable.fromJS({
     partNumbersExpanded: [],
     focus: [null, null],
-    editable: false,
+    editable: false
   }),
-  suggestions: immutable.Map(),
+  suggestions: immutable.Map()
 }
 
 function fitPartNumbers(lines) {
-  const requiredSize = lines.map(line => {
-    const partNumbers = line.get('partNumbers')
-    return partNumbers.findLastIndex(p => !p.equals(emptyPartNumber))
-  }).max() + 2
+  const requiredSize =
+    lines
+      .map(line => {
+        const partNumbers = line.get('partNumbers')
+        return partNumbers.findLastIndex(p => !p.equals(emptyPartNumber))
+      })
+      .max() + 2
   return lines.map(line => {
     return line.update('partNumbers', ps => {
       while (ps.size < requiredSize) {
@@ -61,11 +64,19 @@ const linesActions = {
     if (field.get(0) === 'quantity' && value < 1) {
       value = 1
     }
-    const currentValue = state.getIn(immutable.List.of('lines', lineId).concat(field))
+    const currentValue = state.getIn(
+      immutable.List.of('lines', lineId).concat(field)
+    )
     if (currentValue !== value) {
-      state = state.setIn(immutable.List.of('lines', lineId).concat(field),  value)
+      state = state.setIn(
+        immutable.List.of('lines', lineId).concat(field),
+        value
+      )
       state = state.update('lines', fitPartNumbers)
-      return state.set('editFocus', immutable.List.of(lineId, immutable.fromJS(field)))
+      return state.set(
+        'editFocus',
+        immutable.List.of(lineId, immutable.fromJS(field))
+      )
     }
     return state.update('lines', fitPartNumbers)
   },
@@ -77,7 +88,7 @@ const linesActions = {
   removeField(state, focus) {
     const lineId = focus.get(0)
     const field = focus.get(1)
-    let empty = field.get(0) === 'quantity' ?  1 : ''
+    let empty = field.get(0) === 'quantity' ? 1 : ''
     if (field.get(0) === 'partNumbers' && field.size === 2) {
       empty = emptyPartNumber
     }
@@ -100,9 +111,19 @@ const linesActions = {
     return state.merge({lines, order})
   },
   sortBy(state, header) {
-    let lines = immutable.List(state.get('lines').map((l,k) => l.set('id', k)).values())
+    let lines = immutable.List(
+      state
+        .get('lines')
+        .map((l, k) => l.set('id', k))
+        .values()
+    )
     if (oneClickBom.lineData.retailer_list.includes(header)) {
-      lines = lines.sortBy(line => line.get('retailers').get(header).toLowerCase())
+      lines = lines.sortBy(line =>
+        line
+          .get('retailers')
+          .get(header)
+          .toLowerCase()
+      )
     } else if (typeof header === 'object') {
       //header can be an array meaning we want to sort by mpn or manufacturer
       //e.g. ['manufacturer', 0]
@@ -128,7 +149,7 @@ const linesActions = {
     }
     const order = lines.map(l => l.get('id'))
     return state.merge({order, sortedBy})
-  },
+  }
 }
 
 const viewActions = {
@@ -148,7 +169,7 @@ const viewActions = {
       }
       return focus
     })
-  },
+  }
 }
 
 const rootActions = {
@@ -160,15 +181,15 @@ const rootActions = {
     lines = fitPartNumbers(lines)
     const order = immutable.List(lines.keys())
     const present = state.data.present.merge({lines, order})
-    const suggestions = immutable.Map(order.map(lineId => (
-      [
+    const suggestions = immutable.Map(
+      order.map(lineId => [
         lineId,
         immutable.Map({
           status: 'done',
-          data: immutable.List(),
-        }),
-      ]
-    )))
+          data: immutable.List()
+        })
+      ])
+    )
     return Object.assign({}, state, {
       suggestions,
       data: Object.assign({}, state.data, {present})
@@ -176,7 +197,7 @@ const rootActions = {
   },
   setFocusBelow(state) {
     const order = state.data.present.get('order')
-    const view  = state.view.update('focus', focus => {
+    const view = state.view.update('focus', focus => {
       if (focus == null) {
         return focus
       }
@@ -186,7 +207,7 @@ const rootActions = {
       if (index < 0 || field == null) {
         return focus
       }
-      if ((index + 1) >= order.size) {
+      if (index + 1 >= order.size) {
         return immutable.List.of(null, null)
       }
       return immutable.List.of(order.get(index + 1), field)
@@ -196,7 +217,7 @@ const rootActions = {
   setFocusNext(state) {
     const lines = state.data.present.get('lines')
     const order = state.data.present.get('order')
-    const view  = state.view.update('focus', focus => {
+    const view = state.view.update('focus', focus => {
       if (focus == null) {
         return focus
       }
@@ -211,9 +232,9 @@ const rootActions = {
       if (fieldName === 'retailers') {
         const rs = oneClickBom.lineData.retailer_list
         const i = rs.indexOf(field.get(1))
-        if ((i + 1) < rs.length) {
+        if (i + 1 < rs.length) {
           return immutable.fromJS([order.get(index), ['retailers', rs[i + 1]]])
-        } else if ((index + 1) < order.size) {
+        } else if (index + 1 < order.size) {
           return immutable.fromJS([order.get(index + 1), ['reference']])
         } else {
           return immutable.List.of(null, null)
@@ -238,7 +259,7 @@ const rootActions = {
               const type = field.get(2)
               if (type === 'manufacturer') {
                 return immutable.List.of('partNumbers', i, 'part')
-              } else if ((i + 1) < lines.get(0).get('partNumbers').size) {
+              } else if (i + 1 < lines.get(0).get('partNumbers').size) {
                 if (partNumbersExpanded.get(i + 1)) {
                   return immutable.List.of('partNumbers', i + 1, 'manufacturer')
                 } else {
@@ -247,12 +268,12 @@ const rootActions = {
               } else {
                 return firstRetailer
               }
-            } else if ((i + 1) < lines.get(0).get('partNumbers').size) {
-                if (partNumbersExpanded.get(i + 1)) {
-                  return immutable.List.of('partNumbers', i + 1, 'manufacturer')
-                } else {
-                  return immutable.List.of('partNumbers', i + 1, 'part')
-                }
+            } else if (i + 1 < lines.get(0).get('partNumbers').size) {
+              if (partNumbersExpanded.get(i + 1)) {
+                return immutable.List.of('partNumbers', i + 1, 'manufacturer')
+              } else {
+                return immutable.List.of('partNumbers', i + 1, 'part')
+              }
             } else {
               return firstRetailer
             }
@@ -279,7 +300,7 @@ const rootActions = {
       return Object.assign({}, state, {view})
     }
     return state
-  },
+  }
 }
 
 const rootReducer = makeReducer(rootActions, initialState)
@@ -293,7 +314,7 @@ const linesReducer = reduxUndo.default(
         return false
       }
       return !newState.equals(previousState)
-    },
+    }
   }
 )
 
@@ -313,7 +334,7 @@ const suggestionsActions = {
       }
       return s.push(part)
     })
-  },
+  }
 }
 
 const suggestionsReducer = makeReducer(
@@ -326,7 +347,7 @@ const viewReducer = makeReducer(viewActions, initialState['view'])
 const combinedReducer = redux.combineReducers({
   data: linesReducer,
   view: viewReducer,
-  suggestions: suggestionsReducer,
+  suggestions: suggestionsReducer
 })
 
 function mainReducer(state = initialState, action) {
@@ -370,7 +391,7 @@ function makeDataImmutable(data) {
   return immutable.Map({
     lines: immutable.List(lines).map(line => immutable.fromJS(line)),
     editFocus: immutable.List(editFocus),
-    sortedBy: immutable.List(sortedBy),
+    sortedBy: immutable.List(sortedBy)
   })
 }
 
@@ -379,10 +400,10 @@ function makeImmutable({data, view, suggestions}) {
     data: {
       present: makeDataImmutable(data.present),
       past: data.past.map(makeDataImmutable),
-      future: data.future.map(makeDataImmutable),
+      future: data.future.map(makeDataImmutable)
     },
     view: immutable.fromJS(view),
-    suggestions: immutable.Map(suggestions).map(v => immutable.List(v)),
+    suggestions: immutable.Map(suggestions).map(v => immutable.List(v))
   }
 }
 
@@ -391,10 +412,10 @@ function makeMutable({data, view, parts}) {
     data: {
       present: data.present.toJS(),
       past: data.past.map(s => s.toJS()),
-      future: data.future.map(s => s.toJS()),
+      future: data.future.map(s => s.toJS())
     },
     view: view.toJS(),
-    parts: parts.toJS(),
+    parts: parts.toJS()
   }
 }
 
@@ -412,5 +433,5 @@ module.exports = {
   makeImmutable,
   makeMutable,
   changed,
-  emptyPartNumber,
+  emptyPartNumber
 }

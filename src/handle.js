@@ -1,6 +1,6 @@
-const React      = require('react')
+const React = require('react')
 const reactRedux = require('react-redux')
-const redux      = require('redux')
+const redux = require('redux')
 
 const {actions} = require('./state')
 
@@ -16,7 +16,7 @@ function Handle(props) {
             props.loseFocus([lineId, null])
           }, 100)
         }}
-        className='mousetrap'
+        className="mousetrap"
         readOnly
         onKeyDown={e => {
           if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -58,11 +58,8 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state, props) {
   return {
-    reference: state.data.present.getIn(['lines', props.lineId, 'reference']),
+    reference: state.data.present.getIn(['lines', props.lineId, 'reference'])
   }
 }
 
-module.exports = reactRedux.connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Handle)
+module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(Handle)

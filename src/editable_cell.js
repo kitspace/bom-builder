@@ -1,6 +1,6 @@
-const React       = require('react')
+const React = require('react')
 const createClass = require('create-react-class')
-const semantic    = require('semantic-ui-react')
+const semantic = require('semantic-ui-react')
 
 const EditableCell = createClass({
   displayName: 'EditableCell',
@@ -54,25 +54,25 @@ const EditableCell = createClass({
   }
 })
 
-
 class Cell extends React.PureComponent {
   render() {
     const props = this.props
-    const smallField = props.smallField ?
-       (<div className='smallField'>{props.smallField}</div>) : null
+    const smallField = props.smallField ? (
+      <div className="smallField">{props.smallField}</div>
+    ) : null
     let icon
     if (!props.active && props.wand) {
       if (props.wand === 'loading') {
-        icon = <semantic.Loader active inline size='mini' />
+        icon = <semantic.Loader active inline size="mini" />
       } else {
         const color = props.wand === 'match' ? 'green' : 'grey'
         const opacity = props.wand === 'match' ? 1.0 : 0.3
         icon = (
           <semantic.Icon
             style={{opacity}}
-            size='large'
+            size="large"
             color={color}
-            name='magic'
+            name="magic"
           />
         )
       }
@@ -89,13 +89,14 @@ class Cell extends React.PureComponent {
           {icon}
           {props.contents}
           {/* here to make sure the cell grows with the content */}
-          <div key='div' style={{visibility: 'hidden', height: 0}}>{props.value}</div>
+          <div key="div" style={{visibility: 'hidden', height: 0}}>
+            {props.value}
+          </div>
         </a>
       </semantic.Table.Cell>
     )
   }
 }
-
 
 class EditInput extends React.PureComponent {
   constructor(props) {
@@ -106,7 +107,7 @@ class EditInput extends React.PureComponent {
     this.save = this.save.bind(this)
     this.state = {
       value: props.value,
-      initialValue: props.value,
+      initialValue: props.value
     }
   }
   handleChange(event) {
@@ -136,7 +137,7 @@ class EditInput extends React.PureComponent {
       if (newProps.value !== this.state.initialValue) {
         clearTimeout(this.timeout)
         this.setState({
-          value: newProps.value,
+          value: newProps.value
         })
       }
     }
@@ -144,14 +145,14 @@ class EditInput extends React.PureComponent {
   render() {
     const input = (
       <input
-        ref='input'
+        ref="input"
         spellCheck={false}
         value={this.state.value}
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         type={this.props.type}
         //needed for grabbing shortcuts while editing
-        className='mousetrap'
+        className="mousetrap"
         onKeyDown={e => {
           if (e.key === 'Tab') {
             e.preventDefault()

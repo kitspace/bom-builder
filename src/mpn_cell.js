@@ -1,13 +1,13 @@
-const React       = require('react')
+const React = require('react')
 const createClass = require('create-react-class')
-const reactRedux  = require('react-redux')
-const redux       = require('redux')
-const reselect    = require('reselect')
-const immutable   = require('immutable')
+const reactRedux = require('react-redux')
+const redux = require('redux')
+const reselect = require('reselect')
+const immutable = require('immutable')
 
-const {actions}    = require('./state')
-const {MpnPopup}   = require('./popup')
-const selectors    = require('./selectors')
+const {actions} = require('./state')
+const {MpnPopup} = require('./popup')
+const selectors = require('./selectors')
 const EditableCell = require('./editable_cell')
 
 const MpnCell = createClass({
@@ -25,7 +25,7 @@ const MpnCell = createClass({
       field,
       setField,
       setFocus,
-      active,
+      active
     } = props
     const cell = (
       <EditableCell
@@ -46,11 +46,11 @@ const MpnCell = createClass({
     if (props.wand || props.selected > -1) {
       return (
         <MpnPopup
-          on='click'
+          on="click"
           trigger={cell}
           field={field.pop()}
           lineId={props.lineId}
-          position='bottom center'
+          position="bottom center"
           suggestions={props.suggestions}
           selected={props.selected}
           setField={setField}
@@ -67,18 +67,16 @@ function parentField(_, props) {
 }
 
 function makeMpnSelector() {
-  return reselect.createSelector(
-    [selectors.line, parentField],
-    (line, field) => line.getIn(field)
+  return reselect.createSelector([selectors.line, parentField], (line, field) =>
+    line.getIn(field)
   )
 }
 
-const partNumbersSelector = reselect.createSelector(
-  [selectors.line],
-  line => line.get('partNumbers')
+const partNumbersSelector = reselect.createSelector([selectors.line], line =>
+  line.get('partNumbers')
 )
 
-function makeOtherMpnsSelector(mpn)  {
+function makeOtherMpnsSelector(mpn) {
   return reselect.createSelector(
     [partNumbersSelector, mpn],
     (partNumbers, mpn) => partNumbers.filter(m => !m.equals(mpn))
@@ -86,14 +84,15 @@ function makeOtherMpnsSelector(mpn)  {
 }
 
 function makeEmptyMpnsSelector() {
-  return reselect.createSelector(
-    [partNumbersSelector],
-    partNumbers => partNumbers.map((m, index) => {
-      if(!m.get('part') || !m.get('manufacturer')) {
-        return index
-      }
-      return null
-    }).filter(x => x != null)
+  return reselect.createSelector([partNumbersSelector], partNumbers =>
+    partNumbers
+      .map((m, index) => {
+        if (!m.get('part') || !m.get('manufacturer')) {
+          return index
+        }
+        return null
+      })
+      .filter(x => x != null)
   )
 }
 
@@ -151,9 +150,8 @@ function isManufacturer(_, props) {
 }
 
 function makeSelectedSelector(suggestions, mpn) {
-  return reselect.createSelector(
-    [suggestions, mpn],
-    (suggestions, mpn) => suggestions.findIndex(s => s.get('mpn').equals(mpn))
+  return reselect.createSelector([suggestions, mpn], (suggestions, mpn) =>
+    suggestions.findIndex(s => s.get('mpn').equals(mpn))
   )
 }
 
@@ -164,25 +162,30 @@ function isExpanded(_, props) {
 function makeSmallValueSelector(mpn) {
   return reselect.createSelector(
     [mpn, isManufacturer, isExpanded],
-    (mpn, isManufacturer, isExpanded) => (
+    (mpn, isManufacturer, isExpanded) =>
       !isExpanded && !isManufacturer && mpn.get('manufacturer')
-    )
   )
 }
 
 function mapStateToProps() {
-  const active      = selectors.makeActiveSelector()
-  const value       = selectors.makeValueSelector()
-  const editing     = selectors.makeEditingSelector()
-  const mpn         = makeMpnSelector()
+  const active = selectors.makeActiveSelector()
+  const value = selectors.makeValueSelector()
+  const editing = selectors.makeEditingSelector()
+  const mpn = makeMpnSelector()
   const suggestions = makeApplicableSuggestions(mpn)
-  const wand        = makeWandSelector(suggestions, mpn)
-  const selected    = makeSelectedSelector(suggestions, mpn)
-  const smallValue  = makeSmallValueSelector(mpn)
+  const wand = makeWandSelector(suggestions, mpn)
+  const selected = makeSelectedSelector(suggestions, mpn)
+  const smallValue = makeSmallValueSelector(mpn)
   return reselect.createSelector(
     [value, editing, active, suggestions, wand, selected, smallValue],
     (value, editing, active, suggestions, wand, selected, smallValue) => ({
-      value, editing, active, suggestions, wand, selected, smallValue
+      value,
+      editing,
+      active,
+      suggestions,
+      wand,
+      selected,
+      smallValue
     })
   )
 }
@@ -191,7 +194,6 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-module.exports = reactRedux.connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MpnCell)
+module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(
+  MpnCell
+)

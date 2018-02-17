@@ -4,15 +4,11 @@ const reactRedux = require('react-redux')
 const redux = require('redux')
 const immutable = require('immutable')
 
-const {actions} = require('./state')
+const { actions } = require('./state')
 
 function Menu(props) {
   return (
     <semantic.Menu secondary>
-      <semantic.Menu.Item onClick={props.save}>
-        <semantic.Icon name="save" />
-        Save
-      </semantic.Menu.Item>
       <semantic.Menu.Item disabled={!props.undosAvailable} onClick={props.undo}>
         <semantic.Icon name="undo" />
         Undo
@@ -30,9 +26,13 @@ function Menu(props) {
         <semantic.Icon name="x" />
         Delete
       </semantic.Menu.Item>
-      <semantic.Menu.Item onClick={props.copyBom}>
-        <semantic.Icon name="clipboard" />
-        Copy to clipboard
+      <semantic.Menu.Item disabled={props.empty} onClick={props.copyBom}>
+        <semantic.Icon name="copy" />
+        Copy All
+      </semantic.Menu.Item>
+      <semantic.Menu.Item onClick={props.pasteBom}>
+        <semantic.Icon name="paste" />
+        Paste / Replace All
       </semantic.Menu.Item>
     </semantic.Menu>
   )
@@ -65,6 +65,7 @@ function mapStateToProps(state) {
   return {
     undosAvailable: !!state.data.past.length,
     redosAvailable: !!state.data.future.length,
+    empty: state.data.present.get('lines').size === 0,
     deleteFocus
   }
 }

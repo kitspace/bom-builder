@@ -9,6 +9,7 @@ const reactRedux = require('react-redux')
 const oneClickBom = require('1-click-bom')
 const mousetrap = require('mousetrap')
 const copyToClipboard = require('copy-to-clipboard')
+const fileDownload = require('js-file-download')
 
 const Header = require('./header')
 const Body = require('./body')
@@ -63,14 +64,18 @@ function handleFileInput(file) {
     })
 }
 
-function copyBom() {
+function getTsv() {
   const state = store.getState()
   const linesMap = state.data.present
     .get('lines')
     .map(line => line.update('partNumbers', ps => ps.slice(0, -1)))
   const order = state.data.present.get('order')
   const lines = order.map(lineId => linesMap.get(lineId)).toJS()
-  const tsv = oneClickBom.writeTSV(lines)
+  return oneClickBom.writeTSV(lines)
+}
+
+function copyBom() {
+  const tsv = getTsv()
   const copyHandler = e => {
     e.clipboardData.setData('text/plain', tsv)
     e.preventDefault()
@@ -78,6 +83,11 @@ function copyBom() {
   document.addEventListener('copy', copyHandler)
   copyToClipboard(tsv)
   document.removeEventListener('copy', copyHandler)
+}
+
+function downloadBom() {
+  const tsv = getTsv()
+  fileDownload(tsv, '1-click-bom.tsv')
 }
 
 subscribeEffects(store, actions)
@@ -91,7 +101,7 @@ class Bom extends React.Component {
     return (
       <reactRedux.Provider store={store}>
         <div style={{height: this.state.height}} className="tableScroller">
-          <Menu copyBom={copyBom} handleFileInput={handleFileInput} />
+          <Menu downloadBom={downloadBom} copyBom={copyBom} handleFileInput={handleFileInput} />
           <div style={{display: 'flex'}}>
             <semantic.Table
               className="Bom"

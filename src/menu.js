@@ -16,7 +16,7 @@ function Menu(props) {
           Open
         </semantic.Menu.Item>
       </FilePicker>
-      <semantic.Menu.Item disabled={props.empty}>
+      <semantic.Menu.Item disabled={props.empty} onClick={props.downloadBom}>
         <semantic.Icon name="save" />
         Save
       </semantic.Menu.Item>
@@ -36,10 +36,6 @@ function Menu(props) {
       >
         <semantic.Icon name="x" />
         Delete
-      </semantic.Menu.Item>
-      <semantic.Menu.Item disabled={props.empty} onClick={props.copyBom}>
-        <semantic.Icon name="copy" />
-        Copy All
       </semantic.Menu.Item>
     </semantic.Menu>
   )

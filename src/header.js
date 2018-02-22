@@ -99,7 +99,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   const partNumbersExpanded = state.view.get('partNumbersExpanded')
-  const first = state.data.present.getIn(['lines', 0])
+  const first = state.data.present.get('lines').first()
   return {
     partNumbersExpanded,
     maxPartNumbers: first ? first.get('partNumbers').size : 1

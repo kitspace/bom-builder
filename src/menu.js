@@ -9,6 +9,14 @@ const { actions } = require('./state')
 function Menu(props) {
   return (
     <semantic.Menu secondary>
+      <semantic.Menu.Item>
+        <semantic.Icon name="folder open outline" />
+        Open
+      </semantic.Menu.Item>
+      <semantic.Menu.Item>
+        <semantic.Icon name="save" />
+        Save
+      </semantic.Menu.Item>
       <semantic.Menu.Item disabled={!props.undosAvailable} onClick={props.undo}>
         <semantic.Icon name="undo" />
         Undo
@@ -29,10 +37,6 @@ function Menu(props) {
       <semantic.Menu.Item disabled={props.empty} onClick={props.copyBom}>
         <semantic.Icon name="copy" />
         Copy All
-      </semantic.Menu.Item>
-      <semantic.Menu.Item onClick={props.pasteBom}>
-        <semantic.Icon name="paste" />
-        Paste / Replace All
       </semantic.Menu.Item>
     </semantic.Menu>
   )

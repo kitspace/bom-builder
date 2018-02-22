@@ -3,16 +3,50 @@ const semantic = require('semantic-ui-react')
 const reactRedux = require('react-redux')
 const redux = require('redux')
 const immutable = require('immutable')
+const {FilePicker} = require('react-file-picker')
+const oneClickBom = require('1-click-bom')
 
-const { actions } = require('./state')
+const {actions} = require('./state')
+
+function readSingleFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = e => {
+      const contents = e.target.result
+      resolve(contents)
+    }
+    reader.readAsText(file)
+  })
+}
 
 function Menu(props) {
   return (
     <semantic.Menu secondary>
-      <semantic.Menu.Item>
-        <semantic.Icon name="folder open outline" />
-        Open
-      </semantic.Menu.Item>
+      <FilePicker
+        onChange={file =>
+          readSingleFile(file)
+            .then(oneClickBom.parseTSV)
+            .then(r => {
+              if (r.invalid.length > 0) {
+                const text = r.invalid.reduce((p, x) => {
+                  return p + `\trow ${x.row}: ${x.reason}\n`
+                }, `Error${r.invalid.length > 1 ? 's' : ''}: \n`)
+                alert(text)
+                return Promise.reject(text)
+              }
+              if (r.warnings.length > 0) {
+                console.warn(r.warnings)
+              }
+              return r.lines
+            })
+            .then(props.initializeLines)
+        }
+      >
+        <semantic.Menu.Item>
+          <semantic.Icon name="folder open outline" />
+          Open
+        </semantic.Menu.Item>
+      </FilePicker>
       <semantic.Menu.Item>
         <semantic.Icon name="save" />
         Save
@@ -72,6 +106,11 @@ function mapStateToProps(state) {
     empty: state.data.present.get('lines').size === 0,
     deleteFocus
   }
+}
+
+function trace(x) {
+  console.log(x)
+  return x
 }
 
 module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(Menu)

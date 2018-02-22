@@ -36,7 +36,7 @@ const initialState = {
   view: immutable.fromJS({
     partNumbersExpanded: [],
     focus: [null, null],
-    editable: false
+    editable: true
   }),
   suggestions: immutable.Map()
 }
@@ -179,6 +179,9 @@ const rootActions = {
   initializeLines(state, lines) {
     lines = immutable.Map(lines.map(l => [makeId(), immutable.fromJS(l)]))
     lines = fitPartNumbers(lines)
+    if (lines.length < 1) {
+      return state
+    }
     const order = immutable.List(lines.keys())
     const present = state.data.present.merge({lines, order})
     const suggestions = immutable.Map(
@@ -190,9 +193,18 @@ const rootActions = {
         })
       ])
     )
+    const l = lines.first()
+    let view = initialState.view
+    if (l != null) {
+      view = view.set(
+        'partNumbersExpanded',
+        l.get('partNumbers').map(x => false)
+      )
+    }
     return Object.assign({}, state, {
       suggestions,
-      data: Object.assign({}, state.data, {present})
+      data: Object.assign({}, state.data, {present}),
+      view
     })
   },
   setFocusBelow(state) {

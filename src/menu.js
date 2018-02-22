@@ -4,7 +4,6 @@ const reactRedux = require('react-redux')
 const redux = require('redux')
 const immutable = require('immutable')
 const {FilePicker} = require('react-file-picker')
-const oneClickBom = require('1-click-bom')
 
 const {actions} = require('./state')
 

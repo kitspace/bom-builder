@@ -6,10 +6,8 @@ const React = require('react')
 const semantic = require('semantic-ui-react')
 const redux = require('redux')
 const reactRedux = require('react-redux')
-const superagent = require('superagent')
 const oneClickBom = require('1-click-bom')
 const mousetrap = require('mousetrap')
-const {snapshot} = require('react-snapshot')
 const copyToClipboard = require('copy-to-clipboard')
 
 const Header = require('./header')
@@ -83,26 +81,6 @@ function copyBom() {
 }
 
 subscribeEffects(store, actions)
-
-function getTsv() {
-  return superagent.get('1-click-BOM.tsv').then(r => {
-    const {lines} = oneClickBom.parseTSV(r.text)
-    actions.initializeLines(lines)
-    return store.getState()
-  })
-}
-
-snapshot(() => {
-  return getTsv().then(state => {
-    const ps = state.data.present.get('lines').map((line, lineId) => {
-      const state = store.getState()
-      line = state.data.present.getIn(['lines', lineId])
-      const suggestions = state.suggestions.getIn([lineId, 'data'])
-      return findSuggestions(lineId, line, suggestions, actions)
-    })
-    return Promise.all(ps).then(() => store.getState())
-  })
-}).then(actions.setState)
 
 class Bom extends React.Component {
   constructor(props) {

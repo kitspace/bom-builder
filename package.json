@@ -16,7 +16,6 @@
     "react-file-picker": "^0.0.5",
     "react-redux": "^5.0.5",
     "react-scripts": "1.0.10",
-    "react-snapshot": "^2.0.0-1",
     "redux": "^3.7.2",
     "redux-undo-immutable-js": "^1.0.0-beta9-1",
     "reselect": "^3.0.1",

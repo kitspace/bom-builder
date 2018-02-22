@@ -1,6 +1,6 @@
 const superagent = require('superagent')
 
-const partinfoURL = 'http://localhost:4001/graphql'
+const partinfoURL = 'https://partinfo.kitspace.org/graphql'
 
 const part = `
   mpn {

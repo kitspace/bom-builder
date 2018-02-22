@@ -16,7 +16,7 @@ function Menu(props) {
           Open
         </semantic.Menu.Item>
       </FilePicker>
-      <semantic.Menu.Item>
+      <semantic.Menu.Item disabled={props.empty}>
         <semantic.Icon name="save" />
         Save
       </semantic.Menu.Item>

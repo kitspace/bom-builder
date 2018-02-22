@@ -20,6 +20,17 @@ const {subscribeEffects} = require('./effects')
 const {findSuggestions} = require('./suggestions')
 const {mainReducer, initialState} = require('./state')
 
+function readSingleFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = e => {
+      const contents = e.target.result
+      resolve(contents)
+    }
+    reader.readAsText(file)
+  })
+}
+
 const store = redux.createStore(
   mainReducer,
   initialState,
@@ -29,6 +40,30 @@ const actions = redux.bindActionCreators(
   require('./state').actions,
   store.dispatch
 )
+
+function handleFileInput(file) {
+  return readSingleFile(file)
+    .then(oneClickBom.parseTSV)
+    .then(r => {
+      if (r.invalid.length > 0) {
+        const text = r.invalid.reduce((p, x) => {
+          return p + `\trow ${x.row}: ${x.reason}\n`
+        }, `Error${r.invalid.length > 1 ? 's' : ''}: \n`)
+        alert(text)
+        return Promise.reject(text)
+      }
+      if (r.warnings.length > 0) {
+        console.warn(r.warnings)
+      }
+      actions.initializeLines(r.lines)
+      store.getState().data.present.get('lines').map((line, lineId) => {
+        const state = store.getState()
+        line = state.data.present.getIn(['lines', lineId])
+        const suggestions = state.suggestions.getIn([lineId, 'data'])
+        return findSuggestions(lineId, line, suggestions, actions)
+      })
+    })
+}
 
 function copyBom() {
   const state = store.getState()
@@ -78,7 +113,7 @@ class Bom extends React.Component {
     return (
       <reactRedux.Provider store={store}>
         <div style={{height: this.state.height}} className="tableScroller">
-          <Menu copyBom={copyBom} />
+          <Menu copyBom={copyBom} handleFileInput={handleFileInput} />
           <div style={{display: 'flex'}}>
             <semantic.Table
               className="Bom"

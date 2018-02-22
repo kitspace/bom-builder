@@ -8,40 +8,10 @@ const oneClickBom = require('1-click-bom')
 
 const {actions} = require('./state')
 
-function readSingleFile(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = e => {
-      const contents = e.target.result
-      resolve(contents)
-    }
-    reader.readAsText(file)
-  })
-}
-
 function Menu(props) {
   return (
     <semantic.Menu secondary>
-      <FilePicker
-        onChange={file =>
-          readSingleFile(file)
-            .then(oneClickBom.parseTSV)
-            .then(r => {
-              if (r.invalid.length > 0) {
-                const text = r.invalid.reduce((p, x) => {
-                  return p + `\trow ${x.row}: ${x.reason}\n`
-                }, `Error${r.invalid.length > 1 ? 's' : ''}: \n`)
-                alert(text)
-                return Promise.reject(text)
-              }
-              if (r.warnings.length > 0) {
-                console.warn(r.warnings)
-              }
-              return r.lines
-            })
-            .then(props.initializeLines)
-        }
-      >
+      <FilePicker onChange={props.handleFileInput}>
         <semantic.Menu.Item>
           <semantic.Icon name="folder open outline" />
           Open

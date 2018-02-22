@@ -2,7 +2,7 @@ const immutableDiff = require('immutable-diff').default
 const immutable = require('immutable')
 
 const {findSuggestions} = require('./suggestions')
-const {initialState, changed, emptyPartNumber} = require('./state')
+const {initialState, emptyPartNumber} = require('./state')
 
 const suggestionFields = immutable.List([
   'description',

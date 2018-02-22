@@ -90,7 +90,6 @@ class SkuPopup extends Popup {
     const sku = suggestion.get('sku') || immutable.Map()
     const mpn = suggestion.get('mpn') || immutable.Map()
     const part = sku.get('part') || ''
-    let specs = suggestion.get('specs') || immutable.List()
     let stockInfo = suggestion.get('stock_info')
     const skuTitle = (
       <Title

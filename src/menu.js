@@ -108,9 +108,4 @@ function mapStateToProps(state) {
   }
 }
 
-function trace(x) {
-  console.log(x)
-  return x
-}
-
 module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(Menu)

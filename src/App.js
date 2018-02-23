@@ -55,12 +55,15 @@ function handleFileInput(file) {
         console.warn(r.warnings)
       }
       actions.initializeLines(r.lines)
-      store.getState().data.present.get('lines').map((line, lineId) => {
-        const state = store.getState()
-        line = state.data.present.getIn(['lines', lineId])
-        const suggestions = state.suggestions.getIn([lineId, 'data'])
-        return findSuggestions(lineId, line, suggestions, actions)
-      })
+      store
+        .getState()
+        .data.present.get('lines')
+        .map((line, lineId) => {
+          const state = store.getState()
+          line = state.data.present.getIn(['lines', lineId])
+          const suggestions = state.suggestions.getIn([lineId, 'data'])
+          return findSuggestions(lineId, line, suggestions, actions)
+        })
     })
 }
 
@@ -101,7 +104,11 @@ class Bom extends React.Component {
     return (
       <reactRedux.Provider store={store}>
         <div style={{height: this.state.height}} className="tableScroller">
-          <Menu downloadBom={downloadBom} copyBom={copyBom} handleFileInput={handleFileInput} />
+          <Menu
+            downloadBom={downloadBom}
+            copyBom={copyBom}
+            handleFileInput={handleFileInput}
+          />
           <div style={{display: 'flex'}}>
             <semantic.Table
               className="Bom"
@@ -114,11 +121,17 @@ class Bom extends React.Component {
               <Body />
             </semantic.Table>
           </div>
+          <semantic.Button
+            onClick={() => actions.addEmptyLine()}
+            basic
+            icon={<semantic.Icon name="plus" />}
+          />
         </div>
       </reactRedux.Provider>
     )
   }
   componentWillMount() {
+    actions.addEmptyLine()
     window.onresize = e => {
       this.setState({height: window.innerHeight})
     }

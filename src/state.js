@@ -80,10 +80,11 @@ const linesActions = {
     }
     return state.update('lines', fitPartNumbers)
   },
-  addLine(state, value) {
-    const line = immutable.fromJS(value).set('id', makeId())
-    const lines = state.get('lines').push(line)
-    return state.merge({lines})
+  addEmptyLine(state) {
+    const id = makeId()
+    const lines = state.get('lines').set(id, emptyLine)
+    const order = state.get('order').push(id)
+    return state.merge({lines, order})
   },
   removeField(state, focus) {
     const lineId = focus.get(0)

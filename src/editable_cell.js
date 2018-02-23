@@ -81,7 +81,7 @@ class Cell extends React.PureComponent {
       <semantic.Table.Cell
         selectable={props.selectable}
         active={props.active}
-        style={{maxWidth: props.active ? '' : 100}}
+        style={{maxWidth: props.active ? '' : 100, minWidth: 50}}
         onClick={props.onClick}
       >
         <a>

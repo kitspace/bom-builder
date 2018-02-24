@@ -35,6 +35,11 @@ const store = redux.createStore(
   initialState,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
+
+store.subscribe(() => {
+  localStorage.setItem('tsv', getTsv())
+})
+
 const actions = redux.bindActionCreators(
   require('./state').actions,
   store.dispatch
@@ -95,6 +100,10 @@ function downloadBom() {
 
 subscribeEffects(store, actions)
 
+function clearAll() {
+  actions.initializeLines([])
+}
+
 class Bom extends React.Component {
   constructor(props) {
     super(props)
@@ -108,6 +117,7 @@ class Bom extends React.Component {
             downloadBom={downloadBom}
             copyBom={copyBom}
             handleFileInput={handleFileInput}
+            clearAll={clearAll}
           />
           <div style={{display: 'flex'}}>
             <semantic.Table
@@ -131,7 +141,17 @@ class Bom extends React.Component {
     )
   }
   componentWillMount() {
-    actions.addEmptyLine()
+    const storedData = localStorage.getItem('tsv')
+    if (storedData) {
+      const {lines} = oneClickBom.parseTSV(storedData)
+      if (lines.length === 0) {
+        actions.addEmptyLine()
+      } else {
+        actions.initializeLines(lines)
+      }
+    } else {
+      actions.addEmptyLine()
+    }
     window.onresize = e => {
       this.setState({height: window.innerHeight})
     }

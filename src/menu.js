@@ -5,7 +5,7 @@ const redux = require('redux')
 const immutable = require('immutable')
 const {FilePicker} = require('react-file-picker')
 
-const {actions} = require('./state')
+const {emptyLine, actions} = require('./state')
 
 function Menu(props) {
   return (
@@ -36,6 +36,16 @@ function Menu(props) {
       >
         <semantic.Icon name="x" />
         Delete
+      </semantic.Menu.Item>
+      <semantic.Menu.Item
+        disabled={props.empty}
+        onClick={() => {
+          props.clearAll()
+          props.addEmptyLine()
+        }}
+      >
+        <semantic.Icon name="trash" />
+        Remove All
       </semantic.Menu.Item>
     </semantic.Menu>
   )
@@ -68,7 +78,9 @@ function mapStateToProps(state) {
   return {
     undosAvailable: !!state.data.past.length,
     redosAvailable: !!state.data.future.length,
-    empty: state.data.present.get('lines').size === 0,
+    empty:
+      state.data.present.get('lines').size === 0 ||
+      state.data.present.get('lines').get(0) === emptyLine,
     deleteFocus
   }
 }

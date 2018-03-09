@@ -148,6 +148,11 @@ class Bom extends React.Component {
         actions.addEmptyLine()
       } else {
         actions.initializeLines(lines)
+        const state = store.getState()
+        state.data.present.get('lines').forEach((line, id) => {
+          const suggestions = state.suggestions.getIn([id, 'data'])
+          findSuggestions(id, line, suggestions, actions)
+        })
       }
     } else {
       actions.addEmptyLine()

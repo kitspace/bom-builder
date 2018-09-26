@@ -47,7 +47,7 @@ const actions = redux.bindActionCreators(
 
 function handleFileInput(file) {
   return readSingleFile(file)
-    .then(oneClickBom.parseTSV)
+    .then(oneClickBom.parse)
     .then(r => {
       if (r.invalid.length > 0) {
         const text = r.invalid.reduce((p, x) => {

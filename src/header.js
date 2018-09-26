@@ -75,7 +75,7 @@ function Header({
           return cells
         })()}
         {(() => {
-          return oneClickBom.lineData.retailer_list.map((retailer, i) => {
+          return oneClickBom.getRetailers().map((retailer, i) => {
             return (
               <th key={retailer}>
                 <div className="headerWithButton">

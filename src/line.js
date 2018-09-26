@@ -25,7 +25,7 @@ const fields = immutable.Map({
     })
   ),
   retailers: immutable.Map(
-    oneClickBom.lineData.retailer_list.map(r => [
+    oneClickBom.getRetailers().map(r => [
       r,
       immutable.List.of('retailers', r)
     ])
@@ -63,7 +63,7 @@ function Line(props) {
     )
     return cells
   })
-  const retailerCells = oneClickBom.lineData.retailer_list.map((name, i) => {
+  const retailerCells = oneClickBom.getRetailers().map((name, i) => {
     const field = fields.getIn(['retailers', name])
     return <SkuCell key={name} field={field} lineId={lineId} />
   })

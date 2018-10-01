@@ -17,7 +17,7 @@ function Menu(props) {
         </semantic.Menu.Item>
       </FilePicker>
       <semantic.Menu.Item disabled={props.empty} onClick={props.downloadBom}>
-        <semantic.Icon name="save" />
+        <semantic.Icon name="download" />
         Save
       </semantic.Menu.Item>
       <semantic.Menu.Item disabled={!props.undosAvailable} onClick={props.undo}>

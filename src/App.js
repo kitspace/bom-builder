@@ -69,14 +69,18 @@ function handleFileInput(file) {
     })
 }
 
-function getTsv() {
+function getLines() {
   const state = store.getState()
   const linesMap = state.data.present
     .get('lines')
     .map(line => line.update('partNumbers', ps => ps.slice(0, -1)))
     .map(line => line.set('reference', line.get('reference') || ''))
   const order = state.data.present.get('order')
-  const lines = order.map(lineId => linesMap.get(lineId)).toJS()
+  return order.map(lineId => linesMap.get(lineId)).toJS()
+}
+
+function getTsv() {
+  const lines = getLines()
   return oneClickBom.writeTSV(lines)
 }
 
@@ -92,8 +96,9 @@ function copyBom() {
 }
 
 function downloadBom() {
-  const tsv = getTsv()
-  fileDownload(tsv, '1-click-bom.tsv')
+  const lines = getLines()
+  const csv = oneClickBom.write(lines, {type: 'string', bookType:'csv'})
+  fileDownload(csv, '1-click-bom.csv')
 }
 
 subscribeEffects(store, actions)

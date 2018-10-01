@@ -74,14 +74,42 @@ function mapStateToProps(state) {
     //don't delete quantity or empty fields
     deleteFocus = immutable.List.of(null)
   }
+  const lines = state.data.present.get('lines')
   return {
     undosAvailable: !!state.data.past.length,
     redosAvailable: !!state.data.future.length,
-    empty:
-      state.data.present.get('lines').size === 0 ||
-      state.data.present.get('lines').get(0) === emptyLine,
+    empty: lines.size === 0 || (lines.size === 1 && isEmpty(lines.first())),
     deleteFocus
   }
 }
 
+function isEmpty(line) {
+  return line.reduce((prev, v, k) => {
+    switch (k) {
+      case 'retailers':
+        return prev && isEmptyRetailers(v)
+      case 'partNumbers':
+        return prev && isEmptyPartnumbers(v)
+      case 'quantity':
+        return prev && v <= 1
+      case 'description':
+        return prev && !v
+      default:
+        return prev
+    }
+  }, true)
+}
+
+function isEmptyPartnumbers(ps) {
+  return ps.reduce(
+    (prev, p) => prev && !(p.get('part') || p.get('manufacturer')),
+    true
+  )
+}
+
+function isEmptyRetailers(r) {
+  return r.reduce((prev, v, k) => {
+    return prev && !v
+  }, true)
+}
 export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(Menu)

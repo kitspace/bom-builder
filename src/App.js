@@ -97,7 +97,7 @@ function copyBom() {
 
 function downloadBom() {
   const lines = getLines()
-  const csv = oneClickBom.write(lines, {type: 'string', bookType:'csv'})
+  const csv = oneClickBom.write(lines, {type: 'string', bookType: 'csv'})
   fileDownload(csv, '1-click-bom.csv')
 }
 
@@ -138,11 +138,11 @@ class Bom extends React.Component {
           <semantic.Container className="infoBox">
             <semantic.Segment style={{fontSize: 18}}>
               This is a prototype of an electronics bill of materials editor
-              tool for <a href="https://kitspace.org">Kitspace</a>. Try it out
-              by typing in a component description above (e.g.{' '}
-              <code>1uF 0805</code>) or opening an existing BOM (csv, xlsx, ods
-              etc.). If you are confused maybe{' '}
-              <a href="https://www.youtube.com/watch?v=ryhtlKIPi_k">
+              tool for <a href="https://kitspace.org">Kitspace</a>. Try typing
+              in a component description above (e.g. <code>1uF 0805</code>) or
+              opening an existing BOM (csv, xlsx, ods etc.). If you are confused
+              maybe{' '}
+              <a href="https://www.youtube.com/watch?v=m96G7B1doRQ">
                 watch the demo
               </a>{' '}
               but don't hesistate to jump{' '}

@@ -130,20 +130,22 @@ class EditInput extends React.PureComponent {
   }
   save(value) {
     clearTimeout(this.timeout)
-    this.props.setField(value)
-    /* global _paq */
-    if (typeof _paq !== 'undefined') {
-      _paq.push([
-        'trackSiteSearch',
-        // Search keyword searched for
-        this.state.value,
-        // Search category selected in your search engine. If you do not need
-        //this, set to false
-        'BOM Builder',
-        // Number of results on the Search results page. Zero indicates a 'No
-        // Result Search Keyword'. Set to false if you don't know
-        false
-      ])
+    if (this.state.initialValue !== value) {
+      this.props.setField(value)
+      /* global _paq */
+      if (typeof _paq !== 'undefined') {
+        _paq.push([
+          'trackSiteSearch',
+          // Search keyword searched for
+          this.state.value,
+          // Search category selected in your search engine. If you do not need
+          //this, set to false
+          'BOM Builder',
+          // Number of results on the Search results page. Zero indicates a 'No
+          // Result Search Keyword'. Set to false if you don't know
+          false
+        ])
+      }
     }
   }
   componentWillReceiveProps(newProps) {

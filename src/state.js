@@ -64,6 +64,12 @@ export function fitPartNumbers(lines) {
 }
 
 export const linesActions = {
+  clearAll(state) {
+    const id = makeId()
+    const lines = immutable.Map().set(id, emptyLine)
+    const order = immutable.List.of(id)
+    return state.merge({lines, order})
+  },
   setField(state, {lineId, field, value}) {
     if (field.get(0) === 'quantity' && value < 1) {
       value = 1
@@ -183,10 +189,6 @@ export const viewActions = {
 export const rootActions = {
   setState(_, state) {
     return makeImmutable(state)
-  },
-  clearAll(state) {
-    const lines = [emptyLine]
-    return this.initializeLines(state, lines)
   },
   initializeLines(state, lines) {
     lines = immutable.Map(lines.map(l => [makeId(), immutable.fromJS(l)]))

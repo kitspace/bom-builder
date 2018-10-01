@@ -1,4 +1,4 @@
-const superagent = require('superagent')
+import superagent from 'superagent'
 
 const partinfoURL = 'https://partinfo.kitspace.org/graphql'
 
@@ -69,7 +69,7 @@ query SearchQuery($input: String!) {
   }
 }`
 
-function getPartinfo(input) {
+export default function getPartinfo(input) {
   let query = MpnQuery
   if (typeof input === 'string') {
     query = SearchQuery
@@ -105,5 +105,3 @@ function getPartinfo(input) {
       return null
     })
 }
-
-module.exports = getPartinfo

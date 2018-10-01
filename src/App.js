@@ -2,22 +2,22 @@ import './App.css'
 import 'semantic-ui-css/semantic.css'
 import './fontello.css'
 
-const React = require('react')
-const semantic = require('semantic-ui-react')
-const redux = require('redux')
-const reactRedux = require('react-redux')
-const oneClickBom = require('1-click-bom')
-const mousetrap = require('mousetrap')
-const copyToClipboard = require('copy-to-clipboard')
-const fileDownload = require('js-file-download')
+import React from 'react'
+import * as semantic from 'semantic-ui-react'
+import * as redux from 'redux'
+import * as reactRedux from 'react-redux'
+import oneClickBom from '1-click-bom'
+import mousetrap from 'mousetrap'
+import copyToClipboard from 'copy-to-clipboard'
+import fileDownload from 'js-file-download'
 
-const Header = require('./header')
-const Body = require('./body')
-const Menu = require('./menu')
+import Header from './header'
+import Body from './body'
+import Menu from './menu'
 
-const {subscribeEffects} = require('./effects')
-const {findSuggestions} = require('./suggestions')
-const {mainReducer, initialState} = require('./state')
+import {subscribeEffects} from './effects'
+import {findSuggestions} from './suggestions'
+import {mainReducer, initialState} from './state'
 
 function readSingleFile(file) {
   return new Promise((resolve, reject) => {

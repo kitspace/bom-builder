@@ -1,8 +1,8 @@
-const React = require('react')
-const reactRedux = require('react-redux')
-const redux = require('redux')
+import React from 'react'
+import * as reactRedux from 'react-redux'
+import * as redux from 'redux'
 
-const {actions} = require('./state')
+import {actions} from './state'
 
 function Handle(props) {
   const {reference, lineId, setFocus, removeLine} = props
@@ -62,4 +62,4 @@ function mapStateToProps(state, props) {
   }
 }
 
-module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(Handle)
+export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(Handle)

@@ -1,10 +1,10 @@
-const React = require('react')
-const semantic = require('semantic-ui-react')
-const reactRedux = require('react-redux')
-const redux = require('redux')
-const oneClickBom = require('1-click-bom')
+import React from 'react'
+import * as semantic from 'semantic-ui-react'
+import * as reactRedux from 'react-redux'
+import * as redux from 'redux'
+import oneClickBom from '1-click-bom'
 
-const {actions} = require('./state')
+import {actions} from './state'
 
 function Header({
   partNumbersExpanded,
@@ -106,4 +106,4 @@ function mapStateToProps(state) {
   }
 }
 
-module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(Header)
+export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(Header)

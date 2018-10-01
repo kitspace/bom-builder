@@ -1,5 +1,5 @@
-const immutable = require('immutable')
-const getPartinfo = require('./get_partinfo')
+import immutable from 'immutable'
+import getPartinfo from './get_partinfo'
 
 function fromRetailer(sku, suggestions) {
   const existing = suggestions.find(s =>

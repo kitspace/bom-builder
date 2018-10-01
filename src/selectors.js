@@ -1,5 +1,5 @@
-const immutable = require('immutable')
-const reselect = require('reselect')
+import * as immutable from 'immutable'
+import * as reselect from 'reselect'
 
 function suggestions(state) {
   return state.suggestions
@@ -54,7 +54,7 @@ function makeSuggestionsLoading() {
   )
 }
 
-module.exports = {
+export default {
   line,
   suggestions,
   view,

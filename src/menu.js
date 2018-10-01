@@ -1,11 +1,11 @@
-const React = require('react')
-const semantic = require('semantic-ui-react')
-const reactRedux = require('react-redux')
-const redux = require('redux')
-const immutable = require('immutable')
-const {FilePicker} = require('react-file-picker')
+import React from 'react'
+import * as semantic from 'semantic-ui-react'
+import * as reactRedux from 'react-redux'
+import * as redux from 'redux'
+import immutable from 'immutable'
+import {FilePicker} from 'react-file-picker'
 
-const {emptyLine, actions} = require('./state')
+import {emptyLine, actions} from './state'
 
 function Menu(props) {
   return (
@@ -85,4 +85,4 @@ function mapStateToProps(state) {
   }
 }
 
-module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(Menu)
+export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(Menu)

@@ -1,8 +1,8 @@
-const immutableDiff = require('immutable-diff').default
-const immutable = require('immutable')
+import immutableDiff from 'immutable-diff'
+import immutable from 'immutable'
 
-const {findSuggestions} = require('./suggestions')
-const {initialState, emptyPartNumber} = require('./state')
+import {findSuggestions} from './suggestions'
+import {initialState, emptyPartNumber} from './state'
 
 const suggestionFields = immutable.List([
   'description',
@@ -35,7 +35,7 @@ function effects(diff, state, actions) {
   })
 }
 
-function subscribeEffects(store, actions) {
+export function subscribeEffects(store, actions) {
   let past = initialState.data
   store.subscribe(() => {
     const state = store.getState()
@@ -61,4 +61,3 @@ function subscribeEffects(store, actions) {
   })
 }
 
-module.exports = {subscribeEffects}

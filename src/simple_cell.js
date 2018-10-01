@@ -1,10 +1,10 @@
-const redux = require('redux')
-const reactRedux = require('react-redux')
-const reselect = require('reselect')
+import * as redux from 'redux'
+import * as reactRedux from 'react-redux'
+import * as reselect from 'reselect'
 
-const EditableCell = require('./editable_cell')
-const selectors = require('./selectors')
-const {actions} = require('./state')
+import EditableCell from './editable_cell'
+import selectors from './selectors'
+import {actions} from './state'
 
 function mapStateToProps() {
   const active = selectors.makeActiveSelector()
@@ -24,6 +24,6 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(
+export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(
   EditableCell
 )

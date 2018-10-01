@@ -1,8 +1,8 @@
 import './popup.css'
 
-const React = require('react')
-const semantic = require('semantic-ui-react')
-const immutable = require('immutable')
+import React from 'react'
+import * as semantic from 'semantic-ui-react'
+import immutable from 'immutable'
 
 class Popup extends React.PureComponent {
   constructor(props) {

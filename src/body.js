@@ -1,7 +1,7 @@
-const React = require('react')
-const reactRedux = require('react-redux')
+import React from 'react'
+import * as reactRedux from 'react-redux'
 
-const Line = require('./line')
+import Line from './line'
 
 function Body(props) {
   return (
@@ -17,4 +17,4 @@ function mapStateToProps(state) {
   }
 }
 
-module.exports = reactRedux.connect(mapStateToProps)(Body)
+export default reactRedux.connect(mapStateToProps)(Body)

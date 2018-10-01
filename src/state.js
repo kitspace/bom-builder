@@ -1,14 +1,16 @@
-const immutable = require('immutable')
-const oneClickBom = require('1-click-bom')
-const redux = require('redux')
-const reduxUndo = require('redux-undo-immutable-js')
+import immutable from 'immutable'
+import oneClickBom from '1-click-bom'
+import * as redux from 'redux'
+import * as reduxUndo from 'redux-undo-immutable-js'
 
-function makeId() {
+function MakeId() {
   this.id = this.id || 0
-  return this.id++
+  return () => this.id++
 }
 
-const emptyLine = immutable.Map({
+const makeId = new MakeId()
+
+export const emptyLine = immutable.Map({
   reference: '',
   quantity: 1,
   description: '',
@@ -22,12 +24,12 @@ const emptyLine = immutable.Map({
   })
 })
 
-const emptyPartNumber = immutable.Map({
+export const emptyPartNumber = immutable.Map({
   part: '',
   manufacturer: ''
 })
 
-const initialState = {
+export const initialState = {
   data: immutable.fromJS({
     lines: {},
     order: [],
@@ -42,7 +44,7 @@ const initialState = {
   suggestions: immutable.Map()
 }
 
-function fitPartNumbers(lines) {
+export function fitPartNumbers(lines) {
   const requiredSize =
     lines
       .map(line => {
@@ -60,7 +62,7 @@ function fitPartNumbers(lines) {
   })
 }
 
-const linesActions = {
+export const linesActions = {
   setField(state, {lineId, field, value}) {
     if (field.get(0) === 'quantity' && value < 1) {
       value = 1
@@ -154,7 +156,7 @@ const linesActions = {
   }
 }
 
-const viewActions = {
+export const viewActions = {
   setFocus(state, location) {
     return state.set('focus', immutable.fromJS(location))
   },
@@ -174,7 +176,7 @@ const viewActions = {
   }
 }
 
-const rootActions = {
+export const rootActions = {
   setState(_, state) {
     return makeImmutable(state)
   },
@@ -317,10 +319,10 @@ const rootActions = {
   }
 }
 
-const rootReducer = makeReducer(rootActions, initialState)
+export const rootReducer = makeReducer(rootActions, initialState)
 
-const ignoreTypes = immutable.List.of('initializeLines', 'addSuggestion')
-const linesReducer = reduxUndo.default(
+export const ignoreTypes = immutable.List.of('initializeLines', 'addSuggestion')
+export const linesReducer = reduxUndo.default(
   makeReducer(linesActions, initialState['data']),
   {
     filter(action, newState, previousState) {
@@ -332,7 +334,7 @@ const linesReducer = reduxUndo.default(
   }
 )
 
-const suggestionsActions = {
+export const suggestionsActions = {
   setSuggestions(state, {lineId, suggestions}) {
     const s = immutable.Map({status: 'done', data: suggestions})
     return state.set(lineId, s)
@@ -351,25 +353,25 @@ const suggestionsActions = {
   }
 }
 
-const suggestionsReducer = makeReducer(
+export const suggestionsReducer = makeReducer(
   suggestionsActions,
   initialState.suggestions
 )
 
-const viewReducer = makeReducer(viewActions, initialState['view'])
+export const viewReducer = makeReducer(viewActions, initialState['view'])
 
-const combinedReducer = redux.combineReducers({
+export const combinedReducer = redux.combineReducers({
   data: linesReducer,
   view: viewReducer,
   suggestions: suggestionsReducer
 })
 
-function mainReducer(state = initialState, action) {
+export function mainReducer(state = initialState, action) {
   const state2 = rootReducer(state, action)
   return combinedReducer(state2, action)
 }
 
-function makeReducer(reducers, initialState) {
+export function makeReducer(reducers, initialState) {
   return function reducer(state = initialState, action) {
     if (Object.keys(reducers).includes(action.type)) {
       const state2 = reducers[action.type](state, action.value)
@@ -379,7 +381,7 @@ function makeReducer(reducers, initialState) {
   }
 }
 
-function makeActions(reducers) {
+export function makeActions(reducers) {
   const actions = {}
   Object.keys(reducers).forEach(name => {
     actions[name] = function createAction(value) {
@@ -389,7 +391,7 @@ function makeActions(reducers) {
   return actions
 }
 
-const actions = Object.assign(
+export const actions = Object.assign(
   makeActions(linesActions),
   makeActions(viewActions),
   makeActions(rootActions),
@@ -397,7 +399,7 @@ const actions = Object.assign(
   reduxUndo.ActionCreators
 )
 
-function makeDataImmutable(data) {
+export function makeDataImmutable(data) {
   if (immutable.Iterable.isIterable(data)) {
     return data
   }
@@ -409,7 +411,7 @@ function makeDataImmutable(data) {
   })
 }
 
-function makeImmutable({data, view, suggestions}) {
+export function makeImmutable({data, view, suggestions}) {
   return {
     data: {
       present: makeDataImmutable(data.present),
@@ -421,7 +423,7 @@ function makeImmutable({data, view, suggestions}) {
   }
 }
 
-function makeMutable({data, view, parts}) {
+export function makeMutable({data, view, parts}) {
   return {
     data: {
       present: data.present.toJS(),
@@ -433,19 +435,6 @@ function makeMutable({data, view, parts}) {
   }
 }
 
-function changed(state1, state2) {
+export function changed(state1, state2) {
   return !immutable.fromJS(state1).equals(state2)
-}
-
-module.exports = {
-  initialState,
-  mainReducer,
-  makeReducer,
-  linesActions,
-  emptyLine,
-  actions,
-  makeImmutable,
-  makeMutable,
-  changed,
-  emptyPartNumber
 }

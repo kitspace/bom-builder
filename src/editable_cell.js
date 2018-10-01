@@ -1,6 +1,6 @@
-const React = require('react')
-const createClass = require('create-react-class')
-const semantic = require('semantic-ui-react')
+import React from 'react'
+import createClass from 'create-react-class'
+import * as semantic from 'semantic-ui-react'
 
 const EditableCell = createClass({
   displayName: 'EditableCell',
@@ -197,4 +197,4 @@ class EditInput extends React.PureComponent {
   }
 }
 
-module.exports = EditableCell
+export default EditableCell

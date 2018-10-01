@@ -1,14 +1,14 @@
-const React = require('react')
-const createClass = require('create-react-class')
-const reactRedux = require('react-redux')
-const redux = require('redux')
-const reselect = require('reselect')
-const immutable = require('immutable')
+import React from 'react'
+import * as createClass from 'create-react-class'
+import * as reactRedux from 'react-redux'
+import * as redux from 'redux'
+import * as reselect from 'reselect'
+import * as immutable from 'immutable'
 
-const {actions} = require('./state')
-const {MpnPopup} = require('./popup')
-const selectors = require('./selectors')
-const EditableCell = require('./editable_cell')
+import {actions} from './state'
+import {MpnPopup} from './popup'
+import selectors from './selectors'
+import EditableCell from './editable_cell'
 
 const MpnCell = createClass({
   displayName: 'MpnCell',
@@ -194,6 +194,6 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(
+export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(
   MpnCell
 )

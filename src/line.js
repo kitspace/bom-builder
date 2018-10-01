@@ -1,17 +1,17 @@
-const React = require('react')
-const semantic = require('semantic-ui-react')
-const oneClickBom = require('1-click-bom')
-const immutable = require('immutable')
-const reactRedux = require('react-redux')
-const redux = require('redux')
-const reselect = require('reselect')
+import React from 'react'
+import * as semantic from 'semantic-ui-react'
+import * as oneClickBom from '1-click-bom'
+import * as immutable from 'immutable'
+import * as reactRedux from 'react-redux'
+import * as redux from 'redux'
+import * as reselect from 'reselect'
 
-const selectors = require('./selectors')
-const {actions} = require('./state')
-const SimpleCell = require('./simple_cell')
-const MpnCell = require('./mpn_cell')
-const SkuCell = require('./sku_cell')
-const Handle = require('./handle')
+import selectors from './selectors'
+import {actions} from './state'
+import SimpleCell from './simple_cell'
+import MpnCell from './mpn_cell'
+import SkuCell from './sku_cell'
+import Handle from './handle'
 
 //for passing shallow equality
 const fields = immutable.Map({
@@ -111,4 +111,4 @@ function mapStateToProps() {
   )
 }
 
-module.exports = reactRedux.connect(mapStateToProps, mapDispatchToProps)(Line)
+export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(Line)

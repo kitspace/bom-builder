@@ -6,10 +6,10 @@ import React from 'react'
 import * as semantic from 'semantic-ui-react'
 import * as redux from 'redux'
 import * as reactRedux from 'react-redux'
-import oneClickBom from '1-click-bom'
-import mousetrap from 'mousetrap'
-import copyToClipboard from 'copy-to-clipboard'
-import fileDownload from 'js-file-download'
+import * as oneClickBom from '1-click-bom'
+import * as mousetrap from 'mousetrap'
+import * as copyToClipboard from 'copy-to-clipboard'
+import * as fileDownload from 'js-file-download'
 
 import Header from './header'
 import Body from './body'
@@ -17,7 +17,7 @@ import Menu from './menu'
 
 import {subscribeEffects} from './effects'
 import {findSuggestions} from './suggestions'
-import {mainReducer, initialState} from './state'
+import {mainReducer, initialState, actions as unboundActions} from './state'
 
 function readSingleFile(file) {
   return new Promise((resolve, reject) => {
@@ -40,10 +40,7 @@ store.subscribe(() => {
   localStorage.setItem('tsv', getTsv())
 })
 
-const actions = redux.bindActionCreators(
-  require('./state').actions,
-  store.dispatch
-)
+const actions = redux.bindActionCreators(unboundActions, store.dispatch)
 
 function handleFileInput(file) {
   return readSingleFile(file)

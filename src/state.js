@@ -3,12 +3,12 @@ import oneClickBom from '1-click-bom'
 import * as redux from 'redux'
 import * as reduxUndo from 'redux-undo-immutable-js'
 
-function MakeId() {
-  this.id = this.id || 0
+function IdMaker() {
+  this.id = 0
   return () => this.id++
 }
 
-const makeId = new MakeId()
+const makeId = new IdMaker()
 
 export const emptyLine = immutable.Map({
   reference: '',
@@ -82,6 +82,9 @@ export const linesActions = {
       )
     }
     return state.update('lines', fitPartNumbers)
+  },
+  initEmptyLine(state) {
+    return this.addEmptyLine(state)
   },
   addEmptyLine(state) {
     const id = makeId()
@@ -321,8 +324,12 @@ export const rootActions = {
 
 export const rootReducer = makeReducer(rootActions, initialState)
 
-export const ignoreTypes = immutable.List.of('initializeLines', 'addSuggestion')
-export const linesReducer = reduxUndo.default(
+const ignoreTypes = immutable.List.of(
+  'initializeLines',
+  'addSuggestion',
+  'initEmptyLine'
+)
+const linesReducer = reduxUndo.default(
   makeReducer(linesActions, initialState['data']),
   {
     filter(action, newState, previousState) {

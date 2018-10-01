@@ -161,7 +161,7 @@ class Bom extends React.Component {
     if (storedData) {
       const {lines} = oneClickBom.parseTSV(storedData)
       if (lines.length === 0) {
-        actions.addEmptyLine()
+        actions.initEmptyLine()
       } else {
         actions.initializeLines(lines)
         const state = store.getState()
@@ -171,7 +171,7 @@ class Bom extends React.Component {
         })
       }
     } else {
-      actions.addEmptyLine()
+      actions.initEmptyLine()
     }
     window.onresize = e => {
       this.setState({height: window.innerHeight})

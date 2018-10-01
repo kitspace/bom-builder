@@ -14,7 +14,7 @@ const EditableCell = createClass({
   },
   loseFocusHandler() {
     //give it some time so we can get to the delete button before losing focus
-    setTimeout(this.loseFocusCallback, 100)
+    setTimeout(this.loseFocusCallback, 300)
   },
   clickHandler(e) {
     const {lineId, field, setFocus, onClick} = this.props

@@ -48,12 +48,13 @@ export function fitPartNumbers(lines) {
   const requiredSize =
     lines
       .map(line => {
-        const partNumbers = line.get('partNumbers')
+        const partNumbers = line.get('partNumbers') || immutable.List()
         return partNumbers.findLastIndex(p => !p.equals(emptyPartNumber))
       })
       .max() + 2
   return lines.map(line => {
     return line.update('partNumbers', ps => {
+      ps = ps || immutable.List()
       while (ps.size < requiredSize) {
         ps = ps.push(emptyPartNumber)
       }
@@ -182,6 +183,10 @@ export const viewActions = {
 export const rootActions = {
   setState(_, state) {
     return makeImmutable(state)
+  },
+  clearAll(state) {
+    const lines = [emptyLine]
+    return this.initializeLines(state, lines)
   },
   initializeLines(state, lines) {
     lines = immutable.Map(lines.map(l => [makeId(), immutable.fromJS(l)]))

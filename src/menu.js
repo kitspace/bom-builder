@@ -41,7 +41,6 @@ function Menu(props) {
         disabled={props.empty}
         onClick={() => {
           props.clearAll()
-          props.addEmptyLine()
         }}
       >
         <semantic.Icon name="trash" />

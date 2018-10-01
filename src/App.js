@@ -98,10 +98,6 @@ function downloadBom() {
 
 subscribeEffects(store, actions)
 
-function clearAll() {
-  actions.initializeLines([])
-}
-
 class Bom extends React.Component {
   constructor(props) {
     super(props)
@@ -115,7 +111,7 @@ class Bom extends React.Component {
             downloadBom={downloadBom}
             copyBom={copyBom}
             handleFileInput={handleFileInput}
-            clearAll={clearAll}
+            clearAll={this.props.clearAll}
           />
           <div style={{display: 'flex'}}>
             <semantic.Table

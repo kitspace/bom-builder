@@ -124,7 +124,7 @@ export const linesActions = {
         .map((l, k) => l.set('id', k))
         .values()
     )
-    if (oneClickBom.lineData.retailer_list.includes(header)) {
+    if (oneClickBom.getRetailers().includes(header)) {
       lines = lines.sortBy(line =>
         line
           .get('retailers')
@@ -249,7 +249,7 @@ export const rootActions = {
       const fieldName = field.get(0)
       const partNumbersExpanded = state.view.get('partNumbersExpanded')
       if (fieldName === 'retailers') {
-        const rs = oneClickBom.lineData.retailer_list
+        const rs = oneClickBom.getRetailers()
         const i = rs.indexOf(field.get(1))
         if (i + 1 < rs.length) {
           return immutable.fromJS([order.get(index), ['retailers', rs[i + 1]]])
@@ -271,7 +271,7 @@ export const rootActions = {
               return immutable.List.of('partNumbers', 0, 'part')
             }
           } else if (fieldName === 'partNumbers') {
-            const first = oneClickBom.lineData.retailer_list[0]
+            const first = oneClickBom.getRetailers()[0]
             const firstRetailer = immutable.List.of('retailers', first)
             const i = field.get(1)
             if (partNumbersExpanded.get(i)) {

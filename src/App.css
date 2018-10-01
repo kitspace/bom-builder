@@ -1,3 +1,15 @@
+.infoBox a {
+  color: blue !important;
+}
+
+.infoBox a:visited {
+  color: purple !important;
+}
+
+.infoBox {
+  font-size: 24pt !important;
+}
+
 th a {
     color: rgba(0, 0, 0, 0.87) !important;
 }

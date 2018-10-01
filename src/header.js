@@ -75,18 +75,21 @@ function Header({
           return cells
         })()}
         {(() => {
-          return oneClickBom.getRetailers().map((retailer, i) => {
-            return (
-              <th key={retailer}>
-                <div className="headerWithButton">
-                  <a onClick={() => sortBy(retailer)}>{retailer}</a>
-                  {/*<semantic.Button className="headerButton" basic>
+          return oneClickBom
+            .getRetailers()
+            .filter(r => r !== 'Rapid')
+            .map((retailer, i) => {
+              return (
+                <th key={retailer}>
+                  <div className="headerWithButton">
+                    <a onClick={() => sortBy(retailer)}>{retailer}</a>
+                    {/*<semantic.Button className="headerButton" basic>
                     <i className="icon-basket-3" />
                   </semantic.Button>*/}
-                </div>
-              </th>
-            )
-          })
+                  </div>
+                </th>
+              )
+            })
         })()}
       </tr>
     </thead>

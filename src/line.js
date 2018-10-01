@@ -13,6 +13,9 @@ import MpnCell from './mpn_cell'
 import SkuCell from './sku_cell'
 import Handle from './handle'
 
+
+const retailer_list = oneClickBom.getRetailers().filter(r => r !== 'Rapid')
+
 //for passing shallow equality
 const fields = immutable.Map({
   reference: immutable.List.of('reference'),
@@ -25,7 +28,7 @@ const fields = immutable.Map({
     })
   ),
   retailers: immutable.Map(
-    oneClickBom.getRetailers().map(r => [
+    retailer_list.map(r => [
       r,
       immutable.List.of('retailers', r)
     ])
@@ -63,7 +66,7 @@ function Line(props) {
     )
     return cells
   })
-  const retailerCells = oneClickBom.getRetailers().map((name, i) => {
+  const retailerCells = retailer_list.map((name, i) => {
     const field = fields.getIn(['retailers', name])
     return <SkuCell key={name} field={field} lineId={lineId} />
   })

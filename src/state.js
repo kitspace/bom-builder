@@ -3,6 +3,8 @@ import oneClickBom from '1-click-bom'
 import * as redux from 'redux'
 import * as reduxUndo from 'redux-undo-immutable-js'
 
+const retailer_list = oneClickBom.getRetailers().filter(r => r !== 'Rapid')
+
 function IdMaker() {
   this.id = 0
   return () => this.id++
@@ -131,7 +133,7 @@ export const linesActions = {
         .map((l, k) => l.set('id', k))
         .values()
     )
-    if (oneClickBom.getRetailers().includes(header)) {
+    if (retailer_list.includes(header)) {
       lines = lines.sortBy(line =>
         line
           .get('retailers')
@@ -256,7 +258,7 @@ export const rootActions = {
       const fieldName = field.get(0)
       const partNumbersExpanded = state.view.get('partNumbersExpanded')
       if (fieldName === 'retailers') {
-        const rs = oneClickBom.getRetailers()
+        const rs = retailer_list
         const i = rs.indexOf(field.get(1))
         if (i + 1 < rs.length) {
           return immutable.fromJS([order.get(index), ['retailers', rs[i + 1]]])
@@ -278,7 +280,7 @@ export const rootActions = {
               return immutable.List.of('partNumbers', 0, 'part')
             }
           } else if (fieldName === 'partNumbers') {
-            const first = oneClickBom.getRetailers()[0]
+            const first = retailer_list[0]
             const firstRetailer = immutable.List.of('retailers', first)
             const i = field.get(1)
             if (partNumbersExpanded.get(i)) {

@@ -74,6 +74,7 @@ function getTsv() {
   const linesMap = state.data.present
     .get('lines')
     .map(line => line.update('partNumbers', ps => ps.slice(0, -1)))
+    .map(line => line.set('reference', line.get('reference') || ''))
   const order = state.data.present.get('order')
   const lines = order.map(lineId => linesMap.get(lineId)).toJS()
   return oneClickBom.writeTSV(lines)
@@ -139,8 +140,11 @@ class Bom extends React.Component {
               tool for <a href="https://kitspace.org">Kitspace</a>. Try it out
               by typing in a component description above (e.g.{' '}
               <code>1uF 0805</code>) or opening an existing BOM (csv, xlsx, ods
-              etc.). If you are confused maybe <a href="https://www.youtube.com/watch?v=ryhtlKIPi_k">watch the demo</a> but
-              don't hesistate to jump{' '}
+              etc.). If you are confused maybe{' '}
+              <a href="https://www.youtube.com/watch?v=ryhtlKIPi_k">
+                watch the demo
+              </a>{' '}
+              but don't hesistate to jump{' '}
               <a href="https://github.com/kitspace/kitspace/issues">
                 on GitHub
               </a>{' '}

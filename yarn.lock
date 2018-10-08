@@ -2,11 +2,12 @@
 # yarn lockfile v1
 
 
-"1-click-bom@git+https://github.com/kitspace/npm-1-click-bom.git":
+"1-click-bom@https://github.com/kitspace/npm-1-click-bom":
   version "1.3.1"
-  resolved "git+https://github.com/kitspace/npm-1-click-bom.git#03330ab5334a22ff86804259c2bd2deb81beb44e"
+  resolved "https://github.com/kitspace/npm-1-click-bom#414ce3ac237f6136f0a42cf6a97ae1d0bd470983"
   dependencies:
     file-type "^9.0.0"
+    s-expression "^3.0.3"
     xlsx "^0.12.6"
 
 "@babel/code-frame@7.0.0", "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.0.0-beta.35":
@@ -7783,6 +7784,10 @@ rxjs@^6.1.0:
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.3.3.tgz#3c6a7fa420e844a81390fb1158a9ec614f4bad55"
   dependencies:
     tslib "^1.9.0"
+
+s-expression@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/s-expression/-/s-expression-3.0.3.tgz#80309bfea6bcf80960b61bb22f4498d17860799d"
 
 safe-buffer@5.1.1, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.1"

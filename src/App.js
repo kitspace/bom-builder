@@ -19,14 +19,17 @@ import {subscribeEffects} from './effects'
 import {findSuggestions} from './suggestions'
 import {mainReducer, initialState, actions as unboundActions} from './state'
 
-function readSingleFile(file) {
+function readSingleFile(file, asString=false) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = e => {
       const contents = e.target.result
       resolve(contents)
     }
-    reader.readAsText(file)
+    if (asString) {
+      return reader.readAsText(file)
+    }
+    return reader.readAsArrayBuffer(file)
   })
 }
 
@@ -43,8 +46,17 @@ store.subscribe(() => {
 const actions = redux.bindActionCreators(unboundActions, store.dispatch)
 
 function handleFileInput(file) {
-  return readSingleFile(file)
-    .then(oneClickBom.parse)
+  let parse = oneClickBom.parse
+  let asString = false
+  if (/^text\//.test(file.type)) {
+    asString = true
+  }
+  if (file.type === 'application/x-kicad-pcb') {
+    asString = true
+    parse = contents => oneClickBom.parse(contents, {ext: 'kicad_pcb'})
+  }
+  return readSingleFile(file, asString)
+    .then(parse)
     .then(r => {
       if (r.invalid.length > 0) {
         const text = r.invalid.reduce((p, x) => {

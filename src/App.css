@@ -205,3 +205,8 @@ td > a {
 .tableScroller {
     overflow: scroll;
 }
+
+label.item:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  cursor: pointer !important;
+}

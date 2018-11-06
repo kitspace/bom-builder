@@ -45,7 +45,8 @@ store.subscribe(() => {
 
 const actions = redux.bindActionCreators(unboundActions, store.dispatch)
 
-function handleFileInput(file) {
+function handleFileInput(e) {
+  const file = e.target.files[0]
   let parse = oneClickBom.parse
   let asString = false
   if (/^text\//.test(file.type)) {

@@ -7297,10 +7297,6 @@ react-error-overlay@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-5.0.1.tgz#29a04732a2de48de4d23c56cace5a69674cb0587"
 
-react-file-picker@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/react-file-picker/-/react-file-picker-0.0.5.tgz#b1505080c7d2d22149aeae879638007e8e3154ae"
-
 react-redux@^5.0.5:
   version "5.0.6"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-5.0.6.tgz#23ed3a4f986359d68b5212eaaa681e60d6574946"

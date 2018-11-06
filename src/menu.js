@@ -10,12 +10,16 @@ import {emptyLine, actions} from './state'
 function Menu(props) {
   return (
     <semantic.Menu secondary>
-      <FilePicker onChange={props.handleFileInput}>
-        <semantic.Menu.Item>
+      <input
+        type="file"
+        onChange={props.handleFileInput}
+        id="uploadInput"
+        style={{display: 'none'}}
+      />
+      <label className="item" htmlFor="uploadInput">
           <semantic.Icon name="folder open outline" />
           Open
-        </semantic.Menu.Item>
-      </FilePicker>
+      </label>
       <semantic.Menu.Item disabled={props.empty} onClick={props.downloadBom}>
         <semantic.Icon name="download" />
         Save

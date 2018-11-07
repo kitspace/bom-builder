@@ -164,7 +164,7 @@ class Bom extends React.Component {
               </a>{' '}
               or{' '}
               <a href="https://riot.im/app/#/room/#kitspace:matrix.org">chat</a>{' '}
-              if you have any issues or questions.
+              if you have any issues or questions!
             </semantic.Segment>
           </semantic.Container>
         </div>

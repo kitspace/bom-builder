@@ -3,7 +3,6 @@ import * as semantic from 'semantic-ui-react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import immutable from 'immutable'
-import {FilePicker} from 'react-file-picker'
 
 import {emptyLine, actions} from './state'
 

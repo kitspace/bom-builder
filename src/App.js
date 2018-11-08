@@ -150,7 +150,11 @@ class Bom extends React.Component {
           />
           <semantic.Container className="infoBox">
             <semantic.Segment style={{fontSize: 18}}>
-              This is a prototype of an electronics bill of materials editor
+              This is an{' '}
+              <a href="https://github.com/kitspace/bom-builder">
+                open source
+              </a>{' '}
+              prototype of an electronics bill of materials editor
               tool for <a href="https://kitspace.org">Kitspace</a>. Try typing
               in a component description above (e.g. <code>1uF 0805</code>) or
               opening an existing BOM (csv, xlsx, ods etc.). If you are confused

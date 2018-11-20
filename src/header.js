@@ -53,7 +53,7 @@ function Header({
         {(() => {
           return oneClickBom
             .getRetailers()
-            .filter(r => r !== 'Rapid')
+            .filter(r => r !== 'Rapid' && r !== 'Newark')
             .map((retailer, i) => {
               return (
                 <th key={retailer}>

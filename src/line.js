@@ -13,8 +13,9 @@ import MpnCell from './mpn_cell'
 import SkuCell from './sku_cell'
 import Handle from './handle'
 
-
-const retailer_list = oneClickBom.getRetailers().filter(r => r !== 'Rapid')
+const retailer_list = oneClickBom
+  .getRetailers()
+  .filter(r => r !== 'Rapid' && r !== 'Newark')
 
 //for passing shallow equality
 const fields = immutable.Map({
@@ -28,10 +29,7 @@ const fields = immutable.Map({
     })
   ),
   retailers: immutable.Map(
-    retailer_list.map(r => [
-      r,
-      immutable.List.of('retailers', r)
-    ])
+    retailer_list.map(r => [r, immutable.List.of('retailers', r)])
   )
 })
 

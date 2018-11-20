@@ -3,7 +3,9 @@ import oneClickBom from '1-click-bom'
 import * as redux from 'redux'
 import * as reduxUndo from 'redux-undo-immutable-js'
 
-const retailer_list = oneClickBom.getRetailers().filter(r => r !== 'Rapid')
+const retailer_list = oneClickBom
+  .getRetailers()
+  .filter(r => r !== 'Rapid' && r !== 'Newark')
 
 function IdMaker() {
   this.id = 0

@@ -115,10 +115,11 @@ class SkuPopup extends Popup {
         wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
       />
     )
-    const priceTable = <PriceTable prices={suggestion.get('prices')} />
-    if (stockInfo) {
-      var stockTable = <SpecTable specs={stockInfo.take(3)} />
-    }
+    const priceTable = (
+      <SpecTable
+        specs={stockInfo.concat(pricesToSpecs(suggestion.get('prices')))}
+      />
+    )
     let expandButton
     if (suggestion.get('specs') && suggestion.get('specs').size > 4) {
       expandButton = (
@@ -168,7 +169,6 @@ class SkuPopup extends Popup {
               {mpn.get('manufacturer') + ' - ' + mpn.get('part')}
             </div>
             <Datasheet href={suggestion.get('datasheet')} />
-            {stockTable}
             {priceTable}
             {expandButton}
           </div>
@@ -316,36 +316,17 @@ class SpecTable extends React.PureComponent {
   }
 }
 
-class PriceTable extends React.PureComponent {
-  render() {
-    let tableData, symbol
-    const prices = this.props.prices
-    if (prices) {
-      const gbp = prices.get('GBP')
-      const eur = prices.get('EUR')
-      const usd = prices.get('USD')
-      symbol = gbp ? '£' : eur ? '€' : usd ? '$' : ''
-      tableData = gbp || eur || usd
-    }
-    tableData = tableData || immutable.List()
-    return (
-      <semantic.Table
-        className="specTable"
-        unstackable
-        basic="very"
-        compact={true}
-        tableData={tableData.toArray()}
-        renderBodyRow={args => {
-          return (
-            <tr key={String(args)}>
-              <td>{args.get(0)}</td>
-              <td>{`${symbol}${args.get(1)}`}</td>
-            </tr>
-          )
-        }}
-      />
-    )
+function pricesToSpecs(prices) {
+  if (!prices) {
+    return immutable.List()
   }
+  const gbp = prices.get('GBP')
+  const eur = prices.get('EUR')
+  const usd = prices.get('USD')
+  const symbol = gbp ? '£' : eur ? '€' : usd ? '$' : ''
+  return (gbp || eur || usd || []).map(price =>
+    immutable.Map({name: price.get(0), value: symbol + price.get(1)})
+  )
 }
 
 class Title extends React.PureComponent {

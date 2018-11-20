@@ -209,3 +209,12 @@ label.item:hover {
   background: rgba(0, 0, 0, 0.05) !important;
   cursor: pointer !important;
 }
+
+.headerButton {
+  border: 0px !important;
+  box-shadow: none !important;
+  border-radius: 100px !important;
+  margin: 2px !important;
+  background: rgba(0, 0, 0, 0) !important;
+}
+

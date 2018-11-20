@@ -59,9 +59,14 @@ function Header({
                 <th key={retailer}>
                   <div className="headerWithButton">
                     <a onClick={() => sortBy(retailer)}>{retailer}</a>
-                    {/*<semantic.Button className="headerButton" basic>
-                    <i className="icon-basket-3" />
-                  </semantic.Button>*/}
+                    <div>
+                      <semantic.Button
+                        circular
+                        className="headerButton"
+                      >
+                        <i className="icon-basket-3" />
+                      </semantic.Button>
+                    </div>
                   </div>
                 </th>
               )

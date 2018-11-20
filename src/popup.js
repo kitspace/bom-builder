@@ -4,6 +4,22 @@ import React from 'react'
 import * as semantic from 'semantic-ui-react'
 import immutable from 'immutable'
 
+function getSkuUrl(vendor, sku) {
+  switch (vendor) {
+    case 'Farnell':
+      return 'https://uk.farnell.com/' + sku
+    case 'Mouser':
+      return 'https://mouser.com/ProductDetail/' + sku
+    case 'Newark':
+      return 'https://www.newark.com/' + sku
+    case 'Digikey':
+      return 'https://www.digikey.co.uk/products/en?keywords=' + sku
+    case 'RS':
+      return 'https://uk.rs-online.com/web/c/?searchTerm=' + sku
+    case 'Rapid':
+      return 'https://www.rapidonline.com/Catalogue/Search?Query=' + sku
+  }
+}
 class Popup extends React.PureComponent {
   constructor(props) {
     super(props)
@@ -90,11 +106,11 @@ class SkuPopup extends Popup {
     const sku = suggestion.get('sku') || immutable.Map()
     const mpn = suggestion.get('mpn') || immutable.Map()
     const part = sku.get('part') || ''
-    let stockInfo = suggestion.get('stock_info')
+    const vendor = sku.get('vendor')
+    let stockInfo = suggestion.get('stock_info') || immutable.List()
     const skuTitle = (
       <Title
-        one={mpn.get('manufacturer')}
-        two={mpn.get('part')}
+        one={<a href={getSkuUrl(vendor, part)}>{part}</a>}
         page={`${this.state.viewing + 1}/${suggestions.size}`}
         wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
       />
@@ -148,7 +164,9 @@ class SkuPopup extends Popup {
             </div>
           </div>
           <div className="rightHandModule">
-            <div className="description">{suggestion.get('description')}</div>
+            <div className="description">
+              {mpn.get('manufacturer') + ' - ' + mpn.get('part')}
+            </div>
             <Datasheet href={suggestion.get('datasheet')} />
             {stockTable}
             {priceTable}
@@ -316,7 +334,7 @@ class PriceTable extends React.PureComponent {
         unstackable
         basic="very"
         compact={true}
-        tableData={tableData.take(3).toArray()}
+        tableData={tableData.toArray()}
         renderBodyRow={args => {
           return (
             <tr key={String(args)}>

@@ -1,6 +1,6 @@
 import superagent from 'superagent'
 
-const partinfoURL = 'https://partinfo.kitspace.org/graphql'
+const partinfoURL = 'http://localhost:4001/graphql'
 
 const part = `
   mpn {

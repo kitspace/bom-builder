@@ -26,7 +26,7 @@ function Header({
         </th>
         {(() => {
           const cells = []
-          for (let i = 0; i < maxPartNumbers - 1; ++i) {
+          for (let i = 0; i < maxPartNumbers; ++i) {
             if (partNumbersExpanded.get(i)) {
               cells.push(
                 <th style={{minWidth: 160}} key={`Manufacturer${i}`}>
@@ -39,39 +39,15 @@ function Header({
               )
             }
             cells.push(
-              <th style={{minWidth: 130}} key={`MPN${i}`}>
-                <div className="headerWithButton">
-                  {(() => {
-                    if (!partNumbersExpanded.get(i)) {
-                      return (
-                        <semantic.Label
-                          basic
-                          onClick={() => togglePartNumbersExpanded(i)}
-                          className="expandLabel"
-                        >
-                          <semantic.Icon name="angle double left" />
-                          <semantic.Icon name="angle double right" />
-                        </semantic.Label>
-                      )
-                    } else {
-                      return (
-                        <semantic.Label
-                          basic
-                          onClick={() => togglePartNumbersExpanded(i)}
-                          className="expandLabel"
-                        >
-                          <semantic.Icon name="angle double right" />
-                          <semantic.Icon name="angle double left" />
-                        </semantic.Label>
-                      )
-                    }
-                  })()}
-                  <a onClick={() => sortBy(['part', i])}>Part Number</a>
-                </div>
-              </th>
+              <PartNumberHeader
+                isExpanded={partNumbersExpanded.get(i)}
+                toggleExpanded={() => togglePartNumbersExpanded(i)}
+                sortByThis={() => sortBy(['part', i])}
+                key={`MPN${i}`}
+                shorten={maxPartNumbers > 1 && i === maxPartNumbers - 1}
+              />
             )
           }
-          cells.push(<th key="MPN-last">...</th>)
           return cells
         })()}
         {(() => {
@@ -93,6 +69,42 @@ function Header({
         })()}
       </tr>
     </thead>
+  )
+}
+
+function PartNumberHeader({sortByThis, isExpanded, toggleExpanded, shorten}) {
+  const text = shorten ? '...' : 'Part Number'
+  return (
+    <th style={{minWidth: shorten ? 0 : 130}}>
+      <div className="headerWithButton">
+        {(() => {
+          if (!isExpanded) {
+            return (
+              <semantic.Label
+                basic
+                onClick={toggleExpanded}
+                className="expandLabel"
+              >
+                <semantic.Icon name="angle double left" />
+                <semantic.Icon name="angle double right" />
+              </semantic.Label>
+            )
+          } else {
+            return (
+              <semantic.Label
+                basic
+                onClick={toggleExpanded}
+                className="expandLabel"
+              >
+                <semantic.Icon name="angle double right" />
+                <semantic.Icon name="angle double left" />
+              </semantic.Label>
+            )
+          }
+        })()}
+        <a onClick={sortByThis}>{text}</a>
+      </div>
+    </th>
   )
 }
 

@@ -1,7 +1,5 @@
 import superagent from 'superagent'
 
-const partinfoURL = 'http://localhost:4001/graphql'
-
 const part = `
   mpn {
     manufacturer
@@ -83,7 +81,7 @@ export default function getPartinfo(input) {
   }
 
   return superagent
-    .post(partinfoURL)
+    .post(process.env.REACT_APP_PARTINFO_URL)
     .set('Accept', 'application/json')
     .send({
       query,

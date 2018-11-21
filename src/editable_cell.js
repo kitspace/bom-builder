@@ -61,11 +61,11 @@ class Cell extends React.PureComponent {
     const smallField = props.smallField ? (
       <div className="smallField">{props.smallField}</div>
     ) : null
-    let icons = []
+    const icons = []
     if (!props.active) {
       if (props.wand) {
         if (props.wand === 'loading') {
-          icons.push(<semantic.Loader key="loader" active inline size="mini" />)
+          icons.push(<semantic.Loader key="magic" active inline size="mini" />)
         } else {
           const color = props.wand === 'match' ? 'green' : 'grey'
           const wandOpacity = props.wand === 'match' ? 1.0 : 0.3
@@ -85,7 +85,7 @@ class Cell extends React.PureComponent {
         icons.push(
           <semantic.Icon
             style={{opacity: checkOpacity}}
-            name="check"
+            name={props.check === 'red' ? 'close' : 'check'}
             key="check"
             color={props.check}
           />

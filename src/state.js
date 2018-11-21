@@ -14,11 +14,16 @@ function IdMaker() {
 
 const makeId = new IdMaker()
 
+export const emptyPartNumber = immutable.Map({
+  part: '',
+  manufacturer: ''
+})
+
 export const emptyLine = immutable.Map({
   reference: '',
   quantity: 1,
   description: '',
-  partNumbers: immutable.List(),
+  partNumbers: immutable.List.of(emptyPartNumber),
   retailers: immutable.Map({
     Digikey: '',
     Mouser: '',
@@ -28,10 +33,6 @@ export const emptyLine = immutable.Map({
   })
 })
 
-export const emptyPartNumber = immutable.Map({
-  part: '',
-  manufacturer: ''
-})
 
 export const initialState = {
   data: immutable.fromJS({

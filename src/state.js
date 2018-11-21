@@ -295,7 +295,7 @@ export const rootActions = {
               const type = field.get(2)
               if (type === 'manufacturer') {
                 return immutable.List.of('partNumbers', i, 'part')
-              } else if (i + 1 < lines.get(0).get('partNumbers').size) {
+              } else if (i + 1 < lines.first().get('partNumbers').size) {
                 if (partNumbersExpanded.get(i + 1)) {
                   return immutable.List.of('partNumbers', i + 1, 'manufacturer')
                 } else {
@@ -304,7 +304,7 @@ export const rootActions = {
               } else {
                 return firstRetailer
               }
-            } else if (i + 1 < lines.get(0).get('partNumbers').size) {
+            } else if (i + 1 < lines.first().get('partNumbers').size) {
               if (partNumbersExpanded.get(i + 1)) {
                 return immutable.List.of('partNumbers', i + 1, 'manufacturer')
               } else {

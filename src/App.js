@@ -19,6 +19,8 @@ import {subscribeEffects} from './effects'
 import {findSuggestions} from './suggestions'
 import {mainReducer, initialState, actions as unboundActions} from './state'
 
+const initialStoredData = 'References\tQty\tDescription\tDigikey\tMouser\tRS\tNewark\tFarnell\tRapid\n\t1\t\t\t\t\t\t\t\n'
+
 function readSingleFile(file, asString = false) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -174,11 +176,7 @@ class Bom extends React.Component {
     )
   }
   componentWillMount() {
-    const storedData =
-      localStorage.getItem('tsv') ||
-      `References\tQty\tDescription\tDigikey\tMouser\tRS\tNewark\tFarnell\tRapid
-      \t1\t\t\t\t\t\t\t
-      `
+    const storedData = localStorage.getItem('tsv') || initialStoredData
     const {lines} = oneClickBom.parseTSV(storedData)
     actions.initializeLines(lines)
     const state = store.getState()
@@ -192,6 +190,9 @@ class Bom extends React.Component {
     actions.setEditable(this.props.editable)
     mousetrap.bind('ctrl+z', actions.undo)
     mousetrap.bind('ctrl+y', actions.redo)
+    if (storedData === initialStoredData) {
+      actions.setFocus([0, ['description']])
+    }
   }
 }
 

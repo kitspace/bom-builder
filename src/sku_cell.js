@@ -117,13 +117,12 @@ function makeCheckSelector(
   return reselect.createSelector(
     [applicableSuggestionsSelector, selectedSelector, wandSelector],
     (suggestions, selected, wand) => {
-      console.log({wand})
-      if (wand === 'loading') {
-        return null
-      }
       if (selected >= 0) {
         const s = suggestions.get(selected)
         return s.get('checkColor')
+      }
+      if (!wand || wand === 'loading') {
+        return null
       }
       const match = suggestions.reduce(
         (prev, s) =>

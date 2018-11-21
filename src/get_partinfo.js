@@ -23,15 +23,13 @@ const part = `
       part
     }
     description
+    moq
+    in_stock_quantity
+    stock_location
     image {
       url
       credit_string
       credit_url
-    }
-    stock_info {
-      key
-      name
-      value
     }
     specs {
       key

@@ -48,6 +48,7 @@ const EditableCell = createClass({
         contents={editInput}
         smallField={props.smallField}
         wand={props.wand}
+        check={props.check}
         onClick={this.clickHandler}
       />
     )
@@ -60,21 +61,26 @@ class Cell extends React.PureComponent {
     const smallField = props.smallField ? (
       <div className="smallField">{props.smallField}</div>
     ) : null
-    let icon
-    if (!props.active && props.wand) {
-      if (props.wand === 'loading') {
-        icon = <semantic.Loader active inline size="mini" />
-      } else {
-        const color = props.wand === 'match' ? 'green' : 'grey'
-        const opacity = props.wand === 'match' ? 1.0 : 0.3
-        icon = (
-          <semantic.Icon
-            style={{opacity}}
-            size="large"
-            color={color}
-            name="magic"
-          />
-        )
+    let icons = []
+    if (!props.active) {
+      if (props.wand) {
+        if (props.wand === 'loading') {
+          icons.push(<semantic.Loader active inline size="mini" />)
+        } else {
+          const color = props.wand === 'match' ? 'green' : 'grey'
+          const opacity = props.wand === 'match' ? 1.0 : 0.3
+          icons.push(
+            <semantic.Icon
+              style={{opacity}}
+              size="large"
+              color={color}
+              name="magic"
+            />
+          )
+        }
+      }
+      if (props.check) {
+        icons.push(<semantic.Icon name="check" color={props.check} />)
       }
     }
     return (
@@ -86,7 +92,7 @@ class Cell extends React.PureComponent {
       >
         <a>
           {smallField}
-          {icon}
+          {icons}
           {props.contents}
           {/* here to make sure the cell grows with the content */}
           <div key="div" style={{visibility: 'hidden', height: 0}}>

@@ -29,6 +29,7 @@ const SkuCell = createClass({
         active={active}
         editing={editing}
         wand={props.wand}
+        check={props.check}
         setFocusBelow={props.setFocusBelow}
         setFocusNext={props.setFocusNext}
       />
@@ -58,8 +59,9 @@ function retailerSelector(_, props) {
 
 function makeApplicableSuggestions() {
   return reselect.createSelector(
-    [selectors.suggestions, selectors.lineId, retailerSelector],
-    (suggestions, lineId, retailer) => {
+    [selectors.suggestions, selectors.lineId, retailerSelector, selectors.line],
+    (suggestions, lineId, retailer, line) => {
+      const desiredQuantity = line.get('quantity')
       suggestions = suggestions.getIn([lineId, 'data']) || immutable.List()
       return suggestions.flatMap(s => {
         const type = s.get('type')
@@ -67,7 +69,7 @@ function makeApplicableSuggestions() {
         const offers = s
           .get('offers')
           .filter(o => o.getIn(['sku', 'vendor']) === retailer)
-        return offers.map(o => o.merge({type, mpn}))
+        return offers.map(o => o.merge({type, mpn, desiredQuantity}))
       })
     }
   )
@@ -85,6 +87,18 @@ function makeWandSelector(applicableSuggestionsSelector, valueSelector) {
         return 'loading'
       }
       return !value && suggestions.getIn([0, 'type'])
+    }
+  )
+}
+
+function makeCheckSelector(applicableSuggestionsSelector) {
+  return reselect.createSelector(
+    [applicableSuggestionsSelector],
+    (suggestions) => {
+      const enoughInStock = suggestions.reduce((prev, s) => {
+        return prev || s.get('desiredQuantity') <= s.get('in_stock_quantity')
+      }, false)
+      return enoughInStock ? 'green' : null
     }
   )
 }
@@ -110,15 +124,17 @@ function mapStateToProps() {
   const value = selectors.makeValueSelector()
   const suggestions = makeApplicableSuggestions()
   const wand = makeWandSelector(suggestions, value)
+  const check = makeCheckSelector(suggestions)
   const selected = makeSelectedSelector(suggestions)
   return reselect.createSelector(
-    [value, editing, active, suggestions, wand, selected],
-    (value, editing, active, suggestions, wand, selected) => ({
+    [value, editing, active, suggestions, wand, check, selected],
+    (value, editing, active, suggestions, wand, check, selected) => ({
       value,
       editing,
       active,
       suggestions,
       wand,
+      check,
       selected
     })
   )

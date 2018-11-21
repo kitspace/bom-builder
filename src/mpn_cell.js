@@ -38,6 +38,7 @@ const MpnCell = createClass({
         active={active}
         editing={editing}
         wand={props.wand}
+        check={props.check}
         smallField={smallValue}
         setFocusBelow={props.setFocusBelow}
         setFocusNext={props.setFocusNext}

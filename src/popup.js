@@ -107,7 +107,43 @@ class SkuPopup extends Popup {
     const mpn = suggestion.get('mpn') || immutable.Map()
     const part = sku.get('part') || ''
     const vendor = sku.get('vendor')
-    let stockInfo = suggestion.get('stock_info') || immutable.List()
+    const inStock = suggestion.get('in_stock_quantity')
+    const desiredQuantity = suggestion.get('desiredQuantity')
+    const stockLocation = suggestion.get('stock_location')
+    const checkIcon = (
+      <span style={{marginLeft: 10}}>
+        {desiredQuantity <= inStock ? (
+          <semantic.Icon
+            name="check"
+            color={
+              !stockLocation || stockLocation === 'UK' ? 'green' : 'orange'
+            }
+          />
+        ) : inStock === 0 ? (
+          <semantic.Icon name="close" color="red" />
+        ) : (
+          <semantic.Icon name="check" color="orange" />
+        )}
+      </span>
+    )
+    let stockInfo = [
+      immutable.Map({
+        name: ['Stock'],
+        value: [inStock, checkIcon]
+      })
+    ]
+    if (stockLocation) {
+      stockInfo.push(
+        immutable.Map({
+          name: 'Location',
+          value: stockLocation
+        })
+      )
+    }
+    stockInfo.push(
+      immutable.Map({name: <div style={{minHeight: 30}} />, value: ''})
+    )
+    stockInfo = immutable.List(stockInfo)
     const skuTitle = (
       <Title
         one={<a href={getSkuUrl(vendor, part)}>{part}</a>}
@@ -307,7 +343,7 @@ class SpecTable extends React.PureComponent {
         renderBodyRow={args => {
           return (
             <tr key={String(args)}>
-              {args.map(text => <td key={text}>{text}</td>)}
+              {args.map(text => <td key={String(text)}>{text}</td>)}
             </tr>
           )
         }}
@@ -332,12 +368,12 @@ function pricesToSpecs(prices) {
 class Title extends React.PureComponent {
   render() {
     const props = this.props
-    const opacity = props.wandColor === 'green' ? 1.0 : 0.3
+    const wandOpacity = props.wandColor === 'green' ? 1.0 : 0.3
     return (
       <div className="titleContainer">
         <div>
           <semantic.Icon
-            style={{opacity}}
+            style={{opacity: wandOpacity}}
             size="large"
             color={props.wandColor}
             name="magic"

@@ -227,7 +227,15 @@ export const rootActions = {
     })
   },
   setFocusBelow(state) {
-    const order = state.data.present.get('order')
+    let data = state.data
+    let order = data.present.get('order')
+    // add a line if needed (in an undoable way)
+    if (state.view.get('focus').first() + 1 >= order.size) {
+      const past = state.data.past.concat([data.present])
+      const present = linesActions.addEmptyLine(data.present)
+      data = Object.assign({}, state.data, {present, past})
+      order = data.present.get('order')
+    }
     const view = state.view.update('focus', focus => {
       if (focus == null) {
         return focus
@@ -238,12 +246,9 @@ export const rootActions = {
       if (index < 0 || field == null) {
         return focus
       }
-      if (index + 1 >= order.size) {
-        return immutable.List.of(null, null)
-      }
       return immutable.List.of(order.get(index + 1), field)
     })
-    return Object.assign({}, state, {view})
+    return Object.assign({}, state, {view, data})
   },
   setFocusNext(state) {
     const lines = state.data.present.get('lines')

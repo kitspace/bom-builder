@@ -221,7 +221,7 @@ label.item:hover {
 .expandLabel {
   border: 0px !important;
   box-shadow: none !important;
-  background: rgba(0, 0, 0, 0) !important;
+  background: #F9FAFB !important;
   color: rgba(0, 0, 0, 0.87) !important;
 }
 

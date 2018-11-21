@@ -5,6 +5,7 @@ const part = `
     manufacturer
     part
   }
+  type
   datasheet
   description
   image {
@@ -89,10 +90,8 @@ export default function getPartinfo(input) {
     })
     .then(res => {
       if (res.body.data.search) {
-        res.body.data.search.forEach(s => (s.type = 'search'))
         return res.body.data.search
       } else if (res.body.data.part) {
-        res.body.data.part.type = 'match'
         return res.body.data.part
       }
     })

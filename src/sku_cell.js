@@ -109,6 +109,8 @@ function getCheckColor(desiredQuantity, s) {
   }
 }
 
+const checkColors = ['red', 'orange', 'green']
+
 function makeCheckSelector(
   applicableSuggestionsSelector,
   selectedSelector,
@@ -124,14 +126,18 @@ function makeCheckSelector(
       if (!wand || wand === 'loading') {
         return null
       }
-      const match = suggestions.reduce(
-        (prev, s) =>
-          prev ||
-          (s.get('type') === 'match' && s.get('checkColor') === 'green'),
-        false
-      )
-      if (match) {
-        return 'green'
+      const match = suggestions.reduce((prev, s) => {
+        const c = s.get('checkColor')
+        const x = checkColors.indexOf(c)
+        if (prev > x) {
+          return prev
+        }
+        if (s.get('type') === 'match') {
+          return x
+        }
+      }, -1)
+      if (match >= 0) {
+        return checkColors[match]
       }
       return 'grey'
     }

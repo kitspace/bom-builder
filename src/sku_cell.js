@@ -69,7 +69,13 @@ function makeApplicableSuggestions() {
         const offers = s
           .get('offers')
           .filter(o => o.getIn(['sku', 'vendor']) === retailer)
-        return offers.map(o => o.merge({type, mpn, desiredQuantity}))
+        return offers.map(o =>
+          o.merge({
+            type,
+            mpn,
+            checkColor: getCheckColor(desiredQuantity, o)
+          })
+        )
       })
     }
   )
@@ -91,14 +97,44 @@ function makeWandSelector(applicableSuggestionsSelector, valueSelector) {
   )
 }
 
-function makeCheckSelector(applicableSuggestionsSelector) {
+function getCheckColor(desiredQuantity, s) {
+  if (desiredQuantity <= s.get('in_stock_quantity')) {
+    if (!s.get('stock_location') || s.get('stock_location') === 'UK') {
+      return 'green'
+    } else {
+      return 'orange'
+    }
+  } else {
+    return s.get('in_stock_quantity') === 0 ? 'red' : 'orange'
+  }
+}
+
+function makeCheckSelector(
+  applicableSuggestionsSelector,
+  selectedSelector,
+  wandSelector
+) {
   return reselect.createSelector(
-    [applicableSuggestionsSelector],
-    (suggestions) => {
-      const enoughInStock = suggestions.reduce((prev, s) => {
-        return prev || s.get('desiredQuantity') <= s.get('in_stock_quantity')
-      }, false)
-      return enoughInStock ? 'green' : null
+    [applicableSuggestionsSelector, selectedSelector, wandSelector],
+    (suggestions, selected, wand) => {
+      console.log({wand})
+      if (wand === 'loading') {
+        return null
+      }
+      if (selected >= 0) {
+        const s = suggestions.get(selected)
+        return s.get('checkColor')
+      }
+      const match = suggestions.reduce(
+        (prev, s) =>
+          prev ||
+          (s.get('type') === 'match' && s.get('checkColor') === 'green'),
+        false
+      )
+      if (match) {
+        return 'green'
+      }
+      return 'grey'
     }
   )
 }
@@ -124,8 +160,8 @@ function mapStateToProps() {
   const value = selectors.makeValueSelector()
   const suggestions = makeApplicableSuggestions()
   const wand = makeWandSelector(suggestions, value)
-  const check = makeCheckSelector(suggestions)
   const selected = makeSelectedSelector(suggestions)
+  const check = makeCheckSelector(suggestions, selected, wand)
   return reselect.createSelector(
     [value, editing, active, suggestions, wand, check, selected],
     (value, editing, active, suggestions, wand, check, selected) => ({
@@ -144,6 +180,4 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(
-  SkuCell
-)
+export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(SkuCell)

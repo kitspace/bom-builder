@@ -108,23 +108,14 @@ class SkuPopup extends Popup {
     const part = sku.get('part') || ''
     const vendor = sku.get('vendor')
     const inStock = suggestion.get('in_stock_quantity')
-    const desiredQuantity = suggestion.get('desiredQuantity')
     const stockLocation = suggestion.get('stock_location')
+    const checkColor = suggestion.get('checkColor')
     const checkIcon = (
-      <span style={{marginLeft: 10}}>
-        {desiredQuantity <= inStock ? (
-          <semantic.Icon
-            name="check"
-            color={
-              !stockLocation || stockLocation === 'UK' ? 'green' : 'orange'
-            }
-          />
-        ) : inStock === 0 ? (
-          <semantic.Icon name="close" color="red" />
-        ) : (
-          <semantic.Icon name="check" color="orange" />
-        )}
-      </span>
+      <semantic.Icon
+        name={checkColor === 'red' ? 'close' : 'check'}
+        style={{marginLeft: 10}}
+        color={checkColor}
+      />
     )
     let stockInfo = [
       immutable.Map({

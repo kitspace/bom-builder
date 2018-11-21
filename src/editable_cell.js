@@ -68,10 +68,10 @@ class Cell extends React.PureComponent {
           icons.push(<semantic.Loader active inline size="mini" />)
         } else {
           const color = props.wand === 'match' ? 'green' : 'grey'
-          const opacity = props.wand === 'match' ? 1.0 : 0.3
+          const wandOpacity = props.wand === 'match' ? 1.0 : 0.3
           icons.push(
             <semantic.Icon
-              style={{opacity}}
+              style={{opacity: wandOpacity}}
               size="large"
               color={color}
               name="magic"
@@ -80,7 +80,14 @@ class Cell extends React.PureComponent {
         }
       }
       if (props.check) {
-        icons.push(<semantic.Icon name="check" color={props.check} />)
+        const checkOpacity = props.check === 'grey' ? 0.3 : 1.0
+        icons.push(
+          <semantic.Icon
+            style={{opacity: checkOpacity}}
+            name="check"
+            color={props.check}
+          />
+        )
       }
     }
     return (

@@ -19,7 +19,7 @@ import {subscribeEffects} from './effects'
 import {findSuggestions} from './suggestions'
 import {mainReducer, initialState, actions as unboundActions} from './state'
 
-function readSingleFile(file, asString=false) {
+function readSingleFile(file, asString = false) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = e => {
@@ -151,12 +151,10 @@ class Bom extends React.Component {
           <semantic.Container className="infoBox">
             <semantic.Segment style={{fontSize: 18}}>
               This is an{' '}
-              <a href="https://github.com/kitspace/bom-builder">
-                open source
-              </a>{' '}
-              prototype of an electronics bill of materials editor
-              tool for <a href="https://kitspace.org">Kitspace</a>. Try typing
-              in a component description above (e.g. <code>1uF 0805</code>) or
+              <a href="https://github.com/kitspace/bom-builder">open source</a>{' '}
+              prototype of an electronics bill of materials editor tool for{' '}
+              <a href="https://kitspace.org">Kitspace</a>. Try typing in a
+              component description above (e.g. <code>1uF 0805</code>) or
               opening an existing BOM (csv, xlsx, ods etc.). If you are confused
               maybe{' '}
               <a href="https://www.youtube.com/watch?v=m96G7B1doRQ">
@@ -176,22 +174,18 @@ class Bom extends React.Component {
     )
   }
   componentWillMount() {
-    const storedData = localStorage.getItem('tsv')
-    if (storedData) {
-      const {lines} = oneClickBom.parseTSV(storedData)
-      if (lines.length === 0) {
-        actions.clearAll()
-      } else {
-        actions.initializeLines(lines)
-        const state = store.getState()
-        state.data.present.get('lines').forEach((line, id) => {
-          const suggestions = state.suggestions.getIn([id, 'data'])
-          findSuggestions(id, line, suggestions, actions)
-        })
-      }
-    } else {
-      actions.clearAll()
-    }
+    const storedData =
+      localStorage.getItem('tsv') ||
+      `References\tQty\tDescription\tDigikey\tMouser\tRS\tNewark\tFarnell\tRapid
+      \t1\t\t\t\t\t\t\t
+      `
+    const {lines} = oneClickBom.parseTSV(storedData)
+    actions.initializeLines(lines)
+    const state = store.getState()
+    state.data.present.get('lines').forEach((line, id) => {
+      const suggestions = state.suggestions.getIn([id, 'data'])
+      findSuggestions(id, line, suggestions, actions)
+    })
     window.onresize = e => {
       this.setState({height: window.innerHeight})
     }

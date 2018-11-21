@@ -98,7 +98,7 @@ function PartNumberHeader({sortByThis, isExpanded, toggleExpanded, shorten}) {
                 onClick={toggleExpanded}
                 className="expandLabel"
                 style={{
-                  marginLeft: -15.6,
+                  marginLeft: -15.6
                 }}
               >
                 <semantic.Icon name="angle double right" />
@@ -122,7 +122,7 @@ function mapStateToProps(state) {
   const first = state.data.present.get('lines').first()
   return {
     partNumbersExpanded,
-    maxPartNumbers: first ? first.get('partNumbers').size : 1
+    maxPartNumbers: first ? Math.max(first.get('partNumbers').size, 1) : 1
   }
 }
 

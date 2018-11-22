@@ -158,6 +158,7 @@ function makeCheckSelector(
         if (s.get('type') === 'match') {
           return x
         }
+        return prev
       }, -1)
       if (match >= 0) {
         return checkColors[match]

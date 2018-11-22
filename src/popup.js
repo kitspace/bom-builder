@@ -74,9 +74,10 @@ class Popup extends React.PureComponent {
 }
 
 class SkuPopup extends Popup {
-  constructor(props) {
-    super(props)
+  constructor(...args) {
+    super(...args)
     this.toggleSelected = this.toggleSelected.bind(this)
+    this.state = {expanded: false}
   }
   toggleSelected() {
     const {selected, remove, setField, suggestions, lineId, field} = this.props
@@ -103,7 +104,8 @@ class SkuPopup extends Popup {
     }
     const suggestion = suggestions.get(this.state.viewing) || immutable.Map()
     const partData = suggestion.get('partData') || immutable.Map()
-    const image = suggestion.get('image') || immutable.Map()
+    const image =
+      suggestion.get('image') || partData.get('image') || immutable.Map()
     const sku = suggestion.get('sku') || immutable.Map()
     const mpn = suggestion.get('mpn') || immutable.Map()
     const part = sku.get('part') || ''
@@ -143,7 +145,9 @@ class SkuPopup extends Popup {
           page={`${this.state.viewing + 1}/${suggestions.size}`}
           wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
         />
-        <div className='subTitle'>{mpn.get('manufacturer') + ' - ' + mpn.get('part')}</div>
+        <div className="subTitle">
+          {mpn.get('manufacturer') + ' - ' + mpn.get('part')}
+        </div>
       </div>
     )
     const priceTable = (
@@ -151,20 +155,7 @@ class SkuPopup extends Popup {
         specs={stockInfo.concat(pricesToSpecs(suggestion.get('prices')))}
       />
     )
-    let expandButton
-    if (suggestion.get('specs') && suggestion.get('specs').size > 4) {
-      expandButton = (
-        <div className="expandButtonContainer">
-          <semantic.Button
-            onClick={this.toggleExpanded}
-            size="tiny"
-            basic={true}
-          >
-            {this.state.expanded ? '⇡' : '...'}
-          </semantic.Button>
-        </div>
-      )
-    }
+    let specs = partData.get('specs') || immutable.List()
     return (
       <semantic.Popup {...popupProps}>
         <Buttons
@@ -196,15 +187,55 @@ class SkuPopup extends Popup {
             </div>
           </div>
           <div className="leftHandModule">
-            <div className="description">
-              <p>{partData.get('description')}</p>
+            <div
+              style={{
+                display: 'flex',
+                width: '100%',
+                justifyContent: 'center',
+                marginBottom: 10
+              }}
+            >
+              <semantic.Button
+                style={{display: this.state.expanded ? 'initial' : 'none'}}
+                onClick={this.toggleExpanded}
+                size="tiny"
+                basic={true}
+                icon="eye"
+              >
+                {this.state.expanded ? '⭬' : '...'}
+              </semantic.Button>
             </div>
-            <Datasheet href={partData.get('datasheet')} />
+            {this.state.expanded && (
+              <div>
+                <div
+                  style={{cursor: 'pointer'}}
+                  onClick={this.toggleExpanded}
+                  className="description"
+                >
+                  {partData.get('description')}
+                </div>
+                <Datasheet href={partData.get('datasheet')} />
+                <SpecTable specs={specs} />
+              </div>
+            )}
           </div>
           <div className="rightHandModule">
+            {!this.state.expanded && (
+              <div className="description" style={{cursor: 'pointer'}}>
+                {partData.get('description')}
+              </div>
+            )}
+            <semantic.Button
+              style={{visibility: this.state.expanded ? 'hidden' : 'visible'}}
+              onClick={this.toggleExpanded}
+              size="tiny"
+              basic={true}
+              icon="eye"
+            >
+              {this.state.expanded ? '⭬' : '...'}
+            </semantic.Button>
             <Datasheet href={suggestion.get('datasheet')} />
             {priceTable}
-            {expandButton}
           </div>
         </div>
       </semantic.Popup>

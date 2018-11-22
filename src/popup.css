@@ -72,6 +72,11 @@ a.imageCredit {
    margin-bottom: 20px;
 }
 
+.leftHandModule {
+   margin-left: 20px;
+   margin-right: 20px;
+}
+
 .expandButtonContainer {
    display: flex;
    justify-content: center;

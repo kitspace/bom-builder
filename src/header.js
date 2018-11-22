@@ -16,13 +16,22 @@ function Header({
     <thead>
       <tr>
         <th colSpan={2}>
-          <a onClick={() => sortBy('reference')}>References</a>
+          <span style={{cursor: 'pointer'}} onClick={() => sortBy('reference')}>
+            References
+          </span>
         </th>
         <th>
-          <a onClick={() => sortBy('quantity')}>Qty</a>
+          <span style={{cursor: 'pointer'}} onClick={() => sortBy('quantity')}>
+            Quantity
+          </span>
         </th>
         <th>
-          <a onClick={() => sortBy('description')}>Description</a>
+          <span
+            style={{cursor: 'pointer'}}
+            onClick={() => sortBy('description')}
+          >
+            Description
+          </span>
         </th>
         {(() => {
           const cells = []
@@ -31,9 +40,12 @@ function Header({
               cells.push(
                 <th style={{minWidth: 160}} key={`Manufacturer${i}`}>
                   <div className="headerWithButton">
-                    <a onClick={() => sortBy(['manufacturer', i])}>
+                    <span
+                      style={{cursor: 'pointer'}}
+                      onClick={() => sortBy(['manufacturer', i])}
+                    >
                       Manufacturer
-                    </a>
+                    </span>
                   </div>
                 </th>
               )
@@ -58,7 +70,12 @@ function Header({
               return (
                 <th key={retailer}>
                   <div className="headerWithButton">
-                    <a onClick={() => sortBy(retailer)}>{retailer}</a>
+                    <span
+                      style={{cursor: 'pointer'}}
+                      onClick={() => sortBy(retailer)}
+                    >
+                      {retailer}
+                    </span>
                     <div>
                       <semantic.Button circular className="headerButton">
                         <i className="icon-basket-3" />
@@ -107,7 +124,9 @@ function PartNumberHeader({sortByThis, isExpanded, toggleExpanded, shorten}) {
             )
           }
         })()}
-        <a onClick={sortByThis}>{text}</a>
+        <span style={{cursor: 'pointer'}} onClick={sortByThis}>
+          {text}
+        </span>
       </div>
     </th>
   )

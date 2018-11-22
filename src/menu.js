@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import immutable from 'immutable'
 
-import {emptyLine, actions} from './state'
+import {actions} from './state'
 
 function Menu(props) {
   return (

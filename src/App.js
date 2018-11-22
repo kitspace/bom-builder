@@ -175,7 +175,7 @@ class Bom extends React.Component {
       </reactRedux.Provider>
     )
   }
-  componentWillMount() {
+  componentDidMount() {
     const storedData = localStorage.getItem('tsv') || initialStoredData
     const {lines} = oneClickBom.parseTSV(storedData)
     actions.initializeLines(lines)

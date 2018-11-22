@@ -99,7 +99,7 @@ class Cell extends React.PureComponent {
         style={{maxWidth: props.active ? '' : 100, minWidth: 50}}
         onClick={props.onClick}
       >
-        <a>
+        <div>
           {smallField}
           {icons}
           {props.contents}
@@ -107,7 +107,7 @@ class Cell extends React.PureComponent {
           <div key="div" style={{visibility: 'hidden', height: 0}}>
             {props.value}
           </div>
-        </a>
+        </div>
       </semantic.Table.Cell>
     )
   }
@@ -163,7 +163,7 @@ class EditInput extends React.PureComponent {
       }
     }
   }
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(newProps) {
     if (this.props.type !== 'number') {
       if (newProps.value !== this.state.initialValue) {
         clearTimeout(this.timeout)

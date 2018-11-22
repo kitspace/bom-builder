@@ -17,7 +17,7 @@
     "react-scripts": "2.0.0",
     "redux": "^3.7.2",
     "redux-undo-immutable-js": "^1.0.0-beta9-1",
-    "reselect": "^3.0.1",
+    "reselect": "^4.0.0",
     "semantic-ui-css": "^2.2.11",
     "semantic-ui-react": "^0.71.2",
     "superagent": "^3.5.2"

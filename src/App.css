@@ -180,7 +180,7 @@ table {
 }
 
 td {
-   padding: 0px !important;
+   padding: 0px 0px 0px 2px !important;
 }
 
 th {

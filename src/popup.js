@@ -37,7 +37,7 @@ class Popup extends React.PureComponent {
     this.setViewing = this.setViewing.bind(this)
     this.handleClose = this.handleClose.bind(this)
   }
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(newProps) {
     if (
       newProps.suggestions &&
       !newProps.suggestions.equals(this.props.suggestions)

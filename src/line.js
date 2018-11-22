@@ -69,7 +69,7 @@ function Line(props) {
     return <SkuCell key={name} field={field} lineId={lineId} />
   })
   return (
-    <semantic.Table.Row active={editingLine}>
+    <semantic.Table.Row className='bomLine' active={editingLine}>
       <Handle lineId={lineId} />
       <SimpleCell field={fields.get('reference')} lineId={lineId} />
       <SimpleCell field={fields.get('quantity')} lineId={lineId} />

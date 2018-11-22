@@ -6,7 +6,7 @@ import Line from './line'
 function Body(props) {
   return (
     <tbody>
-      {props.lineIds.map(lineId => <Line key={lineId} lineId={lineId} />)}
+      {props.lineIds.map(lineId => <Line className='bomLine' key={lineId} lineId={lineId} />)}
     </tbody>
   )
 }

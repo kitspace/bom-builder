@@ -102,6 +102,7 @@ class SkuPopup extends Popup {
       on: props.on
     }
     const suggestion = suggestions.get(this.state.viewing) || immutable.Map()
+    const partData = suggestion.get('partData') || immutable.Map()
     const image = suggestion.get('image') || immutable.Map()
     const sku = suggestion.get('sku') || immutable.Map()
     const mpn = suggestion.get('mpn') || immutable.Map()
@@ -136,11 +137,14 @@ class SkuPopup extends Popup {
     )
     stockInfo = immutable.List(stockInfo)
     const skuTitle = (
-      <Title
-        one={<a href={getSkuUrl(vendor, part)}>{part}</a>}
-        page={`${this.state.viewing + 1}/${suggestions.size}`}
-        wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
-      />
+      <div>
+        <Title
+          one={<a href={getSkuUrl(vendor, part)}>{part}</a>}
+          page={`${this.state.viewing + 1}/${suggestions.size}`}
+          wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
+        />
+        <div className='subTitle'>{mpn.get('manufacturer') + ' - ' + mpn.get('part')}</div>
+      </div>
     )
     const priceTable = (
       <SpecTable
@@ -191,10 +195,13 @@ class SkuPopup extends Popup {
               </a>
             </div>
           </div>
-          <div className="rightHandModule">
+          <div className="leftHandModule">
             <div className="description">
-              {mpn.get('manufacturer') + ' - ' + mpn.get('part')}
+              <p>{partData.get('description')}</p>
             </div>
+            <Datasheet href={partData.get('datasheet')} />
+          </div>
+          <div className="rightHandModule">
             <Datasheet href={suggestion.get('datasheet')} />
             {priceTable}
             {expandButton}

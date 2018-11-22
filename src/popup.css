@@ -44,7 +44,7 @@ a.imageCredit {
    display: flex;
    border-bottom: 1px solid #e8e8e9;
    justify-content: space-between;
-   margin: 20px;
+   margin: 20px 20px 5px 20px;
 }
 
 .viewingNumber {
@@ -62,6 +62,14 @@ a.imageCredit {
 
 .mpnTitle > div {
    margin: 5px;
+}
+
+.subTitle {
+   display: flex;
+   justify-content: center;
+   font-weight: bold;
+   font-size: 12px;
+   margin-bottom: 20px;
 }
 
 .expandButtonContainer {

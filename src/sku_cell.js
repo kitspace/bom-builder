@@ -72,6 +72,7 @@ function makeApplicableSuggestions() {
             .filter(o => o.getIn(['sku', 'vendor']) === retailer)
           return offers.map(o =>
             o.merge({
+              partData: s,
               type,
               mpn,
               checkColor: getCheckColor(desiredQuantity, o)

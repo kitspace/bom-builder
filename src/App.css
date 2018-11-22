@@ -172,7 +172,12 @@ div.retailerButtonCellIcon {
 }
 
 .expandLabel > i {
-   margin: 2px !important
+   margin: 2px !important;
+   color: lightgrey;
+}
+
+.expandLabel:hover > i {
+   color: grey;
 }
 
 table {

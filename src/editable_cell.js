@@ -71,8 +71,7 @@ class Cell extends React.PureComponent {
           const wandOpacity = props.wand === 'match' ? 1.0 : 0.3
           icons.push(
             <semantic.Icon
-              style={{opacity: wandOpacity}}
-              size="large"
+              style={{opacity: wandOpacity, fontSize:'1.2em'}}
               color={color}
               name="magic"
               key="magic"

@@ -115,7 +115,7 @@ function PartNumberHeader({sortByThis, isExpanded, toggleExpanded, shorten}) {
                 onClick={toggleExpanded}
                 className="expandLabel"
                 style={{
-                  marginLeft: -15.6
+                  marginLeft: -19
                 }}
               >
                 <semantic.Icon name="angle double right" />

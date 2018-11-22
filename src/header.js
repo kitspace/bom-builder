@@ -78,7 +78,7 @@ function Header({
                     </span>
                     <div>
                       <semantic.Button circular className="headerButton">
-                        <i className="icon-basket-3" />
+                        <i style={{fontSize:16}} className="icon-basket-3" />
                       </semantic.Button>
                     </div>
                   </div>

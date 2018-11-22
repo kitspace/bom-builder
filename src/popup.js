@@ -118,6 +118,7 @@ class SkuPopup extends Popup {
         name={checkColor === 'red' ? 'close' : 'check'}
         style={{marginLeft: 10}}
         color={checkColor}
+        key='checkIcon'
       />
     )
     let stockInfo = [
@@ -200,7 +201,6 @@ class SkuPopup extends Popup {
                 onClick={this.toggleExpanded}
                 size="tiny"
                 basic={true}
-                icon="eye"
               >
                 {this.state.expanded ? '⭬' : '...'}
               </semantic.Button>
@@ -230,7 +230,6 @@ class SkuPopup extends Popup {
               onClick={this.toggleExpanded}
               size="tiny"
               basic={true}
-              icon="eye"
             >
               {this.state.expanded ? '⭬' : '...'}
             </semantic.Button>

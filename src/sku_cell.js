@@ -63,20 +63,42 @@ function makeApplicableSuggestions() {
     (suggestions, lineId, retailer, line) => {
       const desiredQuantity = line.get('quantity')
       suggestions = suggestions.getIn([lineId, 'data']) || immutable.List()
-      return suggestions.flatMap(s => {
-        const type = s.get('type')
-        const mpn = s.get('mpn')
-        const offers = s
-          .get('offers')
-          .filter(o => o.getIn(['sku', 'vendor']) === retailer)
-        return offers.map(o =>
-          o.merge({
-            type,
-            mpn,
-            checkColor: getCheckColor(desiredQuantity, o)
-          })
-        )
-      })
+      return suggestions
+        .flatMap(s => {
+          const type = s.get('type')
+          const mpn = s.get('mpn')
+          const offers = s
+            .get('offers')
+            .filter(o => o.getIn(['sku', 'vendor']) === retailer)
+          return offers.map(o =>
+            o.merge({
+              type,
+              mpn,
+              checkColor: getCheckColor(desiredQuantity, o)
+            })
+          )
+        })
+        .sort((a, b) => {
+          const [aType, bType] = [a.get('type'), b.get('type')]
+          const [aCheck, bCheck] = [a.get('checkColor'), b.get('checkColor')]
+          const [aQty, bQty] = [
+            a.get('in_stock_quantity'),
+            b.get('in_stock_quantity')
+          ]
+          if (aType === 'match' && bType !== 'match' && aCheck === 'green') {
+            return -1
+          }
+          if (aType !== 'match' && bType === 'match' && bCheck === 'green') {
+            return 1
+          }
+          if (aQty > bQty) {
+            return -1
+          }
+          if (aQty < bQty) {
+            return 1
+          }
+          return 0
+        })
     }
   )
 }
@@ -109,7 +131,7 @@ function getCheckColor(desiredQuantity, s) {
   }
 }
 
-const checkColors = ['red', 'orange', 'green']
+const checkColors = ['orange', 'green']
 
 function makeCheckSelector(
   applicableSuggestionsSelector,

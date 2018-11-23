@@ -44,7 +44,7 @@ const MpnCell = createClass({
         setFocusNext={props.setFocusNext}
       />
     )
-    if (props.wand || props.selected > -1) {
+    if (props.suggestions.size > 0) {
       return (
         <MpnPopup
           on="click"
@@ -184,8 +184,26 @@ function mapStateToProps() {
   const selected = makeSelectedSelector(suggestions, mpn)
   const smallValue = makeSmallValueSelector(mpn)
   return reselect.createSelector(
-    [value, editing, active, suggestions, wand, selected, smallValue, mpnPopupExpanded],
-    (value, editing, active, suggestions, wand, selected, smallValue, mpnPopupExpanded) => ({
+    [
+      value,
+      editing,
+      active,
+      suggestions,
+      wand,
+      selected,
+      smallValue,
+      mpnPopupExpanded
+    ],
+    (
+      value,
+      editing,
+      active,
+      suggestions,
+      wand,
+      selected,
+      smallValue,
+      mpnPopupExpanded
+    ) => ({
       value,
       editing,
       active,
@@ -202,6 +220,4 @@ function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
 
-export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(
-  MpnCell
-)
+export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(MpnCell)

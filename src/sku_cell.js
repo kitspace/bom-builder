@@ -34,7 +34,7 @@ const SkuCell = createClass({
         setFocusNext={props.setFocusNext}
       />
     )
-    if (props.wand || props.selected > -1) {
+    if (props.suggestions.size > 0) {
       return (
         <SkuPopup
           on="click"

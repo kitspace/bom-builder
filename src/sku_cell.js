@@ -88,6 +88,24 @@ function makeApplicableSuggestions() {
             a.get('in_stock_quantity'),
             b.get('in_stock_quantity')
           ]
+          if (
+            aType === 'match' &&
+            bType === 'match' &&
+            aCheck === 'green' &&
+            bCheck === 'green'
+          ) {
+            const [aMoq, bMoq] = [a.get('moq'), b.get('moq')]
+            const [aDiff, bDiff] = [
+              Math.abs(aMoq - desiredQuantity),
+              Math.abs(bMoq - desiredQuantity)
+            ]
+            if (aDiff < bDiff) {
+              return -1
+            }
+            if (aDiff > bDiff) {
+              return 1
+            }
+          }
           if (aType === 'match' && bType !== 'match' && aCheck === 'green') {
             return -1
           }

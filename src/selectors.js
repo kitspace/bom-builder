@@ -64,5 +64,5 @@ export default {
   makeLineSelector,
   makeActiveSelector,
   makeValueSelector,
-  makeSuggestionsLoading
+  makeSuggestionsLoading,
 }

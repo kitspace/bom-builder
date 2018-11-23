@@ -44,7 +44,8 @@ export const initialState = {
   view: immutable.fromJS({
     partNumbersExpanded: [],
     focus: [null, null],
-    editable: true
+    editable: true,
+    mpnPopupExpanded: false,
   }),
   suggestions: immutable.Map()
 }
@@ -174,6 +175,10 @@ export const linesActions = {
 export const viewActions = {
   setFocus(state, location) {
     return state.set('focus', immutable.fromJS(location))
+  },
+  setMpnPopupExpanded(state, isExpanded) {
+    console.log('r', 'setMpnPopupExpanded')
+    return state.set('mpnPopupExpanded', isExpanded)
   },
   setEditable(state, value) {
     return state.set('editable', value)

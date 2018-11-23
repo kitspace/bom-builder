@@ -56,6 +56,8 @@ const MpnCell = createClass({
           selected={props.selected}
           setField={setField}
           remove={props.remove}
+          expanded={props.mpnPopupExpanded}
+          setMpnPopupExpanded={props.setMpnPopupExpanded}
         />
       )
     }
@@ -168,6 +170,10 @@ function makeSmallValueSelector(mpn) {
   )
 }
 
+function mpnPopupExpanded(state) {
+  return state.view.get('mpnPopupExpanded')
+}
+
 function mapStateToProps() {
   const active = selectors.makeActiveSelector()
   const value = selectors.makeValueSelector()
@@ -178,15 +184,16 @@ function mapStateToProps() {
   const selected = makeSelectedSelector(suggestions, mpn)
   const smallValue = makeSmallValueSelector(mpn)
   return reselect.createSelector(
-    [value, editing, active, suggestions, wand, selected, smallValue],
-    (value, editing, active, suggestions, wand, selected, smallValue) => ({
+    [value, editing, active, suggestions, wand, selected, smallValue, mpnPopupExpanded],
+    (value, editing, active, suggestions, wand, selected, smallValue, mpnPopupExpanded) => ({
       value,
       editing,
       active,
       suggestions,
       wand,
       selected,
-      smallValue
+      smallValue,
+      mpnPopupExpanded
     })
   )
 }

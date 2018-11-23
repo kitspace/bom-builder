@@ -27,11 +27,9 @@ class Popup extends React.PureComponent {
     super(props)
     const viewing = props.selected < 0 ? 0 : props.selected
     this.state = {
-      expanded: false,
       viewing,
       initialViewing: viewing
     }
-    this.toggleExpanded = this.toggleExpanded.bind(this)
     this.incrementViewing = this.incrementViewing.bind(this)
     this.decrementViewing = this.decrementViewing.bind(this)
     this.setViewing = this.setViewing.bind(this)
@@ -50,9 +48,6 @@ class Popup extends React.PureComponent {
     const viewing = this.props.selected < 0 ? 0 : this.props.selected
     this.setState({viewing})
     this.props.onClose && this.props.onClose()
-  }
-  toggleExpanded() {
-    this.setState({expanded: !this.state.expanded})
   }
   incrementViewing() {
     this.setViewing(this.state.viewing + 1)
@@ -120,7 +115,7 @@ class SkuPopup extends Popup {
         name={checkColor === 'red' ? 'close' : 'check'}
         style={{marginLeft: 10}}
         color={checkColor}
-        key='checkIcon'
+        key="checkIcon"
       />
     )
     let stockInfo = [
@@ -199,15 +194,17 @@ class SkuPopup extends Popup {
               }}
             >
               <semantic.Button
-                style={{display: this.state.expanded ? 'initial' : 'none'}}
-                onClick={this.toggleExpanded}
+                style={{display: this.props.expanded ? 'initial' : 'none'}}
+                onClick={() =>
+                  this.props.setMpnPopupExpanded(!this.props.expanded)
+                }
                 size="tiny"
                 basic={true}
               >
-                {this.state.expanded ? '⭬' : '...'}
+                {this.props.expanded ? '⭬' : '...'}
               </semantic.Button>
             </div>
-            {this.state.expanded && (
+            {this.props.expanded && (
               <div>
                 <div
                   style={{cursor: 'pointer'}}
@@ -222,18 +219,18 @@ class SkuPopup extends Popup {
             )}
           </div>
           <div className="rightHandModule">
-            {!this.state.expanded && (
+            {!this.props.expanded && (
               <div className="description" style={{cursor: 'pointer'}}>
                 {partData.get('description')}
               </div>
             )}
             <semantic.Button
-              style={{visibility: this.state.expanded ? 'hidden' : 'visible'}}
+              style={{visibility: this.props.expanded ? 'hidden' : 'visible'}}
               onClick={this.toggleExpanded}
               size="tiny"
               basic={true}
             >
-              {this.state.expanded ? '⭬' : '...'}
+              {this.props.expanded ? '⭬' : '...'}
             </semantic.Button>
             <Datasheet href={suggestion.get('datasheet')} />
             {priceTable}
@@ -277,7 +274,7 @@ class MpnPopup extends Popup {
     const mpn = suggestion.get('mpn') || immutable.Map()
     const part = mpn.get('part') || ''
     let specs = suggestion.get('specs') || immutable.List()
-    if (!this.state.expanded) {
+    if (!this.props.expanded) {
       specs = specs.slice(0, 4)
     }
     const mpnTitle = (
@@ -294,11 +291,11 @@ class MpnPopup extends Popup {
       expandButton = (
         <div className="expandButtonContainer">
           <semantic.Button
-            onClick={this.toggleExpanded}
+            onClick={() => this.props.setMpnPopupExpanded(!this.props.expanded)}
             size="tiny"
             basic={true}
           >
-            {this.state.expanded ? '⇡' : '...'}
+            {this.props.expanded ? '⇡' : '...'}
           </semantic.Button>
         </div>
       )

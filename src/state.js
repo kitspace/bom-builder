@@ -163,9 +163,9 @@ export const linesActions = {
     let sortedBy = state.get('sortedBy')
     if (sortedBy.get(0) === header && sortedBy.get(1) === 'forward') {
       lines = lines.reverse()
-      sortedBy = [header, 'reverse']
+      sortedBy = immutable.List.of(header, 'reverse')
     } else {
-      sortedBy = [header, 'forward']
+      sortedBy = immutable.List.of(header, 'forward')
     }
     const order = lines.map(l => l.get('id'))
     return state.merge({order, sortedBy})

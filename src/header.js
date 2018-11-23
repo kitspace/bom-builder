@@ -3,6 +3,7 @@ import * as semantic from 'semantic-ui-react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import oneClickBom from '1-click-bom'
+import BuyParts from './buy_parts'
 
 import {actions} from './state'
 
@@ -14,6 +15,7 @@ function Header({
 }) {
   return (
     <thead>
+      <BuyParts colSpan={3} />
       <tr>
         <th colSpan={2}>
           <span style={{cursor: 'pointer'}} onClick={() => sortBy('reference')}>
@@ -76,11 +78,6 @@ function Header({
                     >
                       {retailer}
                     </span>
-                    <div>
-                      <semantic.Button circular className="headerButton">
-                        <i style={{fontSize:16}} className="icon-basket-3" />
-                      </semantic.Button>
-                    </div>
                   </div>
                 </th>
               )

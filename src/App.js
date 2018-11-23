@@ -19,7 +19,8 @@ import {subscribeEffects} from './effects'
 import {findSuggestions} from './suggestions'
 import {mainReducer, initialState, actions as unboundActions} from './state'
 
-const initialStoredData = 'References\tQty\tDescription\tDigikey\tMouser\tRS\tNewark\tFarnell\tRapid\n\t1\t\t\t\t\t\t\t\n'
+const initialStoredData =
+  'References\tQty\tDescription\tDigikey\tMouser\tRS\tNewark\tFarnell\tRapid\n\t1\t\t\t\t\t\t\t\n'
 
 function readSingleFile(file, asString = false) {
   return new Promise((resolve, reject) => {

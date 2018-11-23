@@ -46,6 +46,8 @@ const SkuCell = createClass({
           selected={props.selected}
           setField={setField}
           remove={props.remove}
+          expanded={props.skuPopupExpanded}
+          setSkuPopupExpanded={props.setSkuPopupExpanded}
         />
       )
     }
@@ -183,6 +185,10 @@ function makeSelectedSelector(suggestions) {
   )
 }
 
+function skuPopupExpanded(state) {
+  return state.view.get('skuPopupExpanded')
+}
+
 function mapStateToProps() {
   const active = selectors.makeActiveSelector()
   const editing = selectors.makeEditingSelector()
@@ -192,15 +198,34 @@ function mapStateToProps() {
   const selected = makeSelectedSelector(suggestions)
   const check = makeCheckSelector(suggestions, selected, wand)
   return reselect.createSelector(
-    [value, editing, active, suggestions, wand, check, selected],
-    (value, editing, active, suggestions, wand, check, selected) => ({
+    [
       value,
       editing,
       active,
       suggestions,
       wand,
       check,
-      selected
+      selected,
+      skuPopupExpanded
+    ],
+    (
+      value,
+      editing,
+      active,
+      suggestions,
+      wand,
+      check,
+      selected,
+      skuPopupExpanded
+    ) => ({
+      value,
+      editing,
+      active,
+      suggestions,
+      wand,
+      check,
+      selected,
+      skuPopupExpanded
     })
   )
 }

@@ -33,7 +33,6 @@ export const emptyLine = immutable.Map({
   })
 })
 
-
 export const initialState = {
   data: immutable.fromJS({
     lines: {},
@@ -46,6 +45,7 @@ export const initialState = {
     focus: [null, null],
     editable: true,
     mpnPopupExpanded: false,
+    skuPopupExpanded: false
   }),
   suggestions: immutable.Map()
 }
@@ -177,8 +177,10 @@ export const viewActions = {
     return state.set('focus', immutable.fromJS(location))
   },
   setMpnPopupExpanded(state, isExpanded) {
-    console.log('r', 'setMpnPopupExpanded')
     return state.set('mpnPopupExpanded', isExpanded)
+  },
+  setSkuPopupExpanded(state, isExpanded) {
+    return state.set('skuPopupExpanded', isExpanded)
   },
   setEditable(state, value) {
     return state.set('editable', value)

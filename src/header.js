@@ -13,9 +13,11 @@ function Header({
   sortBy,
   togglePartNumbersExpanded
 }) {
+  const partNumberColumns =
+    maxPartNumbers + partNumbersExpanded.reduce((prev, x) => prev + x, 0)
   return (
     <thead>
-      <BuyParts colSpan={3} />
+      <BuyParts partNumberColumns={partNumberColumns} />
       <tr>
         <th colSpan={2}>
           <span style={{cursor: 'pointer'}} onClick={() => sortBy('reference')}>

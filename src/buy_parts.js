@@ -13,7 +13,8 @@ const retailer_list = oneClickBom
 function BuyParts(props) {
   return (
     <tr style={{height: 40}}>
-      <th colSpan={5} />
+      <th colSpan={4} />
+      <th colSpan={props.partNumberColumns || 1} />
       <th colSpan="100%">
         <div style={{display: 'flex', alignItems: 'center'}}>
           <div>
@@ -24,9 +25,9 @@ function BuyParts(props) {
             </semantic.Button>
           </div>
           <div>
-            <semantic.Button color="blue" basic className="buyPartsButton">
-              <semantic.Icon name="shopping basket"/>
-              <semantic.Icon name="plus"/>
+            <semantic.Button className="buyPartsButton" color="blue" basic>
+              <semantic.Icon name="shopping basket" />
+              <semantic.Icon name="plus" />
               Buy Parts
             </semantic.Button>
           </div>

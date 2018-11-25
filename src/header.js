@@ -7,87 +7,91 @@ import BuyParts from './buy_parts'
 
 import {actions} from './state'
 
-function Header({
-  partNumbersExpanded,
-  maxPartNumbers,
-  sortBy,
-  togglePartNumbersExpanded
-}) {
-  const partNumberColumns =
-    maxPartNumbers + partNumbersExpanded.reduce((prev, x) => prev + x, 0)
-  return (
-    <thead>
-      <BuyParts partNumberColumns={partNumberColumns} />
-      <tr>
-        <th colSpan={2}>
-          <span style={{cursor: 'pointer'}} onClick={() => sortBy('reference')}>
-            References
-          </span>
+const retailer_list = oneClickBom
+  .getRetailers()
+  .filter(r => r !== 'Rapid' && r !== 'Newark')
+
+class Header extends React.Component {
+  render() {
+    const {
+      partNumbersExpanded,
+      maxPartNumbers,
+      sortBy,
+      togglePartNumbersExpanded
+    } = this.props
+    const partNumberColumns =
+      maxPartNumbers + partNumbersExpanded.reduce((prev, x) => prev + x, 0)
+    const cells = []
+    for (let i = 0; i < maxPartNumbers; ++i) {
+      if (partNumbersExpanded.get(i)) {
+        cells.push(
+          <th style={{minWidth: 160}} key={`Manufacturer${i}`}>
+            <div className="headerWithButton">
+              <span
+                style={{cursor: 'pointer'}}
+                onClick={() => sortBy(['manufacturer', i])}
+              >
+                Manufacturer
+              </span>
+            </div>
+          </th>
+        )
+      }
+      cells.push(
+        <PartNumberHeader
+          isExpanded={partNumbersExpanded.get(i)}
+          toggleExpanded={() => togglePartNumbersExpanded(i)}
+          sortByThis={() => sortBy(['part', i])}
+          key={`MPN${i}`}
+          shorten={maxPartNumbers > 1 && i === maxPartNumbers - 1}
+        />
+      )
+    }
+    const headers = retailer_list.map((retailer, i) => {
+      return (
+        <th key={retailer}>
+          <div className="headerWithButton">
+            <span style={{cursor: 'pointer'}} onClick={() => sortBy(retailer)}>
+              {retailer}
+            </span>
+          </div>
         </th>
-        <th>
-          <span style={{cursor: 'pointer'}} onClick={() => sortBy('quantity')}>
-            Quantity
-          </span>
-        </th>
-        <th>
-          <span
-            style={{cursor: 'pointer'}}
-            onClick={() => sortBy('description')}
-          >
-            Description
-          </span>
-        </th>
-        {(() => {
-          const cells = []
-          for (let i = 0; i < maxPartNumbers; ++i) {
-            if (partNumbersExpanded.get(i)) {
-              cells.push(
-                <th style={{minWidth: 160}} key={`Manufacturer${i}`}>
-                  <div className="headerWithButton">
-                    <span
-                      style={{cursor: 'pointer'}}
-                      onClick={() => sortBy(['manufacturer', i])}
-                    >
-                      Manufacturer
-                    </span>
-                  </div>
-                </th>
-              )
-            }
-            cells.push(
-              <PartNumberHeader
-                isExpanded={partNumbersExpanded.get(i)}
-                toggleExpanded={() => togglePartNumbersExpanded(i)}
-                sortByThis={() => sortBy(['part', i])}
-                key={`MPN${i}`}
-                shorten={maxPartNumbers > 1 && i === maxPartNumbers - 1}
-              />
-            )
-          }
-          return cells
-        })()}
-        {(() => {
-          return oneClickBom
-            .getRetailers()
-            .filter(r => r !== 'Rapid' && r !== 'Newark')
-            .map((retailer, i) => {
-              return (
-                <th key={retailer}>
-                  <div className="headerWithButton">
-                    <span
-                      style={{cursor: 'pointer'}}
-                      onClick={() => sortBy(retailer)}
-                    >
-                      {retailer}
-                    </span>
-                  </div>
-                </th>
-              )
-            })
-        })()}
-      </tr>
-    </thead>
-  )
+      )
+    })
+    return (
+      <thead>
+        <BuyParts partNumberColumns={partNumberColumns} />
+        <tr>
+          <th colSpan={2}>
+            <span
+              style={{cursor: 'pointer'}}
+              onClick={() => sortBy('reference')}
+            >
+              References
+            </span>
+          </th>
+          <th>
+            <span
+              style={{cursor: 'pointer'}}
+              onClick={() => sortBy('quantity')}
+            >
+              Quantity
+            </span>
+          </th>
+          <th>
+            <span
+              style={{cursor: 'pointer'}}
+              onClick={() => sortBy('description')}
+            >
+              Description
+            </span>
+          </th>
+          {cells}
+          {headers}
+        </tr>
+      </thead>
+    )
+  }
 }
 
 function PartNumberHeader({sortByThis, isExpanded, toggleExpanded, shorten}) {

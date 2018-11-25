@@ -74,6 +74,7 @@ class SkuPopup extends Popup {
   constructor(...args) {
     super(...args)
     this.toggleSelected = this.toggleSelected.bind(this)
+    this.toggleExpanded = this.toggleExpanded.bind(this)
   }
   toggleSelected() {
     const {selected, remove, setField, suggestions, lineId, field} = this.props
@@ -83,6 +84,9 @@ class SkuPopup extends Popup {
       const value = suggestions.getIn([this.state.viewing, 'sku', 'part'])
       setField({lineId, field, value})
     }
+  }
+  toggleExpanded() {
+    this.props.setSkuPopupExpanded(!this.props.expanded)
   }
   render() {
     const props = this.props
@@ -194,9 +198,7 @@ class SkuPopup extends Popup {
             >
               <semantic.Button
                 style={{display: this.props.expanded ? 'initial' : 'none'}}
-                onClick={() =>
-                  this.props.setSkuPopupExpanded(!this.props.expanded)
-                }
+                onClick={this.toggleExpanded}
                 size="tiny"
                 basic={true}
               >
@@ -221,9 +223,7 @@ class SkuPopup extends Popup {
             )}
             <semantic.Button
               style={{visibility: this.props.expanded ? 'hidden' : 'visible'}}
-              onClick={() =>
-                this.props.setSkuPopupExpanded(!this.props.expanded)
-              }
+              onClick={this.toggleExpanded}
               size="tiny"
               basic={true}
             >
@@ -288,7 +288,7 @@ class MpnPopup extends Popup {
       expandButton = (
         <div className="expandButtonContainer">
           <semantic.Button
-            onClick={() => this.props.setMpnPopupExpanded(!this.props.expanded)}
+            onClick={this.toggleExpanded}
             size="tiny"
             basic={true}
           >

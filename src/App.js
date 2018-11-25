@@ -147,7 +147,7 @@ class Bom extends React.Component {
             </semantic.Table>
           </div>
           <semantic.Button
-            onClick={() => actions.addEmptyLine()}
+            onClick={actions.addEmptyLine}
             basic
             icon={<semantic.Icon name="plus" />}
           />

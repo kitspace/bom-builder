@@ -42,8 +42,18 @@ const store = redux.createStore(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
 
+let previous_tsv
+let previous_state
 store.subscribe(() => {
-  localStorage.setItem('tsv', getTsv())
+  const state = store.getState().data.present
+  if (state !== previous_state) {
+    const tsv = getTsv()
+    if (tsv !== previous_tsv) {
+      localStorage.setItem('tsv', tsv)
+      previous_tsv = tsv
+    }
+    previous_state = state
+  }
 })
 
 const actions = redux.bindActionCreators(unboundActions, store.dispatch)

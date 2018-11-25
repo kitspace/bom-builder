@@ -74,38 +74,40 @@ query MatchQuery($input: [MpnOrSku]!) {
   }
 }`
 
-const request_bus = new EventEmitter()
+const match_request_bus = new EventEmitter()
 const response_bus = new EventEmitter()
 
-let requests = []
-request_bus.on('request', ({id, input}) => {
-  requests.push({id, input})
-  runRequests()
+let match_requests = []
+match_request_bus.on('request', ({id, input}) => {
+  match_requests.push({id, input})
+  runMatchRequests()
 })
 
-setInterval(runRequests, 1000)
+setInterval(runMatchRequests, 1000)
 
 let previous_time = Date.now()
-async function runRequests() {
+async function runMatchRequests() {
   const time = Date.now()
   if (
-    requests.length >= 20 ||
-    (time - previous_time > 10000 && requests.length > 0)
+    match_requests.length >= 20 ||
+    (time - previous_time > 10000 && match_requests.length > 0)
   ) {
     previous_time = time
-    const parts = requests.map(({input}) => {
+    const parts = match_requests.map(({input}) => {
       if (input.vendor) {
         return {sku: input}
       }
       return {mpn: input}
     })
-    const ids = requests.map(({id}) => id)
-    requests = []
+    const ids = match_requests.map(({id}) => id)
+    match_requests = []
     const matches = await runQuery(MatchQuery, parts)
-    matches.forEach((r, i) => {
-      const id = ids[i]
-      response_bus.emit(id, r)
-    })
+    if (matches) {
+      matches.forEach((r, i) => {
+        const id = ids[i]
+        response_bus.emit(id, r)
+      })
+    }
   }
 }
 
@@ -116,7 +118,7 @@ function IdMaker() {
 
 const makeId = new IdMaker()
 
-function addRequest(input) {
+function addMatchRequest(input) {
   return new Promise((resolve, reject) => {
     let timeout
     const id = makeId()
@@ -124,19 +126,25 @@ function addRequest(input) {
       clearTimeout(timeout)
       resolve(r)
     })
-    request_bus.emit('request', {id, input})
-    timeout = setTimeout(() => reject(new Error('timed out')), 60000)
+    match_request_bus.emit('request', {id, input})
+    timeout = setTimeout(() => {
+      console.error('Request timed out')
+      resolve()
+    }, 60000)
   })
 }
 
 export default function getPartinfo(input) {
   if (typeof input === 'string') {
+    if (!input) {
+      return Promise.resolve(null)
+    }
     return runQuery(SearchQuery, input)
   }
   if (!input.part || input.part === '') {
     return Promise.resolve(null)
   }
-  return addRequest(input)
+  return addMatchRequest(input)
 }
 
 function runQuery(query, input) {

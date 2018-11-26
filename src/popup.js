@@ -34,6 +34,7 @@ class Popup extends React.PureComponent {
     this.decrementViewing = this.decrementViewing.bind(this)
     this.setViewing = this.setViewing.bind(this)
     this.handleClose = this.handleClose.bind(this)
+    this.toggleExpanded = this.toggleExpanded.bind(this)
   }
   UNSAFE_componentWillReceiveProps(newProps) {
     if (
@@ -43,6 +44,9 @@ class Popup extends React.PureComponent {
       const viewing = newProps.selected < 0 ? 0 : newProps.selected
       this.setViewing(viewing)
     }
+  }
+  toggleExpanded() {
+    this.props.setExpanded(!this.props.expanded)
   }
   handleClose() {
     const viewing = this.props.selected < 0 ? 0 : this.props.selected
@@ -74,7 +78,6 @@ class SkuPopup extends Popup {
   constructor(...args) {
     super(...args)
     this.toggleSelected = this.toggleSelected.bind(this)
-    this.toggleExpanded = this.toggleExpanded.bind(this)
   }
   toggleSelected() {
     const {selected, remove, setField, suggestions, lineId, field} = this.props
@@ -84,9 +87,6 @@ class SkuPopup extends Popup {
       const value = suggestions.getIn([this.state.viewing, 'sku', 'part'])
       setField({lineId, field, value})
     }
-  }
-  toggleExpanded() {
-    this.props.setSkuPopupExpanded(!this.props.expanded)
   }
   render() {
     const props = this.props

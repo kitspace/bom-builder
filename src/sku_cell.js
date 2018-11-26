@@ -47,7 +47,7 @@ const SkuCell = createClass({
           setField={setField}
           remove={props.remove}
           expanded={props.skuPopupExpanded}
-          setSkuPopupExpanded={props.setSkuPopupExpanded}
+          setExpanded={props.setSkuPopupExpanded}
         />
       )
     }

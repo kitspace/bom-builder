@@ -57,7 +57,7 @@ const MpnCell = createClass({
           setField={setField}
           remove={props.remove}
           expanded={props.mpnPopupExpanded}
-          setMpnPopupExpanded={props.setMpnPopupExpanded}
+          setExpanded={props.setMpnPopupExpanded}
         />
       )
     }

@@ -130,8 +130,8 @@ function downloadBom() {
 subscribeEffects(store, actions)
 
 class Bom extends React.Component {
-  constructor(props) {
-    super(props)
+  constructor(props, ...args) {
+    super(props, ...args)
     this.state = {height: window.innerHeight}
   }
   render() {

@@ -113,8 +113,8 @@ class Cell extends React.PureComponent {
 }
 
 class EditInput extends React.PureComponent {
-  constructor(props) {
-    super(props)
+  constructor(props, ...args) {
+    super(props, ...args)
     this.skipInitialBlur = true
     this.handleBlur = this.handleBlur.bind(this)
     this.handleChange = this.handleChange.bind(this)

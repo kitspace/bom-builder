@@ -23,8 +23,8 @@ function getSkuUrl(vendor, sku) {
   }
 }
 class Popup extends React.PureComponent {
-  constructor(props) {
-    super(props)
+  constructor(props, ...args) {
+    super(props, ...args)
     const viewing = props.selected < 0 ? 0 : props.selected
     this.state = {
       viewing,
@@ -75,8 +75,8 @@ class Popup extends React.PureComponent {
 }
 
 class SkuPopup extends Popup {
-  constructor(...args) {
-    super(...args)
+  constructor(props, ...args) {
+    super(props, ...args)
     this.toggleSelected = this.toggleSelected.bind(this)
   }
   toggleSelected() {
@@ -239,8 +239,8 @@ class SkuPopup extends Popup {
 }
 
 class MpnPopup extends Popup {
-  constructor(props) {
-    super(props)
+  constructor(props, ...args) {
+    super(props, ...args)
     this.toggleSelected = this.toggleSelected.bind(this)
   }
   toggleSelected() {

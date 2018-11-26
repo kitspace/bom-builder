@@ -118,28 +118,43 @@ function IdMaker() {
 
 const makeId = new IdMaker()
 
+const match_cache = {}
+
 function addMatchRequest(input) {
   return new Promise((resolve, reject) => {
+    const key = (input.vendor || input.manufacturer) + ':' + input.part
+    if (key in match_cache) {
+      return resolve(match_cache[key])
+    }
     let timeout
     const id = makeId()
     response_bus.once(id, r => {
       clearTimeout(timeout)
+      match_cache[key] = r
       resolve(r)
     })
     match_request_bus.emit('request', {id, input})
     timeout = setTimeout(() => {
       console.error('Request timed out')
       resolve()
-    }, 60000)
+    }, 5 * 60000)
   })
 }
 
+const search_cache = {}
+
 export default function getPartinfo(input) {
+  if (!input) {
+    return Promise.resolve(null)
+  }
   if (typeof input === 'string') {
-    if (!input) {
-      return Promise.resolve(null)
+    if (input in search_cache) {
+      return Promise.resolve(search_cache[input])
     }
-    return runQuery(SearchQuery, input)
+    return runQuery(SearchQuery, input).then(r => {
+      search_cache[input] = r
+      return r
+    })
   }
   if (!input.part || input.part === '') {
     return Promise.resolve(null)

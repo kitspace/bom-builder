@@ -120,9 +120,13 @@ const makeId = new IdMaker()
 
 const match_cache = {}
 
+function mpnOrSkuToKey(input) {
+  return (input.vendor || input.manufacturer) + ':' + input.part
+}
+
 function addMatchRequest(input) {
   return new Promise((resolve, reject) => {
-    const key = (input.vendor || input.manufacturer) + ':' + input.part
+    const key = mpnOrSkuToKey(input)
     if (key in match_cache) {
       return resolve(match_cache[key])
     }
@@ -131,6 +135,12 @@ function addMatchRequest(input) {
     response_bus.once(id, r => {
       clearTimeout(timeout)
       match_cache[key] = r
+      if (r && r.offers) {
+        r.offers.forEach(offer => {
+          const k = mpnOrSkuToKey(offer.sku)
+          match_cache[k] = r
+        })
+      }
       resolve(r)
     })
     match_request_bus.emit('request', {id, input})

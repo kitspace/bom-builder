@@ -7,7 +7,7 @@ import * as immutable from 'immutable'
 
 import {actions} from './state'
 import {SkuPopup} from './popup'
-import selectors from './selectors'
+import * as selectors from './selectors'
 import EditableCell from './editable_cell'
 
 const SkuCell = createClass({
@@ -64,11 +64,11 @@ function retailerSelector(_, props) {
 }
 
 function makeApplicableSuggestions() {
+  const suggestions = selectors.makeSuggestionsSelector()
   return reselect.createSelector(
-    [selectors.suggestions, selectors.lineId, retailerSelector, selectors.line],
-    (suggestions, lineId, retailer, line) => {
+    [suggestions, retailerSelector, selectors.line],
+    (suggestions, retailer, line) => {
       const desiredQuantity = line.get('quantity')
-      suggestions = suggestions.getIn([lineId, 'data']) || immutable.List()
       return suggestions
         .flatMap(s => {
           const type = s.get('type')

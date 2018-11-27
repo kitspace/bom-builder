@@ -1,64 +1,60 @@
 import * as immutable from 'immutable'
 import * as reselect from 'reselect'
 
-function suggestions(state) {
+export function suggestions(state) {
   return state.suggestions
 }
 
-function line(state, props) {
+export function makeSuggestionsSelector() {
+  return reselect.createSelector(
+    [suggestions, lineId],
+    (suggestions, lineId) => {
+      return suggestions.getIn([lineId, 'data']) || immutable.List()
+    }
+  )
+}
+
+export function line(state, props) {
   return state.data.present.getIn(['lines', props.lineId])
 }
 
-function view(state) {
+export function view(state) {
   return state.view
 }
 
-function lineId(_, props) {
+export function lineId(_, props) {
   return props.lineId
 }
 
-function field(_, props) {
+export function field(_, props) {
   return props.field
 }
 
-function makeValueSelector() {
+export function makeValueSelector() {
   return reselect.createSelector([line, field], (line, field) =>
     line.getIn(field)
   )
 }
 
-function editingThis(editing, lineId, field) {
+export function editingThis(editing, lineId, field) {
   return editing && editing.equals(immutable.fromJS([lineId, field]))
 }
 
-function makeActiveSelector() {
+export function makeActiveSelector() {
   return reselect.createSelector([editingSelector, lineId, field], editingThis)
 }
 
-function editingSelector(state) {
+export function editingSelector(state) {
   return state.view.get('editable') ? state.view.get('focus') : null
 }
 
-function makeLineSelector() {
+export function makeLineSelector() {
   return reselect.createSelector([line], line => line)
 }
 
-function makeSuggestionsLoading() {
+export function makeSuggestionsLoading() {
   return reselect.createSelector(
     [suggestions, lineId],
     (suggestions, lineId) => suggestions.getIn([lineId, 'status']) === 'loading'
   )
 }
-
-export default {
-  line,
-  suggestions,
-  view,
-  lineId,
-  field,
-  makeLineSelector,
-  makeActiveSelector,
-  makeValueSelector,
-  makeSuggestionsLoading,
-}
-

@@ -6,7 +6,7 @@ import * as immutable from 'immutable'
 
 import {actions} from './state'
 import {MpnPopup} from './popup'
-import selectors from './selectors'
+import * as selectors from './selectors'
 import EditableCell from './editable_cell'
 
 class MpnCell extends React.Component {
@@ -101,10 +101,10 @@ function makeSuggestionNumberSelector() {
 
 function makeApplicableSuggestions(mpn) {
   const otherMpns = makeOtherMpnsSelector(mpn)
+  const suggestions = selectors.makeSuggestionsSelector()
   return reselect.createSelector(
-    [selectors.suggestions, otherMpns, selectors.lineId],
+    [suggestions, otherMpns, selectors.lineId],
     (suggestions, otherMpns, lineId, suggestionNumber) => {
-      suggestions = suggestions.getIn([lineId, 'data']) || immutable.List()
       return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
     }
   )

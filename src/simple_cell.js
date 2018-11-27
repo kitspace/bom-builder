@@ -3,7 +3,7 @@ import * as reactRedux from 'react-redux'
 import * as reselect from 'reselect'
 
 import EditableCell from './editable_cell'
-import selectors from './selectors'
+import * as selectors from './selectors'
 import {actions} from './state'
 
 function mapStateToProps() {

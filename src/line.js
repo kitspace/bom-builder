@@ -6,7 +6,7 @@ import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import * as reselect from 'reselect'
 
-import selectors from './selectors'
+import * as selectors from './selectors'
 import {actions} from './state'
 import SimpleCell from './simple_cell'
 import MpnCell from './mpn_cell'

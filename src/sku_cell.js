@@ -15,6 +15,11 @@ const SkuCell = createClass({
   getInitialState() {
     return {triggered: false}
   },
+  shouldComponentUpdate(newProps) {
+    return Object.keys(newProps).reduce((prev, k) => {
+      return prev || (k !== 'field' && newProps[k] !== this.props[k])
+    }, false)
+  },
   render() {
     const props = this.props
     const {value, lineId, field, setField, setFocus, active} = props

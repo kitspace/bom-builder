@@ -10,17 +10,14 @@ import selectors from './selectors'
 import EditableCell from './editable_cell'
 
 class MpnCell extends React.Component {
+  shouldComponentUpdate(newProps) {
+    return Object.keys(newProps).reduce((prev, k) => {
+      return prev || (k !== 'field' && newProps[k] !== this.props[k])
+    }, false)
+  }
   render() {
     const props = this.props
-    const {
-      value,
-      smallValue,
-      lineId,
-      field,
-      setField,
-      setFocus,
-      active
-    } = props
+    const {value, smallValue, lineId, field, setField, setFocus, active} = props
     const cell = (
       <EditableCell
         field={field}
@@ -176,15 +173,7 @@ function mapStateToProps() {
   const selected = makeSelectedSelector(suggestions, mpn)
   const smallValue = makeSmallValueSelector(mpn)
   return reselect.createSelector(
-    [
-      value,
-      active,
-      suggestions,
-      wand,
-      selected,
-      smallValue,
-      mpnPopupExpanded
-    ],
+    [value, active, suggestions, wand, selected, smallValue, mpnPopupExpanded],
     (
       value,
       active,

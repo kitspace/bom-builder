@@ -1,5 +1,4 @@
 import React from 'react'
-import * as createClass from 'create-react-class'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import * as reselect from 'reselect'
@@ -10,11 +9,7 @@ import {MpnPopup} from './popup'
 import selectors from './selectors'
 import EditableCell from './editable_cell'
 
-const MpnCell = createClass({
-  displayName: 'MpnCell',
-  getInitialState() {
-    return {triggered: false}
-  },
+class MpnCell extends React.Component {
   render() {
     const props = this.props
     const {
@@ -63,7 +58,7 @@ const MpnCell = createClass({
     }
     return cell
   }
-})
+}
 
 function parentField(_, props) {
   return props.field.pop()

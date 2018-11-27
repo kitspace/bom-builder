@@ -79,11 +79,20 @@ async function findSuggestions(
       })
   )
 
+  suggestions = makeUniform(suggestions)
+  actions.setSuggestions({lineId, suggestions})
+
   const ds = await fromDescription(line.get('description'))
   if (ds) {
     suggestions = suggestions.concat(ds)
   }
 
+  suggestions = makeUniform(suggestions)
+  actions.setSuggestions({lineId, suggestions})
+  actions.setSuggestionsStatus({lineId, status: 'done'})
+}
+
+function makeUniform(suggestions) {
   //make unique
   suggestions = suggestions.reduce((prev, p) => {
     if (prev.map(s => s.get('mpn')).includes(p.get('mpn'))) {
@@ -123,7 +132,7 @@ async function findSuggestions(
     return 0
   })
 
-  actions.setSuggestions({lineId, suggestions})
+  return suggestions
 }
 
 export {findSuggestions}

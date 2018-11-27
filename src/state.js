@@ -367,8 +367,7 @@ const linesReducer = reduxUndo.default(
 
 const suggestionsActions = {
   setSuggestions(state, {lineId, suggestions}) {
-    const s = immutable.Map({status: 'done', data: suggestions})
-    return state.set(lineId, s)
+    return state.setIn([lineId, 'data'], suggestions)
   },
   setSuggestionsStatus(state, {lineId, status}) {
     return state.setIn([lineId, 'status'], status)

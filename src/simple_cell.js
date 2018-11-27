@@ -9,12 +9,10 @@ import {actions} from './state'
 function mapStateToProps() {
   const active = selectors.makeActiveSelector()
   const value = selectors.makeValueSelector()
-  const editing = selectors.makeEditingSelector()
   return reselect.createSelector(
-    [value, editing, active],
-    (value, editing, active) => ({
+    [value, active],
+    (value, active) => ({
       value,
-      editing,
       active
     })
   )

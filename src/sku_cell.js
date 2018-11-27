@@ -17,7 +17,7 @@ const SkuCell = createClass({
   },
   render() {
     const props = this.props
-    const {editing, value, lineId, field, setField, setFocus, active} = props
+    const {value, lineId, field, setField, setFocus, active} = props
     const cell = (
       <EditableCell
         field={field}
@@ -27,7 +27,6 @@ const SkuCell = createClass({
         setFocus={setFocus}
         loseFocus={props.loseFocus}
         active={active}
-        editing={editing}
         wand={props.wand}
         check={props.check}
         setFocusBelow={props.setFocusBelow}
@@ -209,7 +208,6 @@ function skuPopupExpanded(state) {
 
 function mapStateToProps() {
   const active = selectors.makeActiveSelector()
-  const editing = selectors.makeEditingSelector()
   const value = selectors.makeValueSelector()
   const suggestions = makeApplicableSuggestions()
   const wand = makeWandSelector(suggestions, value)
@@ -218,7 +216,6 @@ function mapStateToProps() {
   return reselect.createSelector(
     [
       value,
-      editing,
       active,
       suggestions,
       wand,
@@ -228,7 +225,6 @@ function mapStateToProps() {
     ],
     (
       value,
-      editing,
       active,
       suggestions,
       wand,
@@ -237,7 +233,6 @@ function mapStateToProps() {
       skuPopupExpanded
     ) => ({
       value,
-      editing,
       active,
       suggestions,
       wand,

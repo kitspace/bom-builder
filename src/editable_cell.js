@@ -23,7 +23,7 @@ const EditableCell = createClass({
   },
   render() {
     const props = this.props
-    const {editing, value, field, active} = props
+    const {value, field, active} = props
     if (field.get(0) === 'quantity') {
       var type = 'number'
     }
@@ -42,7 +42,6 @@ const EditableCell = createClass({
     }
     return (
       <Cell
-        selectable={!!editing}
         active={active}
         value={value}
         contents={editInput}

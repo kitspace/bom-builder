@@ -43,10 +43,6 @@ function makeLineSelector() {
   return reselect.createSelector([line], line => line)
 }
 
-function makeEditingSelector() {
-  return reselect.createSelector([editingSelector], editing => editing)
-}
-
 function makeSuggestionsLoading() {
   return reselect.createSelector(
     [suggestions, lineId],
@@ -60,9 +56,9 @@ export default {
   view,
   lineId,
   field,
-  makeEditingSelector,
   makeLineSelector,
   makeActiveSelector,
   makeValueSelector,
   makeSuggestionsLoading,
 }
+

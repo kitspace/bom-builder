@@ -20,21 +20,24 @@ function needsSuggestions(path) {
 }
 
 function effects(diff, state, actions) {
-  diff.forEach(d => {
-    const path = d.get('path')
-    const lineId = path.get(1)
-    if (needsSuggestions(path)) {
-      const line = state.data.present.getIn(path.take(2))
-      if (state.suggestions.getIn([lineId, 'status']) !== 'loading') {
-        let suggestions =
-          state.suggestions.getIn([lineId, 'data']) || immutable.List()
-        suggestions = suggestions.filter(
-          p => !p.get('from').equals(path.slice(2, 4))
-        )
-        findSuggestions(lineId, line, suggestions, actions)
+  Promise.all(
+    diff.toArray().map(d => {
+      const path = d.get('path')
+      const lineId = path.get(1)
+      if (needsSuggestions(path)) {
+        const line = state.data.present.getIn(path.take(2))
+        if (state.suggestions.getIn([lineId, 'status']) !== 'loading') {
+          let suggestions =
+            state.suggestions.getIn([lineId, 'data']) || immutable.List()
+          suggestions = suggestions.filter(
+            p => !p.get('from').equals(path.slice(2, 4))
+          )
+          return findSuggestions(lineId, line, suggestions, actions)
+        }
       }
-    }
-  })
+      return Promise.resolve()
+    })
+  )
 }
 
 export function subscribeEffects(store, actions) {

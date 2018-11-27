@@ -56,12 +56,16 @@ async function findSuggestions(
       }
     })
   )
+
+  suggestions = makeUniform(suggestions)
+  actions.setSuggestions({lineId, suggestions})
+
   await Promise.all(
     line
       .get('retailers')
       .entrySeq()
       .map(async ([vendor, part]) => {
-        if (part == null) {
+        if (!part) {
           return
         }
         const result = await fromRetailer(

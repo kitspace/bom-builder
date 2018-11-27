@@ -50,7 +50,7 @@ export const initialState = {
   suggestions: immutable.Map()
 }
 
-export function fitPartNumbers(lines) {
+function fitPartNumbers(lines) {
   const requiredSize =
     lines
       .map(line => {
@@ -69,7 +69,7 @@ export function fitPartNumbers(lines) {
   })
 }
 
-export const linesActions = {
+const linesActions = {
   clearAll(state) {
     const id = makeId()
     const lines = immutable.Map().set(id, emptyLine)
@@ -172,7 +172,7 @@ export const linesActions = {
   }
 }
 
-export const viewActions = {
+const viewActions = {
   setFocus(state, location) {
     return state.set('focus', immutable.fromJS(location))
   },
@@ -198,7 +198,7 @@ export const viewActions = {
   }
 }
 
-export const rootActions = {
+const rootActions = {
   setState(_, state) {
     return makeImmutable(state)
   },
@@ -346,7 +346,7 @@ export const rootActions = {
   }
 }
 
-export const rootReducer = makeReducer(rootActions, initialState)
+const rootReducer = makeReducer(rootActions, initialState)
 
 const ignoreTypes = immutable.List.of(
   'initializeLines',
@@ -365,7 +365,7 @@ const linesReducer = reduxUndo.default(
   }
 )
 
-export const suggestionsActions = {
+const suggestionsActions = {
   setSuggestions(state, {lineId, suggestions}) {
     const s = immutable.Map({status: 'done', data: suggestions})
     return state.set(lineId, s)
@@ -384,14 +384,14 @@ export const suggestionsActions = {
   }
 }
 
-export const suggestionsReducer = makeReducer(
+const suggestionsReducer = makeReducer(
   suggestionsActions,
   initialState.suggestions
 )
 
-export const viewReducer = makeReducer(viewActions, initialState['view'])
+const viewReducer = makeReducer(viewActions, initialState['view'])
 
-export const combinedReducer = redux.combineReducers({
+const combinedReducer = redux.combineReducers({
   data: linesReducer,
   view: viewReducer,
   suggestions: suggestionsReducer
@@ -402,7 +402,7 @@ export function mainReducer(state = initialState, action) {
   return combinedReducer(state2, action)
 }
 
-export function makeReducer(reducers, initialState) {
+function makeReducer(reducers, initialState) {
   return function reducer(state = initialState, action) {
     if (Object.keys(reducers).includes(action.type)) {
       const state2 = reducers[action.type](state, action.value)
@@ -412,7 +412,7 @@ export function makeReducer(reducers, initialState) {
   }
 }
 
-export function makeActions(reducers) {
+function makeActions(reducers) {
   const actions = {}
   Object.keys(reducers).forEach(name => {
     actions[name] = function createAction(value) {
@@ -430,7 +430,7 @@ export const actions = Object.assign(
   reduxUndo.ActionCreators
 )
 
-export function makeDataImmutable(data) {
+function makeDataImmutable(data) {
   if (immutable.Iterable.isIterable(data)) {
     return data
   }
@@ -442,7 +442,7 @@ export function makeDataImmutable(data) {
   })
 }
 
-export function makeImmutable({data, view, suggestions}) {
+function makeImmutable({data, view, suggestions}) {
   return {
     data: {
       present: makeDataImmutable(data.present),

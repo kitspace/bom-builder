@@ -38,8 +38,7 @@ export const initialState = {
   data: immutable.fromJS({
     lines: {},
     order: [],
-    sortedBy: [null, null],
-    editFocus: [null, null]
+    sortedBy: [null, null]
   }),
   view: immutable.fromJS({
     partNumbersExpanded: [],
@@ -92,11 +91,7 @@ const linesActions = {
         immutable.List.of('lines', lineId).concat(field),
         value
       )
-      state = state.update('lines', fitPartNumbers)
-      return state.set(
-        'editFocus',
-        immutable.List.of(lineId, immutable.fromJS(field))
-      )
+      return state.update('lines', fitPartNumbers)
     }
     return state.update('lines', fitPartNumbers)
   },
@@ -380,24 +375,6 @@ const rootActions = {
       }
     })
     return Object.assign({}, state, {view})
-  },
-  '@@redux-undo/UNDO'(state) {
-    const past = state.data.past
-    if (past.length > 0) {
-      const editFocus = past[past.length - 1].get('editFocus')
-      const view = state.view.set('focus', editFocus)
-      return Object.assign({}, state, {view})
-    }
-    return state
-  },
-  '@@redux-undo/REDO'(state) {
-    const future = state.data.future
-    if (future.length > 0) {
-      const editFocus = future[0].get('editFocus')
-      const view = state.view.set('focus', editFocus)
-      return Object.assign({}, state, {view})
-    }
-    return state
   }
 }
 
@@ -485,10 +462,9 @@ function makeDataImmutable(data) {
   if (immutable.Iterable.isIterable(data)) {
     return data
   }
-  const {lines, editFocus, sortedBy} = data
+  const {lines, sortedBy} = data
   return immutable.Map({
     lines: immutable.List(lines).map(line => immutable.fromJS(line)),
-    editFocus: immutable.List(editFocus),
     sortedBy: immutable.List(sortedBy)
   })
 }

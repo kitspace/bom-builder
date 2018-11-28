@@ -275,6 +275,9 @@ const rootActions = {
   },
   setSuggestions(state, {lineId, suggestions}) {
     const line = state.data.present.getIn(['lines', lineId])
+    if (!line) {
+      return state
+    }
     const existing = state.suggestions.getIn([lineId, 'data'])
     if (existing && existing.equals(suggestions)) {
       return state

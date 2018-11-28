@@ -53,6 +53,12 @@ export function computeSuggestionsForRetailer(suggestions, retailer, line) {
           return 1
         }
       }
+      if (aType === 'match' && bType === 'match' && bCheck !== 'green') {
+        return -1
+      }
+      if (aType === 'match' && bType === 'match' && aCheck !== 'green') {
+        return 1
+      }
       if (aType === 'match' && bType !== 'match' && aCheck === 'green') {
         return -1
       }

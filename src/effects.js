@@ -1,7 +1,7 @@
 import immutableDiff from 'immutable-diff'
 import immutable from 'immutable'
 
-import {findSuggestions} from './suggestions'
+import {findSuggestions} from './find_suggestions'
 import {initialState, emptyPartNumber} from './state'
 
 const suggestionFields = immutable.List([

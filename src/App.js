@@ -15,7 +15,7 @@ import Body from './body'
 import Menu from './menu'
 
 import {subscribeEffects} from './effects'
-import {findSuggestions} from './suggestions'
+import {findSuggestions} from './find_suggestions'
 import {mainReducer, initialState, actions as unboundActions} from './state'
 
 const initialStoredData =

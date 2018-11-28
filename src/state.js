@@ -235,15 +235,14 @@ const rootActions = {
     })
   },
   autoFillSuggestions(state) {
-    const past = state.data.past.concat([state.data.present])
     const present = state.data.present.update('lines', lines =>
       lines.map((line, lineId) => {
         const desiredQuantity = line.get('quantity')
         const suggestions = state.suggestions.getIn([lineId, 'data'])
-        return line.update('retailers', rs =>
-          rs.mapEntries(([retailer, v]) => {
+        return line.update('retailers', retailers => {
+          return retailers.map((v, retailer) => {
             if (v) {
-              return [retailer, v]
+              return v
             }
             const s = computeSuggestionsForRetailer(
               suggestions,
@@ -255,15 +254,19 @@ const rootActions = {
               s.get('type') === 'match' &&
               s.get('checkColor') === 'green'
             ) {
-              return [retailer, s.getIn(['sku', 'part'])]
+              return s.getIn(['sku', 'part'])
             }
-            return [retailer, v]
+            return v
           })
-        )
+        })
       })
     )
-    const data = Object.assign({}, state.data, {present, past, future: []})
-    return Object.assign({}, state, {data})
+    if (!present.equals(state.data.present)) {
+      const past = state.data.past.concat([state.data.present])
+      const data = Object.assign({}, state.data, {present, past, future: []})
+      return Object.assign({}, state, {data})
+    }
+    return state
   },
   setFocusBelow(state) {
     let data = state.data

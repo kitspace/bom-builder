@@ -19,23 +19,29 @@ function needsSuggestions(path) {
   )
 }
 
-function effects(diff, state, actions) {
-  Promise.all(
-    diff.toArray().map(d => {
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+function effects(diff, store, actions) {
+  return Promise.all(
+    diff.toArray().map(async d => {
       const path = d.get('path')
       const lineId = path.get(1)
       if (needsSuggestions(path)) {
-        const line = state.data.present.getIn(path.take(2))
-        if (state.suggestions.getIn([lineId, 'status']) !== 'loading') {
-          let suggestions =
-            state.suggestions.getIn([lineId, 'data']) || immutable.List()
-          suggestions = suggestions.filter(
-            p => !p.get('from').equals(path.slice(2, 4))
-          )
-          return findSuggestions(lineId, line, suggestions, actions)
+        let state = store.getState()
+        while (state.suggestions.getIn([lineId, 'status']) === 'loading') {
+          await sleep(100)
+          state = store.getState()
         }
+        const line = state.data.present.getIn(path.take(2))
+        let suggestions =
+          state.suggestions.getIn([lineId, 'data']) || immutable.List()
+        suggestions = suggestions.filter(
+          p => !p.get('from').equals(path.slice(2, 4))
+        )
+        return findSuggestions(lineId, line, suggestions, actions)
       }
-      return Promise.resolve()
     })
   )
 }
@@ -61,7 +67,7 @@ export function subscribeEffects(store, actions) {
         return true
       })
       past = present
-      effects(diff, state, actions)
+      effects(diff, store, actions)
     }
   })
 }

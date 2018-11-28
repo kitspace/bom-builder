@@ -238,7 +238,6 @@ const rootActions = {
   autoFillSuggestions(state) {
     const present = state.data.present.update('lines', lines =>
       lines.map((line, lineId) => {
-        const desiredQuantity = line.get('quantity')
         const suggestions =
           state.suggestions.getIn([lineId, 'retailers']) || immutable.Map()
         return line.update('retailers', retailers => {
@@ -254,11 +253,7 @@ const rootActions = {
               }
             }
             const s = vendorSuggestions.first()
-            if (
-              s &&
-              s.get('type') === 'match' &&
-              s.get('checkColor') === 'green'
-            ) {
+            if (s && s.get('type') === 'match') {
               return s.getIn(['sku', 'part'])
             }
             return part

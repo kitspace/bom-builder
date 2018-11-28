@@ -92,8 +92,6 @@ function makeWandSelector(applicableSuggestionsSelector, valueSelector) {
   )
 }
 
-const checkColors = ['orange', 'green']
-
 function makeCheckSelector(
   applicableSuggestionsSelector,
   selectedSelector,
@@ -103,13 +101,16 @@ function makeCheckSelector(
     [applicableSuggestionsSelector, selectedSelector, wandSelector],
     (suggestions, selected, wand) => {
       if (selected >= 0) {
-        const s = suggestions.get(selected)
-        return s.get('checkColor')
+        const checkColor = suggestions.getIn([selected, 'checkColor'])
+        if (checkColor !== 'green' && suggestions.first()) {
+          return checkColor + ':' + suggestions.first().get('checkColor')
+        }
+        return checkColor
       }
       if (!wand || wand === 'loading') {
         return null
       }
-      return suggestions.first().get('checkColor')
+      return ':' + suggestions.first().get('checkColor')
     }
   )
 }

@@ -216,7 +216,8 @@ const rootActions = {
         lineId,
         immutable.Map({
           status: 'done',
-          data: immutable.List()
+          data: immutable.List(),
+          retailers: immutable.Map()
         })
       ])
     )
@@ -238,7 +239,8 @@ const rootActions = {
     const present = state.data.present.update('lines', lines =>
       lines.map((line, lineId) => {
         const desiredQuantity = line.get('quantity')
-        const suggestions = state.suggestions.getIn([lineId, 'retailers'])
+        const suggestions =
+          state.suggestions.getIn([lineId, 'retailers']) || immutable.Map()
         return line.update('retailers', retailers => {
           return retailers.map((v, retailer) => {
             if (v) {
@@ -266,6 +268,10 @@ const rootActions = {
   },
   setSuggestions(state, {lineId, suggestions}) {
     const line = state.data.present.getIn(['lines', lineId])
+    const existing = state.suggestions.getIn([lineId, 'data'])
+    if (existing && existing.equals(suggestions)) {
+      return state
+    }
     const retailers = immutable.Map(
       retailer_list.map(retailer => {
         const s = computeSuggestionsForRetailer(suggestions, retailer, line)

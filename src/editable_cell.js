@@ -62,16 +62,17 @@ class Cell extends React.PureComponent {
     ) : null
     const icons = []
     if (!props.active) {
+      let wandColor
       if (props.wand) {
         if (props.wand === 'loading') {
           icons.push(<semantic.Loader key="magic" active inline size="mini" />)
         } else {
-          const color = props.wand === 'match' ? 'green' : 'grey'
+          wandColor = props.wand === 'match' ? 'green' : 'grey'
           const wandOpacity = props.wand === 'match' ? 1.0 : 0.3
           icons.push(
             <semantic.Icon
-              style={{opacity: wandOpacity, fontSize:'1.2em'}}
-              color={color}
+              style={{opacity: wandOpacity, fontSize: '1.2em'}}
+              color={wandColor}
               name="magic"
               key="magic"
             />
@@ -79,13 +80,14 @@ class Cell extends React.PureComponent {
         }
       }
       if (props.check) {
-        const checkOpacity = props.check === 'grey' ? 0.3 : 1.0
+        const checkColor = wandColor === 'grey' ? 'grey' : props.check
+        const checkOpacity = checkColor === 'grey' ? 0.3 : 1.0
         icons.push(
           <semantic.Icon
             style={{opacity: checkOpacity}}
             name={props.check === 'red' ? 'close' : 'check'}
             key="check"
-            color={props.check}
+            color={checkColor}
           />
         )
       }

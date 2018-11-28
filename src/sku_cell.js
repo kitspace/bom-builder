@@ -87,7 +87,7 @@ function makeWandSelector(applicableSuggestionsSelector, valueSelector) {
       if (loading) {
         return 'loading'
       }
-      return !value && suggestions.getIn([0, 'type'])
+      return suggestions.getIn([0, 'type'])
     }
   )
 }
@@ -109,21 +109,7 @@ function makeCheckSelector(
       if (!wand || wand === 'loading') {
         return null
       }
-      const match = suggestions.reduce((prev, s) => {
-        const c = s.get('checkColor')
-        const x = checkColors.indexOf(c)
-        if (prev > x) {
-          return prev
-        }
-        if (s.get('type') === 'match') {
-          return x
-        }
-        return prev
-      }, -1)
-      if (match >= 0) {
-        return checkColors[match]
-      }
-      return 'grey'
+      return suggestions.first().get('checkColor')
     }
   )
 }

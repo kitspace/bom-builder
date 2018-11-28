@@ -1,6 +1,5 @@
 import './App.css'
 import 'semantic-ui-css/semantic.css'
-import './fontello.css'
 
 import React from 'react'
 import * as semantic from 'semantic-ui-react'

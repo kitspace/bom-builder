@@ -238,17 +238,13 @@ const rootActions = {
     const present = state.data.present.update('lines', lines =>
       lines.map((line, lineId) => {
         const desiredQuantity = line.get('quantity')
-        const suggestions = state.suggestions.getIn([lineId, 'data'])
+        const suggestions = state.suggestions.getIn([lineId, 'retailers'])
         return line.update('retailers', retailers => {
           return retailers.map((v, retailer) => {
             if (v) {
               return v
             }
-            const s = computeSuggestionsForRetailer(
-              suggestions,
-              retailer,
-              line
-            ).first()
+            const s = (suggestions.get(retailer) || immutable.List()).first()
             if (
               s &&
               s.get('type') === 'match' &&
@@ -267,6 +263,19 @@ const rootActions = {
       return Object.assign({}, state, {data})
     }
     return state
+  },
+  setSuggestions(state, {lineId, suggestions}) {
+    const line = state.data.present.getIn(['lines', lineId])
+    const retailers = immutable.Map(
+      retailer_list.map(retailer => {
+        const s = computeSuggestionsForRetailer(suggestions, retailer, line)
+        return [retailer, s]
+      })
+    )
+    const stateSuggestions = state.suggestions
+      .setIn([lineId, 'data'], suggestions)
+      .setIn([lineId, 'retailers'], retailers)
+    return Object.assign({}, state, {suggestions: stateSuggestions})
   },
   setFocusBelow(state) {
     let data = state.data
@@ -401,9 +410,6 @@ const linesReducer = reduxUndo.default(
 )
 
 const suggestionsActions = {
-  setSuggestions(state, {lineId, suggestions}) {
-    return state.setIn([lineId, 'data'], suggestions)
-  },
   setSuggestionsStatus(state, {lineId, status}) {
     return state.setIn([lineId, 'status'], status)
   },

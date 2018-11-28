@@ -64,11 +64,15 @@ function retailerSelector(_, props) {
   return props.field.get(1)
 }
 
+function retailerSuggestions(state, props) {
+  return state.suggestions.getIn([props.lineId, 'retailers']) || immutable.Map()
+}
+
 function makeApplicableSuggestions() {
-  const suggestions = selectors.makeSuggestionsSelector()
   return reselect.createSelector(
-    [suggestions, retailerSelector, selectors.line],
-    computeSuggestionsForRetailer
+    [retailerSuggestions, retailerSelector],
+    (retailerSuggestions, retailer) =>
+      retailerSuggestions.get(retailer) || immutable.List()
   )
 }
 

@@ -124,6 +124,17 @@ function mpnOrSkuToKey(input) {
   return (input.vendor || input.manufacturer) + ':' + input.part
 }
 
+function cachePart(part) {
+  if (part && part.offers) {
+    const key = mpnOrSkuToKey(part.mpn)
+    match_cache[key] = part
+    part.offers.forEach(offer => {
+      const k = mpnOrSkuToKey(offer.sku)
+      match_cache[k] = part
+    })
+  }
+}
+
 function addMatchRequest(input) {
   return new Promise((resolve, reject) => {
     const key = mpnOrSkuToKey(input)
@@ -134,13 +145,7 @@ function addMatchRequest(input) {
     const id = makeId()
     response_bus.once(id, r => {
       clearTimeout(timeout)
-      match_cache[key] = r
-      if (r && r.offers) {
-        r.offers.forEach(offer => {
-          const k = mpnOrSkuToKey(offer.sku)
-          match_cache[k] = r
-        })
-      }
+      cachePart(r)
       resolve(r)
     })
     match_request_bus.emit('request', {id, input})
@@ -163,6 +168,7 @@ export default function getPartinfo(input) {
     }
     return runQuery(SearchQuery, input).then(r => {
       search_cache[input] = r
+      r.forEach(cachePart)
       return r
     })
   }

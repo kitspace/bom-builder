@@ -34,7 +34,8 @@ const SkuCell = createClass({
         loseFocus={props.loseFocus}
         active={active}
         wand={props.wand}
-        check={props.check}
+        selectedCheck={props.selectedCheck}
+        suggestionCheck={props.suggestionCheck}
         setFocusBelow={props.setFocusBelow}
         setFocusNext={props.setFocusNext}
       />
@@ -76,11 +77,14 @@ function makeApplicableSuggestions() {
   )
 }
 
-function makeWandSelector(applicableSuggestionsSelector, valueSelector) {
+function makeWandSelector(applicableSuggestionsSelector, valueSelector, suggestionCheckSelector) {
   const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, valueSelector, loading],
-    (suggestions, value, loading) => {
+    [applicableSuggestionsSelector, valueSelector, loading, suggestionCheckSelector],
+    (suggestions, value, loading, suggestionCheck) => {
+      if (suggestionCheck) {
+        return suggestions.getIn([0, 'type'])
+      }
       if (value) {
         return false
       }
@@ -92,25 +96,42 @@ function makeWandSelector(applicableSuggestionsSelector, valueSelector) {
   )
 }
 
-function makeCheckSelector(
+function makeSuggestionCheckSelector(
   applicableSuggestionsSelector,
   selectedSelector,
-  wandSelector
+  selectedCheckSelector
 ) {
   return reselect.createSelector(
-    [applicableSuggestionsSelector, selectedSelector, wandSelector],
+    [applicableSuggestionsSelector, selectedSelector, selectedCheckSelector],
+    (suggestions, selected, selectedCheck) => {
+      if (!suggestions.first()) {
+        return null
+      }
+      if (selected >= 0 && !selectedCheck) {
+        return null
+      }
+      if (selectedCheck === suggestions.first().get('checkColor')) {
+        return null
+      }
+      return suggestions.first().get('checkColor')
+    }
+  )
+}
+
+function makeSelectedCheckSelector(
+  applicableSuggestionsSelector,
+  selectedSelector
+) {
+  return reselect.createSelector(
+    [applicableSuggestionsSelector, selectedSelector],
     (suggestions, selected, wand) => {
       if (selected >= 0) {
         const checkColor = suggestions.getIn([selected, 'checkColor'])
-        if (checkColor !== 'green' && suggestions.first()) {
-          return checkColor + ':' + suggestions.first().get('checkColor')
+        if (checkColor === 'green') {
+          return null
         }
         return checkColor
       }
-      if (!wand || wand === 'loading') {
-        return null
-      }
-      return ':' + suggestions.first().get('checkColor')
     }
   )
 }
@@ -138,17 +159,37 @@ function mapStateToProps() {
   const active = selectors.makeActiveSelector()
   const value = selectors.makeValueSelector()
   const suggestions = makeApplicableSuggestions()
-  const wand = makeWandSelector(suggestions, value)
   const selected = makeSelectedSelector(suggestions)
-  const check = makeCheckSelector(suggestions, selected, wand)
+  const selectedCheck = makeSelectedCheckSelector(suggestions, selected)
+  const suggestionCheck = makeSuggestionCheckSelector(suggestions, selected, selectedCheck)
+  const wand = makeWandSelector(suggestions, value, suggestionCheck)
   return reselect.createSelector(
-    [value, active, suggestions, wand, check, selected, skuPopupExpanded],
-    (value, active, suggestions, wand, check, selected, skuPopupExpanded) => ({
+    [
       value,
       active,
       suggestions,
       wand,
-      check,
+      suggestionCheck,
+      selectedCheck,
+      selected,
+      skuPopupExpanded
+    ],
+    (
+      value,
+      active,
+      suggestions,
+      wand,
+      suggestionCheck,
+      selectedCheck,
+      selected,
+      skuPopupExpanded
+    ) => ({
+      value,
+      active,
+      suggestions,
+      wand,
+      suggestionCheck,
+      selectedCheck,
       selected,
       skuPopupExpanded
     })

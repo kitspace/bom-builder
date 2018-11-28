@@ -47,7 +47,8 @@ const EditableCell = createClass({
         contents={editInput}
         smallField={props.smallField}
         wand={props.wand}
-        check={props.check}
+        selectedCheck={props.selectedCheck}
+        suggestionCheck={props.suggestionCheck}
         onClick={this.clickHandler}
       />
     )
@@ -79,30 +80,23 @@ class Cell extends React.PureComponent {
           )
         }
       }
-      if (props.check) {
-        const [check, suggestionCheck] = props.check.split(':')
-        if (suggestionCheck && suggestionCheck !== check) {
-          icons.push(
-            <semantic.Icon
-              style={{opacity: 0.8}}
-              name={suggestionCheck === 'red' ? 'close' : 'check'}
-              key="suggestionCheck"
-              color={suggestionCheck}
-            />
-          )
-        }
-        if (check && check !== 'green') {
-          const checkColor = wandColor === 'grey' ? 'grey' : check
-          const checkOpacity = checkColor === 'grey' ? 0.3 : 1.0
-          icons.push(
-            <semantic.Icon
-              style={{opacity: checkOpacity}}
-              name={check === 'red' ? 'window close' : 'check square'}
-              key="check"
-              color={checkColor}
-            />
-          )
-        }
+      if (props.suggestionCheck) {
+        icons.push(
+          <semantic.Icon
+            name={props.suggestionCheck === 'red' ? 'close' : 'check'}
+            key="suggestionCheck"
+            color={props.suggestionCheck}
+          />
+        )
+      }
+      if (props.selectedCheck) {
+        icons.push(
+          <semantic.Icon
+            name={props.selectedCheck === 'red' ? 'window close' : 'check square'}
+            key="selectedCheck"
+            color={props.selectedCheck}
+          />
+        )
       }
     }
     return (

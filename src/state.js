@@ -2,6 +2,7 @@ import immutable from 'immutable'
 import oneClickBom from '1-click-bom'
 import * as redux from 'redux'
 import * as reduxUndo from 'redux-undo-immutable-js'
+import {computeSuggestionsForRetailer} from './suggestions'
 
 const retailer_list = oneClickBom
   .getRetailers()
@@ -76,6 +77,9 @@ const linesActions = {
     const order = immutable.List.of(id)
     return state.merge({lines, order})
   },
+  initEmptyLine(state) {
+    return this.addEmptyLine(state)
+  },
   setField(state, {lineId, field, value}) {
     if (field.get(0) === 'quantity' && value < 1) {
       value = 1
@@ -95,9 +99,6 @@ const linesActions = {
       )
     }
     return state.update('lines', fitPartNumbers)
-  },
-  initEmptyLine(state) {
-    return this.addEmptyLine(state)
   },
   addEmptyLine(state) {
     const id = makeId()
@@ -232,6 +233,37 @@ const rootActions = {
       data: Object.assign({}, state.data, {present}),
       view
     })
+  },
+  autoFillSuggestions(state) {
+    const past = state.data.past.concat([state.data.present])
+    const present = state.data.present.update('lines', lines =>
+      lines.map((line, lineId) => {
+        const desiredQuantity = line.get('quantity')
+        const suggestions = state.suggestions.getIn([lineId, 'data'])
+        return line.update('retailers', rs =>
+          rs.mapEntries(([retailer, v]) => {
+            if (v) {
+              return [retailer, v]
+            }
+            const s = computeSuggestionsForRetailer(
+              suggestions,
+              retailer,
+              line
+            ).first()
+            if (
+              s &&
+              s.get('type') === 'match' &&
+              s.get('checkColor') === 'green'
+            ) {
+              return [retailer, s.getIn(['sku', 'part'])]
+            }
+            return [retailer, v]
+          })
+        )
+      })
+    )
+    const data = Object.assign({}, state.data, {present, past, future: []})
+    return Object.assign({}, state, {data})
   },
   setFocusBelow(state) {
     let data = state.data

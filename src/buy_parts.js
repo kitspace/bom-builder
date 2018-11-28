@@ -18,7 +18,7 @@ function BuyParts(props) {
       <th colSpan="100%">
         <div style={{display: 'flex', alignItems: 'center'}}>
           <div>
-            <semantic.Button className="buyPartsButton" color="green" basic>
+            <semantic.Button onClick={props.autoFillSuggestions} className="buyPartsButton" color="green" basic>
               <semantic.Icon name="magic" />
               <semantic.Icon name="check" />
               Auto Fill

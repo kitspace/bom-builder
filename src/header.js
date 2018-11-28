@@ -13,12 +13,13 @@ const retailer_list = oneClickBom
 
 class Header extends React.Component {
   render() {
+    const props = this.props
     const {
       partNumbersExpanded,
       maxPartNumbers,
       sortBy,
       togglePartNumbersExpanded
-    } = this.props
+    } = props
     const partNumberColumns =
       maxPartNumbers + partNumbersExpanded.reduce((prev, x) => prev + x, 0)
     const cells = []
@@ -60,7 +61,10 @@ class Header extends React.Component {
     })
     return (
       <thead>
-        <BuyParts partNumberColumns={partNumberColumns} />
+        <BuyParts
+          autoFillSuggestions={props.autoFillSuggestions}
+          partNumberColumns={partNumberColumns}
+        />
         <tr>
           <th colSpan={2}>
             <span

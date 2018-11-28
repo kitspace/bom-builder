@@ -242,11 +242,18 @@ const rootActions = {
         const suggestions =
           state.suggestions.getIn([lineId, 'retailers']) || immutable.Map()
         return line.update('retailers', retailers => {
-          return retailers.map((v, retailer) => {
-            if (v) {
-              return v
+          return retailers.map((part, vendor) => {
+            const vendorSuggestions =
+              suggestions.get(vendor) || immutable.List()
+            if (part) {
+              const existing = vendorSuggestions.find(
+                s => s.getIn(['sku', 'part']) === part
+              )
+              if (existing && existing.checkColor === 'green') {
+                return part
+              }
             }
-            const s = (suggestions.get(retailer) || immutable.List()).first()
+            const s = vendorSuggestions.first()
             if (
               s &&
               s.get('type') === 'match' &&
@@ -254,7 +261,7 @@ const rootActions = {
             ) {
               return s.getIn(['sku', 'part'])
             }
-            return v
+            return part
           })
         })
       })

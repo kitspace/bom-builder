@@ -110,7 +110,11 @@ function makeSuggestionCheckSelector(
       if (selected >= 0 && !selectedCheck) {
         return null
       }
-      if (selectedCheck === suggestions.first().get('checkColor')) {
+      const check = suggestions.first().get('checkColor')
+      if (check === 'red') {
+        return null
+      }
+      if (selectedCheck === check) {
         return null
       }
       return suggestions.first().get('checkColor')

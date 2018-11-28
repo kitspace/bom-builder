@@ -92,7 +92,7 @@ class Cell extends React.PureComponent {
       if (props.selectedCheck) {
         icons.push(
           <semantic.Icon
-            name={props.selectedCheck === 'red' ? 'close' : 'check square'}
+            name={props.selectedCheck === 'red' ? 'close' : 'check'}
             key="selectedCheck"
             color={props.selectedCheck}
           />

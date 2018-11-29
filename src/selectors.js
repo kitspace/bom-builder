@@ -30,10 +30,8 @@ export function field(_, props) {
   return props.field
 }
 
-export function makeValueSelector() {
-  return reselect.createSelector([line, field], (line, field) =>
-    line.getIn(field)
-  )
+export function value(state, props) {
+  return state.data.present.getIn(['lines', props.lineId]).getIn(props.field)
 }
 
 export function editingThis(editing, lineId, field) {

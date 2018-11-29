@@ -8,9 +8,8 @@ import {actions} from './state'
 
 function mapStateToProps() {
   const active = selectors.makeActiveSelector()
-  const value = selectors.makeValueSelector()
   return reselect.createSelector(
-    [value, active],
+    [selectors.value, active],
     (value, active) => ({
       value,
       active

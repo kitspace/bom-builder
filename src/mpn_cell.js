@@ -166,14 +166,21 @@ function mpnPopupExpanded(state) {
 
 function mapStateToProps() {
   const active = selectors.makeActiveSelector()
-  const value = selectors.makeValueSelector()
   const mpn = makeMpnSelector()
   const suggestions = makeApplicableSuggestions(mpn)
   const wand = makeWandSelector(suggestions, mpn)
   const selected = makeSelectedSelector(suggestions, mpn)
   const smallValue = makeSmallValueSelector(mpn)
   return reselect.createSelector(
-    [value, active, suggestions, wand, selected, smallValue, mpnPopupExpanded],
+    [
+      selectors.value,
+      active,
+      suggestions,
+      wand,
+      selected,
+      smallValue,
+      mpnPopupExpanded
+    ],
     (
       value,
       active,

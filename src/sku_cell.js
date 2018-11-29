@@ -77,10 +77,19 @@ function makeApplicableSuggestions() {
   )
 }
 
-function makeWandSelector(applicableSuggestionsSelector, valueSelector, suggestionCheckSelector) {
+function makeWandSelector(
+  applicableSuggestionsSelector,
+  valueSelector,
+  suggestionCheckSelector
+) {
   const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, valueSelector, loading, suggestionCheckSelector],
+    [
+      applicableSuggestionsSelector,
+      valueSelector,
+      loading,
+      suggestionCheckSelector
+    ],
     (suggestions, value, loading, suggestionCheck) => {
       if (suggestionCheck) {
         return suggestions.getIn([0, 'type'])
@@ -126,9 +135,13 @@ function makeSelectedCheckSelector(
   applicableSuggestionsSelector,
   selectedSelector
 ) {
+  const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, selectedSelector],
-    (suggestions, selected, wand) => {
+    [applicableSuggestionsSelector, selectedSelector, loading, selectors.value],
+    (suggestions, selected, loading, value) => {
+      if (loading) {
+        return null
+      }
       if (selected >= 0) {
         const checkColor = suggestions.getIn([selected, 'checkColor'])
         if (checkColor === 'green') {
@@ -136,14 +149,17 @@ function makeSelectedCheckSelector(
         }
         return checkColor
       }
+      if (value) {
+        return 'red'
+      }
     }
   )
 }
 
 function makeSkuSelector() {
-  const value = selectors.makeValueSelector()
-  return reselect.createSelector([retailerSelector, value], (vendor, part) =>
-    immutable.Map({vendor, part})
+  return reselect.createSelector(
+    [retailerSelector, selectors.value],
+    (vendor, part) => immutable.Map({vendor, part})
   )
 }
 
@@ -161,15 +177,18 @@ function skuPopupExpanded(state) {
 
 function mapStateToProps() {
   const active = selectors.makeActiveSelector()
-  const value = selectors.makeValueSelector()
   const suggestions = makeApplicableSuggestions()
   const selected = makeSelectedSelector(suggestions)
   const selectedCheck = makeSelectedCheckSelector(suggestions, selected)
-  const suggestionCheck = makeSuggestionCheckSelector(suggestions, selected, selectedCheck)
-  const wand = makeWandSelector(suggestions, value, suggestionCheck)
+  const suggestionCheck = makeSuggestionCheckSelector(
+    suggestions,
+    selected,
+    selectedCheck
+  )
+  const wand = makeWandSelector(suggestions, selectors.value, suggestionCheck)
   return reselect.createSelector(
     [
-      value,
+      selectors.value,
       active,
       suggestions,
       wand,

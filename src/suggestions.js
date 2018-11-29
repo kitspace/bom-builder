@@ -59,10 +59,16 @@ export function computeSuggestionsForRetailer(suggestions, retailer, line) {
       if (aType === 'match' && bType === 'match' && aCheck !== 'green') {
         return 1
       }
-      if (aType === 'match' && bType !== 'match' && aCheck === 'green') {
+      if (aType === 'match' && bType === 'search' && aCheck === 'green') {
         return -1
       }
-      if (aType !== 'match' && bType === 'match' && bCheck === 'green') {
+      if (aType === 'search' && bType === 'match' && bCheck === 'green') {
+        return 1
+      }
+      if (aCheck === 'green' && bCheck !== 'green') {
+        return -1
+      }
+      if (aCheck !== 'green' && bCheck === 'green') {
         return 1
       }
       if (aQty > bQty) {

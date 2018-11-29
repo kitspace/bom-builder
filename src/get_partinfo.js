@@ -167,6 +167,10 @@ export default function getPartinfo(input) {
       return Promise.resolve(search_cache[input])
     }
     return runQuery(SearchQuery, input).then(r => {
+      if (!r) {
+        console.error('empty search response')
+        return null
+      }
       search_cache[input] = r
       r.forEach(cachePart)
       return r

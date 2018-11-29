@@ -191,6 +191,9 @@ const viewActions = {
       }
       return focus
     })
+  },
+  registerExtension(state) {
+    return state.set('extensionPresent', true)
   }
 }
 

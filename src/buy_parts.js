@@ -29,32 +29,54 @@ function BuyParts(props) {
             </semantic.Button>
           </div>
           <div>
-            <semantic.Button className="buyPartsButton" color="blue" basic>
+            <semantic.Button
+              disabled={!props.extensionPresent}
+              className="buyPartsButton"
+              color={props.extensionPresent ? 'blue' : 'grey'}
+              basic
+            >
               <semantic.Icon name="shopping basket" />
               <semantic.Icon name="plus" />
               Buy Parts
             </semantic.Button>
           </div>
-          <div
-            style={{
-              fontWeight: 'normal',
-              height: '100%',
-              verticalAlign: 'middle',
-              color: '#2185D0',
-              minWidth: 160
-            }}
-          >
-            Preffered retailer:{'  '}
-            <semantic.Dropdown
-              inline
-              defaultValue="Farnell"
-              options={retailer_list.map(r => ({key: r, text: r, value: r}))}
-            />
-          </div>
+          {props.extensionPresent ? (
+            <div
+              style={{
+                fontWeight: 'normal',
+                height: '100%',
+                verticalAlign: 'middle',
+                color: '#2185D0',
+                minWidth: 160
+              }}
+            >
+              Preffered retailer:{'  '}
+              <semantic.Dropdown
+                inline
+                defaultValue="Farnell"
+                options={retailer_list.map(r => ({key: r, text: r, value: r}))}
+              />{' '}
+            </div>
+          ) : (
+            <div style={{color: 'lightgrey'}}>
+              Install the 1-click BOM exension to use this feature
+            </div>
+          )}
         </div>
       </th>
     </tr>
   )
 }
 
-export default BuyParts
+function mapDispatchToProps(dispatch) {
+  return redux.bindActionCreators(actions, dispatch)
+}
+
+function mapStateToProps(state) {
+  const extensionPresent = state.view.get('extensionPresent')
+  return {
+    extensionPresent
+  }
+}
+
+export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(BuyParts)

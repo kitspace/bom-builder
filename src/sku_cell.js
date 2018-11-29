@@ -40,10 +40,11 @@ const SkuCell = createClass({
         setFocusNext={props.setFocusNext}
       />
     )
-    if (props.suggestions.size > 0) {
+    if (value || props.suggestions.size > 0) {
       return (
         <SkuPopup
           on="click"
+          value={value}
           trigger={cell}
           field={field}
           lineId={props.lineId}

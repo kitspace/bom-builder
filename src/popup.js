@@ -108,32 +108,37 @@ class SkuPopup extends Popup {
       suggestion.get('image') || partData.get('image') || immutable.Map()
     const sku = suggestion.get('sku') || immutable.Map()
     const mpn = suggestion.get('mpn') || immutable.Map()
-    const part = sku.get('part') || ''
-    const vendor = sku.get('vendor')
+    const part = sku.get('part') || props.value
+    const vendor = sku.get('vendor') || props.field.last()
     const inStock = suggestion.get('in_stock_quantity')
     const stockLocation = suggestion.get('stock_location')
     const checkColor = suggestion.get('checkColor')
-    const checkIcon = (
-      <semantic.Icon
-        name={checkColor === 'red' ? 'close' : 'check'}
-        style={{marginLeft: 10}}
-        color={checkColor}
-        key="checkIcon"
-      />
-    )
-    let stockInfo = [
-      immutable.Map({
-        name: ['Stock'],
-        value: [inStock, checkIcon]
-      })
-    ]
-    if (stockLocation) {
-      stockInfo.push(
-        immutable.Map({
-          name: 'Location',
-          value: stockLocation
-        })
+    const expanded = mpn.get('part') && this.props.expanded
+
+    let stockInfo = []
+    if (inStock != null) {
+      const checkIcon = (
+        <semantic.Icon
+          name={checkColor === 'red' ? 'close' : 'check'}
+          style={{marginLeft: 10}}
+          color={checkColor}
+          key="checkIcon"
+        />
       )
+      stockInfo = [
+        immutable.Map({
+          name: ['Stock'],
+          value: [inStock, checkIcon]
+        })
+      ]
+      if (stockLocation) {
+        stockInfo.push(
+          immutable.Map({
+            name: 'Location',
+            value: stockLocation
+          })
+        )
+      }
     }
     stockInfo.push(
       immutable.Map({name: <div style={{minHeight: 30}} />, value: ''})
@@ -142,12 +147,25 @@ class SkuPopup extends Popup {
     const skuTitle = (
       <div>
         <Title
-          one={<a href={getSkuUrl(vendor, part)}>{part}</a>}
-          page={`${this.state.viewing + 1}/${suggestions.size}`}
+          one={
+            <a
+              href={getSkuUrl(vendor || props.field.pop(), part || props.value)}
+            >
+              {part || props.value}
+            </a>
+          }
+          page={
+            suggestions.size
+              ? `${this.state.viewing + 1}/${suggestions.size}`
+              : ''
+          }
           wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
+          hideWand={!mpn.get('part')}
         />
         <div className="subTitle">
-          {mpn.get('manufacturer') + ' - ' + mpn.get('part')}
+          {mpn.get('part')
+            ? mpn.get('manufacturer') + ' - ' + mpn.get('part')
+            : ''}
         </div>
       </div>
     )
@@ -161,6 +179,7 @@ class SkuPopup extends Popup {
       <semantic.Popup {...popupProps}>
         <Buttons
           disabled={suggestions.size < 2}
+          selectDisabled={suggestions.size < 1}
           selected={this.props.selected === this.state.viewing}
           onIncrement={this.incrementViewing}
           onDecrement={this.decrementViewing}
@@ -197,15 +216,15 @@ class SkuPopup extends Popup {
               }}
             >
               <semantic.Button
-                style={{display: this.props.expanded ? 'initial' : 'none'}}
+                style={{display: expanded ? 'initial' : 'none'}}
                 onClick={this.toggleExpanded}
                 size="tiny"
                 basic={true}
               >
-                {this.props.expanded ? '⭬' : '...'}
+                {expanded ? '⭬' : '...'}
               </semantic.Button>
             </div>
-            {this.props.expanded && (
+            {expanded && (
               <div>
                 <div style={{cursor: 'pointer'}} className="description">
                   {partData.get('description')}
@@ -216,13 +235,15 @@ class SkuPopup extends Popup {
             )}
           </div>
           <div className="rightHandModule">
-            {!this.props.expanded && (
+            {!expanded && (
               <div className="description" style={{cursor: 'pointer'}}>
                 {partData.get('description')}
               </div>
             )}
             <semantic.Button
-              style={{visibility: this.props.expanded ? 'hidden' : 'visible'}}
+              style={{
+                visibility: expanded || !mpn.get('part') ? 'hidden' : 'visible'
+              }}
               onClick={this.toggleExpanded}
               size="tiny"
               basic={true}
@@ -396,11 +417,13 @@ class Title extends React.PureComponent {
     return (
       <div className="titleContainer">
         <div>
-          <semantic.Icon
-            style={{opacity: wandOpacity}}
-            color={props.wandColor}
-            name="magic"
-          />
+          {!props.hideWand && (
+            <semantic.Icon
+              style={{opacity: wandOpacity}}
+              color={props.wandColor}
+              name="magic"
+            />
+          )}
         </div>
         <div className="mpnTitle">
           <div>{props.one}</div>
@@ -414,7 +437,14 @@ class Title extends React.PureComponent {
 
 class Buttons extends React.PureComponent {
   render() {
-    const {disabled, selected, onDecrement, onIncrement, onSelect} = this.props
+    const {
+      disabled,
+      selected,
+      onDecrement,
+      onIncrement,
+      onSelect,
+      selectDisabled
+    } = this.props
     return (
       <semantic.Button.Group size="tiny" basic fluid>
         <semantic.Button
@@ -422,7 +452,7 @@ class Buttons extends React.PureComponent {
           icon="left chevron"
           onClick={onDecrement}
         />
-        <semantic.Button onClick={onSelect}>
+        <semantic.Button disabled={selectDisabled} onClick={onSelect}>
           <semantic.Icon name={selected ? 'checkmark box' : 'square outline'} />
           {selected ? 'Selected' : 'Select'}
         </semantic.Button>

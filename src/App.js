@@ -139,34 +139,6 @@ window.addEventListener(
     }
     if (event.data.from == 'extension') {
       actions.registerExtension()
-      //console.log({
-      //  extensionWaiting: false,
-      //  extensionPresence: 'present'
-      //})
-      //switch (event.data.message) {
-      //  case 'register':
-      //    console.log({
-      //      buyParts: retailer => {
-      //        window.postMessage(
-      //          {
-      //            from: 'page',
-      //            message: 'quickAddToCart',
-      //            value: {
-      //              retailer,
-      //              multiplier: 1 //this.getMultiplier()
-      //            }
-      //          },
-      //          '*'
-      //        )
-      //      }
-      //    })
-      //    break
-      //  case 'updateAddingState':
-      //    console.log({
-      //      adding: event.data.value
-      //    })
-      //    break
-      //}
     }
   },
   false

@@ -2,17 +2,9 @@
 # yarn lockfile v1
 
 
-"1-click-bom@git+https://github.com/kitspace/npm-1-click-bom":
-  version "1.3.1"
-  resolved "git+https://github.com/kitspace/npm-1-click-bom#f0eb1bc93167c48ac5972524331dc2833cf5d8b1"
-  dependencies:
-    file-type "^9.0.0"
-    s-expression "^3.0.3"
-    xlsx "^0.12.6"
-
 "1-click-bom@git+https://github.com/kitspace/npm-1-click-bom.git":
   version "1.3.1"
-  resolved "git+https://github.com/kitspace/npm-1-click-bom.git#6b81b8ba904ec7d4be54f19562c22ff0ff5ae84b"
+  resolved "git+https://github.com/kitspace/npm-1-click-bom.git#f7b5474f81d159eb163b34a94a89ea87aba20c6d"
   dependencies:
     file-type "^9.0.0"
     s-expression "^3.0.3"

@@ -2,9 +2,11 @@ import React from 'react'
 import * as semantic from 'semantic-ui-react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
+import immutable from 'immutable'
 import oneClickBom from '1-click-bom'
 
 import {actions} from './state'
+import {priorityOfRetailers, reduceBom, retailerSelectionNumbers} from './bom'
 
 const retailer_list = oneClickBom
   .getRetailers()
@@ -33,6 +35,7 @@ function BuyParts(props) {
               disabled={!props.extensionPresent}
               className="buyPartsButton"
               color={props.extensionPresent ? 'blue' : 'grey'}
+              onClick={() => props.setAddingParts('start')}
               basic
             >
               <semantic.Icon name="shopping basket" />
@@ -53,8 +56,9 @@ function BuyParts(props) {
               Preffered retailer:{'  '}
               <semantic.Dropdown
                 inline
-                defaultValue="Farnell"
+                value={props.preferredRetailer}
                 options={retailer_list.map(r => ({key: r, text: r, value: r}))}
+                onChange={(e, {value}) => props.setPreferredRetailer(value)}
               />{' '}
             </div>
           ) : (
@@ -62,6 +66,7 @@ function BuyParts(props) {
               Install the 1-click BOM exension to use this feature
             </div>
           )}
+          <pre>{JSON.stringify(props.selectionNumbers, null, 2)}</pre>
         </div>
       </th>
     </tr>
@@ -74,8 +79,46 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   const extensionPresent = state.view.get('extensionPresent')
+  const preferred = state.view.get('preferredRetailer')
+  let lines = state.data.present.get('lines')
+  const loading = state.suggestions.reduce(
+    (prev, s) => prev || s.state === 'loading',
+    false
+  )
+  let selectionNumbers = immutable.Map()
+  if (!loading) {
+    const stock = state.suggestions
+      .map(x => x.get('data'))
+      .reduce((stock, suggestions, lineId) => {
+        suggestions = suggestions || immutable.List()
+        return suggestions.reduce(
+          (stock, part) =>
+            part
+              .get('offers')
+              .reduce(
+                (stock, offer) =>
+                  stock.set(offer.get('sku'), offer.get('in_stock_quantity')),
+                stock
+              ),
+          stock
+        )
+      }, immutable.Map())
+    lines = reduceBom(lines, preferred, stock)
+    const priority = priorityOfRetailers(lines)
+    const {reducedLines} = priority.reduce(
+      ({reducedLines, done}, retailer) => {
+        reducedLines = reduceBom(reducedLines, retailer, stock, done)
+        done = done.push(retailer)
+        return {reducedLines, done}
+      },
+      {reducedLines: lines, done: immutable.List.of(preferred)}
+    )
+    selectionNumbers = retailerSelectionNumbers(reducedLines)
+  }
   return {
-    extensionPresent
+    selectionNumbers,
+    extensionPresent,
+    preferredRetailer: state.view.get('preferredRetailer')
   }
 }
 

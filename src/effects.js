@@ -69,5 +69,16 @@ export function subscribeEffects(store, actions) {
       past = present
       effects(diff, store, actions)
     }
+
+    if (state.view.get('addingParts') === 'start') {
+      window.postMessage(
+        {
+          from: 'page',
+          message: 'bomBuilderAddToCart',
+          value: {tsv: ''}
+        },
+        '*'
+      )
+    }
   })
 }

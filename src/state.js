@@ -20,18 +20,14 @@ export const emptyPartNumber = immutable.Map({
   manufacturer: ''
 })
 
+export const emptyRetailers = immutable.Map(retailer_list.map(r => [r, '']))
+
 export const emptyLine = immutable.Map({
   reference: '',
   quantity: 1,
   description: '',
   partNumbers: immutable.List.of(emptyPartNumber),
-  retailers: immutable.Map({
-    Digikey: '',
-    Mouser: '',
-    RS: '',
-    Farnell: '',
-    Newark: ''
-  })
+  retailers: emptyRetailers
 })
 
 export const initialState = {
@@ -45,7 +41,10 @@ export const initialState = {
     focus: [null, null],
     editable: true,
     mpnPopupExpanded: false,
-    skuPopupExpanded: false
+    skuPopupExpanded: false,
+    addingParts: false,
+    extensionPresent: false,
+    preferredRetailer: 'Farnell'
   }),
   suggestions: immutable.Map()
 }
@@ -194,7 +193,14 @@ const viewActions = {
   },
   registerExtension(state) {
     return state.set('extensionPresent', true)
+  },
+  setAddingParts(state, value) {
+    return state.set('addingParts', value)
+  },
+  setPreferredRetailer(state, value) {
+    return state.set('preferredRetailer', value)
   }
+
 }
 
 const rootActions = {

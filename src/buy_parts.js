@@ -82,7 +82,7 @@ function mapStateToProps(state) {
   const preferred = state.view.get('preferredRetailer')
   let lines = state.data.present.get('lines')
   const loading = state.suggestions.reduce(
-    (prev, s) => prev || s.state === 'loading',
+    (prev, s) => prev || s.get('status') === 'loading',
     false
   )
   let selectionNumbers = immutable.Map()

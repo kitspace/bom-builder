@@ -141,18 +141,12 @@ function addMatchRequest(input) {
     if (key in match_cache) {
       return resolve(match_cache[key])
     }
-    let timeout
     const id = makeId()
     response_bus.once(id, r => {
-      clearTimeout(timeout)
       cachePart(r)
       resolve(r)
     })
     match_request_bus.emit('request', {id, input})
-    timeout = setTimeout(() => {
-      console.error('Request timed out')
-      resolve()
-    }, 5 * 60000)
   })
 }
 
@@ -192,6 +186,7 @@ function runQuery(query, input) {
         input
       }
     })
+    .retry(10)
     .then(res => {
       if (res.body.data.search) {
         return res.body.data.search

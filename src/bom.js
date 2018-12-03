@@ -29,28 +29,18 @@ export function priorityOfRetailers(lines) {
     .toList()
 }
 
-export function reduceBom(lines, preferred, stock, done = immutable.List()) {
+export function reduceBom(lines, preferred, done = immutable.List()) {
   return lines.map(line => {
     const part = line.getIn(['retailers', preferred])
     if (part) {
-      const sku = immutable.Map({part, vendor: preferred})
-      const in_stock = stock.get(sku)
-      const desired = line.get('quantity')
-      if (in_stock >= desired) {
-        return line.update('retailers', retailers => {
-          return retailers.map((v, k) => {
-            if (done.includes(k)) {
-              return v
-            }
-            if (k === preferred) {
-              if (in_stock >= desired) {
-                return v
-              }
-            }
-            return ''
-          })
+      return line.update('retailers', retailers => {
+        return retailers.map((v, k) => {
+          if (k === preferred || done.includes(k)) {
+            return v
+          }
+          return ''
         })
-      }
+      })
     }
     return line
   })

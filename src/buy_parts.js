@@ -103,11 +103,23 @@ function mapStateToProps(state) {
           stock
         )
       }, immutable.Map())
-    lines = reduceBom(lines, preferred, stock)
-    const priority = priorityOfRetailers(lines)
+    lines = lines.map(line =>
+      line.update('retailers', retailers =>
+        retailers.map((part, vendor) => {
+          const sku = immutable.Map({part, vendor})
+          const in_stock = stock.get(sku)
+          if (in_stock && in_stock >= line.get('quantity')) {
+            return part
+          }
+          return ''
+        })
+      )
+    )
+    lines = reduceBom(lines, preferred)
+    const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
     const {reducedLines} = priority.reduce(
       ({reducedLines, done}, retailer) => {
-        reducedLines = reduceBom(reducedLines, retailer, stock, done)
+        reducedLines = reduceBom(reducedLines, retailer, done)
         done = done.push(retailer)
         return {reducedLines, done}
       },

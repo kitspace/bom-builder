@@ -69,12 +69,6 @@ function fitPartNumbers(lines) {
 }
 
 const linesActions = {
-  clearAll(state) {
-    const id = makeId()
-    const lines = immutable.Map().set(id, emptyLine)
-    const order = immutable.List.of(id)
-    return state.merge({lines, order})
-  },
   initEmptyLine(state) {
     return this.addEmptyLine(state)
   },
@@ -200,12 +194,25 @@ const viewActions = {
   setPreferredRetailer(state, value) {
     return state.set('preferredRetailer', value)
   }
-
 }
 
 const rootActions = {
   setState(_, state) {
     return makeImmutable(state)
+  },
+  clearAll(state) {
+    const id = makeId()
+    const lines = immutable.Map().set(id, emptyLine)
+    const order = immutable.List.of(id)
+    const past = state.data.past.concat([state.data.present])
+    const present = state.data.present.merge({lines, order})
+    const suggestions = immutable
+      .Map()
+      .set(id, immutable.Map({status: 'done', data: immutable.List()}))
+    return Object.assign({}, state, {
+      data: Object.assign({}, state.data, {past, present}),
+      suggestions
+    })
   },
   initializeLines(state, lines) {
     lines = immutable.Map(lines.map(l => [makeId(), immutable.fromJS(l)]))

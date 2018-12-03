@@ -89,7 +89,7 @@ function mapStateToProps(state) {
   if (!loading) {
     const stock = state.suggestions
       .map(x => x.get('data'))
-      .reduce((stock, suggestions, lineId) => {
+      .reduce((stock, suggestions) => {
         suggestions = suggestions || immutable.List()
         return suggestions.reduce(
           (stock, part) =>

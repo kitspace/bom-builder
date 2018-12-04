@@ -6,7 +6,7 @@ import immutable from 'immutable'
 import oneClickBom from '1-click-bom'
 
 import {actions} from './state'
-import {priorityOfRetailers, reduceBom, retailerSelectionNumbers} from './bom'
+import {retailerSelectionNumbers, getPurchaseLines} from './bom'
 
 const retailer_list = oneClickBom
   .getRetailers()
@@ -94,7 +94,6 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   const extensionPresent = state.view.get('extensionPresent')
-  const preferred = state.view.get('preferredRetailer')
   let lines = state.data.present.get('lines')
   const loading = state.suggestions.reduce(
     (prev, s) => prev || s.get('status') === 'loading',
@@ -102,56 +101,8 @@ function mapStateToProps(state) {
   )
   let selectionNumbers = immutable.Map()
   if (!loading) {
-    const offers = state.suggestions
-      .map(x => x.get('data'))
-      .reduce((offers, suggestions) => {
-        suggestions = suggestions || immutable.List()
-        return suggestions.reduce(
-          (offers, part) =>
-            part
-              .get('offers')
-              .reduce(
-                (offers, offer) => offers.set(offer.get('sku'), offer),
-                offers
-              ),
-          offers
-        )
-      }, immutable.Map())
-    // filter out out of stock
-    lines = lines.map(line =>
-      line.update('retailers', retailers =>
-        retailers.map((part, vendor) => {
-          if (part) {
-            const sku = immutable.Map({part, vendor})
-            const offer = offers.get(sku)
-            let in_stock, stock_location
-            if (offer) {
-              in_stock = offer.get('in_stock_quantity')
-              stock_location = offer.get('stock_location')
-            }
-            if (
-              in_stock &&
-              in_stock >= line.get('quantity') &&
-              stock_location !== 'US'
-            ) {
-              return part
-            }
-          }
-          return ''
-        })
-      )
-    )
-    lines = reduceBom(lines, preferred)
-    const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
-    const {reducedLines} = priority.reduce(
-      ({reducedLines, done}, retailer) => {
-        reducedLines = reduceBom(reducedLines, retailer, done)
-        done = done.push(retailer)
-        return {reducedLines, done}
-      },
-      {reducedLines: lines, done: immutable.List.of(preferred)}
-    )
-    selectionNumbers = retailerSelectionNumbers(reducedLines)
+    const purchaseLines = getPurchaseLines(state)
+    selectionNumbers = retailerSelectionNumbers(purchaseLines)
   }
   return {
     selectionNumbers,

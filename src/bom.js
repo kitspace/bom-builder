@@ -45,3 +45,58 @@ export function reduceBom(lines, preferred, done = immutable.List()) {
     return line
   })
 }
+
+export function getPurchaseLines(state) {
+  const preferred = state.view.get('preferredRetailer')
+  let lines = state.data.present.get('lines')
+  const offers = state.suggestions
+    .map(x => x.get('data'))
+    .reduce((offers, suggestions) => {
+      suggestions = suggestions || immutable.List()
+      return suggestions.reduce(
+        (offers, part) =>
+          part
+            .get('offers')
+            .reduce(
+              (offers, offer) => offers.set(offer.get('sku'), offer),
+              offers
+            ),
+        offers
+      )
+    }, immutable.Map())
+  // filter out out of stock
+  lines = lines.map(line =>
+    line.update('retailers', retailers =>
+      retailers.map((part, vendor) => {
+        if (part) {
+          const sku = immutable.Map({part, vendor})
+          const offer = offers.get(sku)
+          let in_stock, stock_location
+          if (offer) {
+            in_stock = offer.get('in_stock_quantity')
+            stock_location = offer.get('stock_location')
+          }
+          if (
+            in_stock &&
+            in_stock >= line.get('quantity') &&
+            stock_location !== 'US'
+          ) {
+            return part
+          }
+        }
+        return ''
+      })
+    )
+  )
+  lines = reduceBom(lines, preferred)
+  const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
+  const {reducedLines} = priority.reduce(
+    ({reducedLines, done}, retailer) => {
+      reducedLines = reduceBom(reducedLines, retailer, done)
+      done = done.push(retailer)
+      return {reducedLines, done}
+    },
+    {reducedLines: lines, done: immutable.List.of(preferred)}
+  )
+  return reducedLines
+}

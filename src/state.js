@@ -44,7 +44,8 @@ export const initialState = {
     skuPopupExpanded: false,
     addingParts: false,
     extensionPresent: false,
-    preferredRetailer: 'Farnell'
+    preferredRetailer: 'Farnell',
+    previewBuy: false
   }),
   suggestions: immutable.Map()
 }
@@ -164,6 +165,9 @@ const linesActions = {
 const viewActions = {
   setFocus(state, location) {
     return state.set('focus', immutable.fromJS(location))
+  },
+  setPreviewBuy(state, value) {
+    return state.set('previewBuy', value)
   },
   setMpnPopupExpanded(state, isExpanded) {
     return state.set('mpnPopupExpanded', isExpanded)

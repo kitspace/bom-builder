@@ -70,6 +70,22 @@ function BuyParts(props) {
             options={retailer_list.map(r => ({key: r, text: r, value: r}))}
             onChange={(e, {value}) => props.setPreferredRetailer(value)}
           />{' '}
+          <div
+            style={{
+              fontWeight: 'normal',
+              height: '100%',
+              verticalAlign: 'middle',
+              color: '#2185D0',
+              minWidth: 160
+            }}
+          >
+            Preview:
+            <semantic.Radio
+              toggle
+              checked={props.previewBuy}
+              onChange={(e, data) => props.setPreviewBuy(data.checked)}
+            />
+          </div>
         </div>
       ) : (
         <div style={{color: 'lightgrey'}}>
@@ -99,7 +115,8 @@ function mapStateToProps(state) {
   return {
     selectionNumbers,
     extensionPresent,
-    preferredRetailer: state.view.get('preferredRetailer')
+    preferredRetailer: state.view.get('preferredRetailer'),
+    previewBuy: state.view.get('previewBuy')
   }
 }
 

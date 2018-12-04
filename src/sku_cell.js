@@ -40,6 +40,7 @@ const SkuCell = createClass({
         setFocusBelow={props.setFocusBelow}
         setFocusNext={props.setFocusNext}
         previewBuy={props.previewBuy}
+        highlightRed={props.previewBuy && props.noneSelected}
       />
     )
     if (value || props.suggestions.size > 0) {
@@ -203,20 +204,27 @@ function makeRetailersSelector() {
   )
 }
 
-function makeRetailerValueSelector(lineId, field) {
+function makeRetailerValueSelector(lineId, field, retailersSelector) {
   const retailer = field.last()
-  const retailers = makeRetailersSelector()
-  return reselect.createSelector([retailers], retailers => {
+  return reselect.createSelector([retailersSelector], retailers => {
     return retailers.getIn([lineId, retailer])
+  })
+}
+
+function makeNoneSelectedSelector(lineId, retailersSelector) {
+  return reselect.createSelector([retailersSelector], retailers => {
+    return !retailers.get(lineId).some(x => x)
   })
 }
 
 function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
-  const value = makeRetailerValueSelector(props.lineId, props.field)
+  const retailers = makeRetailersSelector()
+  const value = makeRetailerValueSelector(props.lineId, props.field, retailers)
   const suggestions = makeApplicableSuggestions()
   const selected = makeSelectedSelector(suggestions)
   const selectedCheck = makeSelectedCheckSelector(suggestions, selected)
+  const noneSelected = makeNoneSelectedSelector(props.lineId, retailers)
   const suggestionCheck = makeSuggestionCheckSelector(
     suggestions,
     selected,
@@ -233,7 +241,8 @@ function mapStateToProps(state, props) {
       selectedCheck,
       selected,
       skuPopupExpanded,
-      previewBuySelector
+      previewBuySelector,
+      noneSelected
     ],
     (
       value,
@@ -244,7 +253,8 @@ function mapStateToProps(state, props) {
       selectedCheck,
       selected,
       skuPopupExpanded,
-      previewBuy
+      previewBuy,
+      noneSelected
     ) => ({
       value,
       active,
@@ -254,7 +264,8 @@ function mapStateToProps(state, props) {
       selectedCheck,
       selected,
       skuPopupExpanded,
-      previewBuy
+      previewBuy,
+      noneSelected
     })
   )
 }

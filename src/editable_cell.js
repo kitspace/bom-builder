@@ -50,7 +50,7 @@ const EditableCell = createClass({
         selectedCheck={props.selectedCheck}
         suggestionCheck={props.suggestionCheck}
         onClick={this.clickHandler}
-        highlight={props.previewBuy && value && 'blue'}
+        highlight={props.highlightRed ? 'red' : props.previewBuy && value && 'blue'}
       />
     )
   }

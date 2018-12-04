@@ -241,3 +241,7 @@ tr.bomLine {
 .highlight.blue {
   background: #b1d3ed !important;
 }
+
+.highlight.red {
+  background: #fbdada !important;
+}

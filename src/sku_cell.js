@@ -10,7 +10,7 @@ import {SkuPopup} from './popup'
 import * as selectors from './selectors'
 import EditableCell from './editable_cell'
 import {computeSuggestionsForRetailer} from './suggestions'
-import {getPurchaseLines} from './bom'
+import {makePurchaseLinesSelector} from './bom'
 
 const SkuCell = createClass({
   displayName: 'MpnCell',
@@ -188,16 +188,16 @@ function preferredRetailerSelector(state) {
 }
 
 function makeRetailersSelector() {
+  const purchaseLinesSelector = makePurchaseLinesSelector(
+    preferredRetailerSelector,
+    selectors.lines,
+    selectors.suggestions
+  )
   return reselect.createSelector(
-    [
-      selectors.lines,
-      previewBuySelector,
-      preferredRetailerSelector,
-      selectors.suggestions
-    ],
-    (lines, previewBuy, preferred, suggestions) => {
+    [selectors.lines, previewBuySelector, purchaseLinesSelector],
+    (lines, previewBuy, purchaseLines) => {
       if (previewBuy) {
-        lines = getPurchaseLines(preferred, lines, suggestions)
+        return purchaseLines.map(l => l.get('retailers'))
       }
       return lines.map(l => l.get('retailers'))
     }

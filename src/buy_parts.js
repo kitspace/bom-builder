@@ -102,29 +102,40 @@ function mapStateToProps(state) {
   )
   let selectionNumbers = immutable.Map()
   if (!loading) {
-    const stock = state.suggestions
+    const offers = state.suggestions
       .map(x => x.get('data'))
-      .reduce((stock, suggestions) => {
+      .reduce((offers, suggestions) => {
         suggestions = suggestions || immutable.List()
         return suggestions.reduce(
-          (stock, part) =>
+          (offers, part) =>
             part
               .get('offers')
               .reduce(
-                (stock, offer) =>
-                  stock.set(offer.get('sku'), offer.get('in_stock_quantity')),
-                stock
+                (offers, offer) => offers.set(offer.get('sku'), offer),
+                offers
               ),
-          stock
+          offers
         )
       }, immutable.Map())
+    // filter out out of stock
     lines = lines.map(line =>
       line.update('retailers', retailers =>
         retailers.map((part, vendor) => {
-          const sku = immutable.Map({part, vendor})
-          const in_stock = stock.get(sku)
-          if (in_stock && in_stock >= line.get('quantity')) {
-            return part
+          if (part) {
+            const sku = immutable.Map({part, vendor})
+            const offer = offers.get(sku)
+            let in_stock, stock_location
+            if (offer) {
+              in_stock = offer.get('in_stock_quantity')
+              stock_location = offer.get('stock_location')
+            }
+            if (
+              in_stock &&
+              in_stock >= line.get('quantity') &&
+              stock_location !== 'US'
+            ) {
+              return part
+            }
           }
           return ''
         })

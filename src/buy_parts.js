@@ -13,6 +13,20 @@ const retailer_list = oneClickBom
   .filter(r => r !== 'Rapid' && r !== 'Newark')
 
 function BuyParts(props) {
+  const retailers = props.selectionNumbers
+    .sort((a, b) => b - a)
+    .map((v, r) => {
+      if (v > 0) {
+        return (
+          <semantic.List.Item key={r}>
+            <semantic.List.Header>{r}</semantic.List.Header>
+            {v}
+          </semantic.List.Item>
+        )
+      }
+    })
+    .valueSeq()
+    .toJS()
   return (
     <tr style={{height: 40}}>
       <th colSpan={4} />
@@ -66,6 +80,7 @@ function BuyParts(props) {
               Install the 1-click BOM exension to use this feature
             </div>
           )}
+          <semantic.List>{retailers}</semantic.List>
           <pre>{JSON.stringify(props.selectionNumbers, null, 2)}</pre>
         </div>
       </th>

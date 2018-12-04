@@ -80,6 +80,22 @@ function BuyParts(props) {
               Install the 1-click BOM exension to use this feature
             </div>
           )}
+          <div
+            style={{
+              fontWeight: 'normal',
+              height: '100%',
+              verticalAlign: 'middle',
+              color: '#2185D0',
+              minWidth: 160
+            }}
+          >
+            Preview:
+            <semantic.Radio
+              toggle
+              checked={props.previewBuy}
+              onChange={(e, data) => props.setPreviewBuy(data.checked)}
+            />
+          </div>
           <semantic.List>{retailers}</semantic.List>
           <pre>{JSON.stringify(props.selectionNumbers, null, 2)}</pre>
         </div>
@@ -107,7 +123,8 @@ function mapStateToProps(state) {
   return {
     selectionNumbers,
     extensionPresent,
-    preferredRetailer: state.view.get('preferredRetailer')
+    preferredRetailer: state.view.get('preferredRetailer'),
+    previewBuy: state.view.get('previewBuy')
   }
 }
 

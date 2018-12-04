@@ -176,6 +176,12 @@ function skuPopupExpanded(state) {
   return state.view.get('skuPopupExpanded')
 }
 
+function linesForSkuu(state, props) {}
+
+function retailersSelector(state, props) {}
+
+function retailerValue(state, props) {}
+
 function mapStateToProps() {
   const active = selectors.makeActiveSelector()
   const suggestions = makeApplicableSuggestions()

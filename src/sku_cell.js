@@ -10,6 +10,7 @@ import {SkuPopup} from './popup'
 import * as selectors from './selectors'
 import EditableCell from './editable_cell'
 import {computeSuggestionsForRetailer} from './suggestions'
+import {getPurchaseLines} from './bom'
 
 const SkuCell = createClass({
   displayName: 'MpnCell',
@@ -176,14 +177,24 @@ function skuPopupExpanded(state) {
   return state.view.get('skuPopupExpanded')
 }
 
-function linesForSkuu(state, props) {}
+function retailersSelector(state, props) {
+  let lines = state.data.present.get('lines')
+  if (state.view.get('previewBuy')) {
+    lines = getPurchaseLines(state)
+  }
+  return lines.map(l => l.get('retailers'))
+}
 
-function retailersSelector(state, props) {}
+function makeRetailerValueSelector(lineId, field) {
+  const retailer = field.last()
+  return reselect.createSelector([retailersSelector], retailers => {
+    return retailers.getIn([lineId, retailer])
+  })
+}
 
-function retailerValue(state, props) {}
-
-function mapStateToProps() {
+function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
+  const value = makeRetailerValueSelector(props.lineId, props.field)
   const suggestions = makeApplicableSuggestions()
   const selected = makeSelectedSelector(suggestions)
   const selectedCheck = makeSelectedCheckSelector(suggestions, selected)
@@ -195,7 +206,7 @@ function mapStateToProps() {
   const wand = makeWandSelector(suggestions, selectors.value, suggestionCheck)
   return reselect.createSelector(
     [
-      selectors.value,
+      value,
       active,
       suggestions,
       wand,

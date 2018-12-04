@@ -50,6 +50,7 @@ const EditableCell = createClass({
         selectedCheck={props.selectedCheck}
         suggestionCheck={props.suggestionCheck}
         onClick={this.clickHandler}
+        highlight={props.previewBuy && value && 'blue'}
       />
     )
   }
@@ -105,6 +106,7 @@ class Cell extends React.PureComponent {
         active={props.active}
         style={{maxWidth: props.active ? '' : 100, minWidth: 50}}
         onClick={props.onClick}
+        className={props.highlight ? 'highlight ' + props.highlight : ''}
       >
         <div>
           {smallField}

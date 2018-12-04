@@ -237,3 +237,7 @@ label.item:hover {
 tr.bomLine {
   height: 29px;
 }
+
+.highlight.blue {
+  background: #b1d3ed !important;
+}

@@ -39,6 +39,7 @@ const SkuCell = createClass({
         suggestionCheck={props.suggestionCheck}
         setFocusBelow={props.setFocusBelow}
         setFocusNext={props.setFocusNext}
+        previewBuy={props.previewBuy}
       />
     )
     if (value || props.suggestions.size > 0) {
@@ -177,17 +178,35 @@ function skuPopupExpanded(state) {
   return state.view.get('skuPopupExpanded')
 }
 
-function retailersSelector(state, props) {
-  let lines = state.data.present.get('lines')
-  if (state.view.get('previewBuy')) {
-    lines = getPurchaseLines(state)
-  }
-  return lines.map(l => l.get('retailers'))
+function previewBuySelector(state) {
+  return state.view.get('previewBuy')
+}
+
+function preferredRetailerSelector(state) {
+  return state.view.get('preferredRetailer')
+}
+
+function makeRetailersSelector() {
+  return reselect.createSelector(
+    [
+      selectors.lines,
+      previewBuySelector,
+      preferredRetailerSelector,
+      selectors.suggestions
+    ],
+    (lines, previewBuy, preferred, suggestions) => {
+      if (previewBuy) {
+        lines = getPurchaseLines(preferred, lines, suggestions)
+      }
+      return lines.map(l => l.get('retailers'))
+    }
+  )
 }
 
 function makeRetailerValueSelector(lineId, field) {
   const retailer = field.last()
-  return reselect.createSelector([retailersSelector], retailers => {
+  const retailers = makeRetailersSelector()
+  return reselect.createSelector([retailers], retailers => {
     return retailers.getIn([lineId, retailer])
   })
 }
@@ -213,7 +232,8 @@ function mapStateToProps(state, props) {
       suggestionCheck,
       selectedCheck,
       selected,
-      skuPopupExpanded
+      skuPopupExpanded,
+      previewBuySelector
     ],
     (
       value,
@@ -223,7 +243,8 @@ function mapStateToProps(state, props) {
       suggestionCheck,
       selectedCheck,
       selected,
-      skuPopupExpanded
+      skuPopupExpanded,
+      previewBuy
     ) => ({
       value,
       active,
@@ -232,7 +253,8 @@ function mapStateToProps(state, props) {
       suggestionCheck,
       selectedCheck,
       selected,
-      skuPopupExpanded
+      skuPopupExpanded,
+      previewBuy
     })
   )
 }

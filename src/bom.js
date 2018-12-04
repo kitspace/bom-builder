@@ -46,10 +46,8 @@ export function reduceBom(lines, preferred, done = immutable.List()) {
   })
 }
 
-export function getPurchaseLines(state) {
-  const preferred = state.view.get('preferredRetailer')
-  let lines = state.data.present.get('lines')
-  const offers = state.suggestions
+export function getPurchaseLines(preferred, lines, suggestions) {
+  const offers = suggestions
     .map(x => x.get('data'))
     .reduce((offers, suggestions) => {
       suggestions = suggestions || immutable.List()

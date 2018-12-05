@@ -7,15 +7,11 @@ function fromRetailer(sku, suggestions) {
   )
 
   if (existing) {
-    if (existing.get('type') === 'match') {
-      return Promise.resolve(existing)
-    } else {
-      return Promise.resolve(
-        existing
-          .set('type', 'match')
-          .set('from', immutable.List.of('retailers', sku.get('vendor')))
-      )
-    }
+    return Promise.resolve(
+      existing
+        .set('type', 'match')
+        .set('from', immutable.List.of('retailers', sku.get('vendor')))
+    )
   }
 
   return getPartinfo(sku.toJS())

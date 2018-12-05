@@ -21,10 +21,8 @@ class Handle extends React.Component {
     }
   }
   render() {
-    const props = this.props
-    const {reference, lineId, removeLine} = props
     return (
-      <td className={`marked ${markerColor(reference)}`}>
+      <td className={`marked ${markerColor(this.props.reference)}`}>
         <input
           style={{height: 17}}
           onFocus={this.setFocus}

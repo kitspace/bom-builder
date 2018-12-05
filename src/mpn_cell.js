@@ -2,7 +2,6 @@ import React from 'react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import * as reselect from 'reselect'
-import * as immutable from 'immutable'
 
 import {actions} from './state'
 import {MpnPopup} from './popup'

@@ -135,10 +135,10 @@ subscribeEffects(store, actions)
 window.addEventListener(
   'message',
   event => {
-    if (event.source != window) {
+    if (event.source !== window) {
       return
     }
-    if (event.data.from == 'extension') {
+    if (event.data.from === 'extension') {
       actions.registerExtension()
     }
   },
@@ -175,7 +175,6 @@ class Bom extends React.Component {
             style={{
               width: '100%',
               background: 'white',
-              zIndex: 100000,
               borderBottom: '1px solid #e6e6e6',
               overflow: 'hidden',
               zIndex: 9999,

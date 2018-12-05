@@ -21,12 +21,12 @@ function fromRetailer(sku, suggestions) {
   return getPartinfo(sku.toJS())
 }
 
-function fromPartNumber(partNumber, suggestions) {
-  const suggestionMpns = suggestions.flatMap(s => s.get('partNumbers'))
-  if (suggestionMpns.includes(partNumber)) {
-    return Promise.resolve(null)
+async function fromPartNumber(partNumber, suggestions) {
+  const existing = suggestions.find(s => s.get('mpn').equals(partNumber))
+  if (existing) {
+    return existing.set('type', 'match')
   }
-  return getPartinfo(partNumber.toJS())
+  return immutable.fromJS(await getPartinfo(partNumber.toJS()))
 }
 
 function fromDescription(description) {
@@ -49,10 +49,12 @@ async function findSuggestions(
   actions.setSuggestionsStatus({lineId, status: 'loading'})
   await Promise.all(
     line.get('partNumbers').map(async (partNumber, i) => {
-      const part = await fromPartNumber(partNumber, suggestions)
+      let part = await fromPartNumber(partNumber, suggestions)
       if (part != null) {
-        part.from = ['partNumbers', i]
-        suggestions = suggestions.push(immutable.fromJS(part))
+        part = part
+          .set('from', immutable.List.of('partNumbers', i))
+          .set('type', 'match')
+        suggestions = suggestions.push(part)
       }
     })
   )
@@ -93,6 +95,7 @@ async function findSuggestions(
 }
 
 function makeUniform(suggestions) {
+  suggestions = suggestions.filter(x => x)
   //make unique
   suggestions = suggestions.reduce((prev, p) => {
     if (prev.map(s => s.get('mpn')).includes(p.get('mpn'))) {

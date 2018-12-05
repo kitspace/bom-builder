@@ -159,7 +159,7 @@ class Bom extends React.Component {
             handleFileInput={handleFileInput}
             clearAll={this.props.clearAll}
           />
-          <div style={{display: 'flex'}}>
+          <div style={{display: 'flex', marginTop: 40}}>
             <semantic.Table
               className="Bom"
               size="small"

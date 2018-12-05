@@ -8,48 +8,64 @@ import {actions} from './state'
 
 function Menu(props) {
   return (
-    <semantic.Menu secondary>
-      <input
-        type="file"
-        onChange={props.handleFileInput}
-        id="uploadInput"
-        style={{display: 'none'}}
-      />
-      <label className="item" htmlFor="uploadInput">
+    <div
+      className="ui fixed top sticky"
+      style={{
+        width: '100%',
+        background: 'white',
+        zIndex: 100000,
+        borderBottom: '1px solid #e6e6e6'
+      }}
+    >
+      <semantic.Menu secondary>
+        <input
+          type="file"
+          onChange={props.handleFileInput}
+          id="uploadInput"
+          style={{display: 'none'}}
+        />
+        <label className="item" htmlFor="uploadInput">
           <semantic.Icon name="folder open outline" />
           Open
-      </label>
-      <semantic.Menu.Item disabled={props.empty} onClick={props.downloadBom}>
-        <semantic.Icon name="download" />
-        Save
-      </semantic.Menu.Item>
-      <semantic.Menu.Item disabled={!props.undosAvailable} onClick={props.undo}>
-        <semantic.Icon name="undo" />
-        Undo
-      </semantic.Menu.Item>
-      <semantic.Menu.Item disabled={!props.redosAvailable} onClick={props.redo}>
-        <semantic.Icon name="repeat" />
-        Redo
-      </semantic.Menu.Item>
-      <semantic.Menu.Item
-        disabled={props.deleteFocus.get(0) == null}
-        onClick={() => {
-          props.remove(props.deleteFocus)
-        }}
-      >
-        <semantic.Icon name="x" />
-        Delete
-      </semantic.Menu.Item>
-      <semantic.Menu.Item
-        disabled={props.empty}
-        onClick={() => {
-          props.clearAll()
-        }}
-      >
-        <semantic.Icon name="trash" />
-        Remove All
-      </semantic.Menu.Item>
-    </semantic.Menu>
+        </label>
+        <semantic.Menu.Item disabled={props.empty} onClick={props.downloadBom}>
+          <semantic.Icon name="download" />
+          Save
+        </semantic.Menu.Item>
+        <semantic.Menu.Item
+          disabled={!props.undosAvailable}
+          onClick={props.undo}
+        >
+          <semantic.Icon name="undo" />
+          Undo
+        </semantic.Menu.Item>
+        <semantic.Menu.Item
+          disabled={!props.redosAvailable}
+          onClick={props.redo}
+        >
+          <semantic.Icon name="repeat" />
+          Redo
+        </semantic.Menu.Item>
+        <semantic.Menu.Item
+          disabled={props.deleteFocus.get(0) == null}
+          onClick={() => {
+            props.remove(props.deleteFocus)
+          }}
+        >
+          <semantic.Icon name="x" />
+          Delete
+        </semantic.Menu.Item>
+        <semantic.Menu.Item
+          disabled={props.empty}
+          onClick={() => {
+            props.clearAll()
+          }}
+        >
+          <semantic.Icon name="trash" />
+          Remove All
+        </semantic.Menu.Item>
+      </semantic.Menu>
+    </div>
   )
 }
 

@@ -100,6 +100,7 @@ class SkuPopup extends Popup {
       onClose: this.handleClose,
       open: props.open,
       offset: props.offset,
+      keepInViewPort: false,
       on: props.on
     }
     const suggestion = suggestions.get(this.state.viewing) || immutable.Map()
@@ -285,6 +286,7 @@ class MpnPopup extends Popup {
       onClose: this.handleClose,
       open: props.open,
       offset: props.offset,
+      keepInViewPort: false,
       on: props.on
     }
     const suggestion = suggestions.get(this.state.viewing) || immutable.Map()

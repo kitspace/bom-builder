@@ -172,12 +172,10 @@ class EditInput extends React.PureComponent {
   }
   UNSAFE_componentWillReceiveProps(newProps) {
     if (this.props.type !== 'number') {
-      if (newProps.value !== this.state.initialValue) {
-        clearTimeout(this.timeout)
-        this.setState({
-          value: newProps.value
-        })
-      }
+      clearTimeout(this.timeout)
+      this.setState({
+        value: newProps.value
+      })
     }
   }
   render() {

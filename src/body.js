@@ -8,7 +8,12 @@ function Body(props) {
   return (
     <tbody style={{visibility: props.hidden ? 'hidden' : 'visible'}}>
       {props.lineIds.map(lineId => (
-        <Line className="bomLine" key={lineId} lineId={lineId} />
+        <Line
+          className="bomLine"
+          key={lineId}
+          lineId={lineId}
+          hidden={props.hidden}
+        />
       ))}
     </tbody>
   )

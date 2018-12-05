@@ -45,7 +45,7 @@ const SkuCell = createClass({
         setFocusNext={props.setFocusNext}
       />
     )
-    if (value || props.suggestions.size > 0) {
+    if (!props.hidden && (value || props.suggestions.size > 0)) {
       return (
         <SkuPopup
           on="click"
@@ -183,7 +183,7 @@ function skuPopupExpanded(state) {
   return state.view.get('skuPopupExpanded')
 }
 
-function mapStateToProps() {
+function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
   const suggestions = makeApplicableSuggestions()
   const selected = makeSelectedSelector(suggestions)

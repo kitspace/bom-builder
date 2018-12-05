@@ -40,7 +40,7 @@ class MpnCell extends React.Component {
         setFocusNext={props.setFocusNext}
       />
     )
-    if (props.suggestions.size > 0) {
+    if (!props.hidden && props.suggestions.size > 0) {
       return (
         <MpnPopup
           on="click"
@@ -172,7 +172,7 @@ function mpnPopupExpanded(state) {
   return state.view.get('mpnPopupExpanded')
 }
 
-function mapStateToProps() {
+function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
   const mpn = makeMpnSelector()
   const suggestions = makeApplicableSuggestions(mpn)

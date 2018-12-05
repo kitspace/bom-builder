@@ -47,6 +47,7 @@ function Line(props) {
           field={field}
           lineId={lineId}
           partNumberIndex={i}
+          hidden={props.hidden}
         />
       )
     }
@@ -60,20 +61,36 @@ function Line(props) {
         lineId={lineId}
         expanded={partNumbersExpanded.get(i)}
         partNumberIndex={i}
+        hidden={props.hidden}
       />
     )
     return cells
   })
   const retailerCells = retailer_list.map((name, i) => {
     const field = fields.getIn(['retailers', name])
-    return <SkuCell key={name} field={field} lineId={lineId} />
+    return (
+      <SkuCell hidden={props.hidden} key={name} field={field} lineId={lineId} />
+    )
   })
   return (
-    <semantic.Table.Row className='bomLine' active={editingLine}>
-      <Handle lineId={lineId} />
-      <SimpleCell field={fields.get('reference')} lineId={lineId} />
-      <SimpleCell field={fields.get('quantity')} lineId={lineId} />
-      <SimpleCell field={fields.get('description')} lineId={lineId} />
+    <semantic.Table.Row className="bomLine" active={editingLine}>
+      <Handle hidden={props.hidden} lineId={lineId} />
+
+      <SimpleCell
+        hidden={props.hidden}
+        field={fields.get('reference')}
+        lineId={lineId}
+      />
+      <SimpleCell
+        hidden={props.hidden}
+        field={fields.get('quantity')}
+        lineId={lineId}
+      />
+      <SimpleCell
+        hidden={props.hidden}
+        field={fields.get('description')}
+        lineId={lineId}
+      />
       {partNumberCells}
       {retailerCells}
     </semantic.Table.Row>

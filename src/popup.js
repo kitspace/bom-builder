@@ -49,8 +49,9 @@ class Popup extends React.PureComponent {
     this.props.setExpanded(!this.props.expanded)
   }
   handleClose() {
-    const viewing = this.props.selected < 0 ? 0 : this.props.selected
-    this.setState({viewing})
+    if (this.props.selected >= 0) {
+      this.setState({viewing: this.props.selected})
+    }
     this.props.onClose && this.props.onClose()
   }
   incrementViewing() {

@@ -166,6 +166,10 @@ div.retailerButtonCellIcon {
   color: rgba(40, 40, 40, 0.3) !important;
 }
 
+.ui.secondary.menu {
+  margin-bottom: 0px !important;
+}
+
 .expandLabel {
   padding: 1px !important;
   cursor: pointer;

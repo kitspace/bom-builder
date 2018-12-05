@@ -3,7 +3,6 @@ import * as semantic from 'semantic-ui-react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import oneClickBom from '1-click-bom'
-import BuyParts from './buy_parts'
 
 import {actions} from './state'
 
@@ -20,8 +19,6 @@ class Header extends React.Component {
       sortBy,
       togglePartNumbersExpanded
     } = props
-    const partNumberColumns =
-      maxPartNumbers + partNumbersExpanded.reduce((prev, x) => prev + x, 0)
     const cells = []
     for (let i = 0; i < maxPartNumbers; ++i) {
       if (partNumbersExpanded.get(i)) {
@@ -61,10 +58,6 @@ class Header extends React.Component {
     })
     return (
       <thead>
-        <BuyParts
-          autoFillSuggestions={props.autoFillSuggestions}
-          partNumberColumns={partNumberColumns}
-        />
         <tr>
           <th colSpan={2}>
             <span

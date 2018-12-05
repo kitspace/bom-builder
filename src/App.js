@@ -13,6 +13,7 @@ import * as fileDownload from 'js-file-download'
 import Header from './header'
 import Body from './body'
 import Menu from './menu'
+import BuyParts from './buy_parts'
 
 import {subscribeEffects} from './effects'
 import {findSuggestions} from './find_suggestions'
@@ -158,12 +159,7 @@ class Bom extends React.Component {
             style={{
               width: '100%',
               background: 'white',
-              zIndex: 100000,
-              borderBottom: '1px solid #e6e6e6',
-              overflow: 'hidden',
-              height: 131,
-              maxHeight: 131,
-              minHeight: 131
+              zIndex: 10000
             }}
           >
             <Menu
@@ -172,29 +168,43 @@ class Bom extends React.Component {
               handleFileInput={handleFileInput}
               clearAll={this.props.clearAll}
             />
+            <BuyParts />
+          </div>
+          <div
+            className="ui fixed top sticky"
+            style={{
+              width: '100%',
+              background: 'white',
+              zIndex: 100000,
+              borderBottom: '1px solid #e6e6e6',
+              overflow: 'hidden',
+              zIndex: 9999,
+              height: 130
+            }}
+          >
             <semantic.Table
               className="Bom"
               size="small"
               celled
               unstackable
               singleLine
+              style={{marginTop: 110}}
             >
               <Header />
               <Body hidden />
             </semantic.Table>
           </div>
-          <div style={{display: 'flex', marginTop: 45}}>
-            <semantic.Table
-              className="Bom"
-              size="small"
-              celled
-              unstackable
-              singleLine
-            >
-              <Header />
-              <Body />
-            </semantic.Table>
-          </div>
+          <semantic.Table
+            className="Bom"
+            size="small"
+            celled
+            unstackable
+            singleLine
+            style={{marginTop: 109}}
+          >
+            <Header />
+            <Body />
+          </semantic.Table>
           <semantic.Button
             onClick={actions.addEmptyLine}
             basic

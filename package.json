@@ -5,7 +5,6 @@
   "dependencies": {
     "1-click-bom": "git+https://github.com/kitspace/npm-1-click-bom.git",
     "copy-to-clipboard": "^3.0.8",
-    "create-react-class": "^15.6.0",
     "immutable": "^3.8.1",
     "immutable-diff": "^0.1.1",
     "js-file-download": "^0.4.1",

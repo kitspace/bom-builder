@@ -1,26 +1,24 @@
 import React from 'react'
-import createClass from 'create-react-class'
 import * as semantic from 'semantic-ui-react'
 
-const EditableCell = createClass({
-  displayName: 'EditableCell',
-  setFieldHandler(value) {
+class EditableCell extends React.PureComponent {
+  setFieldHandler = value => {
     const {lineId, field, setField} = this.props
     setField({lineId, field, value})
-  },
-  loseFocusCallback() {
+  }
+  loseFocusCallback = () => {
     const {lineId, field, loseFocus} = this.props
     loseFocus([lineId, field])
-  },
-  loseFocusHandler() {
+  }
+  loseFocusHandler = () => {
     //give it some time so we can get to the delete button before losing focus
     setTimeout(this.loseFocusCallback, 300)
-  },
-  clickHandler(e) {
+  }
+  clickHandler = e => {
     const {lineId, field, setFocus, onClick} = this.props
     setFocus([lineId, field])
     onClick && onClick(e)
-  },
+  }
   render() {
     const props = this.props
     const {value, field, active} = props
@@ -53,7 +51,7 @@ const EditableCell = createClass({
       />
     )
   }
-})
+}
 
 class Cell extends React.PureComponent {
   render() {

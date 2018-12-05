@@ -1,5 +1,4 @@
 import React from 'react'
-import * as createClass from 'create-react-class'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import * as reselect from 'reselect'
@@ -11,21 +10,18 @@ import * as selectors from './selectors'
 import EditableCell from './editable_cell'
 import {computeSuggestionsForRetailer} from './suggestions'
 
-const SkuCell = createClass({
-  getInitialState() {
-    return {triggered: false}
-  },
+class SkuCell extends React.Component {
   shouldComponentUpdate(newProps) {
     return Object.keys(newProps).reduce((prev, k) => {
       return prev || (k !== 'field' && newProps[k] !== this.props[k])
     }, false)
-  },
-  handlePopupOpen() {
+  }
+  handlePopupOpen = () => {
     this.props.setPopupFocus([this.props.lineId, this.props.field])
-  },
-  handlePopupClose() {
+  }
+  handlePopupClose = () => {
     this.props.setPopupFocus([null, null])
-  },
+  }
   render() {
     const props = this.props
     const {value, lineId, field, setField, setFocus, active} = props
@@ -67,7 +63,7 @@ const SkuCell = createClass({
     }
     return cell
   }
-})
+}
 
 function retailerSelector(_, props) {
   return props.field.get(1)

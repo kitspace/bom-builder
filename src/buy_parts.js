@@ -75,16 +75,20 @@ function BuyParts(props) {
               fontWeight: 'normal',
               height: '100%',
               verticalAlign: 'middle',
-              color: '#2185D0',
-              minWidth: 160
+              color: '#2185D0 !important',
+              minWidth: 160,
+              display: 'flex',
+              marginTop: 5
             }}
           >
-            Preview:
-            <semantic.Radio
-              toggle
-              checked={props.previewBuy}
-              onChange={(e, data) => props.setPreviewBuy(data.checked)}
-            />
+            <div style={{marginRight: 5}}> Preview: </div>
+            <div>
+              <semantic.Radio
+                toggle
+                checked={props.previewBuy}
+                onChange={(e, data) => props.setPreviewBuy(data.checked)}
+              />
+            </div>
           </div>
         </div>
       ) : (

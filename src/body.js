@@ -6,7 +6,7 @@ import Line from './line'
 
 function Body(props) {
   return (
-    <tbody>
+    <tbody style={{visibility: props.hidden ? 'hidden' : 'visible'}}>
       {props.lineIds.map(lineId => (
         <Line className="bomLine" key={lineId} lineId={lineId} />
       ))}

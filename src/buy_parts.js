@@ -80,8 +80,6 @@ function BuyParts(props) {
               Install the 1-click BOM exension to use this feature
             </div>
           )}
-          <semantic.List>{retailers}</semantic.List>
-          <pre>{JSON.stringify(props.selectionNumbers, null, 2)}</pre>
         </div>
       </th>
     </tr>

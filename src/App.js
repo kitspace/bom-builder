@@ -152,14 +152,38 @@ class Bom extends React.Component {
   render() {
     return (
       <reactRedux.Provider store={store}>
-        <div style={{height: this.state.height}} className="tableScroller">
-          <Menu
-            downloadBom={downloadBom}
-            copyBom={copyBom}
-            handleFileInput={handleFileInput}
-            clearAll={this.props.clearAll}
-          />
-          <div style={{display: 'flex', marginTop: 40}}>
+        <div>
+          <div
+            className="ui fixed top sticky"
+            style={{
+              width: '100%',
+              background: 'white',
+              zIndex: 100000,
+              borderBottom: '1px solid #e6e6e6',
+              overflow: 'hidden',
+              height: 131,
+              maxHeight: 131,
+              minHeight: 131
+            }}
+          >
+            <Menu
+              downloadBom={downloadBom}
+              copyBom={copyBom}
+              handleFileInput={handleFileInput}
+              clearAll={this.props.clearAll}
+            />
+            <semantic.Table
+              className="Bom"
+              size="small"
+              celled
+              unstackable
+              singleLine
+            >
+              <Header />
+              <Body hidden />
+            </semantic.Table>
+          </div>
+          <div style={{display: 'flex', marginTop: 45}}>
             <semantic.Table
               className="Bom"
               size="small"

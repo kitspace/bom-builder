@@ -45,7 +45,8 @@ export const initialState = {
     addingParts: false,
     extensionPresent: false,
     preferredRetailer: 'Farnell',
-    previewBuy: false
+    previewBuy: false,
+    popupFocus: [null, null]
   }),
   suggestions: immutable.Map()
 }
@@ -166,6 +167,9 @@ const viewActions = {
   setFocus(state, location) {
     return state.set('focus', immutable.fromJS(location))
   },
+  setPopupFocus(state, location) {
+    return state.set('popupFocus', immutable.fromJS(location))
+  },
   setPreviewBuy(state, value) {
     return state.set('previewBuy', value)
   },
@@ -182,8 +186,12 @@ const viewActions = {
     return state.updateIn(['partNumbersExpanded', n], expanded => !expanded)
   },
   loseFocus(state, focusToLose) {
+    focusToLose = immutable.fromJS(focusToLose)
+    if (state.get('popupFocus').equals(focusToLose)) {
+      return state
+    }
     return state.update('focus', focus => {
-      if (focus.equals(immutable.fromJS(focusToLose))) {
+      if (focus.equals(focusToLose)) {
         return immutable.List.of(null, null)
       }
       return focus

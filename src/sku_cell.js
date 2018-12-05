@@ -12,7 +12,6 @@ import EditableCell from './editable_cell'
 import {computeSuggestionsForRetailer} from './suggestions'
 
 const SkuCell = createClass({
-  displayName: 'MpnCell',
   getInitialState() {
     return {triggered: false}
   },
@@ -20,6 +19,12 @@ const SkuCell = createClass({
     return Object.keys(newProps).reduce((prev, k) => {
       return prev || (k !== 'field' && newProps[k] !== this.props[k])
     }, false)
+  },
+  handlePopupOpen() {
+    this.props.setPopupFocus([this.props.lineId, this.props.field])
+  },
+  handlePopupClose() {
+    this.props.setPopupFocus([null, null])
   },
   render() {
     const props = this.props
@@ -48,6 +53,8 @@ const SkuCell = createClass({
           trigger={cell}
           field={field}
           lineId={props.lineId}
+          onOpen={this.handlePopupOpen}
+          onClose={this.handlePopupClose}
           position="bottom right"
           suggestions={props.suggestions}
           selected={props.selected}

@@ -15,6 +15,12 @@ class MpnCell extends React.Component {
       return prev || (k !== 'field' && newProps[k] !== this.props[k])
     }, false)
   }
+  handlePopupOpen = () => {
+    this.props.setPopupFocus([this.props.lineId, this.props.field])
+  }
+  handlePopupClose = () => {
+    this.props.setPopupFocus([null, null])
+  }
   render() {
     const props = this.props
     const {value, smallValue, lineId, field, setField, setFocus, active} = props
@@ -42,6 +48,8 @@ class MpnCell extends React.Component {
           field={field.pop()}
           lineId={props.lineId}
           position="bottom center"
+          onOpen={this.handlePopupOpen}
+          onClose={this.handlePopupClose}
           suggestions={props.suggestions}
           selected={props.selected}
           setField={setField}

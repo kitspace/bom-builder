@@ -237,6 +237,10 @@ class Bom extends React.Component {
   componentDidMount() {
     const storedData = localStorage.getItem('tsv') || initialStoredData
     const {lines} = oneClickBom.parseTSV(storedData)
+    lines.forEach(line => {
+      delete line.retailers.Rapid
+      delete line.retailers.Newark
+    })
     actions.initializeLines(lines)
     const state = store.getState()
     state.data.present.get('lines').forEach((line, id) => {

@@ -76,10 +76,32 @@ const partNumbersSelector = reselect.createSelector([selectors.line], line =>
   line.get('partNumbers')
 )
 
+function normalizeName(name) {
+  return (name || '')
+    .toLowerCase()
+    .replace(/-/g, '')
+    .replace(/ /g, '')
+    .replace(/_/g, '')
+    .replace(/&/g, 'and')
+}
+
+function similarEnoughName(name1, name2) {
+  return normalizeName(name1) === normalizeName(name2)
+}
+
+function similarEnough(mpnOrSku1, mpnOrSku2) {
+  const name1 = mpnOrSku1.get('manufacturer') || mpnOrSku1.get('vendor')
+  const name2 = mpnOrSku2.get('manufacturer') || mpnOrSku2.get('vendor')
+  const part1 = mpnOrSku1.get('part')
+  const part2 = mpnOrSku2.get('part')
+  const ret = similarEnoughName(name1, name2) && similarEnoughName(part1, part2)
+  return ret
+}
+
 function makeOtherMpnsSelector(mpn) {
   return reselect.createSelector(
     [partNumbersSelector, mpn],
-    (partNumbers, mpn) => partNumbers.filter(m => !m.equals(mpn))
+    (partNumbers, mpn) => partNumbers.filter(m => !similarEnough(m, mpn))
   )
 }
 
@@ -112,7 +134,9 @@ function makeApplicableSuggestions(mpn) {
   return reselect.createSelector(
     [suggestions, otherMpns, selectors.lineId],
     (suggestions, otherMpns, lineId, suggestionNumber) => {
-      return suggestions.filter(s => !otherMpns.includes(s.get('mpn')))
+      return suggestions.filter(
+        s => !otherMpns.some(other => similarEnough(other, s.get('mpn')))
+      )
     }
   )
 }
@@ -150,9 +174,10 @@ function isManufacturer(_, props) {
 }
 
 function makeSelectedSelector(suggestions, mpn) {
-  return reselect.createSelector([suggestions, mpn], (suggestions, mpn) =>
-    suggestions.findIndex(s => s.get('mpn').equals(mpn))
-  )
+  return reselect.createSelector([suggestions, mpn], (suggestions, mpn) => {
+    const index = suggestions.findIndex(s => similarEnough(s.get('mpn'), mpn))
+    return index
+  })
 }
 
 function isExpanded(_, props) {

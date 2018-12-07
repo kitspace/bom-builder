@@ -37,6 +37,7 @@ function BuyParts(props) {
           basic
         >
           <semantic.Icon name="magic" />
+          <semantic.Icon name="search" />
           Auto Fill
         </semantic.Button>
       </div>

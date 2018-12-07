@@ -36,8 +36,8 @@ export function computeSuggestionsForRetailer(suggestions, retailer, line) {
         b.get('in_stock_quantity')
       ]
       if (
-        aType === 'match' &&
-        bType === 'match' &&
+        /match/.test(aType) &&
+        /match/.test(bType) &&
         aCheck === 'green' &&
         bCheck === 'green'
       ) {
@@ -53,16 +53,16 @@ export function computeSuggestionsForRetailer(suggestions, retailer, line) {
           return 1
         }
       }
-      if (aType === 'match' && bType === 'match' && bCheck !== 'green') {
+      if (/match/.test(aType) && /match/.test(bType) && bCheck !== 'green') {
         return -1
       }
-      if (aType === 'match' && bType === 'match' && aCheck !== 'green') {
+      if (/match/.test(aType) && /match/.test(bType) && aCheck !== 'green') {
         return 1
       }
-      if (aType === 'match' && bType === 'search' && aCheck === 'green') {
+      if (/match/.test(aType) && bType === 'search' && aCheck === 'green') {
         return -1
       }
-      if (aType === 'search' && bType === 'match' && bCheck === 'green') {
+      if (aType === 'search' && /match/.test(bType) && bCheck === 'green') {
         return 1
       }
       if (aCheck === 'green' && bCheck !== 'green') {

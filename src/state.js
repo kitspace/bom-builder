@@ -213,7 +213,7 @@ function makeUniform(suggestions) {
   //make unique
   suggestions = suggestions.reduce((prev, p) => {
     if (prev.map(s => s.get('mpn')).includes(p.get('mpn'))) {
-      if (p.get('type') === 'match') {
+      if (p.get('type') === 'match' || p.get('type') === 'cpl_match') {
         prev = prev.filter(s => !s.get('mpn').equals(p.get('mpn')))
         return prev.push(p)
       }
@@ -237,13 +237,13 @@ function makeUniform(suggestions) {
   //put all matches at the start and searches at the end
   suggestions = suggestions.sort((a, b) => {
     const [t1, t2] = [a.get('type'), b.get('type')]
-    if (t1 === 'match' && t2 === 'match') {
+    if (/match/.test(t1) && /match/.test(t2)) {
       return 0
     }
-    if (t1 === 'match') {
+    if (/match/.test(t1)) {
       return -1
     }
-    if (t2 === 'match') {
+    if (/match/.test(t2)) {
       return 1
     }
     return 0
@@ -320,7 +320,7 @@ const rootActions = {
               }
             }
             const s = vendorSuggestions.first()
-            if (s && s.get('type') === 'match') {
+            if (s && /match/.test(s.get('type'))) {
               return s.getIn(['sku', 'part'])
             }
             return part
@@ -356,7 +356,8 @@ const rootActions = {
     return Object.assign({}, state, {suggestions: stateSuggestions})
   },
   addSuggestions(state, {lineId, suggestions}) {
-    const existing = state.suggestions.getIn([lineId, 'data']) ||immutable.List()
+    const existing =
+      state.suggestions.getIn([lineId, 'data']) || immutable.List()
     suggestions = makeUniform(existing.concat(suggestions))
     return this.setSuggestions(state, {lineId, suggestions})
   },

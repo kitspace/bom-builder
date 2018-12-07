@@ -161,7 +161,7 @@ class SkuPopup extends Popup {
               ? `${this.state.viewing + 1}/${suggestions.size}`
               : ''
           }
-          wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
+          wandColor={suggestion.get('type')}
           hideWand={!mpn.get('part')}
         />
         <div className="subTitle">
@@ -303,7 +303,7 @@ class MpnPopup extends Popup {
         one={mpn.get('manufacturer')}
         two={part}
         page={`${this.state.viewing + 1}/${suggestions.size}`}
-        wandColor={suggestion.get('type') === 'match' ? 'green' : 'grey'}
+        wandColor={suggestion.get('type')}
       />
     )
     const specTable = <SpecTable specs={specs} />
@@ -416,15 +416,15 @@ function pricesToSpecs(prices) {
 class Title extends React.PureComponent {
   render() {
     const props = this.props
-    const wandOpacity = props.wandColor === 'green' ? 1.0 : 0.3
+    const wandOpacity = /match/.test(props.wandColor) ? 1.0 : 0.3
     return (
       <div className="titleContainer">
         <div>
           {!props.hideWand && (
             <semantic.Icon
               style={{opacity: wandOpacity}}
-              color={props.wandColor}
-              name={props.wandColor === 'green' ? "magic" : "search"}
+              color={/match/.test(props.wandColor) ? 'green' : 'grey'}
+              name={props.wandColor === 'match' ? 'magic' : 'search'}
             />
           )}
         </div>

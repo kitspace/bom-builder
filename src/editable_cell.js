@@ -66,13 +66,13 @@ class Cell extends React.PureComponent {
         if (props.wand === 'loading') {
           icons.push(<semantic.Loader key="magic" active inline size="mini" />)
         } else {
-          wandColor = props.wand === 'match' ? 'green' : 'grey'
-          const wandOpacity = props.wand === 'match' ? 1.0 : 0.3
+          wandColor = /match/.test(props.wand) ? 'green' : 'grey'
+          const wandOpacity = /match/.test(props.wand) ?  1.0 : 0.3
           icons.push(
             <semantic.Icon
               style={{opacity: wandOpacity, fontSize: '1.2em'}}
               color={wandColor}
-              name={wandColor === 'green' ? "magic" : "search"}
+              name={props.wand === 'match' ? "magic" : "search"}
               key="magic"
             />
           )

@@ -424,7 +424,7 @@ class Title extends React.PureComponent {
             <semantic.Icon
               style={{opacity: wandOpacity}}
               color={props.wandColor}
-              name="magic"
+              name={props.wandColor === 'green' ? "magic" : "search"}
             />
           )}
         </div>

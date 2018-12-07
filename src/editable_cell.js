@@ -72,7 +72,7 @@ class Cell extends React.PureComponent {
             <semantic.Icon
               style={{opacity: wandOpacity, fontSize: '1.2em'}}
               color={wandColor}
-              name="magic"
+              name={wandColor === 'green' ? "magic" : "search"}
               key="magic"
             />
           )

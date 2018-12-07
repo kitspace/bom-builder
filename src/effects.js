@@ -4,7 +4,7 @@ import immutable from 'immutable'
 import {findSuggestions, searchDescription} from './find_suggestions'
 import {initialState, emptyPartNumber} from './state'
 
-const suggestionFields = immutable.List(['partNumbers', 'retailers'])
+const suggestionFields = immutable.List.of('partNumbers', 'retailers')
 
 function needsSuggestions(path) {
   const lineId = path.get(1)
@@ -33,9 +33,13 @@ function effects(diff, store, actions) {
         const line = state.data.present.getIn(path.take(2))
         let suggestions =
           state.suggestions.getIn([lineId, 'data']) || immutable.List()
+        const suggestionsToRemove = suggestions.filter(p =>
+          p.get('from').equals(path.slice(2, 4))
+        )
         suggestions = suggestions.filter(
           p => !p.get('from').equals(path.slice(2, 4))
         )
+        actions.removeSuggestions({lineId, suggestionsToRemove})
         return findSuggestions(lineId, line, suggestions, actions)
       }
       if (path.last() === 'description') {
@@ -79,14 +83,20 @@ export function subscribeEffects(store, actions) {
         '*'
       )
     }
-    state.suggestions.forEach((s, lineId) => {
+    state.suggestions.forEach(async (s, lineId) => {
       if (s.get('search') === 'start') {
+        actions.setSuggestionsSearch({lineId, status: 'searching'})
+        const suggestionsToRemove = (s.get('data') || immutable.List()).filter(
+          x => x.getIn(['from', 0]) === 'description'
+        )
+        actions.removeSuggestions({lineId, suggestionsToRemove})
         const description = state.data.present.getIn([
           'lines',
           lineId,
           'description'
         ])
-        return searchDescription(lineId, description, actions)
+        await searchDescription(lineId, description, actions)
+        actions.setSuggestionsSearch({lineId, status: 'done'})
       }
     })
   })

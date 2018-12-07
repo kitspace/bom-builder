@@ -81,16 +81,10 @@ async function findSuggestions(
 }
 
 export async function searchDescription(lineId, description, actions) {
-  actions.setSuggestionsSearch({lineId, status: 'searching'})
-
-  let suggestions = immutable.List()
-  const ds = await fromDescription(description)
-  if (ds) {
-    suggestions = suggestions.concat(ds)
+  const suggestions = await fromDescription(description)
+  if (suggestions) {
+    actions.addSuggestions({lineId, suggestions})
   }
-
-  actions.addSuggestions({lineId, suggestions})
-  actions.setSuggestionsSearch({lineId, status: 'done'})
 }
 
 export {findSuggestions}

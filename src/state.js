@@ -361,6 +361,15 @@ const rootActions = {
     suggestions = makeUniform(existing.concat(suggestions))
     return this.setSuggestions(state, {lineId, suggestions})
   },
+  removeSuggestions(state, {lineId, suggestionsToRemove}) {
+    const existing =
+      state.suggestions.getIn([lineId, 'data']) || immutable.List()
+
+    const suggestions = existing.filter(
+      s => !suggestionsToRemove.some(x => x.get('mpn').equals(s.get('mpn')))
+    )
+    return this.setSuggestions(state, {lineId, suggestions})
+  },
   setFocusBelow(state) {
     let data = state.data
     let order = data.present.get('order')

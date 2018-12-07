@@ -91,6 +91,9 @@ function Line(props) {
         field={fields.get('description')}
         lineId={lineId}
       />
+      <td className='searchCell' >
+        <semantic.Icon color="grey" name="search" />
+      </td>
       {partNumberCells}
       {retailerCells}
     </semantic.Table.Row>

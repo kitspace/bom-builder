@@ -75,7 +75,7 @@ class Header extends React.Component {
               Quantity
             </span>
           </th>
-          <th>
+          <th colSpan={2}>
             <span
               style={{cursor: 'pointer'}}
               onClick={() => sortBy('description')}

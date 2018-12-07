@@ -241,3 +241,14 @@ label.item:hover {
 tr.bomLine {
   height: 29px;
 }
+
+.searchCell {
+  border-left: 0 !important;
+  min-width: 25px !important;
+  cursor: pointer !important;
+  text-align: center !important;
+}
+
+.searchCell:hover > i.icon {
+  color: rgba(0, 0, 0, 0.87) !important;
+}

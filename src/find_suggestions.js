@@ -55,8 +55,7 @@ async function findSuggestions(
     })
   )
 
-  suggestions = makeUniform(suggestions)
-  actions.setSuggestions({lineId, suggestions})
+  actions.addSuggestions({lineId, suggestions})
 
   await Promise.all(
     line
@@ -77,61 +76,21 @@ async function findSuggestions(
       })
   )
 
-  suggestions = makeUniform(suggestions)
-  actions.setSuggestions({lineId, suggestions})
+  actions.addSuggestions({lineId, suggestions})
+  actions.setSuggestionsStatus({lineId, status: 'done'})
+}
 
-  const ds = await fromDescription(line.get('description'))
+export async function searchDescription(lineId, description, actions) {
+  actions.setSuggestionsSearch({lineId, status: 'searching'})
+
+  let suggestions = immutable.List()
+  const ds = await fromDescription(description)
   if (ds) {
     suggestions = suggestions.concat(ds)
   }
 
-  suggestions = makeUniform(suggestions)
-  actions.setSuggestions({lineId, suggestions})
-  actions.setSuggestionsStatus({lineId, status: 'done'})
-}
-
-function makeUniform(suggestions) {
-  suggestions = suggestions.filter(x => x)
-  //make unique
-  suggestions = suggestions.reduce((prev, p) => {
-    if (prev.map(s => s.get('mpn')).includes(p.get('mpn'))) {
-      if (p.get('type') === 'match') {
-        prev = prev.filter(s => !s.get('mpn').equals(p.get('mpn')))
-        return prev.push(p)
-      }
-      return prev
-    }
-    return prev.push(p)
-  }, immutable.List())
-
-  //try and and minimize changes in the order by sorting according to part
-  suggestions = suggestions.sort((a, b) => {
-    const [p1, p2] = [a.getIn(['mpn', 'part']), b.getIn(['mpn', 'part'])]
-    if (p1 > p2) {
-      return 1
-    }
-    if (p1 < p2) {
-      return -1
-    }
-    return 0
-  })
-
-  //put all matches at the start and searches at the end
-  suggestions = suggestions.sort((a, b) => {
-    const [t1, t2] = [a.get('type'), b.get('type')]
-    if (t1 === 'match' && t2 === 'match') {
-      return 0
-    }
-    if (t1 === 'match') {
-      return -1
-    }
-    if (t2 === 'match') {
-      return 1
-    }
-    return 0
-  })
-
-  return suggestions
+  actions.addSuggestions({lineId, suggestions})
+  actions.setSuggestionsSearch({lineId, status: 'done'})
 }
 
 export {findSuggestions}

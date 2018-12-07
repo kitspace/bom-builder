@@ -1,14 +1,10 @@
 import immutableDiff from 'immutable-diff'
 import immutable from 'immutable'
 
-import {findSuggestions} from './find_suggestions'
+import {findSuggestions, searchDescription} from './find_suggestions'
 import {initialState, emptyPartNumber} from './state'
 
-const suggestionFields = immutable.List([
-  'description',
-  'partNumbers',
-  'retailers'
-])
+const suggestionFields = immutable.List(['partNumbers', 'retailers'])
 
 function needsSuggestions(path) {
   const lineId = path.get(1)
@@ -41,6 +37,9 @@ function effects(diff, store, actions) {
           p => !p.get('from').equals(path.slice(2, 4))
         )
         return findSuggestions(lineId, line, suggestions, actions)
+      }
+      if (path.last() === 'description') {
+        actions.setSuggestionsSearch({lineId, status: 'start'})
       }
     })
   )
@@ -80,5 +79,15 @@ export function subscribeEffects(store, actions) {
         '*'
       )
     }
+    state.suggestions.forEach((s, lineId) => {
+      if (s.get('search') === 'start') {
+        const description = state.data.present.getIn([
+          'lines',
+          lineId,
+          'description'
+        ])
+        return searchDescription(lineId, description, actions)
+      }
+    })
   })
 }

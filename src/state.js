@@ -208,6 +208,50 @@ const viewActions = {
   }
 }
 
+function makeUniform(suggestions) {
+  suggestions = suggestions.filter(x => x)
+  //make unique
+  suggestions = suggestions.reduce((prev, p) => {
+    if (prev.map(s => s.get('mpn')).includes(p.get('mpn'))) {
+      if (p.get('type') === 'match') {
+        prev = prev.filter(s => !s.get('mpn').equals(p.get('mpn')))
+        return prev.push(p)
+      }
+      return prev
+    }
+    return prev.push(p)
+  }, immutable.List())
+
+  //try and and minimize changes in the order by sorting according to part
+  suggestions = suggestions.sort((a, b) => {
+    const [p1, p2] = [a.getIn(['mpn', 'part']), b.getIn(['mpn', 'part'])]
+    if (p1 > p2) {
+      return 1
+    }
+    if (p1 < p2) {
+      return -1
+    }
+    return 0
+  })
+
+  //put all matches at the start and searches at the end
+  suggestions = suggestions.sort((a, b) => {
+    const [t1, t2] = [a.get('type'), b.get('type')]
+    if (t1 === 'match' && t2 === 'match') {
+      return 0
+    }
+    if (t1 === 'match') {
+      return -1
+    }
+    if (t2 === 'match') {
+      return 1
+    }
+    return 0
+  })
+
+  return suggestions
+}
+
 const rootActions = {
   setState(_, state) {
     return makeImmutable(state)
@@ -310,6 +354,11 @@ const rootActions = {
       .setIn([lineId, 'data'], suggestions)
       .setIn([lineId, 'retailers'], retailers)
     return Object.assign({}, state, {suggestions: stateSuggestions})
+  },
+  addSuggestions(state, {lineId, suggestions}) {
+    const existing = state.suggestions.getIn([lineId, 'data']) ||immutable.List()
+    suggestions = makeUniform(existing.concat(suggestions))
+    return this.setSuggestions(state, {lineId, suggestions})
   },
   setFocusBelow(state) {
     let data = state.data
@@ -428,6 +477,9 @@ const linesReducer = reduxUndo.default(
 const suggestionsActions = {
   setSuggestionsStatus(state, {lineId, status}) {
     return state.setIn([lineId, 'status'], status)
+  },
+  setSuggestionsSearch(state, {lineId, status}) {
+    return state.setIn([lineId, 'search'], status)
   },
   addSuggestion(state, {id, part}) {
     return state.update(id, s => {

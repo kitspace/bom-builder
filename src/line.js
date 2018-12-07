@@ -91,8 +91,22 @@ function Line(props) {
         field={fields.get('description')}
         lineId={lineId}
       />
-      <td className='searchCell' >
-        <semantic.Icon color="grey" name="search" />
+      <td className="searchCell">
+        {props.searching !== 'done' && (
+          <div
+            className="searchCellInner"
+            onClick={() =>
+              props.search !== 'searching' &&
+              props.setSuggestionsSearch({lineId, status: 'start'})
+            }
+          >
+            {props.searching === 'searching' ? (
+              <semantic.Loader active inline size="mini" />
+            ) : (
+              <semantic.Icon color="grey" name="search" />
+            )}
+          </div>
+        )}
       </td>
       {partNumberCells}
       {retailerCells}
@@ -115,17 +129,19 @@ function makeEditingLineSelector() {
   )
 }
 
-function mapStateToProps() {
+function mapStateToProps(state, props) {
   const line = selectors.makeLineSelector()
   const editingLine = makeEditingLineSelector()
+  const searching = selectors.makeSuggestionsSearching()
   return reselect.createSelector(
-    [line, selectors.view, editingLine],
-    (line, viewState, editingLine) => {
+    [line, selectors.view, editingLine, searching],
+    (line, viewState, editingLine, searching) => {
       const partNumbers = line.get('partNumbers')
       const partNumbersExpanded = viewState.get('partNumbersExpanded')
       return {
         partNumbers,
         partNumbersExpanded,
+        searching,
         editingLine
       }
     }

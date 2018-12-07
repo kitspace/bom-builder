@@ -56,3 +56,10 @@ export function makeSuggestionsLoading() {
     (suggestions, lineId) => suggestions.getIn([lineId, 'status']) === 'loading'
   )
 }
+
+export function makeSuggestionsSearching() {
+  return reselect.createSelector(
+    [suggestions, lineId],
+    (suggestions, lineId) => suggestions.getIn([lineId, 'search'])
+  )
+}

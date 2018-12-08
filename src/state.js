@@ -491,14 +491,15 @@ const suggestionsActions = {
   setSuggestionsSearch(state, {lineId, status}) {
     return state.setIn([lineId, 'search'], status)
   },
-  addSuggestion(state, {id, part}) {
-    return state.update(id, s => {
-      s = s || immutable.List()
-      if (s.some(x => part.get('mpn').equals(x.get('mpn')))) {
-        return s
-      }
-      return s.push(part)
-    })
+  searchAll(state) {
+    return state.map(line =>
+      line.update('search', search => {
+        if (search !== 'done' && search !== 'searching') {
+          return 'start'
+        }
+        return search
+      })
+    )
   }
 }
 

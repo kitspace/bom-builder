@@ -82,6 +82,9 @@ class Header extends React.Component {
             >
               Description
             </span>
+            <span className="searchCellInner" onClick={() => props.searchAll()}>
+              <semantic.Icon name="search" />
+            </span>
           </th>
           {cells}
           {headers}

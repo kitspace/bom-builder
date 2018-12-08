@@ -56,6 +56,18 @@ class Header extends React.Component {
         </th>
       )
     })
+    let search
+    if (props.searchStatus !== 'done') {
+      search = (
+        <span className="searchCellInner" onClick={() => props.searchAll()}>
+          {props.searchStatus === 'searching' ? (
+            <semantic.Loader active inline size="mini" />
+          ) : (
+            <semantic.Icon name="search" />
+          )}
+        </span>
+      )
+    }
     return (
       <thead>
         <tr>
@@ -82,9 +94,7 @@ class Header extends React.Component {
             >
               Description
             </span>
-            <span className="searchCellInner" onClick={() => props.searchAll()}>
-              <semantic.Icon name="search" />
-            </span>
+            {search}
           </th>
           {cells}
           {headers}
@@ -142,8 +152,19 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   const partNumbersExpanded = state.view.get('partNumbersExpanded')
   const first = state.data.present.get('lines').first()
+  const searching = state.suggestions.reduce(
+    (prev, s) => prev || s.get('search') === 'searching',
+    false
+  )
+  const done = state.suggestions.reduce(
+    (prev, s) =>
+      prev && s.get('search') === 'done',
+    true
+  )
+  const searchStatus = searching ? 'searching' : done ? 'done' : null
   return {
     partNumbersExpanded,
+    searchStatus,
     maxPartNumbers: first ? Math.max(first.get('partNumbers').size, 1) : 1
   }
 }

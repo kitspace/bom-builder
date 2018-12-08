@@ -198,6 +198,9 @@ const viewActions = {
     })
   },
   registerExtension(state) {
+    if (state.get('extensionPresent')) {
+      return state
+    }
     return state.set('extensionPresent', true)
   },
   setAddingParts(state, value) {

@@ -141,6 +141,10 @@ window.addEventListener(
     if (event.data.from === 'extension') {
       actions.registerExtension()
     }
+    if (event.data.message === 'bomBuilderResult') {
+      const {retailer, result} = event.data.value
+      actions.addBuyPartsResult({retailer, result})
+    }
   },
   false
 )

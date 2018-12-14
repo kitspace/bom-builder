@@ -1,5 +1,6 @@
 import immutableDiff from 'immutable-diff'
 import immutable from 'immutable'
+import oneClickBom from '1-click-bom'
 
 import {findSuggestions, searchDescription} from './find_suggestions'
 import {initialState, emptyPartNumber} from './state'
@@ -74,15 +75,17 @@ export function subscribeEffects(store, actions) {
     }
 
     if (state.view.get('addingParts') === 'start') {
+      actions.setAddingParts('adding')
       window.postMessage(
         {
           from: 'page',
           message: 'bomBuilderAddToCart',
-          value: {tsv: ''}
+          value: {tsv: getTsv(state)}
         },
         '*'
       )
     }
+
     state.suggestions.forEach(async (s, lineId) => {
       if (s.get('search') === 'start') {
         actions.setSuggestionsSearch({lineId, status: 'searching'})
@@ -100,4 +103,18 @@ export function subscribeEffects(store, actions) {
       }
     })
   })
+}
+
+function getLines(state) {
+  const linesMap = state.data.present
+    .get('lines')
+    .map(line => line.update('partNumbers', ps => ps.slice(0, -1)))
+    .map(line => line.set('reference', line.get('reference') || ''))
+  const order = state.data.present.get('order')
+  return order.map(lineId => linesMap.get(lineId)).toJS()
+}
+
+function getTsv(state) {
+  const lines = getLines(state)
+  return oneClickBom.writeTSV(lines)
 }

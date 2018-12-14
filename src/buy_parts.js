@@ -27,6 +27,30 @@ function BuyParts(props) {
     })
     .valueSeq()
     .toJS()
+  const messages = props.buyPartsMessages.map(message => {
+    const vendor = message.getIn(['sku', 'vendor'])
+    const title = `Problem with adding part to ${vendor} cart`
+    const part = message.getIn(['sku', 'part'])
+    if (part == null) {
+      return (
+        <semantic.Message key={title} negative>
+          <semantic.Message.Header>{title}</semantic.Message.Header>
+        </semantic.Message>
+      )
+    }
+    let reference = message.get('reference')
+    if (reference.length > 20) {
+      reference = reference.slice(0, 20) + '...'
+    }
+    const messageBody = `"${reference}": ${part}`
+    return (
+      <semantic.Message key={title + messageBody} negative>
+        <semantic.Message.Header>{title}</semantic.Message.Header>
+        {messageBody}
+      </semantic.Message>
+    )
+  })
+
   return (
     <div style={{display: 'flex', alignItems: 'center'}}>
       <div>
@@ -97,6 +121,7 @@ function BuyParts(props) {
           Install the 1-click BOM exension to use this feature
         </div>
       )}
+      {messages}
     </div>
   )
 }
@@ -121,7 +146,8 @@ function mapStateToProps(state) {
     selectionNumbers,
     extensionPresent,
     preferredRetailer: state.view.get('preferredRetailer'),
-    previewBuy: state.view.get('previewBuy')
+    previewBuy: state.view.get('previewBuy'),
+    buyPartsMessages: state.view.get('buyPartsMessages')
   }
 }
 

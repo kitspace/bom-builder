@@ -46,7 +46,8 @@ export const initialState = {
     extensionPresent: false,
     preferredRetailer: 'Farnell',
     previewBuy: false,
-    popupFocus: [null, null]
+    popupFocus: [null, null],
+    buyPartsMessages: []
   }),
   suggestions: immutable.Map()
 }
@@ -208,6 +209,23 @@ const viewActions = {
   },
   setPreferredRetailer(state, value) {
     return state.set('preferredRetailer', value)
+  },
+  addBuyPartsResult(state, {retailer, result}) {
+    return state.update('buyPartsMessages', messages => {
+      messages = messages.concat(
+        result.fails.map(({part, reference, quantity}) => {
+          return immutable.fromJS({
+            sku: {part, vendor: retailer},
+            reference,
+            quantity
+          })
+        })
+      )
+      if (!result.success && result.fails.length === 0) {
+        messages = messages.push(immutable.fromJS({retailer}))
+      }
+      return messages
+    })
   }
 }
 

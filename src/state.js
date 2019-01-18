@@ -76,8 +76,13 @@ const linesActions = {
     return this.addEmptyLine(state)
   },
   setField(state, {lineId, field, value}) {
+    if (typeof value === 'string') {
+      value = value.trim()
+    }
     if (field.get(0) === 'quantity' && value < 1) {
       value = 1
+    } else if (field.get(0) === 'retailers' && field.get(1) !== 'Digikey') {
+      value = value.replace(/-/g, '')
     }
     const currentValue = state.getIn(
       immutable.List.of('lines', lineId).concat(field)

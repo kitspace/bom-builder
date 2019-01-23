@@ -19,6 +19,15 @@ function Menu(props) {
         <semantic.Icon name="folder open outline" />
         Open
       </label>
+      <semantic.Menu.Item
+        disabled={props.empty}
+        onClick={() => {
+          props.clearAll()
+        }}
+      >
+        <semantic.Icon name="file outline" />
+        New
+      </semantic.Menu.Item>
       <semantic.Menu.Item disabled={props.empty} onClick={props.downloadBom}>
         <semantic.Icon name="download" />
         Save
@@ -39,15 +48,6 @@ function Menu(props) {
       >
         <semantic.Icon name="x" />
         Delete
-      </semantic.Menu.Item>
-      <semantic.Menu.Item
-        disabled={props.empty}
-        onClick={() => {
-          props.clearAll()
-        }}
-      >
-        <semantic.Icon name="trash" />
-        Remove All
       </semantic.Menu.Item>
     </semantic.Menu>
   )

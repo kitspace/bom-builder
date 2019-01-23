@@ -88,13 +88,15 @@ class Header extends React.Component {
             </span>
           </th>
           <th colSpan={2}>
-            <span
-              style={{cursor: 'pointer'}}
-              onClick={() => sortBy('description')}
-            >
-              Description
-            </span>
-            {search}
+            <div style={{minWidth: 88}}>
+              <span
+                style={{cursor: 'pointer'}}
+                onClick={() => sortBy('description')}
+              >
+                Description
+              </span>
+              {search}
+            </div>
           </th>
           {cells}
           {headers}
@@ -157,8 +159,7 @@ function mapStateToProps(state) {
     false
   )
   const done = state.suggestions.reduce(
-    (prev, s) =>
-      prev && s.get('search') === 'done',
+    (prev, s) => prev && s.get('search') === 'done',
     true
   )
   const searchStatus = searching ? 'searching' : done ? 'done' : null

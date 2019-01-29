@@ -8,7 +8,7 @@ import {actions} from './state'
 
 const retailer_list = oneClickBom
   .getRetailers()
-  .filter(r => r !== 'Rapid' && r !== 'Newark')
+  .filter(r => r !== 'Rapid')
 
 class Header extends React.Component {
   render() {

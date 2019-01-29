@@ -10,7 +10,7 @@ import {retailerSelectionNumbers, getPurchaseLines} from './bom'
 
 const retailer_list = oneClickBom
   .getRetailers()
-  .filter(r => r !== 'Rapid' && r !== 'Newark')
+  .filter(r => r !== 'Rapid')
 
 function BuyParts(props) {
   const retailers = props.selectionNumbers

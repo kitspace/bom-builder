@@ -14,9 +14,8 @@ import SkuCell from './sku_cell'
 import Handle from './handle'
 import DescriptionCell from './description_cell'
 
-const retailer_list = oneClickBom
-  .getRetailers()
-  .filter(r => r !== 'Rapid' && r !== 'Newark')
+
+const retailer_list = oneClickBom.getRetailers().filter(r => r !== 'Rapid')
 
 //for passing shallow equality
 const fields = immutable.Map({

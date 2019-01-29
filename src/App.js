@@ -243,7 +243,6 @@ class Bom extends React.Component {
     const {lines} = oneClickBom.parseTSV(storedData)
     lines.forEach(line => {
       delete line.retailers.Rapid
-      delete line.retailers.Newark
     })
     actions.initializeLines(lines)
     const state = store.getState()

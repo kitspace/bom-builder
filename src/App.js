@@ -182,7 +182,7 @@ class Bom extends React.Component {
               borderBottom: '1px solid #e6e6e6',
               overflow: 'hidden',
               zIndex: 9999,
-              height: 130
+              height: 132
             }}
           >
             <semantic.Table

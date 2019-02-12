@@ -14,6 +14,10 @@ export function makeSuggestionsSelector() {
   )
 }
 
+export function lines(state) {
+  return state.data.present.get('lines')
+}
+
 export function line(state, props) {
   return state.data.present.getIn(['lines', props.lineId])
 }

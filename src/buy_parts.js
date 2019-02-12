@@ -139,8 +139,8 @@ function mapStateToProps(state) {
   )
   let selectionNumbers = immutable.Map()
   if (!loading) {
-    const purchaseLines = getPurchaseLines(state)
-    selectionNumbers = retailerSelectionNumbers(purchaseLines)
+    //const purchaseLines = getPurchaseLines(state)
+    //selectionNumbers = retailerSelectionNumbers(purchaseLines)
   }
   return {
     selectionNumbers,

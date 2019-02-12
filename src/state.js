@@ -45,9 +45,9 @@ export const initialState = {
     addingParts: false,
     extensionPresent: false,
     preferredRetailer: 'Farnell',
-    previewBuy: false,
     popupFocus: [null, null],
-    buyPartsMessages: []
+    buyPartsMessages: [],
+    previewBuy: false
   }),
   suggestions: immutable.Map()
 }

@@ -9,6 +9,7 @@ import {SkuPopup} from './popup'
 import * as selectors from './selectors'
 import EditableCell from './editable_cell'
 import {computeSuggestionsForRetailer} from './suggestions'
+import {makePurchaseLinesSelector} from './bom'
 
 class SkuCell extends React.Component {
   shouldComponentUpdate(newProps) {
@@ -39,6 +40,8 @@ class SkuCell extends React.Component {
         suggestionCheck={props.suggestionCheck}
         setFocusBelow={props.setFocusBelow}
         setFocusNext={props.setFocusNext}
+        previewBuy={props.previewBuy}
+        highlightRed={props.previewBuy && props.noneSelected}
       />
     )
     if (!props.hidden && (value || props.suggestions.size > 0)) {
@@ -179,11 +182,52 @@ function skuPopupExpanded(state) {
   return state.view.get('skuPopupExpanded')
 }
 
+function previewBuySelector(state) {
+  return state.view.get('previewBuy')
+}
+
+function preferredRetailerSelector(state) {
+  return state.view.get('preferredRetailer')
+}
+
+function makeRetailersSelector() {
+  const purchaseLinesSelector = makePurchaseLinesSelector(
+    preferredRetailerSelector,
+    selectors.lines,
+    selectors.suggestions
+  )
+  return reselect.createSelector(
+    [selectors.lines, previewBuySelector, purchaseLinesSelector],
+    (lines, previewBuy, purchaseLines) => {
+      if (previewBuy) {
+        return purchaseLines.map(l => l.get('retailers'))
+      }
+      return lines.map(l => l.get('retailers'))
+    }
+  )
+}
+
+function makeRetailerValueSelector(lineId, field, retailersSelector) {
+  const retailer = field.last()
+  return reselect.createSelector([retailersSelector], retailers => {
+    return retailers.getIn([lineId, retailer])
+  })
+}
+
+function makeNoneSelectedSelector(lineId, retailersSelector) {
+  return reselect.createSelector([retailersSelector], retailers => {
+    return !retailers.get(lineId).some(x => x)
+  })
+}
+
 function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
+  const retailers = makeRetailersSelector()
+  const value = makeRetailerValueSelector(props.lineId, props.field, retailers)
   const suggestions = makeApplicableSuggestions()
   const selected = makeSelectedSelector(suggestions)
   const selectedCheck = makeSelectedCheckSelector(suggestions, selected)
+  const noneSelected = makeNoneSelectedSelector(props.lineId, retailers)
   const suggestionCheck = makeSuggestionCheckSelector(
     suggestions,
     selected,
@@ -192,14 +236,16 @@ function mapStateToProps(state, props) {
   const wand = makeWandSelector(suggestions, selectors.value, suggestionCheck)
   return reselect.createSelector(
     [
-      selectors.value,
+      value,
       active,
       suggestions,
       wand,
       suggestionCheck,
       selectedCheck,
       selected,
-      skuPopupExpanded
+      skuPopupExpanded,
+      previewBuySelector,
+      noneSelected
     ],
     (
       value,
@@ -209,7 +255,9 @@ function mapStateToProps(state, props) {
       suggestionCheck,
       selectedCheck,
       selected,
-      skuPopupExpanded
+      skuPopupExpanded,
+      previewBuy,
+      noneSelected
     ) => ({
       value,
       active,
@@ -218,7 +266,9 @@ function mapStateToProps(state, props) {
       suggestionCheck,
       selectedCheck,
       selected,
-      skuPopupExpanded
+      skuPopupExpanded,
+      previewBuy,
+      noneSelected
     })
   )
 }

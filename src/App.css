@@ -258,3 +258,11 @@ tr.bomLine {
   cursor: pointer !important;
   text-align: center !important;
 }
+
+.highlight.blue {
+  background: #b1d3ed !important;
+}
+
+.highlight.red {
+  background: #fbdada !important;
+}

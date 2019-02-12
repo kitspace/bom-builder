@@ -1,6 +1,9 @@
-import immutable from 'immutable'
+import * as immutable from 'immutable'
+import * as reselect from 'reselect'
 
 import {emptyRetailers} from './state'
+
+import * as selectors from './selectors'
 
 export function getLines(state) {
   const linesMap = state
@@ -46,57 +49,88 @@ export function reduceBom(lines, preferred, done = immutable.List()) {
   })
 }
 
-export function getPurchaseLines(state) {
-  const preferred = state.view.get('preferredRetailer')
-  let lines = state.data.present.get('lines')
-  const offers = state.suggestions
-    .map(x => x.get('data'))
-    .reduce((offers, suggestions) => {
-      suggestions = suggestions || immutable.List()
-      return suggestions.reduce(
-        (offers, part) =>
-          part
-            .get('offers')
-            .reduce(
-              (offers, offer) => offers.set(offer.get('sku'), offer),
-              offers
-            ),
-        offers
+export function makeAllOffersSelector(suggestionsSelector) {
+  const loadingSelector = selectors.makeSuggestionsLoading()
+  return reselect.createSelector(
+    [suggestionsSelector, loadingSelector],
+    (suggestions, loading) => {
+      if (loading) {
+        return immutable.Map()
+      }
+      return suggestions
+        .map(x => x.get('data'))
+        .reduce((offers, suggestions) => {
+          suggestions = suggestions || immutable.List()
+          return suggestions.reduce(
+            (offers, part) =>
+              part
+                .get('offers')
+                .reduce(
+                  (offers, offer) => offers.set(offer.get('sku'), offer),
+                  offers
+                ),
+            offers
+          )
+        }, immutable.Map())
+    }
+  )
+}
+
+export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
+  return reselect.createSelector(
+    [linesSelector, allOffersSelector],
+    (lines, offers) => {
+      return lines.map(line =>
+        line.update('retailers', retailers =>
+          retailers.map((part, vendor) => {
+            if (part) {
+              const sku = immutable.Map({part, vendor})
+              const offer = offers.get(sku)
+              let in_stock, stock_location
+              if (offer) {
+                in_stock = offer.get('in_stock_quantity')
+                stock_location = offer.get('stock_location')
+              }
+              if (
+                in_stock &&
+                in_stock >= line.get('quantity') &&
+                stock_location !== 'US'
+              ) {
+                return part
+              }
+            }
+            return ''
+          })
+        )
       )
-    }, immutable.Map())
-  // filter out out of stock
-  lines = lines.map(line =>
-    line.update('retailers', retailers =>
-      retailers.map((part, vendor) => {
-        if (part) {
-          const sku = immutable.Map({part, vendor})
-          const offer = offers.get(sku)
-          let in_stock, stock_location
-          if (offer) {
-            in_stock = offer.get('in_stock_quantity')
-            stock_location = offer.get('stock_location')
-          }
-          if (
-            in_stock &&
-            in_stock >= line.get('quantity') &&
-            stock_location !== 'US'
-          ) {
-            return part
-          }
-        }
-        return ''
-      })
-    )
+    }
   )
-  lines = reduceBom(lines, preferred)
-  const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
-  const {reducedLines} = priority.reduce(
-    ({reducedLines, done}, retailer) => {
-      reducedLines = reduceBom(reducedLines, retailer, done)
-      done = done.push(retailer)
-      return {reducedLines, done}
-    },
-    {reducedLines: lines, done: immutable.List.of(preferred)}
+}
+
+export function makePurchaseLinesSelector(
+  preferredSelector,
+  linesSelector,
+  suggestionsSelector
+) {
+  const allOffersSelector = makeAllOffersSelector(suggestionsSelector)
+  const inStockLinesSelector = makeInStockLinesSelector(
+    linesSelector,
+    allOffersSelector
   )
-  return reducedLines
+  return reselect.createSelector(
+    [preferredSelector, inStockLinesSelector],
+    (preferred, lines) => {
+      lines = reduceBom(lines, preferred)
+      const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
+      const {reducedLines} = priority.reduce(
+        ({reducedLines, done}, retailer) => {
+          reducedLines = reduceBom(reducedLines, retailer, done)
+          done = done.push(retailer)
+          return {reducedLines, done}
+        },
+        {reducedLines: lines, done: immutable.List.of(preferred)}
+      )
+      return reducedLines
+    }
+  )
 }

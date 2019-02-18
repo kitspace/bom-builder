@@ -52,7 +52,7 @@ function effects(diff, store, actions) {
 
 export function subscribeEffects(store, actions) {
   let past = initialState.data
-  store.subscribe(() => {
+  store.subscribe(async () => {
     const state = store.getState()
     const present = state.data.present
     if (present !== past) {

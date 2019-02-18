@@ -47,6 +47,7 @@ export const initialState = {
     preferredRetailer: 'Farnell',
     popupFocus: [null, null],
     buyPartsMessages: [],
+    suggestionsStatus: {},
     previewBuy: false
   }),
   suggestions: immutable.Map()
@@ -217,6 +218,9 @@ const viewActions = {
   },
   setPreferredRetailer(state, value) {
     return state.set('preferredRetailer', value)
+  },
+  setSuggestionsStatus(state, {lineId, status}) {
+    return state.setIn(['suggestionsStatus', lineId, 'matching'], status)
   },
   addBuyPartsResult(state, {retailer, result}) {
     return state.update('buyPartsMessages', messages => {
@@ -537,9 +541,6 @@ const linesReducer = reduxUndo.default(
 )
 
 const suggestionsActions = {
-  setSuggestionsStatus(state, {lineId, status}) {
-    return state.setIn([lineId, 'status'], status)
-  },
   setSuggestionsSearch(state, {lineId, status}) {
     return state.setIn([lineId, 'search'], status)
   },

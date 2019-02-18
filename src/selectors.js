@@ -55,7 +55,6 @@ export function makeLineSelector() {
 }
 
 export function makeSuggestionsLoading() {
-  const suggestions = makeSuggestionsSelector()
   return reselect.createSelector(
     [suggestions, lineId],
     (suggestions, lineId) => suggestions.getIn([lineId, 'status']) === 'loading'
@@ -63,7 +62,6 @@ export function makeSuggestionsLoading() {
 }
 
 export function makeSuggestionsSearching() {
-  const suggestions = makeSuggestionsSelector()
   return reselect.createSelector(
     [suggestions, lineId],
     (suggestions, lineId) => suggestions.getIn([lineId, 'search'])

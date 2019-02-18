@@ -385,8 +385,31 @@ const rootActions = {
     return Object.assign({}, state, {suggestions: stateSuggestions})
   },
   addSuggestions(state, {lineId, suggestions}) {
+    if (suggestions.size < 1) {
+      return state
+    }
     const existing =
       state.suggestions.getIn([lineId, 'data']) || immutable.List()
+
+    //make unique
+    suggestions = suggestions.reduce((prev, p) => {
+      if (prev.map(s => s.get('mpn')).includes(p.get('mpn'))) {
+        if (p.get('type') === 'match' || p.get('type') === 'cpl_match') {
+          prev = prev.filter(s => !s.get('mpn').equals(p.get('mpn')))
+          return prev.push(p)
+        }
+        return prev
+      }
+      return prev.push(p)
+    }, immutable.List())
+
+    suggestions = suggestions.filter(
+      s => !existing.find(x => x.get('mpn').equals(s.get('mpn')))
+    )
+    if (suggestions.size < 1) {
+      return state
+    }
+
     suggestions = makeUniform(existing.concat(suggestions))
     return this.setSuggestions(state, {lineId, suggestions})
   },

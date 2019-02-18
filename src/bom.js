@@ -50,13 +50,9 @@ export function reduceBom(lines, preferred, done = immutable.List()) {
 }
 
 export function makeAllOffersSelector(suggestionsSelector) {
-  const loadingSelector = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [suggestionsSelector, loadingSelector],
-    (suggestions, loading) => {
-      if (loading) {
-        return immutable.Map()
-      }
+    [suggestionsSelector],
+    (suggestions) => {
       return suggestions
         .map(x => x.get('data'))
         .reduce((offers, suggestions) => {

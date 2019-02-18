@@ -1,4 +1,5 @@
 import superagent from 'superagent'
+import EventEmitter from 'events'
 
 const part = `
   mpn {
@@ -73,8 +74,51 @@ query MatchQuery($input: [MpnOrSku]!) {
   }
 }`
 
+const match_request_bus = new EventEmitter()
+const response_bus = new EventEmitter()
+
+let match_requests = []
+match_request_bus.on('request', ({id, input}) => {
+  match_requests.push({id, input})
+  runMatchRequests()
+})
+
+setInterval(runMatchRequests, 1000)
+
+let previous_time = Date.now()
+async function runMatchRequests() {
+  const time = Date.now()
+  if (
+    match_requests.length >= 20 ||
+    (time - previous_time > 10000 && match_requests.length > 0)
+  ) {
+    previous_time = time
+    const parts = match_requests.map(({input}) => {
+      if (input.vendor) {
+        return {sku: input}
+      }
+      return {mpn: input}
+    })
+    const ids = match_requests.map(({id}) => id)
+    match_requests = []
+    const matches = await runQuery(MatchQuery, parts)
+    if (matches) {
+      matches.forEach((r, i) => {
+        const id = ids[i]
+        response_bus.emit(id, r)
+      })
+    }
+  }
+}
+
+function IdMaker() {
+  this.id = 0
+  return () => this.id++
+}
+
+const makeId = new IdMaker()
+
 const match_cache = {}
-const search_cache = {}
 
 function mpnOrSkuToKey(input) {
   return (input.vendor || input.manufacturer) + ':' + input.part
@@ -90,6 +134,23 @@ function cachePart(part) {
     })
   }
 }
+
+function addMatchRequest(input) {
+  return new Promise((resolve, reject) => {
+    const key = mpnOrSkuToKey(input)
+    if (key in match_cache) {
+      return resolve(match_cache[key])
+    }
+    const id = makeId()
+    response_bus.once(id, r => {
+      cachePart(r)
+      resolve(r)
+    })
+    match_request_bus.emit('request', {id, input})
+  })
+}
+
+const search_cache = {}
 
 export default function getPartinfo(input) {
   if (!input) {
@@ -112,18 +173,7 @@ export default function getPartinfo(input) {
   if (!input.part || input.part === '') {
     return Promise.resolve(null)
   }
-  const query = input.vendor ? SkuQuery : MpnQuery
-  if (input.vendor === 'Rapid') {
-    return Promise.resolve(null)
-  }
-  const key = mpnOrSkuToKey(input)
-  if (key in match_cache) {
-    return Promise.resolve(match_cache[key])
-  }
-  return runQuery(query, input).then(part => {
-    cachePart(part)
-    return part
-  })
+  return addMatchRequest(input)
 }
 
 function runQuery(query, input) {

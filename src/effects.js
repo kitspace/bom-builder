@@ -87,7 +87,8 @@ export function subscribeEffects(store, actions) {
     }
 
     state.suggestions.forEach(async (s, lineId) => {
-      if (s.get('search') === 'start') {
+      const state = store.getState()
+      if (state.suggestions.getIn([lineId, 'search']) === 'start') {
         actions.setSuggestionsSearch({lineId, status: 'searching'})
         const suggestionsToRemove = (s.get('data') || immutable.List()).filter(
           x => x.getIn(['from', 0]) === 'description'

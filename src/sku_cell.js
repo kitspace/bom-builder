@@ -90,11 +90,7 @@ function makeWandSelector(
   suggestionCheckSelector
 ) {
   return reselect.createSelector(
-    [
-      applicableSuggestionsSelector,
-      valueSelector,
-      suggestionCheckSelector
-    ],
+    [applicableSuggestionsSelector, valueSelector, suggestionCheckSelector],
     (suggestions, value, suggestionCheck) => {
       if (suggestionCheck) {
         return suggestions.getIn([0, 'type'])
@@ -185,6 +181,7 @@ function makeRetailersSelector() {
   const purchaseLinesSelector = makePurchaseLinesSelector(
     preferredRetailerSelector,
     selectors.lines,
+    previewBuySelector,
     selectors.suggestions
   )
   return reselect.createSelector(

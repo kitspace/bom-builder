@@ -50,26 +50,21 @@ export function reduceBom(lines, preferred, done = immutable.List()) {
 }
 
 export function makeAllOffersSelector(suggestionsSelector) {
-  return reselect.createSelector(
-    [suggestionsSelector],
-    (suggestions) => {
-      return suggestions
-        .map(x => x.get('data'))
-        .reduce((offers, suggestions) => {
-          suggestions = suggestions || immutable.List()
-          return suggestions.reduce(
-            (offers, part) =>
-              part
-                .get('offers')
-                .reduce(
-                  (offers, offer) => offers.set(offer.get('sku'), offer),
-                  offers
-                ),
-            offers
-          )
-        }, immutable.Map())
-    }
-  )
+  return reselect.createSelector([suggestionsSelector], suggestions => {
+    return suggestions.map(x => x.get('data')).reduce((offers, suggestions) => {
+      suggestions = suggestions || immutable.List()
+      return suggestions.reduce(
+        (offers, part) =>
+          part
+            .get('offers')
+            .reduce(
+              (offers, offer) => offers.set(offer.get('sku'), offer),
+              offers
+            ),
+        offers
+      )
+    }, immutable.Map())
+  })
 }
 
 export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
@@ -106,27 +101,31 @@ export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
 export function makePurchaseLinesSelector(
   preferredSelector,
   linesSelector,
+  previewBuy,
   suggestionsSelector
 ) {
-  const allOffersSelector = makeAllOffersSelector(suggestionsSelector)
-  const inStockLinesSelector = makeInStockLinesSelector(
-    linesSelector,
-    allOffersSelector
-  )
-  return reselect.createSelector(
-    [preferredSelector, inStockLinesSelector],
-    (preferred, lines) => {
-      lines = reduceBom(lines, preferred)
-      const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
-      const {reducedLines} = priority.reduce(
-        ({reducedLines, done}, retailer) => {
-          reducedLines = reduceBom(reducedLines, retailer, done)
-          done = done.push(retailer)
-          return {reducedLines, done}
-        },
-        {reducedLines: lines, done: immutable.List.of(preferred)}
-      )
-      return reducedLines
-    }
-  )
+  if (previewBuy) {
+    const allOffersSelector = makeAllOffersSelector(suggestionsSelector)
+    const inStockLinesSelector = makeInStockLinesSelector(
+      linesSelector,
+      allOffersSelector
+    )
+    return reselect.createSelector(
+      [preferredSelector, inStockLinesSelector],
+      (preferred, lines) => {
+        lines = reduceBom(lines, preferred)
+        const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
+        const {reducedLines} = priority.reduce(
+          ({reducedLines, done}, retailer) => {
+            reducedLines = reduceBom(reducedLines, retailer, done)
+            done = done.push(retailer)
+            return {reducedLines, done}
+          },
+          {reducedLines: lines, done: immutable.List.of(preferred)}
+        )
+        return reducedLines
+      }
+    )
+  }
+  return immutable.Map()
 }

@@ -101,18 +101,18 @@ export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
 export function makePurchaseLinesSelector(
   preferredSelector,
   linesSelector,
-  previewBuy,
+  previewBuySelector,
   suggestionsSelector
 ) {
-  if (previewBuy) {
-    const allOffersSelector = makeAllOffersSelector(suggestionsSelector)
-    const inStockLinesSelector = makeInStockLinesSelector(
-      linesSelector,
-      allOffersSelector
-    )
-    return reselect.createSelector(
-      [preferredSelector, inStockLinesSelector],
-      (preferred, lines) => {
+  const allOffersSelector = makeAllOffersSelector(suggestionsSelector)
+  const inStockLinesSelector = makeInStockLinesSelector(
+    linesSelector,
+    allOffersSelector
+  )
+  return reselect.createSelector(
+    [preferredSelector, inStockLinesSelector, previewBuySelector],
+    (preferred, lines, previewBuy) => {
+      if (previewBuy) {
         lines = reduceBom(lines, preferred)
         const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
         const {reducedLines} = priority.reduce(
@@ -125,7 +125,7 @@ export function makePurchaseLinesSelector(
         )
         return reducedLines
       }
-    )
-  }
+    }
+  )
   return immutable.Map()
 }

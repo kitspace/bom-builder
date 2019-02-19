@@ -3714,6 +3714,11 @@ function-bind@^1.0.2, function-bind@^1.1.0, function-bind@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
 
+function-rate-limit@^1.0.1:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/function-rate-limit/-/function-rate-limit-1.1.0.tgz#eccdf1af918fc959eb6509058603e462e37fd683"
+  integrity sha1-7M3xr5GPyVnrZQkFhgPkYuN/1oM=
+
 functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
@@ -7072,6 +7077,13 @@ progress@^2.0.0:
 promise-inflight@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/promise-inflight/-/promise-inflight-1.0.1.tgz#98472870bf228132fcbdd868129bad12c3c029e3"
+
+promise-rate-limit@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/promise-rate-limit/-/promise-rate-limit-0.0.1.tgz#98fec7d214f7d92f93297b7c175794664faffb4d"
+  integrity sha1-mP7H0hT32S+TKXt8F1eUZk+v+00=
+  dependencies:
+    function-rate-limit "^1.0.1"
 
 promise@8.0.2:
   version "8.0.2"

@@ -1,4 +1,7 @@
 import superagent from 'superagent'
+import promiseRateLimit from 'promise-rate-limit'
+
+const runQueryLimited = promiseRateLimit(20, 100, runQuery)
 
 const part = `
   mpn {
@@ -99,7 +102,7 @@ export default function getPartinfo(input) {
     if (input in search_cache) {
       return Promise.resolve(search_cache[input])
     }
-    return runQuery(SearchQuery, input).then(r => {
+    return runQueryLimited(SearchQuery, input).then(r => {
       if (!r) {
         console.error('empty search response')
         return null
@@ -120,7 +123,7 @@ export default function getPartinfo(input) {
   if (key in match_cache) {
     return Promise.resolve(match_cache[key])
   }
-  return runQuery(query, input).then(part => {
+  return runQueryLimited(query, input).then(part => {
     cachePart(part)
     return part
   })

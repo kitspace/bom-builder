@@ -17,21 +17,26 @@ function DescriptionCell(props) {
         lineId={props.lineId}
       />
       <td className="searchCell">
-        {props.value && props.searching !== 'done' && (
-          <div
-            className="searchCellInner"
-            onClick={() =>
-              props.search !== 'searching' &&
-              props.setSuggestionsSearch({lineId: props.lineId, status: 'start'})
-            }
-          >
-            {props.searching === 'searching' ? (
-              <semantic.Loader active inline size="mini" />
-            ) : (
-              <semantic.Icon color="grey" name="search" />
-            )}
-          </div>
-        )}
+        {props.value &&
+          props.searching !== 'done' && (
+            <div
+              className="searchCellInner"
+              onClick={() =>
+                props.search !== 'searching' &&
+                props.setSuggestionsSearch({
+                  lineId: props.lineId,
+                  status: 'start'
+                })
+              }
+            >
+              {props.searching === 'searching' ||
+              props.searching === 'start' ? (
+                <semantic.Loader active inline size="mini" />
+              ) : (
+                <semantic.Icon color="grey" name="search" />
+              )}
+            </div>
+          )}
       </td>
     </>
   )

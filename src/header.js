@@ -155,7 +155,8 @@ function mapStateToProps(state) {
   const partNumbersExpanded = state.view.get('partNumbersExpanded')
   const first = state.data.present.get('lines').first()
   const searching = state.suggestions.reduce(
-    (prev, s) => prev || s.get('search') === 'searching',
+    (prev, s) =>
+      prev || s.get('search') === 'searching' || s.get('search') === 'start',
     false
   )
   const done = state.suggestions.reduce(

@@ -19,12 +19,13 @@ th a:hover {
   cursor: pointer !important;
 }
 
-td.marked {
+td.handle {
   padding: 0px !important;
   padding-left: 3px !important;
+  text-align: center;
 }
 
-td.marked:hover {
+td.handle:hover {
   cursor: pointer !important;
   opacity: 0.8;
 }
@@ -37,36 +38,31 @@ td.handle:hover > .icon {
   visibility: visible;
 }
 
-td.marked input {
-  cursor: pointer !important;
-  opacity: 0;
-}
-
-td.marked.orange {
+td.handle.orange {
   background: #ff9e39 !important;
 }
 
-td.marked.green {
+td.handle.green {
   background: #62b9a4 !important;
 }
 
-td.marked.purple {
+td.handle.purple {
   background: #985dff !important;
 }
 
-td.marked.yellow {
+td.handle.yellow {
   background: #f2ef11 !important;
 }
 
-td.marked.black {
+td.handle.black {
   background: #000000 !important;
 }
 
-td.marked.blue {
+td.handle.blue {
   background: #181887 !important;
 }
 
-td.marked.lightblue {
+td.handle.lightblue {
   background: lightblue !important;
 }
 

@@ -55,8 +55,6 @@ async function findSuggestions(
     })
   )
 
-  actions.addSuggestions({lineId, suggestions})
-
   await Promise.all(
     line
       .get('retailers')

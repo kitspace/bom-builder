@@ -150,10 +150,6 @@ window.addEventListener(
 )
 
 class Bom extends React.Component {
-  constructor(props, ...args) {
-    super(props, ...args)
-    this.state = {height: window.innerHeight}
-  }
   render() {
     return (
       <reactRedux.Provider store={store}>
@@ -251,9 +247,6 @@ class Bom extends React.Component {
       const suggestions = state.suggestions.getIn([id, 'data'])
       findSuggestions(id, line, suggestions, actions)
     })
-    window.onresize = e => {
-      this.setState({height: window.innerHeight})
-    }
     actions.setEditable(this.props.editable)
     mousetrap.bind('ctrl+z', actions.undo)
     mousetrap.bind('ctrl+y', actions.redo)

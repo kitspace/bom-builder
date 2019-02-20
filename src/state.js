@@ -407,16 +407,13 @@ const rootActions = {
         return prev
       }
       return prev.push(p)
-    }, immutable.List())
+    }, existing)
 
-    suggestions = suggestions.filter(
-      s => !existing.find(x => x.get('mpn').equals(s.get('mpn')))
-    )
     if (suggestions.size < 1) {
       return state
     }
 
-    suggestions = makeUniform(existing.concat(suggestions))
+    suggestions = makeUniform(suggestions)
     return this.setSuggestions(state, {lineId, suggestions})
   },
   removeSuggestions(state, {lineId, suggestionsToRemove}) {

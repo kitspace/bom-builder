@@ -22,7 +22,7 @@ function sleep(ms) {
 
 function effects(diff, store, actions) {
   return Promise.all(
-    diff.toArray().map(async d => {
+    diff.map(async d => {
       const path = d.get('path')
       const lineId = path.get(1)
       if (needsSuggestions(path)) {

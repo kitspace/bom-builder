@@ -35,7 +35,7 @@ class SkuCell extends React.Component {
         setFocus={setFocus}
         loseFocus={props.loseFocus}
         active={active}
-        wand={props.wand}
+        match={props.match}
         selectedCheck={props.selectedCheck}
         suggestionCheck={props.suggestionCheck}
         setFocusBelow={props.setFocusBelow}
@@ -221,13 +221,13 @@ function mapStateToProps(state, props) {
     selected,
     selectedCheck
   )
-  const wand = makeWandSelector(suggestions, selectors.value, suggestionCheck)
+  const match = makeWandSelector(suggestions, selectors.value, suggestionCheck)
   return reselect.createSelector(
     [
       value,
       active,
       suggestions,
-      wand,
+      match,
       suggestionCheck,
       selectedCheck,
       selected,
@@ -239,7 +239,7 @@ function mapStateToProps(state, props) {
       value,
       active,
       suggestions,
-      wand,
+      match,
       suggestionCheck,
       selectedCheck,
       selected,
@@ -250,7 +250,7 @@ function mapStateToProps(state, props) {
       value,
       active,
       suggestions,
-      wand,
+      match,
       suggestionCheck,
       selectedCheck,
       selected,

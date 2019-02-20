@@ -32,7 +32,7 @@ class MpnCell extends React.Component {
         setFocus={setFocus}
         loseFocus={props.loseFocus}
         active={active}
-        wand={props.wand}
+        match={props.match}
         check={props.check}
         smallField={smallValue}
         setFocusBelow={props.setFocusBelow}
@@ -196,7 +196,7 @@ function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
   const mpn = makeMpnSelector()
   const suggestions = makeApplicableSuggestions(mpn)
-  const wand = makeWandSelector(suggestions, mpn)
+  const match = makeWandSelector(suggestions, mpn)
   const selected = makeSelectedSelector(suggestions, mpn)
   const smallValue = makeSmallValueSelector(mpn)
   return reselect.createSelector(
@@ -204,7 +204,7 @@ function mapStateToProps(state, props) {
       selectors.value,
       active,
       suggestions,
-      wand,
+      match,
       selected,
       smallValue,
       mpnPopupExpanded
@@ -213,7 +213,7 @@ function mapStateToProps(state, props) {
       value,
       active,
       suggestions,
-      wand,
+      match,
       selected,
       smallValue,
       mpnPopupExpanded
@@ -221,7 +221,7 @@ function mapStateToProps(state, props) {
       value,
       active,
       suggestions,
-      wand,
+      match,
       selected,
       smallValue,
       mpnPopupExpanded

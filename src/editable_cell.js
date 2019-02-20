@@ -44,7 +44,7 @@ class EditableCell extends React.PureComponent {
         value={value}
         contents={editInput}
         smallField={props.smallField}
-        wand={props.wand}
+        match={props.match}
         selectedCheck={props.selectedCheck}
         suggestionCheck={props.suggestionCheck}
         onClick={this.clickHandler}
@@ -62,18 +62,18 @@ class Cell extends React.PureComponent {
     ) : null
     const icons = []
     if (!props.active) {
-      let wandColor
-      if (props.wand) {
-        if (props.wand === 'loading') {
+      let matchColor
+      if (props.match) {
+        if (props.match === 'loading') {
           icons.push(<semantic.Loader key="match" active inline size="mini" />)
         } else {
-          wandColor = /match/.test(props.wand) ? 'green' : 'grey'
-          const wandOpacity = /match/.test(props.wand) ?  1.0 : 0.3
+          matchColor = /match/.test(props.match) ? 'green' : 'grey'
+          const matchOpacity = /match/.test(props.match) ?  1.0 : 0.3
           icons.push(
             <semantic.Icon
-              style={{opacity: wandOpacity, fontSize: '1.2em'}}
-              color={wandColor}
-              name={props.wand === 'match' ? "clone outline" : "search"}
+              style={{opacity: matchOpacity, fontSize: '1.2em'}}
+              color={matchColor}
+              name={props.match === 'match' ? "clone outline" : "search"}
               key="match"
             />
           )

@@ -50,21 +50,30 @@ export function reduceBom(lines, preferred, done = immutable.List()) {
 }
 
 export function makeAllOffersSelector(suggestionsSelector) {
-  return reselect.createSelector([suggestionsSelector], suggestions => {
-    return suggestions.map(x => x.get('data')).reduce((offers, suggestions) => {
-      suggestions = suggestions || immutable.List()
-      return suggestions.reduce(
-        (offers, part) =>
-          part
-            .get('offers')
-            .reduce(
-              (offers, offer) => offers.set(offer.get('sku'), offer),
-              offers
-            ),
-        offers
-      )
-    }, immutable.Map())
-  })
+  const loadingSelector = selectors.makeSuggestionsLoading()
+  return reselect.createSelector(
+    [suggestionsSelector, loadingSelector],
+    (suggestions, loading) => {
+      if (loading) {
+        return immutable.Map()
+      }
+      return suggestions
+        .map(x => x.get('data'))
+        .reduce((offers, suggestions) => {
+          suggestions = suggestions || immutable.List()
+          return suggestions.reduce(
+            (offers, part) =>
+              part
+                .get('offers')
+                .reduce(
+                  (offers, offer) => offers.set(offer.get('sku'), offer),
+                  offers
+                ),
+            offers
+          )
+        }, immutable.Map())
+    }
+  )
 }
 
 export function makeInStockLinesSelector(linesSelector, allOffersSelector) {

@@ -89,14 +89,23 @@ function makeWandSelector(
   valueSelector,
   suggestionCheckSelector
 ) {
+  const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, valueSelector, suggestionCheckSelector],
-    (suggestions, value, suggestionCheck) => {
+    [
+      applicableSuggestionsSelector,
+      valueSelector,
+      loading,
+      suggestionCheckSelector
+    ],
+    (suggestions, value, loading, suggestionCheck) => {
       if (suggestionCheck) {
         return suggestions.getIn([0, 'type'])
       }
       if (value) {
         return false
+      }
+      if (loading) {
+        return 'loading'
       }
       return suggestions.getIn([0, 'type'])
     }
@@ -133,9 +142,13 @@ function makeSelectedCheckSelector(
   applicableSuggestionsSelector,
   selectedSelector
 ) {
+  const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, selectedSelector, selectors.value],
-    (suggestions, selected, value) => {
+    [applicableSuggestionsSelector, selectedSelector, loading, selectors.value],
+    (suggestions, selected, loading, value) => {
+      if (loading) {
+        return null
+      }
       if (selected >= 0) {
         const checkColor = suggestions.getIn([selected, 'checkColor'])
         if (checkColor === 'green') {

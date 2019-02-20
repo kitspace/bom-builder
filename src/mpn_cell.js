@@ -143,11 +143,15 @@ function makeApplicableSuggestions(mpn) {
 
 function makeWandSelector(applicableSuggestionsSelector, mpn) {
   const suggestionNumber = makeSuggestionNumberSelector()
+  const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, suggestionNumber, mpn],
-    (suggestions, suggestionNumber, mpn) => {
+    [applicableSuggestionsSelector, suggestionNumber, loading, mpn],
+    (suggestions, suggestionNumber, loading, mpn) => {
       if (mpn.get('part') && mpn.get('manufacturer')) {
         return false
+      }
+      if (loading) {
+        return 'loading'
       }
       if (suggestionNumber < 0) {
         return false

@@ -14,6 +14,10 @@ export function makeSuggestionsSelector() {
   )
 }
 
+export function suggestionsStatus(state) {
+  return state.view.get('suggestionsStatus')
+}
+
 export function lines(state) {
   return state.data.present.get('lines')
 }
@@ -56,14 +60,13 @@ export function makeLineSelector() {
 
 export function makeSuggestionsLoading() {
   return reselect.createSelector(
-    [suggestions, lineId],
-    (suggestions, lineId) => suggestions.getIn([lineId, 'status']) === 'loading'
+    [suggestionsStatus, lineId],
+    (suggestions, lineId) => suggestions.getIn([lineId, 'match']) === 'loading'
   )
 }
 
 export function makeSuggestionsSearching() {
-  return reselect.createSelector(
-    [suggestions, lineId],
-    (suggestions, lineId) => suggestions.getIn([lineId, 'search'])
+  return reselect.createSelector([suggestions, lineId], (suggestions, lineId) =>
+    suggestions.getIn([lineId, 'search'])
   )
 }

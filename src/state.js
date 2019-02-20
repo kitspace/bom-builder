@@ -222,7 +222,7 @@ const viewActions = {
     return state.set('preferredRetailer', value)
   },
   setSuggestionsStatus(state, {lineId, status}) {
-    return state.setIn(['suggestionsStatus', lineId, 'matching'], status)
+    return state.setIn(['suggestionsStatus', lineId, 'match'], status)
   },
   addBuyPartsResult(state, {retailer, result}) {
     return state.update('buyPartsMessages', messages => {
@@ -391,9 +391,6 @@ const rootActions = {
     return Object.assign({}, state, {suggestions: stateSuggestions})
   },
   addSuggestions(state, {lineId, suggestions}) {
-    if (suggestions.size < 1) {
-      return state
-    }
     const existing =
       state.suggestions.getIn([lineId, 'data']) || immutable.List()
 

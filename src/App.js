@@ -220,7 +220,7 @@ class Bom extends React.Component {
               prototype of an electronics bill of materials editor tool for{' '}
               <a href="https://kitspace.org">Kitspace</a>. Try typing in a
               component description above (e.g. <code>1uF 0805</code>) or
-              opening an existing BOM (csv, xlsx, ods etc.). If you are confused
+              opening an existing BOM (csv, xlsx, ods etc., even .kicad_pcb). If you are confused
               maybe{' '}
               <a href="https://www.youtube.com/watch?v=m96G7B1doRQ">
                 watch the demo

@@ -1,36 +1,21 @@
 import React from 'react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
+import * as semantic from 'semantic-ui-react'
 
 import {actions} from './state'
 
 class Handle extends React.Component {
-  setFocus = () => {
-    this.props.setFocus([this.props.lineId, null])
-  }
-  loseFocus = () => {
-    setTimeout(() => {
-      this.props.loseFocus([this.props.lineId, null])
-    }, 100)
-  }
-  handleKeyDown = e => {
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      this.props.removeLine(this.props.lineId)
-    } else if (e.key === 'Escape') {
-      this.props.loseFocus([this.props.lineId, null])
-    }
+  removeLine = e => {
+    this.props.removeLine(this.props.lineId)
   }
   render() {
     return (
-      <td className={`marked ${markerColor(this.props.reference)}`}>
-        <input
-          style={{height: 17}}
-          onFocus={this.setFocus}
-          onBlur={this.loseFocus}
-          className="mousetrap"
-          readOnly
-          onKeyDown={this.handleKeyDown}
-        />
+      <td
+        onClick={this.removeLine}
+        className={`handle marked ${markerColor(this.props.reference)}`}
+      >
+        <semantic.Icon name="x" />
       </td>
     )
   }

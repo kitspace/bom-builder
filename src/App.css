@@ -20,13 +20,21 @@ th a:hover {
 }
 
 td.marked {
-  min-width: 15px;
-  max-width: 15px;
   padding: 0px !important;
+  padding-left: 3px !important;
 }
 
 td.marked:hover {
+  cursor: pointer !important;
   opacity: 0.8;
+}
+
+td.handle > i {
+  visibility: hidden;
+}
+
+td.handle:hover > .icon {
+  visibility: visible;
 }
 
 td.marked input {
@@ -265,4 +273,7 @@ tr.bomLine {
 
 .highlight.red {
   background: #fbdada !important;
+}
+
+.handle: {
 }

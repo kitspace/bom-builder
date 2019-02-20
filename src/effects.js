@@ -56,20 +56,29 @@ export function subscribeEffects(store, actions) {
     const state = store.getState()
     const present = state.data.present
     if (present !== past) {
-      const diff = immutableDiff(past, present).filter(d => {
-        //ignore additions and removals of empty part numbers
-        const path = d.get('path').take(4)
-        if (path.get(2) === 'partNumbers') {
-          const op = d.get('op')
-          const value = d.get('value')
-          if (op === 'remove' && past.getIn(path).equals(emptyPartNumber)) {
-            return false
-          } else if (op === 'add' && value.equals(emptyPartNumber)) {
-            return false
+      const diff = immutableDiff(past, present)
+        .filter(d => {
+          // ignore additions and removals of empty part numbers
+          const path = d.get('path').take(4)
+          if (path.get(2) === 'partNumbers') {
+            const op = d.get('op')
+            const value = d.get('value')
+            if (op === 'remove' && past.getIn(path).equals(emptyPartNumber)) {
+              return false
+            } else if (op === 'add' && value.equals(emptyPartNumber)) {
+              return false
+            }
           }
-        }
-        return true
-      })
+          return true
+        })
+          .reduce((prev, d) => {
+            // de duplicate by line number
+            const lineNumber = d.getIn(['path', 1])
+            if (prev.find(x => x.getIn(['path', 1]) === lineNumber)) {
+              return prev
+            }
+            return prev.push(d)
+          }, immutable.List())
       past = present
       effects(diff, store, actions)
     }

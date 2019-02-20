@@ -60,7 +60,7 @@ function BuyParts(props) {
           color="green"
           basic
         >
-          <semantic.Icon name="magic" />
+          <semantic.Icon name="clone outline" />
           <semantic.Icon name="search" />
           Auto Fill
         </semantic.Button>

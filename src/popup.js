@@ -441,7 +441,7 @@ class Title extends React.PureComponent {
             <semantic.Icon
               style={{opacity: wandOpacity}}
               color={/match/.test(props.wandColor) ? 'green' : 'grey'}
-              name={props.wandColor === 'match' ? 'magic' : 'search'}
+              name={props.wandColor === 'match' ? 'clone outline' : 'search'}
             />
           )}
         </div>

@@ -52,28 +52,25 @@ function effects(diff, store, actions) {
 
 export function subscribeEffects(store, actions) {
   let past = initialState.data
-  let timeout
-  store.subscribe(() => {
-    clearTimeout(timeout)
-    timeout = setTimeout(async () => {
-      const state = store.getState()
-      const present = state.data.present
-      if (present !== past) {
-        const diff = immutableDiff(past, present)
-          .filter(d => {
-            // ignore additions and removals of empty part numbers
-            const path = d.get('path').take(4)
-            if (path.get(2) === 'partNumbers') {
-              const op = d.get('op')
-              const value = d.get('value')
-              if (op === 'remove' && past.getIn(path).equals(emptyPartNumber)) {
-                return false
-              } else if (op === 'add' && value.equals(emptyPartNumber)) {
-                return false
-              }
+  store.subscribe(async () => {
+    const state = store.getState()
+    const present = state.data.present
+    if (present !== past) {
+      const diff = immutableDiff(past, present)
+        .filter(d => {
+          // ignore additions and removals of empty part numbers
+          const path = d.get('path').take(4)
+          if (path.get(2) === 'partNumbers') {
+            const op = d.get('op')
+            const value = d.get('value')
+            if (op === 'remove' && past.getIn(path).equals(emptyPartNumber)) {
+              return false
+            } else if (op === 'add' && value.equals(emptyPartNumber)) {
+              return false
             }
-            return true
-          })
+          }
+          return true
+        })
           .reduce((prev, d) => {
             // de duplicate by line number
             const lineNumber = d.getIn(['path', 1])
@@ -82,40 +79,39 @@ export function subscribeEffects(store, actions) {
             }
             return prev.push(d)
           }, immutable.List())
-        past = present
-        effects(diff, store, actions)
-      }
+      past = present
+      effects(diff, store, actions)
+    }
 
-      if (state.view.get('addingParts') === 'start') {
-        actions.setAddingParts('adding')
-        window.postMessage(
-          {
-            from: 'page',
-            message: 'bomBuilderAddToCart',
-            value: {tsv: getTsv(state)}
-          },
-          '*'
+    if (state.view.get('addingParts') === 'start') {
+      actions.setAddingParts('adding')
+      window.postMessage(
+        {
+          from: 'page',
+          message: 'bomBuilderAddToCart',
+          value: {tsv: getTsv(state)}
+        },
+        '*'
+      )
+    }
+
+    state.suggestions.forEach(async (s, lineId) => {
+      const state = store.getState()
+      if (state.suggestions.getIn([lineId, 'search']) === 'start') {
+        actions.setSuggestionsSearch({lineId, status: 'searching'})
+        const suggestionsToRemove = (s.get('data') || immutable.List()).filter(
+          x => x.getIn(['from', 0]) === 'description'
         )
+        actions.removeSuggestions({lineId, suggestionsToRemove})
+        const description = state.data.present.getIn([
+          'lines',
+          lineId,
+          'description'
+        ])
+        await searchDescription(lineId, description, actions)
+        actions.setSuggestionsSearch({lineId, status: 'done'})
       }
-
-      state.suggestions.forEach(async (s, lineId) => {
-        const state = store.getState()
-        if (state.suggestions.getIn([lineId, 'search']) === 'start') {
-          actions.setSuggestionsSearch({lineId, status: 'searching'})
-          const suggestionsToRemove = (
-            s.get('data') || immutable.List()
-          ).filter(x => x.getIn(['from', 0]) === 'description')
-          actions.removeSuggestions({lineId, suggestionsToRemove})
-          const description = state.data.present.getIn([
-            'lines',
-            lineId,
-            'description'
-          ])
-          await searchDescription(lineId, description, actions)
-          actions.setSuggestionsSearch({lineId, status: 'done'})
-        }
-      })
-    }, 100)
+    })
   })
 }
 

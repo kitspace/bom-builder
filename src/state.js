@@ -20,7 +20,9 @@ export const emptyPartNumber = immutable.Map({
   manufacturer: ''
 })
 
-export const emptyRetailers = immutable.Map(retailer_list.map(r => [r, '']))
+export const emptyRetailers = immutable.Map(
+  retailer_list.map(r => [r, ''])
+)
 
 export const emptyLine = immutable.Map({
   reference: '',

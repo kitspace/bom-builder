@@ -83,10 +83,17 @@ class SkuPopup extends Popup {
   toggleSelected() {
     const {selected, remove, setField, suggestions, lineId, field} = this.props
     if (selected === this.state.viewing) {
-      remove(immutable.List.of(lineId, field))
+      this.setState({selected: -1})
+      setImmediate(() => {
+        remove(immutable.List.of(lineId, field))
+        this.setState({selected: null})
+      })
     } else {
-      const value = suggestions.getIn([this.state.viewing, 'sku', 'part'])
-      setField({lineId, field, value})
+      this.setState({selected: this.state.viewing})
+      setImmediate(() => {
+        const value = suggestions.getIn([this.state.viewing, 'sku', 'part'])
+        setField({lineId, field, value})
+      })
     }
   }
   render() {
@@ -177,12 +184,14 @@ class SkuPopup extends Popup {
       />
     )
     let specs = partData.get('specs') || immutable.List()
+    const selected =
+      this.state.selected == null ? this.props.selected : this.state.selected
     return (
       <semantic.Popup {...popupProps}>
         <Buttons
           disabled={suggestions.size < 2}
           selectDisabled={suggestions.size < 1}
-          selected={this.props.selected === this.state.viewing}
+          selected={selected === this.state.viewing}
           onIncrement={this.incrementViewing}
           onDecrement={this.decrementViewing}
           onSelect={this.toggleSelected}
@@ -269,10 +278,17 @@ class MpnPopup extends Popup {
   toggleSelected() {
     const {selected, remove, setField, suggestions, lineId, field} = this.props
     if (selected === this.state.viewing) {
-      remove(immutable.List.of(lineId, field))
+      this.setState({selected: -1})
+      setImmediate(() => {
+        remove(immutable.List.of(lineId, field))
+        this.setState({selected: null})
+      })
     } else {
-      const mpn = suggestions.getIn([this.state.viewing, 'mpn'])
-      setField({lineId, field, value: mpn})
+      this.setState({selected: this.state.viewing})
+      setImmediate(() => {
+        const mpn = suggestions.getIn([this.state.viewing, 'mpn'])
+        setField({lineId, field, value: mpn})
+      })
     }
   }
   render() {
@@ -321,11 +337,12 @@ class MpnPopup extends Popup {
         </div>
       )
     }
+    const selected = this.state.selected == null ? this.props.selected : this.state.selected
     return (
       <semantic.Popup {...popupProps}>
         <Buttons
           disabled={suggestions.size < 2}
-          selected={this.props.selected === this.state.viewing}
+          selected={selected === this.state.viewing}
           onIncrement={this.incrementViewing}
           onDecrement={this.decrementViewing}
           onSelect={this.toggleSelected}

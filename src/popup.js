@@ -169,7 +169,7 @@ class SkuPopup extends Popup {
               : ''
           }
           matchColor={suggestion.get('type')}
-          hideWand={!mpn.get('part')}
+          hideMatch={!mpn.get('part')}
         />
         <div className="subTitle">
           {mpn.get('part')
@@ -437,7 +437,7 @@ class Title extends React.PureComponent {
     return (
       <div className="titleContainer">
         <div>
-          {!props.hideWand && (
+          {!props.hideMatch && (
             <semantic.Icon
               style={{opacity: matchOpacity}}
               color={/match/.test(props.matchColor) ? 'green' : 'grey'}

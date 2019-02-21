@@ -141,7 +141,7 @@ function makeApplicableSuggestions(mpn) {
   )
 }
 
-function makeWandSelector(applicableSuggestionsSelector, mpn) {
+function makeMatchSelector(applicableSuggestionsSelector, mpn) {
   const suggestionNumber = makeSuggestionNumberSelector()
   const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
@@ -200,7 +200,7 @@ function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
   const mpn = makeMpnSelector()
   const suggestions = makeApplicableSuggestions(mpn)
-  const match = makeWandSelector(suggestions, mpn)
+  const match = makeMatchSelector(suggestions, mpn)
   const selected = makeSelectedSelector(suggestions, mpn)
   const smallValue = makeSmallValueSelector(mpn)
   return reselect.createSelector(

@@ -84,7 +84,7 @@ function makeApplicableSuggestions() {
   )
 }
 
-function makeWandSelector(
+function makeMatchSelector(
   applicableSuggestionsSelector,
   valueSelector,
   suggestionCheckSelector
@@ -234,7 +234,7 @@ function mapStateToProps(state, props) {
     selected,
     selectedCheck
   )
-  const match = makeWandSelector(suggestions, selectors.value, suggestionCheck)
+  const match = makeMatchSelector(suggestions, selectors.value, suggestionCheck)
   return reselect.createSelector(
     [
       value,

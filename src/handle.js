@@ -15,7 +15,9 @@ class Handle extends React.Component {
         onClick={this.removeLine}
         className={`handle ${markerColor(this.props.reference)}`}
       >
-        <semantic.Icon name="x" />
+        <div>
+          <semantic.Icon name="x" />
+        </div>
       </td>
     )
   }

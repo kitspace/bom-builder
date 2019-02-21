@@ -21,8 +21,6 @@ th a:hover {
 
 td.handle {
   padding: 0px !important;
-  padding-left: 3px !important;
-  text-align: center;
 }
 
 td.handle:hover {
@@ -30,12 +28,20 @@ td.handle:hover {
   opacity: 0.8;
 }
 
-td.handle > i {
+td.handle > div > .icon {
   visibility: hidden;
 }
 
-td.handle:hover > .icon {
+td.handle:hover > div > .icon {
   visibility: visible;
+}
+
+td.handle > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 6px;
+  margin-left: 3px;
 }
 
 td.handle.orange {

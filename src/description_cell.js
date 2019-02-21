@@ -8,43 +8,46 @@ import SimpleCell from './simple_cell'
 import * as selectors from './selectors'
 import {actions} from './state'
 
-function DescriptionCell(props) {
-  const [searching, setSearching] = useState(null)
-  return (
-    <>
-      <SimpleCell
-        hidden={props.hidden}
-        field={props.field}
-        lineId={props.lineId}
-      />
-      <td className="searchCell">
-        {props.value &&
-          props.searching !== 'done' && (
-            <div
-              className="searchCellInner"
-              onClick={() => {
-                setSearching(true)
-                setImmediate(() => {
-                  props.search !== 'searching' &&
-                    props.setSuggestionsSearch({
-                      lineId: props.lineId,
-                      status: 'start'
-                    })
-                })
-              }}
-            >
-              {props.searching === 'searching' ||
-              props.searching === 'start' ||
-              searching ? (
-                <semantic.Loader active inline size="mini" />
-              ) : (
-                <semantic.Icon color="grey" name="search" />
-              )}
-            </div>
-          )}
-      </td>
-    </>
-  )
+class DescriptionCell extends React.Component {
+  state = {searching: null}
+  render() {
+    const props = this.props
+    return (
+      <>
+        <SimpleCell
+          hidden={props.hidden}
+          field={props.field}
+          lineId={props.lineId}
+        />
+        <td className="searchCell">
+          {props.value &&
+            props.searching !== 'done' && (
+              <div
+                className="searchCellInner"
+                onClick={() => {
+                  this.setState({searching: true})
+                  setImmediate(() => {
+                    props.search !== 'searching' &&
+                      props.setSuggestionsSearch({
+                        lineId: props.lineId,
+                        status: 'start'
+                      })
+                  })
+                }}
+              >
+                {props.searching === 'searching' ||
+                props.searching === 'start' ||
+                this.state.searching ? (
+                  <semantic.Loader active inline size="mini" />
+                ) : (
+                  <semantic.Icon color="grey" name="search" />
+                )}
+              </div>
+            )}
+        </td>
+      </>
+    )
+  }
 }
 
 function mapStateToProps() {

@@ -143,15 +143,11 @@ function makeApplicableSuggestions(mpn) {
 
 function makeMatchSelector(applicableSuggestionsSelector, mpn) {
   const suggestionNumber = makeSuggestionNumberSelector()
-  const loading = selectors.makeSuggestionsLoading()
   return reselect.createSelector(
-    [applicableSuggestionsSelector, suggestionNumber, loading, mpn],
-    (suggestions, suggestionNumber, loading, mpn) => {
+    [applicableSuggestionsSelector, suggestionNumber, mpn],
+    (suggestions, suggestionNumber, mpn) => {
       if (mpn.get('part') && mpn.get('manufacturer')) {
         return false
-      }
-      if (loading) {
-        return 'loading'
       }
       if (suggestionNumber < 0) {
         return false

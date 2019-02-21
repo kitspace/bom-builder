@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import * as redux from 'redux'
 import * as reactRedux from 'react-redux'
 import * as reselect from 'reselect'
@@ -9,6 +9,7 @@ import * as selectors from './selectors'
 import {actions} from './state'
 
 function DescriptionCell(props) {
+  const [searching, setSearching] = useState(null)
   return (
     <>
       <SimpleCell
@@ -21,16 +22,20 @@ function DescriptionCell(props) {
           props.searching !== 'done' && (
             <div
               className="searchCellInner"
-              onClick={() =>
-                props.search !== 'searching' &&
-                props.setSuggestionsSearch({
-                  lineId: props.lineId,
-                  status: 'start'
+              onClick={() => {
+                setSearching(true)
+                setImmediate(() => {
+                  props.search !== 'searching' &&
+                    props.setSuggestionsSearch({
+                      lineId: props.lineId,
+                      status: 'start'
+                    })
                 })
-              }
+              }}
             >
               {props.searching === 'searching' ||
-              props.searching === 'start' ? (
+              props.searching === 'start' ||
+              searching ? (
                 <semantic.Loader active inline size="mini" />
               ) : (
                 <semantic.Icon color="grey" name="search" />

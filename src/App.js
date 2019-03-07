@@ -180,7 +180,7 @@ class Bom extends React.Component {
               borderBottom: '1px solid #e6e6e6',
               overflow: 'hidden',
               zIndex: 9999,
-              height: 90
+              height: 80
             }}
           >
             <semantic.Table
@@ -189,7 +189,7 @@ class Bom extends React.Component {
               celled
               unstackable
               singleLine
-              style={{marginTop: 70}}
+              style={{marginTop: 60}}
             >
               <Header />
               <Body hidden />
@@ -201,7 +201,7 @@ class Bom extends React.Component {
             celled
             unstackable
             singleLine
-            style={{marginTop: 69}}
+            style={{marginTop: 59}}
           >
             <Header />
             <Body />

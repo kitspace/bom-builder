@@ -60,9 +60,11 @@ function BuyParts(props) {
           color="green"
           basic
         >
-          <semantic.Icon name="clone outline" />
-          <semantic.Icon name="search" />
-          Auto Fill
+          <div>
+            <semantic.Icon name="clone outline" />
+            <semantic.Icon name="search" />
+            Auto Fill
+          </div>
         </semantic.Button>
       </div>
       <div>
@@ -73,9 +75,11 @@ function BuyParts(props) {
           onClick={() => props.setAddingParts('start')}
           basic
         >
-          <semantic.Icon name="shopping basket" />
-          <semantic.Icon name="plus" />
-          Buy Parts
+          <div style={{width:100}}>
+            <semantic.Icon name="shopping basket" />
+            <semantic.Icon name="plus" />
+            Buy Parts
+          </div>
         </semantic.Button>
       </div>
       {props.extensionPresent ? (
@@ -85,7 +89,7 @@ function BuyParts(props) {
             height: '100%',
             verticalAlign: 'middle',
             color: '#2185D0',
-            minWidth: 160
+            minWidth: 315
           }}
         >
           Preffered retailer:{'  '}

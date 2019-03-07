@@ -162,13 +162,15 @@ class Bom extends React.Component {
               zIndex: 10000
             }}
           >
-            <Menu
-              downloadBom={downloadBom}
-              copyBom={copyBom}
-              handleFileInput={handleFileInput}
-              clearAll={this.props.clearAll}
-            />
-            <BuyParts />
+            <div style={{display: 'flex'}}>
+              <Menu
+                downloadBom={downloadBom}
+                copyBom={copyBom}
+                handleFileInput={handleFileInput}
+                clearAll={this.props.clearAll}
+              />
+              <BuyParts />
+            </div>
           </div>
           <div
             className="ui fixed top sticky"
@@ -178,7 +180,7 @@ class Bom extends React.Component {
               borderBottom: '1px solid #e6e6e6',
               overflow: 'hidden',
               zIndex: 9999,
-              height: 130
+              height: 90
             }}
           >
             <semantic.Table
@@ -187,7 +189,7 @@ class Bom extends React.Component {
               celled
               unstackable
               singleLine
-              style={{marginTop: 110}}
+              style={{marginTop: 70}}
             >
               <Header />
               <Body hidden />
@@ -199,7 +201,7 @@ class Bom extends React.Component {
             celled
             unstackable
             singleLine
-            style={{marginTop: 109}}
+            style={{marginTop: 69}}
           >
             <Header />
             <Body />

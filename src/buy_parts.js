@@ -52,79 +52,76 @@ function BuyParts(props) {
   })
 
   return (
-    <div style={{display: 'flex', alignItems: 'flex-end'}}>
-      <div style={{flexGrow: 2}} />
-      <div style={{display: 'flex', alignItems: 'center', marginRight: 20}}>
-        <div>
-          <semantic.Button
-            onClick={props.autoFillSuggestions}
-            className="buyPartsButton"
-            color="green"
-            basic
-          >
-            <semantic.Icon name="clone outline" />
-            <semantic.Icon name="search" />
-            Auto Fill
-          </semantic.Button>
-        </div>
-        <div>
-          <semantic.Button
-            disabled={!props.extensionPresent}
-            className="buyPartsButton"
-            color={props.extensionPresent ? 'blue' : 'grey'}
-            onClick={() => props.setAddingParts('start')}
-            basic
-          >
-            <semantic.Icon name="shopping basket" />
-            <semantic.Icon name="plus" />
-            Buy Parts
-          </semantic.Button>
-        </div>
-        {props.extensionPresent ? (
+    <div style={{display: 'flex', alignItems: 'center', marginRight: 20}}>
+      <div>
+        <semantic.Button
+          onClick={props.autoFillSuggestions}
+          className="buyPartsButton"
+          color="green"
+          basic
+        >
+          <semantic.Icon name="clone outline" />
+          <semantic.Icon name="search" />
+          Auto Fill
+        </semantic.Button>
+      </div>
+      <div>
+        <semantic.Button
+          disabled={!props.extensionPresent}
+          className="buyPartsButton"
+          color={props.extensionPresent ? 'blue' : 'grey'}
+          onClick={() => props.setAddingParts('start')}
+          basic
+        >
+          <semantic.Icon name="shopping basket" />
+          <semantic.Icon name="plus" />
+          Buy Parts
+        </semantic.Button>
+      </div>
+      {props.extensionPresent ? (
+        <div
+          style={{
+            fontWeight: 'normal',
+            height: '100%',
+            verticalAlign: 'middle',
+            color: '#2185D0',
+            minWidth: 160
+          }}
+        >
+          Preffered retailer:{'  '}
+          <semantic.Dropdown
+            inline
+            value={props.preferredRetailer}
+            options={retailer_list.map(r => ({key: r, text: r, value: r}))}
+            onChange={(e, {value}) => props.setPreferredRetailer(value)}
+          />{' '}
           <div
             style={{
               fontWeight: 'normal',
               height: '100%',
               verticalAlign: 'middle',
-              color: '#2185D0',
-              minWidth: 160
+              color: '#2185D0 !important',
+              minWidth: 160,
+              display: 'flex',
+              marginTop: 5
             }}
           >
-            Preffered retailer:{'  '}
-            <semantic.Dropdown
-              inline
-              value={props.preferredRetailer}
-              options={retailer_list.map(r => ({key: r, text: r, value: r}))}
-              onChange={(e, {value}) => props.setPreferredRetailer(value)}
-            />{' '}
-            <div
-              style={{
-                fontWeight: 'normal',
-                height: '100%',
-                verticalAlign: 'middle',
-                color: '#2185D0 !important',
-                minWidth: 160,
-                display: 'flex',
-                marginTop: 5
-              }}
-            >
-              <div style={{marginRight: 5}}> Preview: </div>
-              <div>
-                <semantic.Radio
-                  toggle
-                  checked={props.previewBuy}
-                  onChange={(e, data) => props.setPreviewBuy(data.checked)}
-                />
-              </div>
+            <div style={{marginRight: 5}}> Preview: </div>
+            <div>
+              <semantic.Radio
+                toggle
+                checked={props.previewBuy}
+                onChange={(e, data) => props.setPreviewBuy(data.checked)}
+              />
             </div>
           </div>
-        ) : (
-          <div style={{color: 'lightgrey'}}>
-            Install the 1-click BOM exension to use this feature
-          </div>
-        )}
-        {messages}
-      </div>
+        </div>
+      ) : (
+        <div style={{color: 'lightgrey'}}>
+          Install the 1-click BOM exension to use this feature
+        </div>
+      )}
+      {messages}
     </div>
   )
 }

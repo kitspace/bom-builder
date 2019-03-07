@@ -8,7 +8,6 @@ import {actions} from './state'
 import {SkuPopup} from './popup'
 import * as selectors from './selectors'
 import EditableCell from './editable_cell'
-import {computeSuggestionsForRetailer} from './suggestions'
 import {makePurchaseLinesSelector} from './bom'
 
 class SkuCell extends React.Component {

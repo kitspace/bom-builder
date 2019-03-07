@@ -20,9 +20,7 @@ export const emptyPartNumber = immutable.Map({
   manufacturer: ''
 })
 
-export const emptyRetailers = immutable.Map(
-  retailer_list.map(r => [r, ''])
-)
+export const emptyRetailers = immutable.Map(retailer_list.map(r => [r, '']))
 
 export const emptyLine = immutable.Map({
   reference: '',
@@ -77,30 +75,6 @@ function fitPartNumbers(lines) {
 const linesActions = {
   initEmptyLine(state) {
     return this.addEmptyLine(state)
-  },
-  setField(state, {lineId, field, value}) {
-    if (typeof value === 'string') {
-      value = value.trim()
-    }
-    if (field.get(0) === 'quantity' && value < 1) {
-      value = 1
-    } else if (field.get(0) === 'retailers') {
-      value = value.toUpperCase()
-      if (field.get(1) !== 'Digikey') {
-        value = value.replace(/-/g, '')
-      }
-    }
-    const currentValue = state.getIn(
-      immutable.List.of('lines', lineId).concat(field)
-    )
-    if (currentValue !== value) {
-      state = state.setIn(
-        immutable.List.of('lines', lineId).concat(field),
-        value
-      )
-      return state.update('lines', fitPartNumbers)
-    }
-    return state.update('lines', fitPartNumbers)
   },
   addEmptyLine(state) {
     const id = makeId()
@@ -379,15 +353,26 @@ const rootActions = {
     if (existing && existing.equals(suggestions)) {
       return state
     }
+    const stateSuggestions = state.suggestions.setIn(
+      [lineId, 'data'],
+      suggestions
+    )
+    state = Object.assign({}, state, {suggestions: stateSuggestions})
+    return this.computeRetailerSuggestions(state, {lineId})
+  },
+  computeRetailerSuggestions(state, {lineId}) {
+    const suggestions = state.suggestions.getIn([lineId, 'data'])
+    const line = state.data.present.getIn(['lines', lineId])
     const retailers = immutable.Map(
       retailer_list.map(retailer => {
         const s = computeSuggestionsForRetailer(suggestions, retailer, line)
         return [retailer, s]
       })
     )
-    const stateSuggestions = state.suggestions
-      .setIn([lineId, 'data'], suggestions)
-      .setIn([lineId, 'retailers'], retailers)
+    const stateSuggestions = state.suggestions.setIn(
+      [lineId, 'retailers'],
+      retailers
+    )
     return Object.assign({}, state, {suggestions: stateSuggestions})
   },
   addSuggestions(state, {lineId, suggestions}) {
@@ -517,6 +502,38 @@ const rootActions = {
       }
     })
     return Object.assign({}, state, {view})
+  },
+  setField(state, {lineId, field, value}) {
+    if (typeof value === 'string') {
+      value = value.trim()
+    }
+    let present = state.data.present
+    const past = state.data.past.concat([present])
+    if (field.get(0) === 'quantity' && value < 1) {
+      value = 1
+    } else if (field.get(0) === 'retailers') {
+      value = value.toUpperCase()
+      if (field.get(1) !== 'Digikey') {
+        value = value.replace(/-/g, '')
+      }
+    }
+    const currentValue = present.getIn(
+      immutable.List.of('lines', lineId).concat(field)
+    )
+    if (currentValue !== value) {
+      present = present.setIn(
+        immutable.List.of('lines', lineId).concat(field),
+        value
+      )
+    }
+    present = present.update('lines', fitPartNumbers)
+    const data = Object.assign({}, state.data, {present, past})
+    state = Object.assign({}, state, {data})
+    if (field.get(0) === 'quantity') {
+      // re-compute suggestions as they are ranked according to in-stock information
+      state = this.computeRetailerSuggestions(state, {lineId})
+    }
+    return state
   }
 }
 

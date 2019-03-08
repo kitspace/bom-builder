@@ -64,7 +64,6 @@ class Cell extends React.PureComponent {
     const smallField = props.smallField ? (
       <div className="smallField">{props.smallField}</div>
     ) : null
-    console.log(props.value, !props.highlight)
     const icons = []
     if (!props.active && props.highlight !== 'blank') {
       let matchColor
@@ -75,7 +74,7 @@ class Cell extends React.PureComponent {
           matchColor = /match/.test(props.match) ? 'green' : 'grey'
           const matchOpacity = /match/.test(props.match) ? 1.0 : 0.3
           icons.push(
-            <span>
+            <span key="match">
               <semantic.Popup
                 inverted
                 size="mini"
@@ -87,7 +86,6 @@ class Cell extends React.PureComponent {
                     style={{opacity: matchOpacity, fontSize: '1.2em'}}
                     color={matchColor}
                     name={props.match === 'match' ? 'clone outline' : 'search'}
-                    key="match"
                   />
                 }
                 content={
@@ -104,7 +102,7 @@ class Cell extends React.PureComponent {
       }
       if (props.suggestionCheck) {
         icons.push(
-          <span>
+          <span key="suggestionCheck">
             <semantic.Popup
               inverted
               size="mini"
@@ -114,7 +112,6 @@ class Cell extends React.PureComponent {
               trigger={
                 <semantic.Icon
                   name={props.suggestionCheck === 'red' ? 'close' : 'check'}
-                  key="suggestionCheck"
                   color={props.suggestionCheck}
                 />
               }
@@ -131,7 +128,7 @@ class Cell extends React.PureComponent {
       }
       if (props.selectedCheck) {
         icons.push(
-          <span>
+          <span key="selectedCheck">
             <semantic.Popup
               inverted
               size="mini"
@@ -141,7 +138,6 @@ class Cell extends React.PureComponent {
               trigger={
                 <semantic.Icon
                   name={props.selectedCheck === 'red' ? 'close' : 'check'}
-                  key="selectedCheck"
                   color={props.selectedCheck}
                 />
               }

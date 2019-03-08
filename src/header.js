@@ -63,7 +63,14 @@ class Header extends React.Component {
           {props.searchStatus === 'searching' ? (
             <semantic.Loader active inline size="mini" />
           ) : (
-            <semantic.Icon name="search" />
+            <semantic.Popup
+              size="mini"
+              position="bottom left"
+              verticalOffset={3}
+              horizontalOffset={7}
+              trigger={<semantic.Icon name="search" />}
+              content="Search using all descriptions"
+            />
           )}
         </span>
       )

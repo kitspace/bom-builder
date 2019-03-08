@@ -9,6 +9,7 @@ import * as oneClickBom from '1-click-bom'
 import * as mousetrap from 'mousetrap'
 import * as copyToClipboard from 'copy-to-clipboard'
 import * as fileDownload from 'js-file-download'
+import Progress from 'react-progress'
 
 import Header from './header'
 import Body from './body'
@@ -154,6 +155,11 @@ class Bom extends React.Component {
     return (
       <reactRedux.Provider store={store}>
         <div>
+          <Progress
+            style={{zIndex: 10001, boxShadow: 'none'}}
+            color="#21BA45"
+            percent={0}
+          />
           <div
             className="ui fixed top sticky"
             style={{

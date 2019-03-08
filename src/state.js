@@ -48,6 +48,7 @@ export const initialState = {
     popupFocus: [null, null],
     buyPartsMessages: [],
     suggestionsStatus: {},
+    loadingFile: 10,
     previewBuy: false
   }),
   suggestions: immutable.Map()
@@ -150,6 +151,9 @@ const linesActions = {
 }
 
 const viewActions = {
+  setLoadingFile(state, percent) {
+    return state.set('loadingFile', percent)
+  },
   setFocus(state, location) {
     return state.set('focus', immutable.fromJS(location))
   },

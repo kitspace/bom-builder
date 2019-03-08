@@ -9,12 +9,12 @@ import * as oneClickBom from '1-click-bom'
 import * as mousetrap from 'mousetrap'
 import * as copyToClipboard from 'copy-to-clipboard'
 import * as fileDownload from 'js-file-download'
-import Progress from 'react-progress'
 
 import Header from './header'
 import Body from './body'
 import Menu from './menu'
 import BuyParts from './buy_parts'
+import ProgressBar from './progress_bar'
 
 import {subscribeEffects} from './effects'
 import {findSuggestions} from './find_suggestions'
@@ -60,6 +60,7 @@ store.subscribe(() => {
 const actions = redux.bindActionCreators(unboundActions, store.dispatch)
 
 function handleFileInput(e) {
+  actions.setLoadingFile(10)
   const file = e.target.files[0]
   if (!file) {
     return
@@ -73,9 +74,11 @@ function handleFileInput(e) {
     asString = true
     parse = contents => oneClickBom.parse(contents, {ext: 'kicad_pcb'})
   }
+  actions.setLoadingFile(15)
   return readSingleFile(file, asString)
     .then(parse)
     .then(r => {
+      actions.setLoadingFile(50)
       if (r.invalid.length > 0) {
         const text = r.invalid.reduce((p, x) => {
           return p + `\trow ${x.row}: ${x.reason}\n`
@@ -87,7 +90,7 @@ function handleFileInput(e) {
         console.warn(r.warnings)
       }
       actions.initializeLines(r.lines)
-      store
+      Promise.all(store
         .getState()
         .data.present.get('lines')
         .map((line, lineId) => {
@@ -95,7 +98,7 @@ function handleFileInput(e) {
           line = state.data.present.getIn(['lines', lineId])
           const suggestions = state.suggestions.getIn([lineId, 'data'])
           return findSuggestions(lineId, line, suggestions, actions)
-        })
+        })).then(() => actions.setLoadingFile(100))
     })
 }
 
@@ -155,11 +158,7 @@ class Bom extends React.Component {
     return (
       <reactRedux.Provider store={store}>
         <div>
-          <Progress
-            style={{zIndex: 10001, boxShadow: 'none'}}
-            color="#21BA45"
-            percent={0}
-          />
+          <ProgressBar />
           <div
             className="ui fixed top sticky"
             style={{

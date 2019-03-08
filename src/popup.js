@@ -158,6 +158,7 @@ class SkuPopup extends Popup {
         <Title
           one={
             <a
+              target="_blank"
               href={getSkuUrl(vendor || props.field.pop(), part || props.value)}
             >
               {part || props.value}
@@ -246,7 +247,9 @@ class SkuPopup extends Popup {
             )}
           </div>
           <div className="rightHandModule">
-            {!sku.get('part') ? <div>Sorry, no part information found.</div> : null}
+            {!sku.get('part') ? (
+              <div>Sorry, no part information found.</div>
+            ) : null}
             {!expanded && (
               <div className="description" style={{cursor: 'pointer'}}>
                 {partData.get('description')}
@@ -356,12 +359,17 @@ class MpnPopup extends Popup {
               <div className="imageContainer">
                 <semantic.Image src={image.get('url')} />
               </div>
-              <a className="imageCredit" href={image.get('credit_url')}>
+              <a
+                className="imageCredit"
+                target="_blank"
+                href={image.get('credit_url')}
+              >
                 {image.get('credit_string')}
               </a>
             </div>
             <div className="octopartLinkContainer">
               <a
+                target="_blank"
                 href={
                   'https://octopart.com' + (part ? `/search?q=${part}` : '')
                 }
@@ -385,7 +393,7 @@ class MpnPopup extends Popup {
 class Datasheet extends React.PureComponent {
   render() {
     const link = this.props.href ? (
-      <a href={this.props.href}>
+      <a target="_blank" href={this.props.href}>
         <semantic.Icon name="file pdf outline" />
         Datasheet
       </a>

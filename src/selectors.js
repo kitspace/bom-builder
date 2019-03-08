@@ -54,16 +54,29 @@ export function makeLineSelector() {
   return reselect.createSelector([line], line => line)
 }
 
-export function makeSuggestionsLoading() {
+export function suggestionsStatus(state) {
+  return state.view.get('suggestionsStatus')
+}
+export function makeSuggestionsLoadingPercent() {
   return reselect.createSelector(
-    [suggestions, lineId],
-    (suggestions, lineId) => suggestions.getIn([lineId, 'status']) === 'loading'
+    [suggestionsStatus],
+    suggestionsStatus =>
+      ((suggestionsStatus.size -
+      suggestionsStatus.reduce(
+        (prev, s) => prev + (s.get('matching') === 'loading' ? 1 : 0),
+        0
+      )) / suggestionsStatus.size) * 100
+  )
+}
+
+export function makeSuggestionsMatching() {
+  return reselect.createSelector([suggestionsStatus, lineId], (suggestions, lineId) =>
+    suggestions.getIn([lineId, 'matching'])
   )
 }
 
 export function makeSuggestionsSearching() {
-  return reselect.createSelector(
-    [suggestions, lineId],
-    (suggestions, lineId) => suggestions.getIn([lineId, 'search'])
+  return reselect.createSelector([suggestions, lineId], (suggestions, lineId) =>
+    suggestions.getIn([lineId, 'search'])
   )
 }

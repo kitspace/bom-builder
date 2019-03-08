@@ -69,7 +69,6 @@ store.subscribe(() => {
 const actions = redux.bindActionCreators(unboundActions, store.dispatch)
 
 function handleFileInput(e) {
-  actions.setLoadingFile(10)
   const file = e.target.files[0]
   if (!file) {
     return
@@ -83,11 +82,9 @@ function handleFileInput(e) {
     asString = true
     parse = contents => oneClickBom.parse(contents, {ext: 'kicad_pcb'})
   }
-  actions.setLoadingFile(15)
   return readSingleFile(file, asString)
     .then(parse)
     .then(r => {
-      actions.setLoadingFile(50)
       if (r.invalid.length > 0) {
         const text = r.invalid.reduce((p, x) => {
           return p + `\trow ${x.row}: ${x.reason}\n`

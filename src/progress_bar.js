@@ -17,15 +17,10 @@ function ProgressBar(props) {
   )
 }
 
-function loadingSelector(state) {
-  const view = state.view
-  return view.get('loadingFile')
-}
-
-
 function mapStateToProps(state, props) {
-  return reselect.createSelector([loadingSelector], loading => ({
-    percent: loading
+  const percent = selectors.makeSuggestionsLoadingPercent()
+  return reselect.createSelector([percent], percent => ({
+    percent
   }))
 }
 

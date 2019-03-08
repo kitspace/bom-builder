@@ -130,11 +130,20 @@ function makeSuggestionCheckSelector(
 
 function makeSelectedCheckSelector(
   applicableSuggestionsSelector,
-  selectedSelector
+  selectedSelector,
+  matchingSelector
 ) {
   return reselect.createSelector(
-    [applicableSuggestionsSelector, selectedSelector, selectors.value],
-    (suggestions, selected, value) => {
+    [
+      applicableSuggestionsSelector,
+      selectedSelector,
+      selectors.value,
+      matchingSelector
+    ],
+    (suggestions, selected, value, matching) => {
+      if (matching !== 'done') {
+        return null
+      }
       if (selected >= 0) {
         const checkColor = suggestions.getIn([selected, 'checkColor'])
         if (checkColor === 'green') {
@@ -207,13 +216,15 @@ function makeNoneSelectedSelector(lineId, retailersSelector) {
   })
 }
 
+
 function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
   const retailers = makeRetailersSelector()
   const value = makeRetailerValueSelector(props.lineId, props.field, retailers)
   const suggestions = makeApplicableSuggestions()
   const selected = makeSelectedSelector(suggestions)
-  const selectedCheck = makeSelectedCheckSelector(suggestions, selected)
+  const matching = selectors.makeSuggestionsMatching()
+  const selectedCheck = makeSelectedCheckSelector(suggestions, selected, matching)
   const noneSelected = makeNoneSelectedSelector(props.lineId, retailers)
   const suggestionCheck = makeSuggestionCheckSelector(
     suggestions,

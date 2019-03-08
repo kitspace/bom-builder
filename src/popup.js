@@ -246,6 +246,7 @@ class SkuPopup extends Popup {
             )}
           </div>
           <div className="rightHandModule">
+            {!sku.get('part') ? <div>Sorry, no part information found.</div> : null}
             {!expanded && (
               <div className="description" style={{cursor: 'pointer'}}>
                 {partData.get('description')}
@@ -337,7 +338,8 @@ class MpnPopup extends Popup {
         </div>
       )
     }
-    const selected = this.state.selected == null ? this.props.selected : this.state.selected
+    const selected =
+      this.state.selected == null ? this.props.selected : this.state.selected
     return (
       <semantic.Popup {...popupProps}>
         <Buttons

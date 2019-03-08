@@ -75,6 +75,36 @@ class Cell extends React.PureComponent {
           matchColor = /match/.test(props.match) ? 'green' : 'grey'
           const matchOpacity = /match/.test(props.match) ? 1.0 : 0.3
           icons.push(
+            <span>
+              <semantic.Popup
+                inverted
+                size="mini"
+                position="bottom right"
+                verticalOffset={3}
+                horizontalOffset={7}
+                trigger={
+                  <semantic.Icon
+                    style={{opacity: matchOpacity, fontSize: '1.2em'}}
+                    color={matchColor}
+                    name={props.match === 'match' ? 'clone outline' : 'search'}
+                    key="match"
+                  />
+                }
+                content={
+                  props.match === 'match'
+                    ? 'Suggestion that matches an already selected part is available'
+                    : matchColor === 'green'
+                      ? 'Common parts library suggestion available'
+                      : 'Search result suggestion available'
+                }
+              />
+            </span>
+          )
+        }
+      }
+      if (props.suggestionCheck) {
+        icons.push(
+          <span>
             <semantic.Popup
               inverted
               size="mini"
@@ -83,69 +113,45 @@ class Cell extends React.PureComponent {
               horizontalOffset={7}
               trigger={
                 <semantic.Icon
-                  style={{opacity: matchOpacity, fontSize: '1.2em'}}
-                  color={matchColor}
-                  name={props.match === 'match' ? 'clone outline' : 'search'}
-                  key="match"
+                  name={props.suggestionCheck === 'red' ? 'close' : 'check'}
+                  key="suggestionCheck"
+                  color={props.suggestionCheck}
                 />
               }
               content={
-                props.match === 'match'
-                  ? 'Suggestion that matches an already selected component is available'
-                  : matchColor === 'green'
-                    ? 'Common parts library suggestion available'
-                    : 'Search result suggestion available'
+                props.suggestionCheck === 'red'
+                  ? 'Suggestion is out of stock'
+                  : props.suggestionCheck === 'orange'
+                    ? 'Suggestion does not have enough stock'
+                    : 'Suggestion is in stock'
               }
             />
-          )
-        }
-      }
-      if (props.suggestionCheck) {
-        icons.push(
-          <semantic.Popup
-            inverted
-            size="mini"
-            position="bottom right"
-            verticalOffset={3}
-            horizontalOffset={7}
-            trigger={
-              <semantic.Icon
-                name={props.suggestionCheck === 'red' ? 'close' : 'check'}
-                key="suggestionCheck"
-                color={props.suggestionCheck}
-              />
-            }
-            content={
-              props.suggestionCheck === 'red'
-                ? 'Suggestion is out of stock'
-                : props.suggestionCheck === 'orange'
-                  ? 'Suggestion does not have enough stock'
-                  : 'Suggestion is in stock'
-            }
-          />
+          </span>
         )
       }
       if (props.selectedCheck) {
         icons.push(
-          <semantic.Popup
-            inverted
-            size="mini"
-            position="bottom right"
-            verticalOffset={3}
-            horizontalOffset={7}
-            trigger={
-              <semantic.Icon
-                name={props.selectedCheck === 'red' ? 'close' : 'check'}
-                key="selectedCheck"
-                color={props.selectedCheck}
-              />
-            }
-            content={
-              props.selectedCheck === 'red'
-                ? 'Selected part is out of stock'
-                : 'Selected part does not have enough stock'
-            }
-          />
+          <span>
+            <semantic.Popup
+              inverted
+              size="mini"
+              position="bottom right"
+              verticalOffset={3}
+              horizontalOffset={7}
+              trigger={
+                <semantic.Icon
+                  name={props.selectedCheck === 'red' ? 'close' : 'check'}
+                  key="selectedCheck"
+                  color={props.selectedCheck}
+                />
+              }
+              content={
+                props.selectedCheck === 'red'
+                  ? 'Selected part does not exist or is out of stock'
+                  : 'Selected part does not have enough stock'
+              }
+            />
+          </span>
         )
       }
     }

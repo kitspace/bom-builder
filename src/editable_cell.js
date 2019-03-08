@@ -78,7 +78,7 @@ class Cell extends React.PureComponent {
             <semantic.Popup
               inverted
               size="mini"
-              position="bottom left"
+              position="bottom right"
               verticalOffset={3}
               horizontalOffset={7}
               trigger={
@@ -93,8 +93,8 @@ class Cell extends React.PureComponent {
                 props.match === 'match'
                   ? 'Suggestion that matches an already selected component is available'
                   : matchColor === 'green'
-                    ? 'CPL part match available'
-                    : 'Search result available'
+                    ? 'Common parts library suggestion available'
+                    : 'Search result suggestion available'
               }
             />
           )
@@ -105,7 +105,7 @@ class Cell extends React.PureComponent {
           <semantic.Popup
             inverted
             size="mini"
-            position="bottom left"
+            position="bottom right"
             verticalOffset={3}
             horizontalOffset={7}
             trigger={
@@ -130,7 +130,7 @@ class Cell extends React.PureComponent {
           <semantic.Popup
             inverted
             size="mini"
-            position="bottom left"
+            position="bottom right"
             verticalOffset={3}
             horizontalOffset={7}
             trigger={

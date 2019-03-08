@@ -2,6 +2,7 @@ import './App.css'
 import 'semantic-ui-css/semantic.css'
 
 import React from 'react'
+import * as immutable from 'immutable'
 import * as semantic from 'semantic-ui-react'
 import * as redux from 'redux'
 import * as reactRedux from 'react-redux'
@@ -15,9 +16,9 @@ import Body from './body'
 import Menu from './menu'
 import BuyParts from './buy_parts'
 import ProgressBar from './progress_bar'
+import FindSuggestionsWorker from './find_suggestions.worker.js'
 
 import {subscribeEffects} from './effects'
-import {findSuggestions} from './find_suggestions'
 import {mainReducer, initialState, actions as unboundActions} from './state'
 
 const initialStoredData =
@@ -42,6 +43,14 @@ const store = redux.createStore(
   initialState,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
+
+const findSuggestionsWorker = new FindSuggestionsWorker()
+findSuggestionsWorker.addEventListener('message', ({data: action}) => {
+  if (action.value.suggestions) {
+    action.value.suggestions = immutable.fromJS(action.value.suggestions)
+  }
+  store.dispatch(action)
+})
 
 let previous_tsv
 let previous_state
@@ -90,15 +99,19 @@ function handleFileInput(e) {
         console.warn(r.warnings)
       }
       actions.initializeLines(r.lines)
-      Promise.all(store
+      store
         .getState()
         .data.present.get('lines')
         .map((line, lineId) => {
           const state = store.getState()
           line = state.data.present.getIn(['lines', lineId])
           const suggestions = state.suggestions.getIn([lineId, 'data'])
-          return findSuggestions(lineId, line, suggestions, actions)
-        })).then(() => actions.setLoadingFile(100))
+          return findSuggestionsWorker.postMessage({
+            lineId,
+            line: line.toJS(),
+            suggestions: suggestions.toJS()
+          })
+        })
     })
 }
 
@@ -252,7 +265,11 @@ class Bom extends React.Component {
     const state = store.getState()
     state.data.present.get('lines').forEach((line, id) => {
       const suggestions = state.suggestions.getIn([id, 'data'])
-      findSuggestions(id, line, suggestions, actions)
+      findSuggestionsWorker.postMessage({
+        lineId: id,
+        line: line.toJS(),
+        suggestions: suggestions.toJS()
+      })
     })
     actions.setEditable(this.props.editable)
     mousetrap.bind('ctrl+z', actions.undo)

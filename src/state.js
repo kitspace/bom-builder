@@ -48,7 +48,7 @@ export const initialState = {
     popupFocus: [null, null],
     buyPartsMessages: [],
     suggestionsStatus: {},
-    loadingFile: 10,
+    loadingFile: 0,
     previewBuy: false
   }),
   suggestions: immutable.Map()

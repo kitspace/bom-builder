@@ -17,7 +17,12 @@ function DescriptionCell(props) {
         field={props.field}
         lineId={props.lineId}
       />
-      <td className="searchCell">
+      <td
+        className={
+          'searchCell' +
+          (props.searching === 'done' ? ' searchCellInvisible' : '')
+        }
+      >
         {props.value &&
           props.searching !== 'done' && (
             <div

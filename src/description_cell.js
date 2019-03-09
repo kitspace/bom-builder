@@ -45,11 +45,12 @@ function DescriptionCell(props) {
               ) : (
                 <semantic.Popup
                   size="mini"
+                  inverted
                   position="bottom left"
                   verticalOffset={3}
                   horizontalOffset={7}
                   trigger={<semantic.Icon color="grey" name="search" />}
-                  content="Search using this description"
+                  content="Search for description"
                 />
               )}
             </div>

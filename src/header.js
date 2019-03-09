@@ -65,11 +65,12 @@ class Header extends React.Component {
           ) : (
             <semantic.Popup
               size="mini"
+              inverted
               position="bottom left"
               verticalOffset={3}
               horizontalOffset={7}
               trigger={<semantic.Icon name="search" />}
-              content="Search using all descriptions"
+              content="Search all descriptions"
             />
           )}
         </span>

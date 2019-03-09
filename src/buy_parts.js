@@ -54,33 +54,49 @@ function BuyParts(props) {
   return (
     <div style={{display: 'flex', alignItems: 'center', marginRight: 20}}>
       <div>
-        <semantic.Button
-          onClick={props.autoFillSuggestions}
-          className="buyPartsButton"
-          color="green"
-          basic
-        >
-          <div>
-            <semantic.Icon name="clone outline" />
-            <semantic.Icon name="search" />
-            Auto Fill
-          </div>
-        </semantic.Button>
+        <semantic.Popup
+          style={{zIndex: 10001}}
+          size="mini"
+          inverted
+          content="Fill in all retailer parts that are high confidence suggestions"
+          trigger={
+            <semantic.Button
+              onClick={props.autoFillSuggestions}
+              className="buyPartsButton"
+              color="green"
+              basic
+            >
+              <div>
+                <semantic.Icon name="clone outline" />
+                <semantic.Icon name="search" />
+                Auto Fill
+              </div>
+            </semantic.Button>
+          }
+        />
       </div>
       <div>
-        <semantic.Button
-          disabled={!props.extensionPresent}
-          className="buyPartsButton"
-          color={props.extensionPresent ? 'blue' : 'grey'}
-          onClick={() => props.setAddingParts('start')}
-          basic
-        >
-          <div style={{width:100}}>
-            <semantic.Icon name="shopping basket" />
-            <semantic.Icon name="plus" />
-            Buy Parts
-          </div>
-        </semantic.Button>
+        <semantic.Popup
+          style={{zIndex: 10001}}
+          size="mini"
+          inverted
+          content="Fill shopping carts with this BOM using your preferred retailer stock and as few additional retailers as possible."
+          trigger={
+            <semantic.Button
+              disabled={!props.extensionPresent}
+              className="buyPartsButton"
+              color={props.extensionPresent ? 'blue' : 'grey'}
+              onClick={() => props.setAddingParts('start')}
+              basic
+            >
+              <div style={{width: 100}}>
+                <semantic.Icon name="shopping basket" />
+                <semantic.Icon name="plus" />
+                Buy Parts
+              </div>
+            </semantic.Button>
+          }
+        />
       </div>
       {props.extensionPresent ? (
         <div
@@ -111,13 +127,20 @@ function BuyParts(props) {
             }}
           >
             <div style={{marginRight: 5}}> Preview: </div>
-            <div>
-              <semantic.Radio
-                toggle
-                checked={props.previewBuy}
-                onChange={(e, data) => props.setPreviewBuy(data.checked)}
-              />
-            </div>
+            <semantic.Popup
+              style={{zIndex: 10001}}
+              size="mini"
+              inverted
+              content="Preview which retailer parts will be selected to fill shopping carts"
+              verticalOffset={-20}
+              trigger={
+                <semantic.Radio
+                  toggle
+                  checked={props.previewBuy}
+                  onChange={(e, data) => props.setPreviewBuy(data.checked)}
+                />
+              }
+            />
           </div>
         </div>
       ) : (
@@ -142,10 +165,6 @@ function mapStateToProps(state) {
     false
   )
   let selectionNumbers = immutable.Map()
-  if (!loading) {
-    //const purchaseLines = getPurchaseLines(state)
-    //selectionNumbers = retailerSelectionNumbers(purchaseLines)
-  }
   return {
     selectionNumbers,
     extensionPresent,

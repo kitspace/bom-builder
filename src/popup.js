@@ -127,11 +127,24 @@ class SkuPopup extends Popup {
     let stockInfo = []
     if (inStock != null) {
       const checkIcon = (
-        <semantic.Icon
-          name={checkColor === 'red' ? 'close' : 'check'}
-          style={{marginLeft: 10}}
-          color={checkColor}
-          key="checkIcon"
+        <semantic.Popup
+          inverted
+          size="mini"
+          content={
+            checkColor === 'red'
+              ? 'Out of stock'
+              : checkColor === 'orange'
+                ? 'Not enough stock or sub-optimal stock location'
+                : 'In stock'
+          }
+          trigger={
+            <semantic.Icon
+              name={checkColor === 'red' ? 'close' : 'check'}
+              style={{marginLeft: 10}}
+              color={checkColor}
+              key="checkIcon"
+            />
+          }
         />
       )
       stockInfo = [
@@ -444,14 +457,32 @@ class Title extends React.PureComponent {
   render() {
     const props = this.props
     const matchOpacity = /match/.test(props.matchColor) ? 1.0 : 0.3
+    const iconColor = /match/.test(props.matchColor) ? 'green' : 'grey'
+    const iconName = props.matchColor === 'match' ? 'clone outline' : 'search'
     return (
       <div className="titleContainer">
         <div>
           {!props.hideMatch && (
-            <semantic.Icon
-              style={{opacity: matchOpacity}}
-              color={/match/.test(props.matchColor) ? 'green' : 'grey'}
-              name={props.matchColor === 'match' ? 'clone outline' : 'search'}
+            <semantic.Popup
+              inverted
+              size="mini"
+              position="bottom left"
+              verticalOffset={3}
+              horizontalOffset={8}
+              content={
+                iconName === 'clone outline'
+                  ? 'Suggestion matches an already selected part'
+                  : iconColor === 'green'
+                    ? 'Suggestion is from the Common Parts Library and matches your description'
+                    : 'Suggestions is a search result'
+              }
+              trigger={
+                <semantic.Icon
+                  style={{opacity: matchOpacity}}
+                  color={iconColor}
+                  name={iconName}
+                />
+              }
             />
           )}
         </div>

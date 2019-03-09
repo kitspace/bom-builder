@@ -93,7 +93,7 @@ class Cell extends React.PureComponent {
                   props.match === 'match'
                     ? 'Suggestion that matches an already selected part is available'
                     : matchColor === 'green'
-                      ? 'Common parts library suggestion available'
+                      ? 'Common Parts Library suggestion available'
                       : 'Search result suggestion available'
                 }
               />

@@ -43,7 +43,10 @@ function BuyParts(props) {
           style={{zIndex: 10001}}
           size="mini"
           inverted
-          content="Fill in all retailer parts that are high confidence suggestions"
+          content={
+            'Fill in all retailer part suggestions that match an' +
+            ' existing selection or match a part from the Common Parts Library'
+          }
           trigger={
             <semantic.Button
               onClick={props.autoFillSuggestions}

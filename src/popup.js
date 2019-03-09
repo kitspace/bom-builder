@@ -172,6 +172,7 @@ class SkuPopup extends Popup {
           one={
             <a
               target="_blank"
+              rel="noopener noreferrer"
               href={getSkuUrl(vendor || props.field.pop(), part || props.value)}
             >
               {part || props.value}
@@ -375,6 +376,7 @@ class MpnPopup extends Popup {
               <a
                 className="imageCredit"
                 target="_blank"
+                rel="noopener noreferrer"
                 href={image.get('credit_url')}
               >
                 {image.get('credit_string')}
@@ -383,6 +385,7 @@ class MpnPopup extends Popup {
             <div className="octopartLinkContainer">
               <a
                 target="_blank"
+                rel="noopener noreferrer"
                 href={
                   'https://octopart.com' + (part ? `/search?q=${part}` : '')
                 }
@@ -406,7 +409,7 @@ class MpnPopup extends Popup {
 class Datasheet extends React.PureComponent {
   render() {
     const link = this.props.href ? (
-      <a target="_blank" href={this.props.href}>
+      <a rel="noopener noreferrer" target="_blank" href={this.props.href}>
         <semantic.Icon name="file pdf outline" />
         Datasheet
       </a>

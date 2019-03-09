@@ -69,13 +69,6 @@ query SearchQuery($input: String!) {
   }
 }`
 
-const MatchQuery = `
-query MatchQuery($input: [MpnOrSku]!) {
-  match(parts: $input) {
-    ${part}
-  }
-}`
-
 const match_cache = {}
 const search_cache = {}
 

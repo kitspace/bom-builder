@@ -3,8 +3,6 @@ import * as reselect from 'reselect'
 
 import {emptyRetailers} from './state'
 
-import * as selectors from './selectors'
-
 export function getLines(state) {
   const linesMap = state
     .get('lines')
@@ -127,5 +125,4 @@ export function makePurchaseLinesSelector(
       }
     }
   )
-  return immutable.Map()
 }

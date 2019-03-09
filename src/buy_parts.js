@@ -6,27 +6,12 @@ import immutable from 'immutable'
 import oneClickBom from '1-click-bom'
 
 import {actions} from './state'
-import {retailerSelectionNumbers, getPurchaseLines} from './bom'
 
 const retailer_list = oneClickBom
   .getRetailers()
   .filter(r => r !== 'Rapid' && r !== 'Newark')
 
 function BuyParts(props) {
-  const retailers = props.selectionNumbers
-    .sort((a, b) => b - a)
-    .map((v, r) => {
-      if (v > 0) {
-        return (
-          <semantic.List.Item key={r}>
-            <semantic.List.Header>{r}</semantic.List.Header>
-            {v}
-          </semantic.List.Item>
-        )
-      }
-    })
-    .valueSeq()
-    .toJS()
   const messages = props.buyPartsMessages.map(message => {
     const vendor = message.getIn(['sku', 'vendor'])
     const title = `Problem with adding part to ${vendor} cart`
@@ -159,11 +144,6 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   const extensionPresent = state.view.get('extensionPresent')
-  let lines = state.data.present.get('lines')
-  const loading = state.suggestions.reduce(
-    (prev, s) => prev || s.get('status') === 'loading',
-    false
-  )
   let selectionNumbers = immutable.Map()
   return {
     selectionNumbers,

@@ -43,7 +43,7 @@ class SkuCell extends React.Component {
         highlightRed={props.previewBuy && props.noneSelected}
       />
     )
-    if (!props.hidden && (value || props.suggestions.size > 0)) {
+    if (value || props.suggestions.size > 0) {
       return (
         <SkuPopup
           on="click"

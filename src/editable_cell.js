@@ -48,6 +48,7 @@ class EditableCell extends React.PureComponent {
         selectedCheck={props.selectedCheck}
         suggestionCheck={props.suggestionCheck}
         onClick={this.clickHandler}
+        colSpan={props.colSpan}
         highlight={
           props.highlightRed
             ? 'red'
@@ -158,6 +159,7 @@ class Cell extends React.PureComponent {
         style={{maxWidth: props.active ? '' : 100, minWidth: 50}}
         onClick={props.onClick}
         className={props.highlight ? 'highlight ' + props.highlight : ''}
+        colSpan={props.colSpan}
       >
         <div>
           {smallField}

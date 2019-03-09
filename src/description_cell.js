@@ -10,52 +10,56 @@ import {actions} from './state'
 
 function DescriptionCell(props) {
   const [searching, setSearching] = useState(null)
+  const hasIcon = props.value && props.searching !== 'done'
+  let icon
+  if (hasIcon) {
+    if (
+      props.searching === 'searching' ||
+      props.searching === 'start' ||
+      searching
+    ) {
+      icon = <semantic.Loader active inline size="mini" />
+    } else {
+      icon = (
+        <semantic.Popup
+          size="mini"
+          inverted
+          position="bottom left"
+          verticalOffset={3}
+          horizontalOffset={7}
+          trigger={<semantic.Icon color="grey" name="search" />}
+          content="Search for description"
+        />
+      )
+    }
+  }
   return (
     <>
       <SimpleCell
         hidden={props.hidden}
         field={props.field}
         lineId={props.lineId}
+        colSpan={hasIcon ? 1 : 2}
       />
-      <td
-        className={
-          'searchCell' +
-          (props.searching === 'done' ? ' searchCellInvisible' : '')
-        }
-      >
-        {props.value &&
-          props.searching !== 'done' && (
-            <div
-              className="searchCellInner"
-              onClick={() => {
-                setSearching(true)
-                setImmediate(() => {
-                  props.search !== 'searching' &&
-                    props.setSuggestionsSearch({
-                      lineId: props.lineId,
-                      status: 'start'
-                    })
-                })
-              }}
-            >
-              {props.searching === 'searching' ||
-              props.searching === 'start' ||
-              searching ? (
-                <semantic.Loader active inline size="mini" />
-              ) : (
-                <semantic.Popup
-                  size="mini"
-                  inverted
-                  position="bottom left"
-                  verticalOffset={3}
-                  horizontalOffset={7}
-                  trigger={<semantic.Icon color="grey" name="search" />}
-                  content="Search for description"
-                />
-              )}
-            </div>
-          )}
-      </td>
+      {hasIcon ? (
+        <td className="searchCell">
+          <div
+            className="searchCellInner"
+            onClick={() => {
+              setSearching(true)
+              setImmediate(() => {
+                props.search !== 'searching' &&
+                  props.setSuggestionsSearch({
+                    lineId: props.lineId,
+                    status: 'start'
+                  })
+              })
+            }}
+          >
+            {icon}
+          </div>
+        </td>
+      ) : null}
     </>
   )
 }

@@ -130,6 +130,7 @@ class SkuPopup extends Popup {
         <semantic.Popup
           inverted
           size="mini"
+          key="checkIcon"
           content={
             checkColor === 'red'
               ? 'Out of stock'
@@ -142,7 +143,6 @@ class SkuPopup extends Popup {
               name={checkColor === 'red' ? 'close' : 'check'}
               style={{marginLeft: 10}}
               color={checkColor}
-              key="checkIcon"
             />
           }
         />

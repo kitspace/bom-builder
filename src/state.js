@@ -436,6 +436,7 @@ const rootActions = {
   },
   replaceSuggestions(state, suggestions) {
     suggestions.forEach((suggestions, lineId) => {
+      lineId = parseInt(lineId, 10)
       state = this.setSuggestions(state, {lineId, suggestions})
     })
     return state

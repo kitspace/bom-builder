@@ -48,6 +48,8 @@ const findSuggestionsWorker = new FindSuggestionsWorker()
 findSuggestionsWorker.addEventListener('message', ({data: action}) => {
   if (action.value.suggestions) {
     action.value.suggestions = immutable.fromJS(action.value.suggestions)
+  } else if (action.type === 'replaceSuggestions') {
+    action.value = immutable.fromJS(action.value)
   }
   store.dispatch(action)
 })
@@ -96,20 +98,14 @@ function handleFileInput(e) {
         console.warn(r.warnings)
       }
       actions.initializeLines(r.lines)
-      store
-        .getState()
-        .data.present.get('lines')
-        .map((line, lineId) => {
-          const state = store.getState()
-          line = state.data.present.getIn(['lines', lineId])
-          const suggestions = state.suggestions.getIn([lineId, 'data'])
-          return findSuggestionsWorker.postMessage({
-            type: 'single',
-            lineId,
-            line: line.toJS(),
-            suggestions: suggestions.toJS()
-          })
-        })
+      const state = store.getState()
+      const lines = state.data.present.get('lines')
+      const suggestions = state.suggestions
+      return findSuggestionsWorker.postMessage({
+        type: 'replace',
+        lines: lines.toJS(),
+        suggestions: suggestions.toJS()
+      })
     })
 }
 
@@ -239,15 +235,13 @@ class Bom extends React.Component {
       delete line.retailers.Newark
     })
     actions.initializeLines(lines)
-    const state = store.getState()
-    state.data.present.get('lines').forEach((line, id) => {
-      const suggestions = state.suggestions.getIn([id, 'data'])
-      findSuggestionsWorker.postMessage({
-        type: 'single',
-        lineId: id,
-        line: line.toJS(),
-        suggestions: suggestions.toJS()
-      })
+    findSuggestionsWorker.postMessage({
+      type: 'replace',
+      lines: store
+        .getState()
+        .data.present.get('lines')
+        .toJS(),
+      suggestions: {}
     })
     actions.setEditable(this.props.editable)
     mousetrap.bind('ctrl+z', actions.undo)

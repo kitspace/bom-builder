@@ -80,20 +80,25 @@ class SkuPopup extends Popup {
     super(props, ...args)
     this.toggleSelected = this.toggleSelected.bind(this)
   }
+  componentWillUnmount() {
+    this.unmounted = true
+  }
   toggleSelected() {
     const {selected, remove, setField, suggestions, lineId, field} = this.props
     if (selected === this.state.viewing) {
       this.setState({selected: -1})
-      setImmediate(() => {
+      setTimeout(() => {
         remove(immutable.List.of(lineId, field))
-        this.setState({selected: null})
-      })
+        if (!this.unmounted) {
+          this.setState({selected: null})
+        }
+      }, 0)
     } else {
       this.setState({selected: this.state.viewing})
-      setImmediate(() => {
+      setTimeout(() => {
         const value = suggestions.getIn([this.state.viewing, 'sku', 'part'])
         setField({lineId, field, value})
-      })
+      }, 0)
     }
   }
   render() {
@@ -293,20 +298,25 @@ class MpnPopup extends Popup {
     super(props, ...args)
     this.toggleSelected = this.toggleSelected.bind(this)
   }
+  componentWillUnmount() {
+    this.unmounted = true
+  }
   toggleSelected() {
     const {selected, remove, setField, suggestions, lineId, field} = this.props
     if (selected === this.state.viewing) {
       this.setState({selected: -1})
-      setImmediate(() => {
+      setTimeout(() => {
         remove(immutable.List.of(lineId, field))
-        this.setState({selected: null})
-      })
+        if (!this.unmounted) {
+          this.setState({selected: null})
+        }
+      }, 0)
     } else {
       this.setState({selected: this.state.viewing})
-      setImmediate(() => {
+      setTimeout(() => {
         const mpn = suggestions.getIn([this.state.viewing, 'mpn'])
         setField({lineId, field, value: mpn})
-      })
+      }, 0)
     }
   }
   render() {

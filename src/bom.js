@@ -96,6 +96,20 @@ export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
   )
 }
 
+export function getPurchaseLines(preferred, lines) {
+  lines = reduceBom(lines, preferred)
+  const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
+  const {reducedLines} = priority.reduce(
+    ({reducedLines, done}, retailer) => {
+      reducedLines = reduceBom(reducedLines, retailer, done)
+      done = done.push(retailer)
+      return {reducedLines, done}
+    },
+    {reducedLines: lines, done: immutable.List.of(preferred)}
+  )
+  return reducedLines
+}
+
 export function makePurchaseLinesSelector(
   preferredSelector,
   linesSelector,
@@ -111,17 +125,7 @@ export function makePurchaseLinesSelector(
     [preferredSelector, inStockLinesSelector, previewBuySelector],
     (preferred, lines, previewBuy) => {
       if (previewBuy) {
-        lines = reduceBom(lines, preferred)
-        const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
-        const {reducedLines} = priority.reduce(
-          ({reducedLines, done}, retailer) => {
-            reducedLines = reduceBom(reducedLines, retailer, done)
-            done = done.push(retailer)
-            return {reducedLines, done}
-          },
-          {reducedLines: lines, done: immutable.List.of(preferred)}
-        )
-        return reducedLines
+        return getPurchaseLines(preferred, lines)
       }
     }
   )

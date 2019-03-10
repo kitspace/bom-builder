@@ -123,8 +123,7 @@ function handleFileInput(e) {
     })
 }
 
-function getLines() {
-  const state = store.getState()
+function getLines(state) {
   const linesMap = state.data.present
     .get('lines')
     .map(line => line.update('partNumbers', ps => ps.slice(0, -1)))
@@ -134,7 +133,8 @@ function getLines() {
 }
 
 function getTsv() {
-  const lines = getLines()
+  const state = store.getState()
+  const lines = getLines(state)
   return oneClickBom.writeTSV(lines)
 }
 
@@ -150,7 +150,8 @@ function copyBom() {
 }
 
 function downloadBom() {
-  const lines = getLines()
+  const state = store.getState()
+  const lines = getLines(state)
   const csv = oneClickBom.write(lines, {type: 'string', bookType: 'csv'})
   fileDownload(csv, '1-click-bom.csv')
 }

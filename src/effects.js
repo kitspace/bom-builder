@@ -4,6 +4,7 @@ import oneClickBom from '1-click-bom'
 
 import {findSuggestions, searchDescription} from './find_suggestions'
 import {initialState, emptyPartNumber} from './state'
+import {getPurchaseLines} from './bom'
 
 const suggestionFields = immutable.List.of('partNumbers', 'retailers')
 
@@ -74,14 +75,14 @@ export function subscribeEffects(store, actions) {
           }
           return true
         })
-          .reduce((prev, d) => {
-            // de duplicate by line number
-            const lineNumber = d.getIn(['path', 1])
-            if (prev.find(x => x.getIn(['path', 1]) === lineNumber)) {
-              return prev
-            }
-            return prev.push(d)
-          }, immutable.List())
+        .reduce((prev, d) => {
+          // de duplicate by line number
+          const lineNumber = d.getIn(['path', 1])
+          if (prev.find(x => x.getIn(['path', 1]) === lineNumber)) {
+            return prev
+          }
+          return prev.push(d)
+        }, immutable.List())
       past = present
       effects(diff, store, actions)
     }
@@ -92,7 +93,7 @@ export function subscribeEffects(store, actions) {
         {
           from: 'page',
           message: 'bomBuilderAddToCart',
-          value: {tsv: getTsv(state)}
+          value: {tsv: getPurchaseTsv(state)}
         },
         '*'
       )
@@ -118,16 +119,13 @@ export function subscribeEffects(store, actions) {
   })
 }
 
-function getLines(state) {
-  const linesMap = state.data.present
-    .get('lines')
-    .map(line => line.update('partNumbers', ps => ps.slice(0, -1)))
-    .map(line => line.set('reference', line.get('reference') || ''))
+function getPurchaseTsv(state) {
+  const preferred = state.view.get('preferredRetailer')
+  let lines = getPurchaseLines(preferred, state.data.present.get('lines'))
   const order = state.data.present.get('order')
-  return order.map(lineId => linesMap.get(lineId)).toJS()
-}
-
-function getTsv(state) {
-  const lines = getLines(state)
+  const linesMap = lines
+    .map(line => line.set('partNumbers', immutable.List()))
+    .map(line => line.set('reference', line.get('reference') || ''))
+  lines = order.map(lineId => linesMap.get(lineId)).toJS()
   return oneClickBom.writeTSV(lines)
 }

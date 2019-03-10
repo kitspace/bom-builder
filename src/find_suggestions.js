@@ -33,16 +33,10 @@ function fromDescription(description) {
     .then(ps => ps.map(p => p.set('from', immutable.List.of('description'))))
 }
 
-async function findSuggestions(
-  lineId,
-  line,
-  suggestions = immutable.List(),
-  actions
-) {
+async function findSuggestions(line, suggestions = immutable.List()) {
   if (line == null) {
     return
   }
-  actions.setSuggestionsStatus({lineId, status: 'loading'})
   await Promise.all(
     line.get('partNumbers').map(async (partNumber, i) => {
       let part = await fromPartNumber(partNumber, suggestions)
@@ -73,9 +67,7 @@ async function findSuggestions(
         }
       })
   )
-
-  actions.addSuggestions({lineId, suggestions})
-  actions.setSuggestionsStatus({lineId, status: 'done'})
+  return suggestions
 }
 
 export async function searchDescription(lineId, description, actions) {

@@ -104,6 +104,7 @@ function handleFileInput(e) {
           line = state.data.present.getIn(['lines', lineId])
           const suggestions = state.suggestions.getIn([lineId, 'data'])
           return findSuggestionsWorker.postMessage({
+            type: 'single',
             lineId,
             line: line.toJS(),
             suggestions: suggestions.toJS()
@@ -242,6 +243,7 @@ class Bom extends React.Component {
     state.data.present.get('lines').forEach((line, id) => {
       const suggestions = state.suggestions.getIn([id, 'data'])
       findSuggestionsWorker.postMessage({
+        type: 'single',
         lineId: id,
         line: line.toJS(),
         suggestions: suggestions.toJS()

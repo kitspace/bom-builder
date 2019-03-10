@@ -67,7 +67,7 @@ function fitPartNumbers(lines) {
         const partNumbers = line.get('partNumbers') || immutable.List()
         return partNumbers.findLastIndex(p => !p.equals(emptyPartNumber))
       })
-      .max() + 2
+      .max() + 3
   return lines.map(line => {
     return line.update('partNumbers', ps => {
       ps = ps || immutable.List()
@@ -433,6 +433,12 @@ const rootActions = {
       s => !suggestionsToRemove.some(x => x.get('mpn').equals(s.get('mpn')))
     )
     return this.setSuggestions(state, {lineId, suggestions})
+  },
+  replaceSuggestions(state, suggestions) {
+    suggestions.forEach((suggestions, lineId) => {
+      state = this.setSuggestions(state, {lineId, suggestions})
+    })
+    return state
   },
   setFocusBelow(state) {
     let data = state.data

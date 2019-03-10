@@ -41,7 +41,10 @@ function effects(diff, store, actions) {
           p => !p.get('from').equals(path.slice(2, 4))
         )
         actions.removeSuggestions({lineId, suggestionsToRemove})
-        return findSuggestions(lineId, line, suggestions, actions)
+        actions.setSuggestionsStatus({lineId, status: 'loading'})
+        suggestions = await findSuggestions(line, suggestions)
+        actions.addSuggestions({lineId, suggestions})
+        actions.setSuggestionsStatus({lineId, status: 'done'})
       }
       if (path.last() === 'description') {
         actions.setSuggestionsSearch({lineId, status: 'start'})

@@ -54,6 +54,13 @@ export const initialState = {
 }
 
 function fitPartNumbers(lines) {
+  lines = lines.map(line =>
+    line.update('partNumbers', ps =>
+      ps
+        .filter(p => !p.equals(emptyPartNumber))
+        .concat(immutable.List.of(emptyPartNumber))
+    )
+  )
   const requiredSize =
     lines
       .map(line => {

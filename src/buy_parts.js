@@ -132,8 +132,12 @@ function BuyParts(props) {
           </div>
         </div>
       ) : (
-        <div style={{color: 'lightgrey'}}>
-          Install the 1-click BOM exension to use this feature
+        <div style={{color: 'lightgrey', minWidth: 352}}>
+          Please install the{' '}
+          <a style={{color: 'grey'}} href="https://1clickBOM.com">
+            1-click BOM exension
+          </a>{' '}
+          to use this feature
         </div>
       )}
       {messages}

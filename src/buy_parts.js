@@ -49,7 +49,11 @@ function BuyParts(props) {
           }
           trigger={
             <semantic.Button
-              onClick={props.autoFillSuggestions}
+              onClick={() => {
+                window.nanobar.go(80)
+                setTimeout(props.autoFillSuggestions, 0)
+                window.nanobar.go(100)
+              }}
               className="buyPartsButton"
               color="green"
               basic

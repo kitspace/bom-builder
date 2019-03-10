@@ -15,7 +15,6 @@ import Header from './header'
 import Body from './body'
 import Menu from './menu'
 import BuyParts from './buy_parts'
-import ProgressBar from './progress_bar'
 import FindSuggestionsWorker from './find_suggestions.worker.js'
 
 import {subscribeEffects} from './effects'
@@ -165,7 +164,6 @@ class Bom extends React.Component {
     return (
       <reactRedux.Provider store={store}>
         <div>
-          <ProgressBar />
           <div
             className="ui fixed top sticky"
             style={{

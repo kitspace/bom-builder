@@ -13,7 +13,6 @@
     "ramda": "^0.24.1",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
-    "react-progress": "^0.0.12",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
     "redux-undo-immutable-js": "^1.0.0-beta9-1",

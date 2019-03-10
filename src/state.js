@@ -313,29 +313,46 @@ const rootActions = {
   },
   autoFillSuggestions(state) {
     const present = state.data.present.update('lines', lines =>
-      lines.map((line, lineId) => {
-        const suggestions =
-          state.suggestions.getIn([lineId, 'retailers']) || immutable.Map()
-        return line.update('retailers', retailers => {
-          return retailers.map((part, vendor) => {
-            const vendorSuggestions =
-              suggestions.get(vendor) || immutable.List()
-            if (part) {
-              const existing = vendorSuggestions.find(
-                s => s.getIn(['sku', 'part']) === part
-              )
-              if (existing && existing.checkColor === 'green') {
-                return part
+      fitPartNumbers(
+        lines.map((line, lineId) => {
+          const retailerSuggestions =
+            state.suggestions.getIn([lineId, 'retailers']) || immutable.Map()
+          line = line.update('retailers', retailers => {
+            return retailers.map((part, vendor) => {
+              const vendorSuggestions =
+                retailerSuggestions.get(vendor) || immutable.List()
+              if (part) {
+                const existing = vendorSuggestions.find(
+                  s => s.getIn(['sku', 'part']) === part
+                )
+                if (existing && existing.checkColor === 'green') {
+                  return part
+                }
               }
-            }
-            const s = vendorSuggestions.first()
-            if (s && /match/.test(s.get('type'))) {
-              return s.getIn(['sku', 'part'])
-            }
-            return part
+              const s = vendorSuggestions.first()
+              if (s && /match/.test(s.get('type'))) {
+                return s.getIn(['sku', 'part'])
+              }
+              return part
+            })
+          })
+          return line.update('partNumbers', ps => {
+            const suggestions = (
+              state.suggestions.getIn([lineId, 'data']) || immutable.List()
+            ).filter(s => !ps.find(p => p.equals(s.get('mpn'))))
+            return ps
+              .slice(0, -1)
+              .concat(
+                suggestions
+                  .filter(
+                    s =>
+                      s.get('type') === 'match' || s.get('type') === 'cpl_match'
+                  )
+                  .map(s => s.get('mpn'))
+              )
           })
         })
-      })
+      )
     )
     if (!present.equals(state.data.present)) {
       const past = state.data.past.concat([state.data.present])

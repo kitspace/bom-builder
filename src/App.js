@@ -10,6 +10,7 @@ import * as oneClickBom from '1-click-bom'
 import * as mousetrap from 'mousetrap'
 import * as copyToClipboard from 'copy-to-clipboard'
 import * as fileDownload from 'js-file-download'
+import Nanobar from 'nanobar'
 
 import Header from './header'
 import Body from './body'
@@ -22,6 +23,11 @@ import {mainReducer, initialState, actions as unboundActions} from './state'
 
 const initialStoredData =
   'References\tQty\tDescription\tDigikey\tMouser\tRS\tNewark\tFarnell\tRapid\n\t1\t\t\t\t\t\t\t\n'
+
+let nanobarTimeout
+const nanobar = new Nanobar({
+  target: document.querySelector('ui.fixed.top.sticky')
+})
 
 function readSingleFile(file, asString = false) {
   return new Promise((resolve, reject) => {
@@ -48,6 +54,8 @@ findSuggestionsWorker.addEventListener('message', ({data: action}) => {
   if (action.value.suggestions) {
     action.value.suggestions = immutable.fromJS(action.value.suggestions)
   } else if (action.type === 'replaceSuggestions') {
+    clearTimeout(nanobarTimeout)
+    nanobar.go(100)
     action.value = immutable.fromJS(action.value)
   }
   store.dispatch(action)
@@ -74,6 +82,7 @@ function handleFileInput(e) {
   if (!file) {
     return
   }
+  nanobar.go(10)
   let parse = oneClickBom.parse
   let asString = false
   if (/^text\//.test(file.type)) {
@@ -84,8 +93,10 @@ function handleFileInput(e) {
     parse = contents => oneClickBom.parse(contents, {ext: 'kicad_pcb'})
   }
   return readSingleFile(file, asString)
+    .then(x => (nanobar.go(30), x))
     .then(parse)
     .then(r => {
+      nanobar.go(50)
       if (r.invalid.length > 0) {
         const text = r.invalid.reduce((p, x) => {
           return p + `\trow ${x.row}: ${x.reason}\n`
@@ -100,6 +111,9 @@ function handleFileInput(e) {
       const state = store.getState()
       const lines = state.data.present.get('lines')
       const suggestions = state.suggestions
+      nanobarTimeout = setTimeout(() => {
+        nanobar.go(80)
+      }, 1000)
       return findSuggestionsWorker.postMessage({
         type: 'replace',
         lines: lines.toJS(),
@@ -169,6 +183,7 @@ class Bom extends React.Component {
             style={{
               width: '100%',
               background: 'white',
+              paddingTop: 4,
               zIndex: 10000
             }}
           >
@@ -190,7 +205,8 @@ class Bom extends React.Component {
               borderBottom: '1px solid #e6e6e6',
               overflow: 'hidden',
               zIndex: 9999,
-              height: 80
+              paddingTop: 4,
+              height: 88
             }}
           >
             <semantic.Table
@@ -199,7 +215,7 @@ class Bom extends React.Component {
               celled
               unstackable
               singleLine
-              style={{marginTop: 60}}
+              style={{marginTop: 64}}
             >
               <Header />
               <Body hidden />
@@ -211,7 +227,7 @@ class Bom extends React.Component {
             celled
             unstackable
             singleLine
-            style={{marginTop: 59}}
+            style={{marginTop: 67}}
           >
             <Header />
             <Body />
@@ -226,13 +242,16 @@ class Bom extends React.Component {
     )
   }
   componentDidMount() {
+    nanobar.go(10)
     const storedData = localStorage.getItem('tsv') || initialStoredData
     const {lines} = oneClickBom.parseTSV(storedData)
     lines.forEach(line => {
       delete line.retailers.Rapid
       delete line.retailers.Newark
     })
+    nanobar.go(20)
     actions.initializeLines(lines)
+    nanobar.go(30)
     findSuggestionsWorker.postMessage({
       type: 'replace',
       lines: store
@@ -241,12 +260,17 @@ class Bom extends React.Component {
         .toJS(),
       suggestions: {}
     })
+    nanobar.go(40)
     actions.setEditable(this.props.editable)
     mousetrap.bind('ctrl+z', actions.undo)
     mousetrap.bind('ctrl+y', actions.redo)
     if (storedData === initialStoredData) {
       actions.setFocus([0, ['description']])
     }
+    nanobar.go(50)
+    nanobarTimeout = setTimeout(() => {
+      nanobar.go(80)
+    }, 1000)
   }
 }
 

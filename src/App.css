@@ -276,3 +276,16 @@ tr.bomLine {
 .highlight.red {
   background: #fbdada !important;
 }
+
+.nanobar {
+  width: 100%;
+  height: 4px;
+  z-index: 10002;
+  top:0
+}
+.bar {
+  width: 0;
+  height: 100%;
+  transition: height .3s;
+  background: #21BA45;
+}

@@ -9,6 +9,7 @@
     "immutable-diff": "^0.1.1",
     "js-file-download": "^0.4.1",
     "mousetrap": "^1.6.1",
+    "nanobar": "^0.4.2",
     "promise-rate-limit": "^0.0.1",
     "ramda": "^0.24.1",
     "react": "^16.8.2",

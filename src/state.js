@@ -435,11 +435,14 @@ const rootActions = {
     return this.setSuggestions(state, {lineId, suggestions})
   },
   replaceSuggestions(state, suggestions) {
+    let status = immutable.Map()
     suggestions.forEach((suggestions, lineId) => {
       lineId = parseInt(lineId, 10)
       state = this.setSuggestions(state, {lineId, suggestions})
+      status = status.setIn([lineId, 'matching'], 'done')
     })
-    return state
+    const view = state.view.set('suggestionsStatus', status)
+    return Object.assign({}, state, {view})
   },
   setFocusBelow(state) {
     let data = state.data

@@ -123,7 +123,7 @@ function makeSuggestionCheckSelector(
       if (selectedCheck === check) {
         return null
       }
-      return suggestions.first().get('checkColor')
+      return check
     }
   )
 }

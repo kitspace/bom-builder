@@ -4,7 +4,7 @@ import oneClickBom from '1-click-bom'
 
 import {findSuggestions, searchDescription} from './find_suggestions'
 import {initialState, emptyPartNumber} from './state'
-import {getPurchaseLines} from './bom'
+import {getPurchaseLines, getInStockLines, getAllOffers} from './bom'
 
 const suggestionFields = immutable.List.of('partNumbers', 'retailers')
 
@@ -120,8 +120,11 @@ export function subscribeEffects(store, actions) {
 }
 
 function getPurchaseTsv(state) {
+  const offers = getAllOffers(state.suggestions)
+  let lines = state.data.present.get('lines')
+  lines = getInStockLines(lines, offers)
   const preferred = state.view.get('preferredRetailer')
-  let lines = getPurchaseLines(preferred, state.data.present.get('lines'))
+  lines = getPurchaseLines(preferred, lines)
   const order = state.data.present.get('order')
   const linesMap = lines
     .map(line => line.set('partNumbers', immutable.List()))

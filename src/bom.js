@@ -47,52 +47,56 @@ export function reduceBom(lines, preferred, done = immutable.List()) {
   })
 }
 
+export function getAllOffers(suggestions) {
+  return suggestions.map(x => x.get('data')).reduce((offers, suggestions) => {
+    suggestions = suggestions || immutable.List()
+    return suggestions.reduce(
+      (offers, part) =>
+        part
+          .get('offers')
+          .reduce(
+            (offers, offer) => offers.set(offer.get('sku'), offer),
+            offers
+          ),
+      offers
+    )
+  }, immutable.Map())
+}
+
 export function makeAllOffersSelector(suggestionsSelector) {
-  return reselect.createSelector([suggestionsSelector], suggestions => {
-    return suggestions.map(x => x.get('data')).reduce((offers, suggestions) => {
-      suggestions = suggestions || immutable.List()
-      return suggestions.reduce(
-        (offers, part) =>
-          part
-            .get('offers')
-            .reduce(
-              (offers, offer) => offers.set(offer.get('sku'), offer),
-              offers
-            ),
-        offers
-      )
-    }, immutable.Map())
-  })
+  return reselect.createSelector([suggestionsSelector], getAllOffers)
+}
+
+export function getInStockLines(lines, offers) {
+  return lines.map(line =>
+    line.update('retailers', retailers =>
+      retailers.map((part, vendor) => {
+        if (part) {
+          const sku = immutable.Map({part, vendor})
+          const offer = offers.get(sku)
+          let in_stock, stock_location
+          if (offer) {
+            in_stock = offer.get('in_stock_quantity')
+            stock_location = offer.get('stock_location')
+          }
+          if (
+            in_stock &&
+            in_stock >= line.get('quantity') &&
+            stock_location !== 'US'
+          ) {
+            return part
+          }
+        }
+        return ''
+      })
+    )
+  )
 }
 
 export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
   return reselect.createSelector(
     [linesSelector, allOffersSelector],
-    (lines, offers) => {
-      return lines.map(line =>
-        line.update('retailers', retailers =>
-          retailers.map((part, vendor) => {
-            if (part) {
-              const sku = immutable.Map({part, vendor})
-              const offer = offers.get(sku)
-              let in_stock, stock_location
-              if (offer) {
-                in_stock = offer.get('in_stock_quantity')
-                stock_location = offer.get('stock_location')
-              }
-              if (
-                in_stock &&
-                in_stock >= line.get('quantity') &&
-                stock_location !== 'US'
-              ) {
-                return part
-              }
-            }
-            return ''
-          })
-        )
-      )
-    }
+    getInStockLines
   )
 }
 

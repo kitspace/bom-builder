@@ -94,7 +94,10 @@ function handleFileInput(e) {
     parse = contents => oneClickBom.parse(contents, {ext: 'kicad_pcb'})
   }
   return readSingleFile(file, asString)
-    .then(x => (window.nanobar.go(30), x))
+    .then(x => {
+      window.nanobar.go(30)
+      return x
+    })
     .then(parse)
     .then(r => {
       window.nanobar.go(60)

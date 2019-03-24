@@ -48,7 +48,10 @@ function BuyParts(props) {
           style={{zIndex: 10001}}
           size="mini"
           inverted
-          content="Fill shopping carts with this BOM using your preferred retailer stock and as few additional retailers as possible."
+          content={
+            'Fill shopping carts with this BOM using your preferred ' +
+            'retailer stock and as few additional retailers as possible.'
+          }
           trigger={
             <semantic.Button
               disabled={!props.extensionPresent}
@@ -76,7 +79,7 @@ function BuyParts(props) {
             minWidth: 315
           }}
         >
-          Preffered retailer:{'  '}
+          Preferred retailer:{'  '}
           <semantic.Dropdown
             inline
             value={props.preferredRetailer}
@@ -99,7 +102,10 @@ function BuyParts(props) {
               style={{zIndex: 10001}}
               size="mini"
               inverted
-              content="Preview which retailer parts will be selected to fill shopping carts"
+              content={
+                'Preview which retailer parts will be selected ' +
+                'to fill shopping carts'
+              }
               verticalOffset={-20}
               trigger={
                 <semantic.Radio

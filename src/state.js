@@ -212,6 +212,7 @@ const viewActions = {
           return immutable.fromJS({
             sku: {part, vendor: retailer},
             reference,
+            id: makeId(),
             quantity
           })
         })
@@ -220,6 +221,11 @@ const viewActions = {
         messages = messages.push(immutable.fromJS({retailer}))
       }
       return messages
+    })
+  },
+  removeBuyPartsMessage(state, id) {
+    return state.update('buyPartsMessages', messages => {
+      return messages.filter(m => m.get('id') !== id)
     })
   }
 }

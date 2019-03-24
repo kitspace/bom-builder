@@ -17,6 +17,7 @@ import Body from './body'
 import Menu from './menu'
 import BuyParts from './buy_parts'
 import FindSuggestionsWorker from './find_suggestions.worker.js'
+import Messages from './messages'
 
 import {subscribeEffects} from './effects'
 import {mainReducer, initialState, actions as unboundActions} from './state'
@@ -243,6 +244,7 @@ class Bom extends React.Component {
             icon={<semantic.Icon name="plus" />}
           />
         </div>
+        <Messages />
       </reactRedux.Provider>
     )
   }

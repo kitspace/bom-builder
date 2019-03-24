@@ -129,6 +129,6 @@ function getPurchaseTsv(state) {
   const linesMap = lines
     .map(line => line.set('partNumbers', immutable.List()))
     .map(line => line.set('reference', line.get('reference') || ''))
-  lines = order.map(lineId => linesMap.get(lineId)).toJS()
+  lines = order.map(lineId => linesMap.get(lineId).set('id', lineId)).toJS()
   return oneClickBom.writeTSV(lines)
 }

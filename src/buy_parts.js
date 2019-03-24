@@ -2,7 +2,6 @@ import React from 'react'
 import * as semantic from 'semantic-ui-react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
-import immutable from 'immutable'
 import oneClickBom from '1-click-bom'
 
 import {actions} from './state'
@@ -55,6 +54,7 @@ function BuyParts(props) {
           trigger={
             <semantic.Button
               disabled={!props.extensionPresent}
+              loading={props.addingParts === 'adding'}
               className="buyPartsButton"
               color={props.extensionPresent ? 'blue' : 'grey'}
               onClick={() => props.setAddingParts('start')}
@@ -136,11 +136,10 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   const extensionPresent = state.view.get('extensionPresent')
-  let selectionNumbers = immutable.Map()
   return {
-    selectionNumbers,
     extensionPresent,
     preferredRetailer: state.view.get('preferredRetailer'),
+    addingParts: state.view.get('addingParts'),
     previewBuy: state.view.get('previewBuy')
   }
 }

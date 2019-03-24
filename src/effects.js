@@ -1,6 +1,7 @@
 import immutableDiff from 'immutable-diff'
 import immutable from 'immutable'
 import oneClickBom from '1-click-bom'
+import shortid from 'shortid'
 
 import {findSuggestions, searchDescription} from './find_suggestions'
 import {initialState, emptyPartNumber} from './state'
@@ -88,14 +89,28 @@ export function subscribeEffects(store, actions) {
     }
 
     if (state.view.get('addingParts') === 'start') {
+      const id = shortid()
       actions.setAddingParts('adding')
       window.postMessage(
         {
           from: 'page',
           message: 'bomBuilderAddToCart',
-          value: {tsv: getPurchaseTsv(state)}
+          value: {tsv: getPurchaseTsv(state), id}
         },
         '*'
+      )
+      window.addEventListener(
+        'message',
+        event => {
+          if (
+            event.data.message === 'bomBuilderResult' &&
+            event.data.value.id === id
+          ) {
+            const {retailer, result} = event.data.value
+            actions.addBuyPartsResult({retailer, result})
+          }
+        },
+        false
       )
     }
 

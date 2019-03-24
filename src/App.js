@@ -170,10 +170,18 @@ window.addEventListener(
     }
     if (event.data.from === 'extension') {
       actions.registerExtension()
-    }
-    if (event.data.message === 'bomBuilderResult') {
-      const {retailer, result} = event.data.value
-      actions.addBuyPartsResult({retailer, result})
+      if (event.data.message === 'updateAddingState') {
+        const adding = event.data.value
+        let anyAdding = false
+        for (const retailer in adding) {
+          if (adding[retailer]) {
+            anyAdding = true
+          }
+        }
+        if (!anyAdding) {
+          actions.setAddingParts('done')
+        }
+      }
     }
   },
   false

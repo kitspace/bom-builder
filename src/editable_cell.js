@@ -161,7 +161,8 @@ class Cell extends React.PureComponent {
       }
     }
     return (
-      <semantic.Table.Cell
+      <div
+        className="tableBodyCell"
         selectable={props.selectable}
         active={props.active}
         style={{maxWidth: props.active ? '' : 100, minWidth: 50}}
@@ -178,7 +179,7 @@ class Cell extends React.PureComponent {
             {props.value}
           </div>
         </div>
-      </semantic.Table.Cell>
+      </div>
     )
   }
 }

@@ -42,7 +42,7 @@ function DescriptionCell(props) {
         colSpan={hasIcon ? 1 : 2}
       />
       {hasIcon ? (
-        <td className="searchCell">
+        <div className="searchCell">
           <div
             className="searchCellInner"
             onClick={() => {
@@ -58,7 +58,7 @@ function DescriptionCell(props) {
           >
             {icon}
           </div>
-        </td>
+        </div>
       ) : null}
     </>
   )

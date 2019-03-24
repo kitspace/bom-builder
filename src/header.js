@@ -23,7 +23,11 @@ class Header extends React.Component {
     for (let i = 0; i < maxPartNumbers; ++i) {
       if (partNumbersExpanded.get(i)) {
         cells.push(
-          <th style={{minWidth: 160}} key={`Manufacturer${i}`}>
+          <div
+            className="tableHeadCell"
+            style={{minWidth: 160}}
+            key={`Manufacturer${i}`}
+          >
             <div className="headerWithButton">
               <span
                 style={{cursor: 'pointer'}}
@@ -32,7 +36,7 @@ class Header extends React.Component {
                 Manufacturer
               </span>
             </div>
-          </th>
+          </div>
         )
       }
       cells.push(
@@ -47,13 +51,13 @@ class Header extends React.Component {
     }
     const headers = retailer_list.map((retailer, i) => {
       return (
-        <th key={retailer}>
+        <div className="tableHeadCell" key={retailer}>
           <div className="headerWithButton">
             <span style={{cursor: 'pointer'}} onClick={() => sortBy(retailer)}>
               {retailer}
             </span>
           </div>
-        </th>
+        </div>
       )
     })
     let search
@@ -77,39 +81,34 @@ class Header extends React.Component {
       )
     }
     return (
-      <thead>
-        <tr>
-          <th colSpan={2}>
+      <div
+        style={{display: 'flex'}}
+        className="tableHeadRow"
+      >
+        <div className="tableHeadCell" colSpan={2}>
+          <span style={{cursor: 'pointer'}} onClick={() => sortBy('reference')}>
+            References
+          </span>
+        </div>
+        <div className="tableHeadCell">
+          <span style={{cursor: 'pointer'}} onClick={() => sortBy('quantity')}>
+            Quantity
+          </span>
+        </div>
+        <div className="tableHeadCell" colSpan={2}>
+          <div style={{minWidth: 88}}>
             <span
               style={{cursor: 'pointer'}}
-              onClick={() => sortBy('reference')}
+              onClick={() => sortBy('description')}
             >
-              References
+              Description
             </span>
-          </th>
-          <th>
-            <span
-              style={{cursor: 'pointer'}}
-              onClick={() => sortBy('quantity')}
-            >
-              Quantity
-            </span>
-          </th>
-          <th colSpan={2}>
-            <div style={{minWidth: 88}}>
-              <span
-                style={{cursor: 'pointer'}}
-                onClick={() => sortBy('description')}
-              >
-                Description
-              </span>
-              {search}
-            </div>
-          </th>
-          {cells}
-          {headers}
-        </tr>
-      </thead>
+            {search}
+          </div>
+        </div>
+        {cells}
+        {headers}
+      </div>
     )
   }
 }
@@ -117,7 +116,7 @@ class Header extends React.Component {
 function PartNumberHeader({sortByThis, isExpanded, toggleExpanded, shorten}) {
   const text = shorten ? '...' : 'Part Number'
   return (
-    <th style={{minWidth: shorten ? 0 : 130}}>
+    <div className="tableHeadCell" style={{minWidth: shorten ? 0 : 130}}>
       <div className="headerWithButton">
         {(() => {
           if (!isExpanded) {
@@ -151,7 +150,7 @@ function PartNumberHeader({sortByThis, isExpanded, toggleExpanded, shorten}) {
           {text}
         </span>
       </div>
-    </th>
+    </div>
   )
 }
 

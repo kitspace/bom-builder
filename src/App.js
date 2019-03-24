@@ -203,68 +203,19 @@ class Bom extends React.Component {
   render() {
     return (
       <reactRedux.Provider store={store}>
-        <div>
-          <div
-            className="ui fixed top sticky"
-            style={{
-              width: '100%',
-              background: 'white',
-              paddingTop: 4,
-              zIndex: 10000
-            }}
-          >
-            <div style={{display: 'flex'}}>
-              <Menu
-                downloadBom={downloadBom}
-                copyBom={copyBom}
-                handleFileInput={handleFileInput}
-                clearAll={this.props.clearAll}
-              />
-              <BuyParts />
-            </div>
+        <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+          <div style={{display: 'flex',}}>
+            <Menu
+              downloadBom={downloadBom}
+              copyBom={copyBom}
+              handleFileInput={handleFileInput}
+              clearAll={this.props.clearAll}
+            />
+            <BuyParts />
           </div>
-          <div
-            className="ui fixed top sticky"
-            style={{
-              width: '100%',
-              background: 'white',
-              borderBottom: '1px solid #e6e6e6',
-              overflow: 'hidden',
-              zIndex: 9999,
-              paddingTop: 4,
-              height: 88
-            }}
-          >
-            <semantic.Table
-              className="Bom"
-              size="small"
-              celled
-              unstackable
-              singleLine
-              style={{marginTop: 64}}
-            >
-              <Header />
-              <Body hidden />
-            </semantic.Table>
-          </div>
-          <semantic.Table
-            className="Bom"
-            size="small"
-            celled
-            unstackable
-            singleLine
-            style={{marginTop: 67}}
-          >
-            <Header />
-            <Body />
-          </semantic.Table>
-          <semantic.Button
-            onClick={actions.addEmptyLine}
-            basic
-            icon={<semantic.Icon name="plus" />}
-          />
+          <Header />
+          <Body />
         </div>
-        <Messages />
       </reactRedux.Provider>
     )
   }

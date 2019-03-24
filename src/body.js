@@ -1,21 +1,37 @@
 import './buy_parts.css'
 import React from 'react'
 import * as reactRedux from 'react-redux'
+import {FixedSizeList} from 'react-window'
+import AutoSizer from 'react-virtualized-auto-sizer'
 
 import Line from './line'
 
+class Row extends React.PureComponent {
+  render() {
+    const props = this.props
+    const id = props.data.get(props.index)
+    return <Line className="bomLine" key={id} lineId={id} style={props.style} />
+  }
+}
+
 function Body(props) {
   return (
-    <tbody style={{visibility: props.hidden ? 'hidden' : 'visible'}}>
-      {props.lineIds.map(lineId => (
-        <Line
-          className="bomLine"
-          key={lineId}
-          lineId={lineId}
-          hidden={props.hidden}
-        />
-      ))}
-    </tbody>
+    <div style={{flex: '1 1 auto'}}>
+      <AutoSizer>
+        {({width, height}) => (
+          <FixedSizeList
+            className="tableBody"
+            height={height}
+            width={width}
+            itemCount={props.lineIds.size}
+            itemSize={29}
+            itemData={props.lineIds}
+          >
+            {Row}
+          </FixedSizeList>
+        )}
+      </AutoSizer>
+    </div>
   )
 }
 

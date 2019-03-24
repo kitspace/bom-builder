@@ -11,14 +11,14 @@ class Handle extends React.Component {
   }
   render() {
     return (
-      <td
+      <div
         onClick={this.removeLine}
         className={`handle ${markerColor(this.props.reference)}`}
       >
         <div>
           <semantic.Icon name="x" />
         </div>
-      </td>
+      </div>
     )
   }
 }

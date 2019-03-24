@@ -75,7 +75,7 @@ function Line(props) {
     )
   })
   return (
-    <semantic.Table.Row className="bomLine" active={editingLine}>
+    <div className="tableBodyLine" active={editingLine} style={props.style}>
       <Handle hidden={props.hidden} lineId={lineId} />
 
       <SimpleCell
@@ -95,7 +95,7 @@ function Line(props) {
       />
       {partNumberCells}
       {retailerCells}
-    </semantic.Table.Row>
+    </div>
   )
 }
 

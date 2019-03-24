@@ -249,10 +249,6 @@ label.item:hover {
   color: rgba(0, 0, 0, 1) !important;
 }
 
-tr.bomLine {
-  height: 29px;
-}
-
 .searchCell {
   border-left: 0 !important;
 }
@@ -291,9 +287,16 @@ tr.bomLine {
   z-index: 10002;
   top: 0;
 }
+
 .bar {
   width: 0;
   height: 100%;
   transition: height 0.3s;
   background: #21ba45;
+}
+
+.tableBodyLine {
+  max-height: 29px;
+  display: flex;
+  overflow: hidden;
 }

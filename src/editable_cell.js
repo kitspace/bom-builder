@@ -120,7 +120,7 @@ class Cell extends React.PureComponent {
                 props.suggestionCheck === 'red'
                   ? 'Suggestion is out of stock'
                   : props.suggestionCheck === 'orange'
-                    ? 'Suggestion does not have enough stock'
+                    ? 'Suggestion does not have enough stock or location is sub-optimal'
                     : 'Suggestion is in stock'
               }
             />

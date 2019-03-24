@@ -106,6 +106,18 @@ function editingSelector(state) {
   return state.view.get('editable') ? state.view.get('focus') : null
 }
 
+function makePartNumbersSelector(lineSelector) {
+  return reselect.createSelector([lineSelector], line =>
+    line.get('partNumbers')
+  )
+}
+
+function makePartNumbersExpandedSelector() {
+  return reselect.createSelector([selectors.view], view =>
+    view.get('partNumbersExpanded')
+  )
+}
+
 function makeEditingLineSelector() {
   return reselect.createSelector(
     [editingSelector, selectors.lineId],
@@ -115,12 +127,12 @@ function makeEditingLineSelector() {
 
 function mapStateToProps(state, props) {
   const line = selectors.makeLineSelector()
+  const partNumbers = makePartNumbersSelector(line)
   const editingLine = makeEditingLineSelector()
+  const partNumbersExpanded = makePartNumbersExpandedSelector()
   return reselect.createSelector(
-    [line, selectors.view, editingLine],
-    (line, viewState, editingLine) => {
-      const partNumbers = line.get('partNumbers')
-      const partNumbersExpanded = viewState.get('partNumbersExpanded')
+    [editingLine, partNumbers, partNumbersExpanded],
+    (editingLine, partNumbers, partNumbersExpanded) => {
       return {
         partNumbers,
         partNumbersExpanded,

@@ -10,6 +10,7 @@ import EditableCell from './editable_cell'
 
 class MpnCell extends React.Component {
   shouldComponentUpdate(newProps) {
+    // don't update when 'field' updates as it never actually changes
     return Object.keys(newProps).reduce((prev, k) => {
       return prev || (k !== 'field' && newProps[k] !== this.props[k])
     }, false)

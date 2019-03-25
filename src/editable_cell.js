@@ -1,7 +1,7 @@
 import React from 'react'
 import * as semantic from 'semantic-ui-react'
 
-class EditableCell extends React.PureComponent {
+class EditableCell extends React.Component {
   setFieldHandler = value => {
     const {lineId, field, setField} = this.props
     setField({lineId, field, value})
@@ -18,6 +18,12 @@ class EditableCell extends React.PureComponent {
     const {lineId, field, setFocus, onClick} = this.props
     setFocus([lineId, field])
     onClick && onClick(e)
+  }
+  shouldComponentUpdate(newProps) {
+    // don't update when 'field' updates as it never actually changes
+    return Object.keys(newProps).reduce((prev, k) => {
+      return prev || (k !== 'field' && newProps[k] !== this.props[k])
+    }, false)
   }
   render() {
     const props = this.props

@@ -12,9 +12,19 @@ import {makePurchaseLinesSelector} from './bom'
 
 class SkuCell extends React.Component {
   shouldComponentUpdate(newProps) {
-    // don't update when 'field' updates as it never actually changes
     return Object.keys(newProps).reduce((prev, k) => {
-      return prev || (k !== 'field' && newProps[k] !== this.props[k])
+      if (prev) {
+        return true
+      }
+      // don't update when 'field' updates as it never actually changes
+      if (k === 'field') {
+        return false
+      }
+      // use deeper equality for suggestions
+      if (k === 'suggestions' && newProps[k] !== this.props[k]) {
+        return !newProps.suggestions.equals(this.props.suggestions)
+      }
+      return newProps[k] !== this.props[k]
     }, false)
   }
   handlePopupOpen = () => {
@@ -155,6 +165,7 @@ function makeSelectedCheckSelector(
       if (value) {
         return 'red'
       }
+      return null
     }
   )
 }
@@ -217,7 +228,6 @@ function makeNoneSelectedSelector(lineId, retailersSelector) {
   })
 }
 
-
 function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
   const retailers = makeRetailersSelector()
@@ -225,7 +235,11 @@ function mapStateToProps(state, props) {
   const suggestions = makeApplicableSuggestions()
   const selected = makeSelectedSelector(suggestions)
   const matching = selectors.makeSuggestionsMatching()
-  const selectedCheck = makeSelectedCheckSelector(suggestions, selected, matching)
+  const selectedCheck = makeSelectedCheckSelector(
+    suggestions,
+    selected,
+    matching
+  )
   const noneSelected = makeNoneSelectedSelector(props.lineId, retailers)
   const suggestionCheck = makeSuggestionCheckSelector(
     suggestions,

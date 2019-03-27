@@ -12,8 +12,7 @@ import * as copyToClipboard from 'copy-to-clipboard'
 import * as fileDownload from 'js-file-download'
 import Nanobar from 'nanobar'
 
-import Header from './header'
-import Body from './body'
+import Table from './table'
 import Menu from './menu'
 import BuyParts from './buy_parts'
 import FindSuggestionsWorker from './find_suggestions.worker.js'
@@ -204,7 +203,7 @@ class Bom extends React.Component {
     return (
       <reactRedux.Provider store={store}>
         <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-          <div style={{display: 'flex',}}>
+          <div style={{display: 'flex'}}>
             <Menu
               downloadBom={downloadBom}
               copyBom={copyBom}
@@ -213,8 +212,7 @@ class Bom extends React.Component {
             />
             <BuyParts />
           </div>
-          <Header />
-          <Body />
+          <Table />
         </div>
       </reactRedux.Provider>
     )

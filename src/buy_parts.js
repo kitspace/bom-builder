@@ -70,53 +70,77 @@ function BuyParts(props) {
         />
       </div>
       {props.extensionPresent ? (
-        <div
-          style={{
-            fontWeight: 'normal',
-            height: '100%',
-            verticalAlign: 'middle',
-            color: '#2185D0',
-            minWidth: 315
-          }}
-        >
-          Preferred retailer:{'  '}
-          <semantic.Dropdown
-            inline
-            value={props.preferredRetailer}
-            options={retailer_list.map(r => ({key: r, text: r, value: r}))}
-            onChange={(e, {value}) => props.setPreferredRetailer(value)}
-          />{' '}
+        <>
+          <div
+            style={{
+              minWidth: 100,
+              display: 'flex',
+              justifyContent: 'flex-end',
+              marginRight: 20
+            }}
+          >
+            <div
+              style={{display: 'flex', alignItems: 'center', color: '#2185d0'}}
+            >
+              <semantic.Icon name="delete" />
+            </div>
+            <div>
+              <semantic.Input
+                className="buyMultiplierInput"
+                style={{minWidth: 90}}
+                type="number"
+                defaultValue={1}
+              />
+            </div>
+          </div>
           <div
             style={{
               fontWeight: 'normal',
               height: '100%',
               verticalAlign: 'middle',
-              color: '#2185D0 !important',
-              minWidth: 160,
-              display: 'flex',
-              marginTop: 5
+              color: '#2185D0',
+              minWidth: 315
             }}
           >
-            <div style={{marginRight: 5}}> Preview: </div>
-            <semantic.Popup
-              style={{zIndex: 10001}}
-              size="mini"
-              inverted
-              content={
-                'Preview which retailer parts will be selected ' +
-                'to fill shopping carts'
-              }
-              verticalOffset={-20}
-              trigger={
-                <semantic.Radio
-                  toggle
-                  checked={props.previewBuy}
-                  onChange={(e, data) => props.setPreviewBuy(data.checked)}
-                />
-              }
-            />
+            Preferred retailer:{'  '}
+            <semantic.Dropdown
+              inline
+              value={props.preferredRetailer}
+              options={retailer_list.map(r => ({key: r, text: r, value: r}))}
+              onChange={(e, {value}) => props.setPreferredRetailer(value)}
+            />{' '}
+            <div
+              style={{
+                fontWeight: 'normal',
+                height: '100%',
+                verticalAlign: 'middle',
+                color: '#2185D0 !important',
+                minWidth: 160,
+                display: 'flex',
+                marginTop: 5
+              }}
+            >
+              <div style={{marginRight: 5}}> Preview: </div>
+              <semantic.Popup
+                style={{zIndex: 10001}}
+                size="mini"
+                inverted
+                content={
+                  'Preview which retailer parts will be selected ' +
+                  'to fill shopping carts'
+                }
+                verticalOffset={-20}
+                trigger={
+                  <semantic.Radio
+                    toggle
+                    checked={props.previewBuy}
+                    onChange={(e, data) => props.setPreviewBuy(data.checked)}
+                  />
+                }
+              />
+            </div>
           </div>
-        </div>
+        </>
       ) : (
         <div style={{color: 'lightgrey', minWidth: 352}}>
           Please install the{' '}

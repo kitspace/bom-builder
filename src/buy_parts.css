@@ -1,6 +1,11 @@
 .buyPartsButton {
   margin: 10px !important;
-  min-width:140px !important;
-  width:140px !important;
+  min-width: 140px !important;
+  width: 140px !important;
   max-height: 37px !important;
+}
+
+.buyMultiplierInput > input {
+  border: 1px solid #2185d0 !important;
+  color: #054c82 !important;
 }

@@ -34,6 +34,14 @@ export function field(_, props) {
   return props.field
 }
 
+export function previewBuy(state) {
+  return state.view.get('previewBuy')
+}
+
+export function buyMultiplier(state) {
+  return state.view.get('buyMultiplier')
+}
+
 export function value(state, props) {
   return state.data.present.getIn(['lines', props.lineId]).getIn(props.field)
 }

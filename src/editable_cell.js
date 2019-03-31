@@ -27,9 +27,12 @@ class EditableCell extends React.Component {
   }
   render() {
     const props = this.props
-    const {value, field, active} = props
+    let {value, field, active} = props
     if (field.get(0) === 'quantity') {
       var type = 'number'
+      if (this.props.previewBuy && !active) {
+        value = this.props.buyMultiplier * value
+      }
     }
     let editInput = value
     if (active) {

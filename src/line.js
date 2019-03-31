@@ -13,6 +13,7 @@ import MpnCell from './mpn_cell'
 import SkuCell from './sku_cell'
 import Handle from './handle'
 import DescriptionCell from './description_cell'
+import QuantityCell from './quantity_cell'
 
 const retailer_list = oneClickBom
   .getRetailers()
@@ -82,7 +83,7 @@ function Line(props) {
         field={fields.get('reference')}
         lineId={lineId}
       />
-      <SimpleCell
+      <QuantityCell
         hidden={props.hidden}
         field={fields.get('quantity')}
         lineId={lineId}

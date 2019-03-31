@@ -189,10 +189,6 @@ function skuPopupExpanded(state) {
   return state.view.get('skuPopupExpanded')
 }
 
-function previewBuySelector(state) {
-  return state.view.get('previewBuy')
-}
-
 function preferredRetailerSelector(state) {
   return state.view.get('preferredRetailer')
 }
@@ -201,11 +197,11 @@ function makeRetailersSelector() {
   const purchaseLinesSelector = makePurchaseLinesSelector(
     preferredRetailerSelector,
     selectors.lines,
-    previewBuySelector,
+    selectors.previewBuy,
     selectors.suggestions
   )
   return reselect.createSelector(
-    [selectors.lines, previewBuySelector, purchaseLinesSelector],
+    [selectors.lines, selectors.previewBuy, purchaseLinesSelector],
     (lines, previewBuy, purchaseLines) => {
       if (previewBuy) {
         return purchaseLines.map(l => l.get('retailers'))
@@ -257,7 +253,7 @@ function mapStateToProps(state, props) {
       selectedCheck,
       selected,
       skuPopupExpanded,
-      previewBuySelector,
+      selectors.previewBuy,
       noneSelected
     ],
     (

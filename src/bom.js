@@ -68,7 +68,7 @@ export function makeAllOffersSelector(suggestionsSelector) {
   return reselect.createSelector([suggestionsSelector], getAllOffers)
 }
 
-export function getInStockLines(lines, offers, buyMultiplier = 1) {
+export function getInStockLines(lines, offers, buyMultiplier) {
   return lines.map(line =>
     line.update('retailers', retailers =>
       retailers.map((part, vendor) => {
@@ -85,7 +85,7 @@ export function getInStockLines(lines, offers, buyMultiplier = 1) {
           }
           if (
             in_stock &&
-            in_stock >= line.get('quantity') * buyMultiplier &&
+            in_stock >= Math.ceil(line.get('quantity') * buyMultiplier) &&
             stock_location !== 'US'
           ) {
             return part

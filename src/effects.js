@@ -147,6 +147,7 @@ function getPurchaseTsv(state) {
     .map(line => line.set('reference', line.get('reference') || ''))
     .map(line =>
       line.update('quantity', qty => {
+        qty = Math.ceil(qty * buyMultiplier)
         const sku = line
           .get('retailers')
           .filter(p => p)

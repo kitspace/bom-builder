@@ -12,8 +12,8 @@ function getCheckColor(desiredQuantity, s) {
   return inStock === 0 ? 'red' : 'orange'
 }
 
-export function computeSuggestionsForRetailer(suggestions, retailer, line) {
-  const desiredQuantity = line.get('quantity')
+export function computeSuggestionsForRetailer(suggestions, retailer, line, buyMultiplier) {
+  const desiredQuantity = Math.ceil(line.get('quantity') * buyMultiplier)
   return suggestions
     .flatMap(s => {
       const type = s.get('type')

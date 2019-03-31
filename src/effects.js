@@ -144,6 +144,32 @@ function getPurchaseTsv(state) {
   const linesMap = lines
     .map(line => line.set('partNumbers', immutable.List()))
     .map(line => line.set('reference', line.get('reference') || ''))
+    .map(line =>
+      line.update('quantity', qty => {
+        const sku = line
+          .get('retailers')
+          .filter(p => p)
+          .map((part, vendor) => immutable.Map({part, vendor}))
+          .first()
+        if (sku == null) {
+          return qty
+        }
+        const offer = offers.get(sku)
+        if (offer == null) {
+          return qty
+        }
+        // adjust quantity if items are supplied in a multi pack
+        const multi = offer.get('multipack_quantity')
+        if (multi != null) {
+          qty = Math.ceil(qty / multi)
+        }
+        // raise to minimum order quantity
+        const moq = offer.get('moq')
+        qty = Math.max(moq, qty)
+
+        return qty
+      })
+    )
   lines = order.map(lineId => linesMap.get(lineId).set('id', lineId)).toJS()
   return oneClickBom.writeTSV(lines)
 }

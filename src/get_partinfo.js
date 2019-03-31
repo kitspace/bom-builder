@@ -29,6 +29,7 @@ const part = `
     description
     moq
     in_stock_quantity
+    multipack_quantity
     stock_location
     image {
       url

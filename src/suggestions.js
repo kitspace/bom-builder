@@ -1,13 +1,15 @@
 function getCheckColor(desiredQuantity, s) {
-  if (desiredQuantity <= s.get('in_stock_quantity')) {
+  let inStock = s.get('in_stock_quantity')
+  if (s.get('multipack_quantity') != null) {
+    inStock *= s.get('multipack_quantity')
+  }
+  if (desiredQuantity <= inStock) {
     if (!s.get('stock_location') || s.get('stock_location') === 'UK') {
       return 'green'
-    } else {
-      return 'orange'
     }
-  } else {
-    return s.get('in_stock_quantity') === 0 ? 'red' : 'orange'
+    return 'orange'
   }
+  return inStock === 0 ? 'red' : 'orange'
 }
 
 export function computeSuggestionsForRetailer(suggestions, retailer, line) {

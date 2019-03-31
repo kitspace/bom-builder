@@ -2,6 +2,7 @@ import * as immutable from 'immutable'
 import * as reselect from 'reselect'
 
 import {emptyRetailers} from './state'
+import * as selectors from './selectors'
 
 export function getLines(state) {
   const linesMap = state
@@ -67,7 +68,7 @@ export function makeAllOffersSelector(suggestionsSelector) {
   return reselect.createSelector([suggestionsSelector], getAllOffers)
 }
 
-export function getInStockLines(lines, offers) {
+export function getInStockLines(lines, offers, buyMultiplier = 1) {
   return lines.map(line =>
     line.update('retailers', retailers =>
       retailers.map((part, vendor) => {
@@ -84,7 +85,7 @@ export function getInStockLines(lines, offers) {
           }
           if (
             in_stock &&
-            in_stock >= line.get('quantity') &&
+            in_stock >= line.get('quantity') * buyMultiplier &&
             stock_location !== 'US'
           ) {
             return part
@@ -98,7 +99,7 @@ export function getInStockLines(lines, offers) {
 
 export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
   return reselect.createSelector(
-    [linesSelector, allOffersSelector],
+    [linesSelector, allOffersSelector, selectors.buyMultiplier],
     getInStockLines
   )
 }

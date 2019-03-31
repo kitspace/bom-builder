@@ -137,7 +137,8 @@ export function subscribeEffects(store, actions) {
 function getPurchaseTsv(state) {
   const offers = getAllOffers(state.suggestions)
   let lines = state.data.present.get('lines')
-  lines = getInStockLines(lines, offers)
+  const buyMultiplier = state.view.get('buyMultiplier')
+  lines = getInStockLines(lines, offers, buyMultiplier)
   const preferred = state.view.get('preferredRetailer')
   lines = getPurchaseLines(preferred, lines)
   const order = state.data.present.get('order')

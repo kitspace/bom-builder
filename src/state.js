@@ -224,12 +224,6 @@ const viewActions = {
       return messages
     })
   },
-  setBuyMultiplier(state, n) {
-    if (n < 1) {
-      n = 1
-    }
-    return state.set('buyMultiplier', n)
-  },
   removeBuyPartsMessage(state, id) {
     return state.update('buyPartsMessages', messages => {
       return messages.filter(m => m.get('id') !== id)
@@ -398,12 +392,32 @@ const rootActions = {
     state = Object.assign({}, state, {suggestions: stateSuggestions})
     return this.computeRetailerSuggestions(state, {lineId})
   },
+  setBuyMultiplier(state, n) {
+    if (n == null || n < 1 || isNaN(n)) {
+      n = 1
+    }
+    if (n === state.view.get('buyMultiplier')) {
+      return state
+    }
+    const view = state.view.set('buyMultiplier', n)
+    state = {...state, view}
+    state.data.present.get('order').forEach(lineId => {
+      state = this.computeRetailerSuggestions(state, {lineId})
+    })
+    return state
+  },
   computeRetailerSuggestions(state, {lineId}) {
     const suggestions = state.suggestions.getIn([lineId, 'data'])
     const line = state.data.present.getIn(['lines', lineId])
+    const buyMultiplier = state.view.get('buyMultiplier')
     const retailers = immutable.Map(
       retailer_list.map(retailer => {
-        const s = computeSuggestionsForRetailer(suggestions, retailer, line)
+        const s = computeSuggestionsForRetailer(
+          suggestions,
+          retailer,
+          line,
+          buyMultiplier
+        )
         return [retailer, s]
       })
     )

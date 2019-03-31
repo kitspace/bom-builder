@@ -126,7 +126,8 @@ class Cell extends React.PureComponent {
                 props.suggestionCheck === 'red'
                   ? 'Suggestion is out of stock'
                   : props.suggestionCheck === 'orange'
-                    ? 'Suggestion does not have enough stock or location is sub-optimal'
+                    ? 'Suggestion does not have enough stock or location is' +
+                      ' sub-optimal'
                     : 'Suggestion is in stock'
               }
             />
@@ -151,7 +152,8 @@ class Cell extends React.PureComponent {
               content={
                 props.selectedCheck === 'red'
                   ? 'Selected part does not exist or is out of stock'
-                  : 'Selected part does not have enough stock'
+                  : 'Selected part does not have enough stock or stock location' +
+                    ' is sub-optimal'
               }
             />
           </span>

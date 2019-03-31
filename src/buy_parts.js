@@ -19,8 +19,8 @@ function BuyParts(props) {
           size="mini"
           inverted
           content={
-            'Fill in all retailer part suggestions that match an' +
-            ' existing selection or match a part from the Common Parts Library'
+            'Fill in all part suggestions that match an existing selection or' +
+            ' match a part from the Common Parts Library'
           }
           trigger={
             <semantic.Button

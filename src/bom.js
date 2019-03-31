@@ -77,6 +77,9 @@ export function getInStockLines(lines, offers) {
           let in_stock, stock_location
           if (offer) {
             in_stock = offer.get('in_stock_quantity')
+            if (offer.get('multipack_quantity') != null) {
+              in_stock *= offer.get('multipack_quantity')
+            }
             stock_location = offer.get('stock_location')
           }
           if (

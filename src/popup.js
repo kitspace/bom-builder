@@ -152,10 +152,16 @@ class SkuPopup extends Popup {
           }
         />
       )
+      const multi = suggestion.get('multipack_quantity')
       stockInfo = [
         immutable.Map({
           name: ['Stock'],
-          value: [inStock, checkIcon]
+          value: [
+            multi != null && multi > 1
+              ? `${inStock} (pack of ${multi})`
+              : inStock,
+            checkIcon
+          ]
         })
       ]
       if (stockLocation) {

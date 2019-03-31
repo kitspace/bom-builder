@@ -16,9 +16,8 @@ function BuyParts(props) {
   const [debouncedSetBuyMultiplier, cancelDebounced] = useDebouncedCallback(
     value => {
       props.setBuyMultiplier(value)
-      setMultiplier(null)
     },
-    1000,
+    100,
     [1]
   )
   multiplier = multiplier == null ? props.buyMultiplier : multiplier

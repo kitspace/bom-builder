@@ -3,6 +3,7 @@ import * as semantic from 'semantic-ui-react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import oneClickBom from '1-click-bom'
+import {useDebouncedCallback} from 'use-debounce'
 
 import {actions} from './state'
 
@@ -11,6 +12,16 @@ const retailer_list = oneClickBom
   .filter(r => r !== 'Rapid' && r !== 'Newark')
 
 function BuyParts(props) {
+  let [multiplier, setMultiplier] = React.useState(null)
+  const [debouncedSetBuyMultiplier, cancelDebounced] = useDebouncedCallback(
+    value => {
+      props.setBuyMultiplier(value)
+      setMultiplier(null)
+    },
+    1000,
+    [1]
+  )
+  multiplier = multiplier == null ? props.buyMultiplier : multiplier
   return (
     <div style={{display: 'flex', alignItems: 'center', marginRight: 20}}>
       <div>
@@ -89,7 +100,23 @@ function BuyParts(props) {
                 className="buyMultiplierInput"
                 style={{minWidth: 90}}
                 type="number"
-                defaultValue={1}
+                value={multiplier}
+                onChange={e => {
+                  cancelDebounced()
+                  setMultiplier(e.target.value)
+                  debouncedSetBuyMultiplier(e.target.value)
+                }}
+                onBlur={e => {
+                  cancelDebounced()
+                  props.setBuyMultiplier(e.target.value)
+                  setMultiplier(null)
+                }}
+                onKeyDown={e => {
+                  if (e.which === 13) {
+                    // enter key is pressed
+                    e.target.blur()
+                  }
+                }}
               />
             </div>
           </div>
@@ -164,6 +191,7 @@ function mapStateToProps(state) {
     extensionPresent,
     preferredRetailer: state.view.get('preferredRetailer'),
     addingParts: state.view.get('addingParts'),
+    buyMultiplier: state.view.get('buyMultiplier'),
     previewBuy: state.view.get('previewBuy')
   }
 }

@@ -48,6 +48,7 @@ export const initialState = {
     popupFocus: [null, null],
     buyPartsMessages: [],
     suggestionsStatus: {},
+    buyMultiplier: 1,
     previewBuy: false
   }),
   suggestions: immutable.Map()
@@ -222,6 +223,12 @@ const viewActions = {
       }
       return messages
     })
+  },
+  setBuyMultiplier(state, n) {
+    if (n < 1) {
+      n = 1
+    }
+    return state.set('buyMultiplier', n)
   },
   removeBuyPartsMessage(state, id) {
     return state.update('buyPartsMessages', messages => {

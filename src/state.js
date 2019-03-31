@@ -383,6 +383,7 @@ const rootActions = {
     if (existing && existing.equals(suggestions)) {
       return state
     }
+    suggestions = makeUniform(suggestions)
     const stateSuggestions = state.suggestions.setIn(
       [lineId, 'data'],
       suggestions
@@ -428,7 +429,6 @@ const rootActions = {
       return state
     }
 
-    suggestions = makeUniform(suggestions)
     return this.setSuggestions(state, {lineId, suggestions})
   },
   removeSuggestions(state, {lineId, suggestionsToRemove}) {

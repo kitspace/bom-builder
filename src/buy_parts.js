@@ -52,6 +52,23 @@ function BuyParts(props) {
           }
         />
       </div>
+      <div style={{marginLeft:20, minWidth: 70}}>
+        Buy Parts:
+      </div>
+      <div>
+        <semantic.Button
+          disabled={!props.extensionPresent}
+          loading={props.clearingCarts === 'clearing'}
+          className="clearButton"
+          color={props.extensionPresent ? 'black' : 'grey'}
+          onClick={() => props.setClearingCarts('start')}
+          basic
+        >
+          <semantic.Icon name="shopping basket" />
+          <semantic.Icon name="delete" />
+          Clear
+        </semantic.Button>
+      </div>
       <div>
         <semantic.Popup
           style={{zIndex: 10001}}
@@ -190,6 +207,7 @@ function mapStateToProps(state) {
     extensionPresent,
     preferredRetailer: state.view.get('preferredRetailer'),
     addingParts: state.view.get('addingParts'),
+    clearingCarts: state.view.get('clearingCarts'),
     buyMultiplier: state.view.get('buyMultiplier'),
     previewBuy: state.view.get('previewBuy')
   }

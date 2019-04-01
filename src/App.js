@@ -182,6 +182,18 @@ window.addEventListener(
           actions.setAddingParts('done')
         }
       }
+      if (event.data.message === 'updateClearingState') {
+        const clearing = event.data.value
+        let anyClearing = false
+        for (const retailer in clearing) {
+          if (clearing[retailer]) {
+            anyClearing = true
+          }
+        }
+        if (!anyClearing) {
+          actions.setClearingCarts('done')
+        }
+      }
     }
   },
   false

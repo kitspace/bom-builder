@@ -43,6 +43,7 @@ export const initialState = {
     mpnPopupExpanded: false,
     skuPopupExpanded: false,
     addingParts: false,
+    clearingCarts: false,
     extensionPresent: false,
     preferredRetailer: 'Farnell',
     popupFocus: [null, null],
@@ -199,6 +200,9 @@ const viewActions = {
   },
   setAddingParts(state, value) {
     return state.set('addingParts', value)
+  },
+  setClearingCarts(state, value) {
+    return state.set('clearingCarts', value)
   },
   setPreferredRetailer(state, value) {
     return state.set('preferredRetailer', value)

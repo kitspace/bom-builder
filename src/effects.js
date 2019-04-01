@@ -114,6 +114,19 @@ export function subscribeEffects(store, actions) {
       )
     }
 
+    if (state.view.get('clearingCarts') === 'start') {
+      const id = shortid()
+      actions.setClearingCarts('clearing')
+      window.postMessage(
+        {
+          from: 'page',
+          message: 'bomBuilderClearCarts',
+          value: {tsv: getPurchaseTsv(state), id}
+        },
+        '*'
+      )
+    }
+
     state.suggestions.forEach(async (s, lineId) => {
       const state = store.getState()
       if (state.suggestions.getIn([lineId, 'search']) === 'start') {

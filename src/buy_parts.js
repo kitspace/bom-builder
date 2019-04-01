@@ -13,6 +13,7 @@ const retailer_list = oneClickBom
 
 function BuyParts(props) {
   let [multiplier, setMultiplier] = React.useState(null)
+  let [autoFilling, setAutoFilling] = React.useState(null)
   const [debouncedSetBuyMultiplier, cancelDebounced] = useDebouncedCallback(
     value => {
       props.setBuyMultiplier(value)
@@ -21,6 +22,8 @@ function BuyParts(props) {
     [1]
   )
   multiplier = multiplier == null ? props.buyMultiplier : multiplier
+  autoFilling =
+    autoFilling == null ? props.autoFilling === 'filling' : autoFilling
   return (
     <div style={{display: 'flex', alignItems: 'center', marginRight: 20}}>
       <div>
@@ -34,9 +37,12 @@ function BuyParts(props) {
           }
           trigger={
             <semantic.Button
+              loading={autoFilling}
               onClick={() => {
                 window.nanobar.go(80)
-                setTimeout(props.autoFillSuggestions, 0)
+                setAutoFilling(true)
+                setTimeout(() => props.setAutoFilling('start'), 10)
+                setTimeout(() => setAutoFilling(null), 500)
                 window.nanobar.go(100)
               }}
               className="autoFillButton"
@@ -52,9 +58,7 @@ function BuyParts(props) {
           }
         />
       </div>
-      <div style={{marginLeft:20, minWidth: 70}}>
-        Buy Parts:
-      </div>
+      <div style={{marginLeft: 20, minWidth: 70}}>Buy Parts:</div>
       <div>
         <semantic.Button
           disabled={!props.extensionPresent}
@@ -208,6 +212,7 @@ function mapStateToProps(state) {
     preferredRetailer: state.view.get('preferredRetailer'),
     addingParts: state.view.get('addingParts'),
     clearingCarts: state.view.get('clearingCarts'),
+    autoFilling: state.view.get('autoFilling'),
     buyMultiplier: state.view.get('buyMultiplier'),
     previewBuy: state.view.get('previewBuy')
   }

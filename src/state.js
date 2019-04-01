@@ -44,6 +44,7 @@ export const initialState = {
     skuPopupExpanded: false,
     addingParts: false,
     clearingCarts: false,
+    autoFilling: false,
     extensionPresent: false,
     preferredRetailer: 'Farnell',
     popupFocus: [null, null],
@@ -328,6 +329,10 @@ const rootActions = {
       data: Object.assign({}, state.data, {present}),
       view
     })
+  },
+  setAutoFilling(state, value) {
+    const view = state.view.set('autoFilling', value)
+    return {...state, view}
   },
   autoFillSuggestions(state) {
     const present = state.data.present.update('lines', lines =>

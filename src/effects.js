@@ -126,24 +126,30 @@ export function subscribeEffects(store, actions) {
         '*'
       )
     }
-
-    state.suggestions.forEach(async (s, lineId) => {
-      const state = store.getState()
-      if (state.suggestions.getIn([lineId, 'search']) === 'start') {
-        actions.setSuggestionsSearch({lineId, status: 'searching'})
-        const suggestionsToRemove = (s.get('data') || immutable.List()).filter(
-          x => x.getIn(['from', 0]) === 'description'
-        )
-        actions.removeSuggestions({lineId, suggestionsToRemove})
-        const description = state.data.present.getIn([
-          'lines',
-          lineId,
-          'description'
-        ])
-        await searchDescription(lineId, description, actions)
-        actions.setSuggestionsSearch({lineId, status: 'done'})
-      }
-    })
+    const p = Promise.all(
+      state.suggestions.map(async (s, lineId) => {
+        const state = store.getState()
+        if (state.suggestions.getIn([lineId, 'search']) === 'start') {
+          actions.setSuggestionsSearch({lineId, status: 'searching'})
+          const suggestionsToRemove = (
+            s.get('data') || immutable.List()
+          ).filter(x => x.getIn(['from', 0]) === 'description')
+          actions.removeSuggestions({lineId, suggestionsToRemove})
+          const description = state.data.present.getIn([
+            'lines',
+            lineId,
+            'description'
+          ])
+          await searchDescription(lineId, description, actions)
+          actions.setSuggestionsSearch({lineId, status: 'done'})
+        }
+      })
+    )
+    if (state.view.get('autoFilling') === 'start') {
+      actions.setAutoFilling('filling')
+      actions.autoFillSuggestions()
+      p.then(() => actions.setAutoFilling('done'))
+    }
   })
 }
 

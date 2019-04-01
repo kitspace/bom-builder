@@ -17,7 +17,7 @@ function BuyParts(props) {
     value => {
       props.setBuyMultiplier(value)
     },
-    100,
+    500,
     [1]
   )
   multiplier = multiplier == null ? props.buyMultiplier : multiplier
@@ -39,7 +39,7 @@ function BuyParts(props) {
                 setTimeout(props.autoFillSuggestions, 0)
                 window.nanobar.go(100)
               }}
-              className="buyPartsButton"
+              className="autoFillButton"
               color="green"
               basic
             >
@@ -87,10 +87,10 @@ function BuyParts(props) {
               onClick={() => props.setAddingParts('start')}
               basic
             >
-              <div style={{width: 100}}>
+              <div>
                 <semantic.Icon name="shopping basket" />
                 <semantic.Icon name="plus" />
-                Buy Parts
+                Add
               </div>
             </semantic.Button>
           }
@@ -185,7 +185,7 @@ function BuyParts(props) {
           </div>
         </>
       ) : (
-        <div style={{color: 'lightgrey', minWidth: 352}}>
+        <div style={{color: 'lightgrey'}}>
           Please install the{' '}
           <a style={{color: 'grey'}} href="https://1clickBOM.com">
             1-click BOM exension

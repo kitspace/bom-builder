@@ -1,7 +1,20 @@
 .buyPartsButton {
   margin: 10px !important;
+  min-width: 120px !important;
+  width: 120px !important;
+  max-height: 37px !important;
+}
+
+.autoFillButton {
+  margin: 10px !important;
   min-width: 140px !important;
   width: 140px !important;
+  max-height: 37px !important;
+}
+
+.clearButton {
+  min-width: 120px !important;
+  width: 120px !important;
   max-height: 37px !important;
 }
 

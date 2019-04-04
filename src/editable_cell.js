@@ -72,7 +72,7 @@ class Cell extends React.PureComponent {
       <div className="smallField">{props.smallField}</div>
     ) : null
     const icons = []
-    if (!props.active && props.highlight !== 'blank') {
+    if (!props.active) {
       let matchColor
       if (props.match) {
         if (props.match === 'loading') {

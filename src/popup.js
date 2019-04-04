@@ -216,12 +216,13 @@ class SkuPopup extends Popup {
     let specs = partData.get('specs') || immutable.List()
     const selected =
       this.state.selected == null ? this.props.selected : this.state.selected
+    const emptyPopup = sku.get('part') == null
     return (
       <semantic.Popup {...popupProps}>
         <Buttons
           disabled={suggestions.size < 2}
           selectDisabled={suggestions.size < 1}
-          selected={selected === this.state.viewing}
+          selected={selected === this.state.viewing || emptyPopup}
           onIncrement={this.incrementViewing}
           onDecrement={this.decrementViewing}
           onSelect={this.toggleSelected}
@@ -279,9 +280,7 @@ class SkuPopup extends Popup {
             )}
           </div>
           <div className="rightHandModule">
-            {!sku.get('part') ? (
-              <div>Sorry, no part information found.</div>
-            ) : null}
+            {emptyPopup ? <div>Sorry, no part information found.</div> : null}
             {!expanded && (
               <div className="description" style={{cursor: 'pointer'}}>
                 {partData.get('description')}

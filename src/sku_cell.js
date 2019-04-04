@@ -8,7 +8,7 @@ import {actions} from './state'
 import {SkuPopup} from './popup'
 import * as selectors from './selectors'
 import EditableCell from './editable_cell'
-import {makePurchaseLinesSelector} from './bom'
+import {makePurchaseLinesSelector} from './process_bom'
 
 class SkuCell extends React.Component {
   shouldComponentUpdate(newProps) {

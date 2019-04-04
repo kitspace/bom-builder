@@ -5,7 +5,7 @@ import shortid from 'shortid'
 
 import {findSuggestions, searchDescription} from './find_suggestions'
 import {initialState, emptyPartNumber} from './state'
-import {getPurchaseLines, getInStockLines, getAllOffers} from './bom'
+import {getPurchaseLines, getInStockLines, getAllOffers} from './process_bom'
 
 const suggestionFields = immutable.List.of('partNumbers', 'retailers')
 

@@ -99,11 +99,25 @@ function retailerSuggestions(state, props) {
   return state.suggestions.getIn([props.lineId, 'retailers']) || immutable.Map()
 }
 
-function makeApplicableSuggestions() {
+function makeApplicableSuggestions(valueSelector) {
   return reselect.createSelector(
-    [retailerSuggestions, retailerSelector],
-    (retailerSuggestions, retailer) =>
-      retailerSuggestions.get(retailer) || immutable.List()
+    [retailerSuggestions, retailerSelector, valueSelector],
+    (retailerSuggestions, retailer, value) => {
+      let suggestions = retailerSuggestions.get(retailer) || immutable.List()
+      const sku = immutable.Map({vendor: retailer, part: value})
+      if (value && !suggestions.find(s => s.get('sku').equals(sku))) {
+        suggestions = suggestions.unshift(
+          immutable.Map({
+            sku,
+            checkColor: 'red',
+            partData: immutable.Map({
+              description: 'Sorry, no part information found'
+            })
+          })
+        )
+      }
+      return suggestions
+    }
   )
 }
 
@@ -279,7 +293,7 @@ function mapStateToProps(state, props) {
     props.field,
     nonPreviewRetailers
   )
-  const suggestions = makeApplicableSuggestions()
+  const suggestions = makeApplicableSuggestions(nonPreviewValue)
   const selected = makeSelectedSelector(suggestions)
   const matching = selectors.makeSuggestionsMatching()
   const selectedCheck = makeSelectedCheckSelector(

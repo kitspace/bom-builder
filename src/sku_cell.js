@@ -247,7 +247,7 @@ function makeHighlightSelector(
         ? 'blank'
         : noneSelected
           ? 'red'
-          : value ? 'blue' : nonPreviewValue ? 'blank' : 'grey'
+          : value ? 'blue' : nonPreviewValue ? 'lightblue' : 'blank'
     }
   )
 }

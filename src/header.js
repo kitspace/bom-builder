@@ -59,9 +59,10 @@ class Header extends React.Component {
             <span style={{cursor: 'pointer'}} onClick={() => sortBy(retailer)}>
               {retailer}
             </span>
-            {props.retailerNumbers.get(retailer) != null && (
+            {props.retailerNumbers.get(retailer) > 0 && (
               <span style={{color: '#2185D0'}}>
-                {props.retailerNumbers.get(retailer)} lines
+                {props.retailerNumbers.get(retailer) +
+                  ` line${props.retailerNumbers.get(retailer) > 1 ? 's' : ''}`}
               </span>
             )}
           </div>

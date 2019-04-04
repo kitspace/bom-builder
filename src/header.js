@@ -2,9 +2,16 @@ import React from 'react'
 import * as semantic from 'semantic-ui-react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
+import * as immutable from 'immutable'
 import oneClickBom from '1-click-bom'
 
 import {actions} from './state'
+import {
+  retailerSelectionNumbers,
+  getInStockLines,
+  getAllOffers,
+  getPurchaseLines
+} from './process_bom'
 
 const retailer_list = oneClickBom
   .getRetailers()
@@ -52,6 +59,11 @@ class Header extends React.Component {
             <span style={{cursor: 'pointer'}} onClick={() => sortBy(retailer)}>
               {retailer}
             </span>
+            {props.retailerNumbers.get(retailer) != null && (
+              <span style={{color: '#2185D0'}}>
+                {props.retailerNumbers.get(retailer)} lines
+              </span>
+            )}
           </div>
         </th>
       )
@@ -155,6 +167,21 @@ function PartNumberHeader({sortByThis, isExpanded, toggleExpanded, shorten}) {
   )
 }
 
+function getInStockPurchaseLines(state) {
+  const offers = getAllOffers(state.suggestions)
+  let lines = state.data.present.get('lines')
+  const buyMultiplier = state.view.get('buyMultiplier')
+  const alwaysBuySkus = state.view.get('alwaysBuySkus')
+  lines = getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus)
+  const preferred = state.view.get('preferredRetailer')
+  return getPurchaseLines(preferred, lines, alwaysBuySkus)
+}
+
+function getRetailerNumbers(state) {
+  const lines = getInStockPurchaseLines(state)
+  return retailerSelectionNumbers(lines)
+}
+
 function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
@@ -173,6 +200,9 @@ function mapStateToProps(state) {
   )
   const searchStatus = searching ? 'searching' : done ? 'done' : null
   return {
+    retailerNumbers: state.view.get('previewBuy')
+      ? getRetailerNumbers(state)
+      : immutable.Map(),
     partNumbersExpanded,
     searchStatus,
     maxPartNumbers: first ? Math.max(first.get('partNumbers').size, 1) : 1

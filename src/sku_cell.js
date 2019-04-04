@@ -246,21 +246,25 @@ function makeNoneSelectedSelector(lineId, retailersSelector) {
 function makeHighlightSelector(
   noneSelectedSelector,
   valueSelector,
-  nonPreviewValueSelector
+  nonPreviewValueSelector,
+  alwaysBuySelector
 ) {
   return reselect.createSelector(
     [
       selectors.previewBuy,
       noneSelectedSelector,
       valueSelector,
-      nonPreviewValueSelector
+      nonPreviewValueSelector,
+      alwaysBuySelector
     ],
-    (previewBuy, noneSelected, value, nonPreviewValue) => {
+    (previewBuy, noneSelected, value, nonPreviewValue, alwaysBuy) => {
       return !previewBuy
         ? 'blank'
         : noneSelected
           ? 'red'
-          : value ? 'blue' : nonPreviewValue ? 'lightblue' : 'blank'
+          : alwaysBuy
+            ? 'darkblue'
+            : value ? 'blue' : nonPreviewValue ? 'lightblue' : 'blank'
     }
   )
 }
@@ -290,8 +294,13 @@ function mapStateToProps(state, props) {
     selectedCheck
   )
   const match = makeMatchSelector(suggestions, selectors.value, suggestionCheck)
-  const highlight = makeHighlightSelector(noneSelected, value, nonPreviewValue)
   const alwaysBuy = makeAlwaysBuyThisSelector()
+  const highlight = makeHighlightSelector(
+    noneSelected,
+    value,
+    nonPreviewValue,
+    alwaysBuy
+  )
   return reselect.createSelector(
     [
       value,

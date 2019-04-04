@@ -172,6 +172,7 @@ const viewActions = {
         if (alwaysBuySkus.size === 0) {
           return null
         }
+        return alwaysBuySkus
       } else {
         return alwaysBuySkus.set(sku, true)
       }

@@ -549,14 +549,14 @@ class Buttons extends React.PureComponent {
         {previewBuy &&
           selected && (
             <semantic.Button
-              className="alwaysAddButton"
+              className="alwaysBuyButton"
               onClick={toggleAlwaysBuy}
             >
               <div>
                 <semantic.Icon
                   name={alwaysBuy ? 'checkmark box' : 'square outline'}
                 />
-                {alwaysBuy ? 'Always Buying Here' : 'Always Buy Here'}
+                Buy Here
               </div>
             </semantic.Button>
           )}

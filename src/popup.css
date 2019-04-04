@@ -126,11 +126,10 @@ a.imageCredit {
    line-height: 10px;
 }
 
-.alwaysAddButton {
+.alwaysBuyButton {
    border: 1px solid #2185d0 !important;
-   color: #2185d0 !important
 }
 
-.alwaysAddButton > div {
+.alwaysBuyButton > div {
    color: #2185d0 !important
 }

@@ -221,6 +221,8 @@ class SkuPopup extends Popup {
           onIncrement={this.incrementViewing}
           onDecrement={this.decrementViewing}
           onSelect={this.toggleSelected}
+          previewBuy={props.previewBuy}
+          alwaysBuy={props.alwaysBuy}
         />
         {skuTitle}
         <div className="topAreaContainer">
@@ -523,6 +525,8 @@ class Buttons extends React.PureComponent {
       onDecrement,
       onIncrement,
       onSelect,
+      previewBuy,
+      alwaysBuy,
       selectDisabled
     } = this.props
     return (
@@ -536,6 +540,14 @@ class Buttons extends React.PureComponent {
           <semantic.Icon name={selected ? 'checkmark box' : 'square outline'} />
           {selected ? 'Selected' : 'Select'}
         </semantic.Button>
+        {previewBuy && selected && (
+          <semantic.Button className="alwaysAddButton">
+            <div>
+              <semantic.Icon name={alwaysBuy ? 'basket' : 'square outline'} />
+              {alwaysBuy ? 'Always Adding' : 'Always Add'}
+            </div>
+          </semantic.Button>
+        )}
         <semantic.Button
           disabled={disabled}
           icon="right chevron"

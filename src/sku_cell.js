@@ -71,6 +71,7 @@ class SkuCell extends React.Component {
           remove={props.remove}
           expanded={props.skuPopupExpanded}
           setExpanded={props.setSkuPopupExpanded}
+          previewBuy={props.previewBuy}
         />
       )
     }

@@ -58,11 +58,7 @@ class EditableCell extends React.Component {
         suggestionCheck={props.suggestionCheck}
         onClick={this.clickHandler}
         colSpan={props.colSpan}
-        highlight={
-          props.highlightRed
-            ? 'red'
-            : props.previewBuy ? (value ? 'blue' : 'blank') : null
-        }
+        highlight={props.highlight}
       />
     )
   }

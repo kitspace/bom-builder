@@ -277,6 +277,10 @@ tr.bomLine {
   background: #fbdada !important;
 }
 
+.highlight.grey {
+  background: grey !important;
+}
+
 .nanobar {
   width: 100%;
   height: 4px;

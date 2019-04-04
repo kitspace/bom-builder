@@ -51,7 +51,7 @@ class SkuCell extends React.Component {
         setFocusBelow={props.setFocusBelow}
         setFocusNext={props.setFocusNext}
         previewBuy={props.previewBuy}
-        highlightRed={props.previewBuy && props.noneSelected}
+        highlight={props.highlight}
       />
     )
     if (!props.hidden && (value || props.suggestions.size > 0)) {
@@ -211,6 +211,12 @@ function makeRetailersSelector() {
   )
 }
 
+function makeNonPreviewRetailerSelector() {
+  return reselect.createSelector([selectors.lines], lines => {
+    return lines.map(l => l.get('retailers'))
+  })
+}
+
 function makeRetailerValueSelector(lineId, field, retailersSelector) {
   const retailer = field.last()
   return reselect.createSelector([retailersSelector], retailers => {
@@ -224,10 +230,38 @@ function makeNoneSelectedSelector(lineId, retailersSelector) {
   })
 }
 
+function makeHighlightSelector(
+  noneSelectedSelector,
+  valueSelector,
+  nonPreviewValueSelector
+) {
+  return reselect.createSelector(
+    [
+      selectors.previewBuy,
+      noneSelectedSelector,
+      valueSelector,
+      nonPreviewValueSelector
+    ],
+    (previewBuy, noneSelected, value, nonPreviewValue) => {
+      return !previewBuy
+        ? 'blank'
+        : noneSelected
+          ? 'red'
+          : value ? 'blue' : nonPreviewValue ? 'blank' : 'grey'
+    }
+  )
+}
+
 function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
   const retailers = makeRetailersSelector()
   const value = makeRetailerValueSelector(props.lineId, props.field, retailers)
+  const nonPreviewRetailers = makeNonPreviewRetailerSelector()
+  const nonPreviewValue = makeRetailerValueSelector(
+    props.lineId,
+    props.field,
+    nonPreviewRetailers
+  )
   const suggestions = makeApplicableSuggestions()
   const selected = makeSelectedSelector(suggestions)
   const matching = selectors.makeSuggestionsMatching()
@@ -243,6 +277,7 @@ function mapStateToProps(state, props) {
     selectedCheck
   )
   const match = makeMatchSelector(suggestions, selectors.value, suggestionCheck)
+  const highlight = makeHighlightSelector(noneSelected, value, nonPreviewValue)
   return reselect.createSelector(
     [
       value,
@@ -254,6 +289,7 @@ function mapStateToProps(state, props) {
       selected,
       skuPopupExpanded,
       selectors.previewBuy,
+      highlight,
       noneSelected
     ],
     (
@@ -266,6 +302,7 @@ function mapStateToProps(state, props) {
       selected,
       skuPopupExpanded,
       previewBuy,
+      highlight,
       noneSelected
     ) => ({
       value,
@@ -277,6 +314,7 @@ function mapStateToProps(state, props) {
       selected,
       skuPopupExpanded,
       previewBuy,
+      highlight,
       noneSelected
     })
   )

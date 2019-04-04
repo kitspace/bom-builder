@@ -14,7 +14,7 @@ export function getLines(state) {
 }
 
 export function retailerSelectionNumbers(lines) {
-  return lines.reduce((prev, line) => {
+  return lines.reduce((prev, line, lineId) => {
     line.get('retailers').forEach((sku, retailer) => {
       if (sku) {
         prev = prev.update(retailer, x => x + 1)
@@ -24,11 +24,23 @@ export function retailerSelectionNumbers(lines) {
   }, emptyRetailers.map(x => 0))
 }
 
-export function priorityOfRetailers(lines) {
-  return retailerSelectionNumbers(lines)
+export function priorityOfRetailers(lines, alwaysBuySkus) {
+  const fromSelection = retailerSelectionNumbers(lines)
     .sort((v1, v2) => v2 - v1)
     .keySeq()
     .toList()
+  const numberOfAlwaysBuy = alwaysBuySkus.reduce((prev, skus) => {
+    if (skus != null) {
+      skus.forEach((_, sku) => {
+        prev = prev.update(sku.get('vendor'), x => (x || 0) + 1)
+      })
+    }
+    return prev
+  }, immutable.Map())
+  return fromSelection.sort(
+    (r1, r2) =>
+      (numberOfAlwaysBuy.get(r2) || 0) - (numberOfAlwaysBuy.get(r1) || 0)
+  )
 }
 
 export function reduceBom(
@@ -127,7 +139,9 @@ export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
 
 export function getPurchaseLines(preferred, lines, alwaysBuySkus) {
   lines = reduceBom(lines, preferred, alwaysBuySkus)
-  const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
+  const priority = priorityOfRetailers(lines, alwaysBuySkus).filter(
+    r => r !== preferred
+  )
   const {reducedLines} = priority.reduce(
     ({reducedLines, done}, retailer) => {
       reducedLines = reduceBom(reducedLines, retailer, alwaysBuySkus, done)

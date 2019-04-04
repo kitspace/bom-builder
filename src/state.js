@@ -168,7 +168,10 @@ const viewActions = {
       }
       const existing = alwaysBuySkus.get(sku)
       if (existing) {
-        return alwaysBuySkus.remove(sku)
+        alwaysBuySkus = alwaysBuySkus.remove(sku)
+        if (alwaysBuySkus.size === 0) {
+          return null
+        }
       } else {
         return alwaysBuySkus.set(sku, true)
       }

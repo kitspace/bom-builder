@@ -85,14 +85,10 @@ function retailerSelector(_, props) {
   return props.field.get(1)
 }
 
-function alwaysBuySkusSelector(state) {
-  return state.view.get('alwaysBuySkus')
-}
-
 function makeAlwaysBuyThisSelector() {
   const skuSelector = makeSkuSelector()
   return reselect.createSelector(
-    [selectors.lineId, skuSelector, alwaysBuySkusSelector],
+    [selectors.lineId, skuSelector, selectors.alwaysBuySkus],
     (lineId, sku, alwaysBuySkus) => {
       return alwaysBuySkus.getIn([lineId, sku])
     }

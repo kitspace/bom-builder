@@ -31,12 +31,25 @@ export function priorityOfRetailers(lines) {
     .toList()
 }
 
-export function reduceBom(lines, preferred, done = immutable.List()) {
-  return lines.map(line => {
+export function reduceBom(
+  lines,
+  preferred,
+  alwaysBuySkus,
+  done = immutable.List()
+) {
+  return lines.map((line, lineId) => {
     const part = line.getIn(['retailers', preferred])
+    let alwaysBuyThisLine = alwaysBuySkus.get(lineId)
+    if (alwaysBuyThisLine != null && alwaysBuyThisLine.size > 0) {
+      alwaysBuyThisLine = true
+    }
     if (part) {
       return line.update('retailers', retailers => {
         return retailers.map((v, k) => {
+          if (alwaysBuyThisLine) {
+            const sku = immutable.Map({vendor: k, part: v})
+            return alwaysBuySkus.getIn([lineId, sku]) ? v : ''
+          }
           if (k === preferred || done.includes(k)) {
             return v
           }
@@ -68,12 +81,15 @@ export function makeAllOffersSelector(suggestionsSelector) {
   return reselect.createSelector([suggestionsSelector], getAllOffers)
 }
 
-export function getInStockLines(lines, offers, buyMultiplier) {
-  return lines.map(line =>
+export function getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus) {
+  return lines.map((line, lineId) =>
     line.update('retailers', retailers =>
       retailers.map((part, vendor) => {
         if (part) {
           const sku = immutable.Map({part, vendor})
+          if (alwaysBuySkus.getIn([lineId, sku])) {
+            return part
+          }
           const offer = offers.get(sku)
           let in_stock, stock_location
           if (offer) {
@@ -99,17 +115,22 @@ export function getInStockLines(lines, offers, buyMultiplier) {
 
 export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
   return reselect.createSelector(
-    [linesSelector, allOffersSelector, selectors.buyMultiplier],
+    [
+      linesSelector,
+      allOffersSelector,
+      selectors.buyMultiplier,
+      selectors.alwaysBuySkus
+    ],
     getInStockLines
   )
 }
 
-export function getPurchaseLines(preferred, lines) {
-  lines = reduceBom(lines, preferred)
+export function getPurchaseLines(preferred, lines, alwaysBuySkus) {
+  lines = reduceBom(lines, preferred, alwaysBuySkus)
   const priority = priorityOfRetailers(lines).filter(r => r !== preferred)
   const {reducedLines} = priority.reduce(
     ({reducedLines, done}, retailer) => {
-      reducedLines = reduceBom(reducedLines, retailer, done)
+      reducedLines = reduceBom(reducedLines, retailer, alwaysBuySkus, done)
       done = done.push(retailer)
       return {reducedLines, done}
     },
@@ -130,10 +151,15 @@ export function makePurchaseLinesSelector(
     allOffersSelector
   )
   return reselect.createSelector(
-    [preferredSelector, inStockLinesSelector, previewBuySelector],
-    (preferred, lines, previewBuy) => {
+    [
+      preferredSelector,
+      inStockLinesSelector,
+      previewBuySelector,
+      selectors.alwaysBuySkus
+    ],
+    (preferred, lines, previewBuy, alwaysBuySkus) => {
       if (previewBuy) {
-        return getPurchaseLines(preferred, lines)
+        return getPurchaseLines(preferred, lines, alwaysBuySkus)
       }
     }
   )

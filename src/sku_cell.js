@@ -72,6 +72,8 @@ class SkuCell extends React.Component {
           expanded={props.skuPopupExpanded}
           setExpanded={props.setSkuPopupExpanded}
           previewBuy={props.previewBuy}
+          alwaysBuy={props.alwaysBuy}
+          toggleAlwaysBuyHere={props.toggleAlwaysBuyHere}
         />
       )
     }
@@ -81,6 +83,20 @@ class SkuCell extends React.Component {
 
 function retailerSelector(_, props) {
   return props.field.get(1)
+}
+
+function alwaysBuySkusSelector(state) {
+  return state.view.get('alwaysBuySkus')
+}
+
+function makeAlwaysBuyThisSelector() {
+  const skuSelector = makeSkuSelector()
+  return reselect.createSelector(
+    [selectors.lineId, skuSelector, alwaysBuySkusSelector],
+    (lineId, sku, alwaysBuySkus) => {
+      return alwaysBuySkus.getIn([lineId, sku])
+    }
+  )
 }
 
 function retailerSuggestions(state, props) {
@@ -279,6 +295,7 @@ function mapStateToProps(state, props) {
   )
   const match = makeMatchSelector(suggestions, selectors.value, suggestionCheck)
   const highlight = makeHighlightSelector(noneSelected, value, nonPreviewValue)
+  const alwaysBuy = makeAlwaysBuyThisSelector()
   return reselect.createSelector(
     [
       value,
@@ -291,6 +308,7 @@ function mapStateToProps(state, props) {
       skuPopupExpanded,
       selectors.previewBuy,
       highlight,
+      alwaysBuy,
       noneSelected
     ],
     (
@@ -304,6 +322,7 @@ function mapStateToProps(state, props) {
       skuPopupExpanded,
       previewBuy,
       highlight,
+      alwaysBuy,
       noneSelected
     ) => ({
       value,
@@ -316,6 +335,7 @@ function mapStateToProps(state, props) {
       skuPopupExpanded,
       previewBuy,
       highlight,
+      alwaysBuy,
       noneSelected
     })
   )

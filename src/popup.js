@@ -76,14 +76,10 @@ class Popup extends React.PureComponent {
 }
 
 class SkuPopup extends Popup {
-  constructor(props, ...args) {
-    super(props, ...args)
-    this.toggleSelected = this.toggleSelected.bind(this)
-  }
   componentWillUnmount() {
     this.unmounted = true
   }
-  toggleSelected() {
+  toggleSelected = () => {
     const {selected, remove, setField, suggestions, lineId, field} = this.props
     if (selected === this.state.viewing) {
       this.setState({selected: -1})
@@ -99,6 +95,14 @@ class SkuPopup extends Popup {
         const value = suggestions.getIn([this.state.viewing, 'sku', 'part'])
         setField({lineId, field, value})
       }, 0)
+    }
+  }
+  toggleAlwaysBuy = () => {
+    const {suggestions, lineId} = this.props
+    const selected = this.state.selected || this.props.selected
+    if (selected >= 0) {
+      const sku = suggestions.get(selected).get('sku')
+      this.props.toggleAlwaysBuyHere({lineId, sku})
     }
   }
   render() {
@@ -223,6 +227,7 @@ class SkuPopup extends Popup {
           onSelect={this.toggleSelected}
           previewBuy={props.previewBuy}
           alwaysBuy={props.alwaysBuy}
+          toggleAlwaysBuy={this.toggleAlwaysBuy}
         />
         {skuTitle}
         <div className="topAreaContainer">
@@ -527,6 +532,7 @@ class Buttons extends React.PureComponent {
       onSelect,
       previewBuy,
       alwaysBuy,
+      toggleAlwaysBuy,
       selectDisabled
     } = this.props
     return (
@@ -540,14 +546,20 @@ class Buttons extends React.PureComponent {
           <semantic.Icon name={selected ? 'checkmark box' : 'square outline'} />
           {selected ? 'Selected' : 'Select'}
         </semantic.Button>
-        {previewBuy && selected && (
-          <semantic.Button className="alwaysAddButton">
-            <div>
-              <semantic.Icon name={alwaysBuy ? 'basket' : 'square outline'} />
-              {alwaysBuy ? 'Always Adding' : 'Always Add'}
-            </div>
-          </semantic.Button>
-        )}
+        {previewBuy &&
+          selected && (
+            <semantic.Button
+              className="alwaysAddButton"
+              onClick={toggleAlwaysBuy}
+            >
+              <div>
+                <semantic.Icon
+                  name={alwaysBuy ? 'checkmark box' : 'square outline'}
+                />
+                {alwaysBuy ? 'Always Buying Here' : 'Always Buy Here'}
+              </div>
+            </semantic.Button>
+          )}
         <semantic.Button
           disabled={disabled}
           icon="right chevron"

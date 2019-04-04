@@ -51,6 +51,7 @@ export const initialState = {
     buyPartsMessages: [],
     suggestionsStatus: {},
     buyMultiplier: 1,
+    alwaysBuySkus: {},
     previewBuy: false
   }),
   suggestions: immutable.Map()
@@ -160,6 +161,19 @@ const linesActions = {
 }
 
 const viewActions = {
+  toggleAlwaysBuyHere(state, {lineId, sku}) {
+    return state.updateIn(['alwaysBuySkus', lineId], alwaysBuySkus => {
+      if (alwaysBuySkus == null) {
+        return immutable.Map([[sku, true]])
+      }
+      const existing = alwaysBuySkus.get(sku)
+      if (existing) {
+        return alwaysBuySkus.remove(sku)
+      } else {
+        return alwaysBuySkus.set(sku, true)
+      }
+    })
+  },
   setFocus(state, location) {
     return state.set('focus', immutable.fromJS(location))
   },

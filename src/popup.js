@@ -553,7 +553,7 @@ class Buttons extends React.PureComponent {
                 <semantic.Icon
                   name={alwaysBuy ? 'checkmark box' : 'square outline'}
                 />
-                Buy Here
+                Definitely Buy
               </div>
             </semantic.Button>
           )}

@@ -59,12 +59,35 @@ function BuyParts(props) {
         />
       </div>
       <div style={{marginLeft: 20, minWidth: 70}}>Buy Parts:</div>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          marginRight: 10
+        }}
+      >
+        <semantic.Popup
+          style={{zIndex: 10001}}
+          size="mini"
+          inverted
+          content="Enable buying mode"
+          verticalOffset={-20}
+          trigger={
+            <semantic.Radio
+              toggle
+              checked={props.previewBuy}
+              onChange={(e, data) => props.setPreviewBuy(data.checked)}
+            />
+          }
+        />
+      </div>
       <div>
         <semantic.Button
           disabled={!props.extensionPresent}
           loading={props.clearingCarts === 'clearing'}
           className="clearButton"
-          color={props.extensionPresent ? 'black' : 'grey'}
+          disabled={!props.previewBuy}
+          color={props.extensionPresent ? 'black' : 'lightgrey'}
           onClick={() => props.setClearingCarts('start')}
           basic
         >
@@ -84,10 +107,10 @@ function BuyParts(props) {
           }
           trigger={
             <semantic.Button
-              disabled={!props.extensionPresent}
+              disabled={!props.extensionPresent || !props.previewBuy}
               loading={props.addingParts === 'adding'}
               className="buyPartsButton"
-              color={props.extensionPresent ? 'blue' : 'grey'}
+              color={props.extensionPresent && props.previewBuy ? 'blue' : 'grey'}
               onClick={() => props.setAddingParts('start')}
               basic
             >
@@ -107,11 +130,10 @@ function BuyParts(props) {
               minWidth: 100,
               display: 'flex',
               justifyContent: 'flex-end',
-              marginRight: 20
             }}
           >
             <div
-              style={{display: 'flex', alignItems: 'center', color: '#2185d0'}}
+              style={{display: 'flex', alignItems: 'center', color: props.previewBuy ? '#2185d0' : 'lightgrey'}}
             >
               <semantic.Icon name="delete" />
             </div>
@@ -121,6 +143,7 @@ function BuyParts(props) {
                 style={{minWidth: 90}}
                 type="number"
                 value={multiplier}
+                disabled={!props.previewBuy}
                 onChange={e => {
                   cancelDebounced()
                   setMultiplier(e.target.value)
@@ -140,52 +163,16 @@ function BuyParts(props) {
               />
             </div>
           </div>
-          <div
-            style={{
-              fontWeight: 'normal',
-              height: '100%',
-              verticalAlign: 'middle',
-              color: '#2185D0',
-              minWidth: 315
-            }}
-          >
-            Preferred retailer:{'  '}
+          <div style={{display: 'flex', color: props.previewBuy ? '#2185d0' : '', marginLeft: 10}}>
+            Preferred retailer:{'   '}
             <semantic.Dropdown
               inline
+              style={{marginLeft: 3}}
+              disabled={!props.previewBuy}
               value={props.preferredRetailer}
               options={retailer_list.map(r => ({key: r, text: r, value: r}))}
               onChange={(e, {value}) => props.setPreferredRetailer(value)}
-            />{' '}
-            <div
-              style={{
-                fontWeight: 'normal',
-                height: '100%',
-                verticalAlign: 'middle',
-                color: '#2185D0 !important',
-                minWidth: 160,
-                display: 'flex',
-                marginTop: 5
-              }}
-            >
-              <div style={{marginRight: 5}}> Preview: </div>
-              <semantic.Popup
-                style={{zIndex: 10001}}
-                size="mini"
-                inverted
-                content={
-                  'Preview which retailer parts will be selected ' +
-                  'to fill shopping carts'
-                }
-                verticalOffset={-20}
-                trigger={
-                  <semantic.Radio
-                    toggle
-                    checked={props.previewBuy}
-                    onChange={(e, data) => props.setPreviewBuy(data.checked)}
-                  />
-                }
-              />
-            </div>
+            />
           </div>
         </>
       ) : (

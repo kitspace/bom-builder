@@ -317,7 +317,7 @@ const rootActions = {
     })
   },
   initializeLines(state, lines) {
-    lines = immutable.Map(lines.map(l => [makeId(), immutable.fromJS(l)]))
+    lines = immutable.OrderedMap(lines.map(l => [makeId(), immutable.fromJS(l)]))
     lines = fitPartNumbers(lines)
     if (lines.length < 1) {
       return state

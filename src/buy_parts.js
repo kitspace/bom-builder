@@ -95,7 +95,7 @@ function BuyParts(props) {
           Clear
         </semantic.Button>
       </div>
-      <div>
+      <div style={{paddingRight: 4}}>
         <semantic.Popup
           style={{zIndex: 10001}}
           size="mini"
@@ -175,7 +175,7 @@ function BuyParts(props) {
               marginLeft: 10
             }}
           >
-            Preferred retailer:{'   '}
+            Preferred retailer:
             <semantic.Dropdown
               inline
               style={{marginLeft: 3}}

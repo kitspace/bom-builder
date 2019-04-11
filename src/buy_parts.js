@@ -83,11 +83,10 @@ function BuyParts(props) {
       </div>
       <div>
         <semantic.Button
-          disabled={!props.extensionPresent}
+          disabled={!(props.previewBuy && props.extensionPresent)}
           loading={props.clearingCarts === 'clearing'}
           className="clearButton"
-          disabled={!props.previewBuy}
-          color={props.extensionPresent ? 'black' : 'lightgrey'}
+          color={props.previewBuy && props.extensionPresent ? 'black' : 'grey'}
           onClick={() => props.setClearingCarts('start')}
           basic
         >
@@ -110,7 +109,9 @@ function BuyParts(props) {
               disabled={!props.extensionPresent || !props.previewBuy}
               loading={props.addingParts === 'adding'}
               className="buyPartsButton"
-              color={props.extensionPresent && props.previewBuy ? 'blue' : 'grey'}
+              color={
+                props.extensionPresent && props.previewBuy ? 'blue' : 'grey'
+              }
               onClick={() => props.setAddingParts('start')}
               basic
             >
@@ -129,11 +130,15 @@ function BuyParts(props) {
             style={{
               minWidth: 100,
               display: 'flex',
-              justifyContent: 'flex-end',
+              justifyContent: 'flex-end'
             }}
           >
             <div
-              style={{display: 'flex', alignItems: 'center', color: props.previewBuy ? '#2185d0' : 'lightgrey'}}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                color: props.previewBuy ? '#2185d0' : 'lightgrey'
+              }}
             >
               <semantic.Icon name="delete" />
             </div>
@@ -163,7 +168,13 @@ function BuyParts(props) {
               />
             </div>
           </div>
-          <div style={{display: 'flex', color: props.previewBuy ? '#2185d0' : '', marginLeft: 10}}>
+          <div
+            style={{
+              display: 'flex',
+              color: props.previewBuy ? '#2185d0' : '',
+              marginLeft: 10
+            }}
+          >
             Preferred retailer:{'   '}
             <semantic.Dropdown
               inline

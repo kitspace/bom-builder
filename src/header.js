@@ -69,26 +69,19 @@ class Header extends React.Component {
         </th>
       )
     })
-    let search
-    if (props.searchStatus !== 'done') {
-      search = (
-        <span className="searchCellInner" onClick={() => props.searchAll()}>
-          {props.searchStatus === 'searching' ? (
-            <semantic.Loader active inline size="mini" />
-          ) : (
-            <semantic.Popup
-              size="mini"
-              inverted
-              position="bottom left"
-              verticalOffset={3}
-              horizontalOffset={7}
-              trigger={<semantic.Icon name="search" />}
-              content="Search all descriptions"
-            />
-          )}
-        </span>
-      )
-    }
+    const search = (
+      <span className="searchCellInner" onClick={() => props.searchAll()}>
+        <semantic.Popup
+          size="mini"
+          inverted
+          position="bottom left"
+          verticalOffset={3}
+          horizontalOffset={7}
+          trigger={<semantic.Icon name="search" />}
+          content="Search all descriptions"
+        />
+      </span>
+    )
     return (
       <thead>
         <tr>
@@ -190,22 +183,11 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   const partNumbersExpanded = state.view.get('partNumbersExpanded')
   const first = state.data.present.get('lines').first()
-  const searching = state.suggestions.reduce(
-    (prev, s) =>
-      prev || s.get('search') === 'searching' || s.get('search') === 'start',
-    false
-  )
-  const done = state.suggestions.reduce(
-    (prev, s) => prev && s.get('search') === 'done',
-    true
-  )
-  const searchStatus = searching ? 'searching' : done ? 'done' : null
   return {
     retailerNumbers: state.view.get('previewBuy')
       ? getRetailerNumbers(state)
       : immutable.Map(),
     partNumbersExpanded,
-    searchStatus,
     maxPartNumbers: first ? Math.max(first.get('partNumbers').size, 1) : 1
   }
 }

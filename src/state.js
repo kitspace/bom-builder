@@ -242,7 +242,9 @@ const viewActions = {
         })
       )
       if (!result.success && result.fails.length === 0) {
-        messages = messages.push(immutable.fromJS({retailer}))
+        messages = messages.push(
+          immutable.fromJS({sku: {vendor: retailer}, id: makeId()})
+        )
       }
       return messages
     })

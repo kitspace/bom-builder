@@ -89,7 +89,7 @@ const linesActions = {
   },
   addEmptyLine(state) {
     const id = makeId()
-    const lines = state.get('lines').set(id, emptyLine)
+    const lines = fitPartNumbers(state.get('lines').set(id, emptyLine))
     const order = state.get('order').push(id)
     return state.merge({lines, order})
   },
@@ -319,7 +319,9 @@ const rootActions = {
     })
   },
   initializeLines(state, lines) {
-    lines = immutable.OrderedMap(lines.map(l => [makeId(), immutable.fromJS(l)]))
+    lines = immutable.OrderedMap(
+      lines.map(l => [makeId(), immutable.fromJS(l)])
+    )
     lines = fitPartNumbers(lines)
     if (lines.length < 1) {
       return state

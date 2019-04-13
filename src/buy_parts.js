@@ -6,6 +6,7 @@ import oneClickBom from '1-click-bom'
 import {useDebouncedCallback} from 'use-debounce'
 
 import {actions} from './state'
+import {autoFillSuggestions} from './process_bom'
 
 const retailer_list = oneClickBom
   .getRetailers()
@@ -38,6 +39,8 @@ function BuyParts(props) {
           trigger={
             <semantic.Button
               loading={autoFilling}
+              disabled={!props.canAutoFill}
+              color={props.canAutoFill ? 'green' : 'grey'}
               onClick={() => {
                 window.nanobar.go(80)
                 setAutoFilling(true)
@@ -46,7 +49,6 @@ function BuyParts(props) {
                 window.nanobar.go(100)
               }}
               className="autoFillButton"
-              color="green"
               basic
             >
               <div>
@@ -199,6 +201,11 @@ function BuyParts(props) {
   )
 }
 
+function hasAutoFill(state) {
+  const newState = autoFillSuggestions(state)
+  return !state.data.present.get('lines').equals(newState.data.present.get('lines'))
+}
+
 function mapDispatchToProps(dispatch) {
   return redux.bindActionCreators(actions, dispatch)
 }
@@ -212,6 +219,7 @@ function mapStateToProps(state) {
     clearingCarts: state.view.get('clearingCarts'),
     autoFilling: state.view.get('autoFilling'),
     buyMultiplier: state.view.get('buyMultiplier'),
+    canAutoFill: hasAutoFill(state),
     previewBuy: state.view.get('previewBuy')
   }
 }

@@ -71,7 +71,7 @@ function fitPartNumbers(lines) {
         const partNumbers = line.get('partNumbers') || immutable.List()
         return partNumbers.findLastIndex(p => !p.equals(emptyPartNumber))
       })
-      .max() + 3
+      .max() + 2
   return lines.map(line => {
     return line.update('partNumbers', ps => {
       ps = ps || immutable.List()

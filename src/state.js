@@ -502,7 +502,7 @@ const rootActions = {
     let data = state.data
     let order = data.present.get('order')
     // add a line if needed (in an undoable way)
-    if (state.view.get('focus').first() + 1 >= order.size) {
+    if (state.view.get('focus').first() === order.last()) {
       const past = state.data.past.concat([data.present])
       const present = linesActions.addEmptyLine(data.present)
       data = Object.assign({}, state.data, {present, past})

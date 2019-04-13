@@ -22,6 +22,7 @@ function getSkuUrl(vendor, sku) {
       return '#'
   }
 }
+
 class Popup extends React.PureComponent {
   constructor(props, ...args) {
     super(props, ...args)
@@ -32,7 +33,6 @@ class Popup extends React.PureComponent {
     }
     this.incrementViewing = this.incrementViewing.bind(this)
     this.decrementViewing = this.decrementViewing.bind(this)
-    this.setViewing = this.setViewing.bind(this)
     this.handleClose = this.handleClose.bind(this)
     this.toggleExpanded = this.toggleExpanded.bind(this)
   }
@@ -41,8 +41,8 @@ class Popup extends React.PureComponent {
       newProps.suggestions &&
       !newProps.suggestions.equals(this.props.suggestions)
     ) {
-      const viewing = newProps.selected < 0 ? 0 : newProps.selected
-      this.setViewing(viewing)
+      const n = newProps.selected < 0 ? 0 : newProps.selected
+      this.setState({viewing: clamp(n, newProps.suggestions.size)})
     }
   }
   toggleExpanded() {
@@ -55,24 +55,26 @@ class Popup extends React.PureComponent {
     this.props.onClose && this.props.onClose()
   }
   incrementViewing() {
-    this.setViewing(this.state.viewing + 1)
+    const n = this.state.viewing + 1
+    this.setState({viewing: clamp(n, this.props.suggestions.size)})
   }
   decrementViewing() {
-    this.setViewing(this.state.viewing - 1)
+    const n = this.state.viewing - 1
+    this.setState({viewing: clamp(n, this.props.suggestions.size)})
   }
-  setViewing(n) {
-    const suggestions = this.props.suggestions
-    if (n >= suggestions.size) {
+}
+
+function clamp(n, size) {
+  if (n >= size) {
+    n = 0
+  } else if (n < 0) {
+    if (size === 0) {
       n = 0
-    } else if (n < 0) {
-      if (suggestions.size === 0) {
-        n = 0
-      } else {
-        n = suggestions.size - 1
-      }
+    } else {
+      n = size - 1
     }
-    this.setState({viewing: n})
   }
+  return n
 }
 
 class SkuPopup extends Popup {

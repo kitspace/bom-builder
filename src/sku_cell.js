@@ -124,11 +124,18 @@ function makeApplicableSuggestions(valueSelector) {
 function makeMatchSelector(
   applicableSuggestionsSelector,
   valueSelector,
+  selectedSelector,
   suggestionCheckSelector
 ) {
   return reselect.createSelector(
-    [applicableSuggestionsSelector, valueSelector, suggestionCheckSelector],
-    (suggestions, value, suggestionCheck) => {
+    [
+      applicableSuggestionsSelector,
+      valueSelector,
+      selectedSelector,
+      suggestionCheckSelector
+    ],
+    (suggestions, value, selected, suggestionCheck) => {
+      suggestions = suggestions.delete(selected)
       if (suggestionCheck) {
         return suggestions.getIn([0, 'type'])
       }
@@ -146,15 +153,22 @@ function makeSuggestionCheckSelector(
   selectedCheckSelector
 ) {
   return reselect.createSelector(
-    [applicableSuggestionsSelector, selectedSelector, selectedCheckSelector],
-    (suggestions, selected, selectedCheck) => {
+    [
+      selectors.value,
+      applicableSuggestionsSelector,
+      selectedSelector,
+      selectedCheckSelector
+    ],
+    (value, suggestions, selected, selectedCheck) => {
       if (!suggestions.first()) {
         return null
       }
       if (selected >= 0 && !selectedCheck) {
         return null
       }
-      const check = suggestions.first().get('checkColor')
+      suggestions = suggestions.delete(selected)
+      const first = suggestions.first()
+      const check = first ? first.get('checkColor') : null
       if (check === 'red') {
         return null
       }
@@ -307,7 +321,12 @@ function mapStateToProps(state, props) {
     selected,
     selectedCheck
   )
-  const match = makeMatchSelector(suggestions, selectors.value, suggestionCheck)
+  const match = makeMatchSelector(
+    suggestions,
+    selectors.value,
+    selected,
+    suggestionCheck
+  )
   const alwaysBuy = makeAlwaysBuyThisSelector()
   const highlight = makeHighlightSelector(
     noneSelected,

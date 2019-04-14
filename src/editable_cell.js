@@ -107,7 +107,7 @@ class Cell extends React.PureComponent {
           )
         }
       }
-      if (props.suggestionCheck) {
+      if (!props.value && props.suggestionCheck) {
         icons.push(
           <span key="suggestionCheck">
             <semantic.Popup

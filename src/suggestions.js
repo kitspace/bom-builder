@@ -1,3 +1,5 @@
+import * as immutable from 'immutable'
+
 function getCheckColor(desiredQuantity, s) {
   let inStock = s.get('in_stock_quantity')
   if (s.get('multipack_quantity') != null) {
@@ -14,7 +16,7 @@ function getCheckColor(desiredQuantity, s) {
 
 export function computeSuggestionsForRetailer(suggestions, retailer, line, buyMultiplier) {
   const desiredQuantity = Math.ceil(line.get('quantity') * buyMultiplier)
-  return suggestions
+  return (suggestions || immutable.List())
     .flatMap(s => {
       const type = s.get('type')
       const mpn = s.get('mpn')

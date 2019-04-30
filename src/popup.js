@@ -41,9 +41,11 @@ class Popup extends React.PureComponent {
       newProps.suggestions &&
       !newProps.suggestions.equals(this.props.suggestions)
     ) {
-      const n = newProps.selected < 0 ? 0 : newProps.selected
-      const selected = clamp(n, newProps.suggestions.size)
-      this.setState({viewing: selected, selected})
+      const selected =
+        newProps.selected < 0
+          ? null
+          : clamp(newProps.selected, newProps.suggestions.size)
+      this.setState({viewing: selected || 0, selected})
     }
   }
   toggleExpanded() {

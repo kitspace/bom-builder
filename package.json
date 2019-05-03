@@ -10,6 +10,7 @@
     "js-file-download": "^0.4.1",
     "mousetrap": "^1.6.1",
     "nanobar": "^0.4.2",
+    "netlify-identity-widget": "^1.4.14",
     "promise-rate-limit": "^0.0.1",
     "ramda": "^0.24.1",
     "react": "^16.8.2",
@@ -30,6 +31,7 @@
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject"
   },
+  "homepage": "https://pro.kitspace.org/bom-builder/v1/",
   "reactSnapshot": {
     "include": [],
     "exclude": [],

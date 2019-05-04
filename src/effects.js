@@ -160,7 +160,11 @@ function getPurchaseTsv(state) {
   const alwaysBuySkus = state.view.get('alwaysBuySkus')
   lines = getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus)
   const preferred = state.view.get('preferredRetailer')
-  lines = getPurchaseLines(preferred, lines, alwaysBuySkus)
+  lines = getPurchaseLines(preferred, lines, alwaysBuySkus).map(line =>
+    line.update('retailers', r =>
+      r.map(v => (v.get('qty') > 0 ? v.get('part') : ''))
+    )
+  )
   const order = state.data.present.get('order')
   const linesMap = lines
     .map(line => line.set('partNumbers', immutable.List()))

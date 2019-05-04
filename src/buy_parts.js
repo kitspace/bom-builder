@@ -189,7 +189,7 @@ function BuyParts(props) {
           </div>
         </>
       ) : (
-        <div style={{color: 'lightgrey'}}>
+        <div style={{color: 'lightgrey', maxHeight: 38}}>
           Please install the{' '}
           <a style={{color: 'grey'}} href="https://1clickBOM.com">
             1-click BOM exension

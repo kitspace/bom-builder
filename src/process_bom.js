@@ -104,28 +104,29 @@ export function reduceBom(
     const partAndQty = line.getIn(['retailers', preferred])
     const alwaysBuyThisLine =
       alwaysBuySkus.get(lineId) != null && alwaysBuySkus.get(lineId).size > 0
-    if (partAndQty != null && partAndQty.get('qty') > 0) {
+    if (partAndQty != null && partAndQty.get('quantity') > 0) {
       return line.update('retailers', retailers => {
         return retailers.map((v, k) => {
           if (v == null) {
-            return immutable.Map({part: '', qty: 0})
+            return immutable.Map({part: '', quantity: 0})
           }
           if (alwaysBuyThisLine) {
             const sku = immutable.Map({vendor: k, part: v.get('part')})
-            return alwaysBuySkus.getIn([lineId, sku]) ? v : v.set('qty', 0)
+            return alwaysBuySkus.getIn([lineId, sku]) ? v : v.set('quantity', 0)
           }
           if (k === preferred || done.includes(k)) {
             return v
           }
+          // spread the quantity out over several parts if we need to
           const total = done.reduce(
-            (prev, name) => prev + retailers.getIn([name, 'qty']),
-            retailers.getIn([preferred, 'qty'])
+            (prev, name) => prev + retailers.getIn([name, 'quantity']),
+            retailers.getIn([preferred, 'quantity'])
           )
           if (total >= line.get('quantity')) {
-            return v.set('qty', 0)
+            return v.set('quantity', 0)
           }
-          return v.update('qty', qty =>
-            Math.min(qty, line.get('quantity') - total)
+          return v.update('quantity', quantity =>
+            Math.min(quantity, line.get('quantity') - total)
           )
         })
       })
@@ -173,11 +174,11 @@ export function getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus) {
             in_stock = 0
           }
         }
-        const qty = Math.min(
+        const quantity = Math.min(
           Math.ceil(line.get('quantity') * buyMultiplier),
           in_stock
         )
-        return immutable.Map({part: part || '', qty})
+        return immutable.Map({part: part || '', quantity})
       })
     )
   )
@@ -233,7 +234,7 @@ export function makePurchaseLinesSelector(
       if (previewBuy) {
         return getPurchaseLines(preferred, lines, alwaysBuySkus).map(line =>
           line.update('retailers', r =>
-            r.map(v => (v.get('qty') > 0 ? v.get('part') : ''))
+            r.map(v => (v.get('quantity') > 0 ? v.get('part') : ''))
           )
         )
       }

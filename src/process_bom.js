@@ -116,20 +116,17 @@ export function reduceBom(
           }
           if (k === preferred || done.includes(k)) {
             return v
-          } else if (done.size > 0) {
-            const total = done.reduce(
-              (prev, name) => prev + retailers.getIn([name, 'qty']),
-              0
-            )
-            if (total >= line.get('quantity')) {
-              return v.set('qty', 0)
-            } else {
-              return v.update('qty', qty =>
-                Math.min(qty, line.get('quantity') - total)
-              )
-            }
           }
-          return v.set('qty', 0)
+          const total = done.reduce(
+            (prev, name) => prev + retailers.getIn([name, 'qty']),
+            retailers.getIn([preferred, 'qty'])
+          )
+          if (total >= line.get('quantity')) {
+            return v.set('qty', 0)
+          }
+          return v.update('qty', qty =>
+            Math.min(qty, line.get('quantity') - total)
+          )
         })
       })
     }

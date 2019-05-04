@@ -168,7 +168,11 @@ function getInStockPurchaseLines(state) {
   const alwaysBuySkus = state.view.get('alwaysBuySkus')
   lines = getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus)
   const preferred = state.view.get('preferredRetailer')
-  return getPurchaseLines(preferred, lines, alwaysBuySkus)
+  return getPurchaseLines(preferred, lines, alwaysBuySkus).map(line =>
+    line.update('retailers', r =>
+      r.map(v => (v.get('qty') > 0 ? v.get('part') : ''))
+    )
+  )
 }
 
 function getRetailerNumbers(state) {

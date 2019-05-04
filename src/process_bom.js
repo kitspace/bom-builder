@@ -101,22 +101,35 @@ export function reduceBom(
   done = immutable.List()
 ) {
   return lines.map((line, lineId) => {
-    const part = line.getIn(['retailers', preferred])
-    let alwaysBuyThisLine = alwaysBuySkus.get(lineId)
-    if (alwaysBuyThisLine != null && alwaysBuyThisLine.size > 0) {
-      alwaysBuyThisLine = true
-    }
-    if (part) {
+    const partAndQty = line.getIn(['retailers', preferred])
+    const alwaysBuyThisLine =
+      alwaysBuySkus.get(lineId) != null && alwaysBuySkus.get(lineId).size > 0
+    if (partAndQty != null && partAndQty.get('qty') > 0) {
       return line.update('retailers', retailers => {
         return retailers.map((v, k) => {
+          if (v == null) {
+            return immutable.Map({part: '', qty: 0})
+          }
           if (alwaysBuyThisLine) {
-            const sku = immutable.Map({vendor: k, part: v})
-            return alwaysBuySkus.getIn([lineId, sku]) ? v : ''
+            const sku = immutable.Map({vendor: k, part: v.get('part')})
+            return alwaysBuySkus.getIn([lineId, sku]) ? v : v.set('qty', 0)
           }
           if (k === preferred || done.includes(k)) {
             return v
+          } else if (done.size > 0) {
+            const total = done.reduce(
+              (prev, name) => prev + retailers.getIn([name, 'qty']),
+              0
+            )
+            if (total >= line.get('quantity')) {
+              return v.set('qty', 0)
+            } else {
+              return v.update('qty', qty =>
+                Math.min(qty, line.get('quantity') - total)
+              )
+            }
           }
-          return ''
+          return v.set('qty', 0)
         })
       })
     }
@@ -148,29 +161,26 @@ export function getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus) {
   return lines.map((line, lineId) =>
     line.update('retailers', retailers =>
       retailers.map((part, vendor) => {
-        if (part) {
-          const sku = immutable.Map({part, vendor})
-          if (alwaysBuySkus.getIn([lineId, sku])) {
-            return part
-          }
-          const offer = offers.get(sku)
-          let in_stock, stock_location
-          if (offer) {
-            in_stock = offer.get('in_stock_quantity')
-            if (offer.get('multipack_quantity') != null) {
-              in_stock *= offer.get('multipack_quantity')
-            }
-            stock_location = offer.get('stock_location')
+        const sku = immutable.Map({part, vendor})
+        const offer = offers.get(sku)
+        let in_stock = 0
+        if (offer) {
+          in_stock = offer.get('in_stock_quantity')
+          if (offer.get('multipack_quantity') != null) {
+            in_stock *= offer.get('multipack_quantity')
           }
           if (
-            in_stock &&
-            in_stock >= Math.ceil(line.get('quantity') * buyMultiplier) &&
-            stock_location !== 'US'
+            !alwaysBuySkus.getIn([lineId, sku]) &&
+            offer.get('stock_location') === 'US'
           ) {
-            return part
+            in_stock = 0
           }
         }
-        return ''
+        const qty = Math.min(
+          Math.ceil(line.get('quantity') * buyMultiplier),
+          in_stock
+        )
+        return immutable.Map({part: part || '', qty})
       })
     )
   )
@@ -224,7 +234,11 @@ export function makePurchaseLinesSelector(
     ],
     (preferred, lines, previewBuy, alwaysBuySkus) => {
       if (previewBuy) {
-        return getPurchaseLines(preferred, lines, alwaysBuySkus)
+        return getPurchaseLines(preferred, lines, alwaysBuySkus).map(line =>
+          line.update('retailers', r =>
+            r.map(v => (v.get('qty') > 0 ? v.get('part') : ''))
+          )
+        )
       }
     }
   )

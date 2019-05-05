@@ -135,7 +135,9 @@ function makeMatchSelector(
       suggestionCheckSelector
     ],
     (suggestions, value, selected, suggestionCheck) => {
-      suggestions = suggestions.delete(selected)
+      if (selected >= 0) {
+        suggestions = suggestions.delete(selected)
+      }
       if (suggestionCheck) {
         return suggestions.getIn([0, 'type'])
       }
@@ -166,7 +168,9 @@ function makeSuggestionCheckSelector(
       if (selected >= 0 && !selectedCheck) {
         return null
       }
-      suggestions = suggestions.delete(selected)
+      if (selected >= 0) {
+        suggestions = suggestions.delete(selected)
+      }
       const first = suggestions.first()
       const check = first ? first.get('checkColor') : null
       if (check === 'red') {

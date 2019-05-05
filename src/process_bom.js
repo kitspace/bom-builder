@@ -98,12 +98,14 @@ export function reduceBom(
   lines,
   preferred,
   alwaysBuySkus,
+  buyMultiplier,
   done = immutable.List()
 ) {
   return lines.map((line, lineId) => {
     const partAndQty = line.getIn(['retailers', preferred])
     const alwaysBuyThisLine =
       alwaysBuySkus.get(lineId) != null && alwaysBuySkus.get(lineId).size > 0
+    const desiredQuantity = Math.ceil(line.get('quantity') * buyMultiplier)
     if (partAndQty != null && partAndQty.get('quantity') > 0) {
       return line.update('retailers', retailers => {
         return retailers.map((v, k) => {
@@ -124,11 +126,11 @@ export function reduceBom(
             (prev, name) => prev + retailers.getIn([name, 'quantity']),
             retailers.getIn([preferred, 'quantity'])
           )
-          if (total >= line.get('quantity')) {
+          if (total >= desiredQuantity) {
             return v.set('quantity', 0)
           }
           return v.update('quantity', quantity =>
-            Math.min(quantity, line.get('quantity') - total)
+            Math.min(quantity, desiredQuantity - total)
           )
         })
       })
@@ -198,14 +200,25 @@ export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
   )
 }
 
-export function getPurchaseLines(preferred, lines, alwaysBuySkus) {
-  lines = reduceBom(lines, preferred, alwaysBuySkus)
+export function getPurchaseLines(
+  preferred,
+  lines,
+  alwaysBuySkus,
+  buyMultiplier
+) {
+  lines = reduceBom(lines, preferred, alwaysBuySkus, buyMultiplier)
   const priority = priorityOfRetailers(lines, alwaysBuySkus).filter(
     r => r !== preferred
   )
   const {reducedLines} = priority.reduce(
     ({reducedLines, done}, retailer) => {
-      reducedLines = reduceBom(reducedLines, retailer, alwaysBuySkus, done)
+      reducedLines = reduceBom(
+        reducedLines,
+        retailer,
+        alwaysBuySkus,
+        buyMultiplier,
+        done
+      )
       done = done.push(retailer)
       return {reducedLines, done}
     },
@@ -230,11 +243,12 @@ export function makePurchaseLinesSelector(
       preferredSelector,
       inStockLinesSelector,
       previewBuySelector,
+      selectors.buyMultiplier,
       selectors.alwaysBuySkus
     ],
-    (preferred, lines, previewBuy, alwaysBuySkus) => {
+    (preferred, lines, previewBuy, buyMultiplier, alwaysBuySkus) => {
       if (previewBuy) {
-        return getPurchaseLines(preferred, lines, alwaysBuySkus).map(line =>
+        return getPurchaseLines(preferred, lines, alwaysBuySkus, buyMultiplier).map(line =>
           line.update('retailers', r =>
             r.map(v => (v.get('quantity') > 0 ? v.get('part') : ''))
           )

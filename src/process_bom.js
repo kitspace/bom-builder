@@ -119,7 +119,7 @@ export function reduceBom(
           if (alwaysBuyThisLine) {
             const sku = immutable.Map({vendor: k, part: v.get('part')})
             return alwaysBuySkus.getIn([lineId, sku])
-              ? v.set('quantity', line.get('quantity'))
+              ? v
               : v.set('quantity', 0)
           }
           if (k === preferred || done.includes(k)) {

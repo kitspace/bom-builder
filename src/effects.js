@@ -160,7 +160,7 @@ function getPurchase(state) {
   const alwaysBuySkus = state.view.get('alwaysBuySkus')
   lines = getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus)
   const preferred = state.view.get('preferredRetailer')
-  lines = getPurchaseLines(preferred, lines, alwaysBuySkus)
+  lines = getPurchaseLines(preferred, lines, alwaysBuySkus, buyMultiplier)
   const order = state.data.present.get('order')
   const linesMap = lines.map(line =>
     line

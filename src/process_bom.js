@@ -16,7 +16,11 @@ export function getLines(state) {
 export function retailerSelectionNumbers(lines) {
   return lines.reduce((prev, line, lineId) => {
     line.get('retailers').forEach((sku, retailer) => {
-      if (sku) {
+      if (typeof sku === 'string') {
+        if (sku) {
+          prev = prev.update(retailer, x => x + 1)
+        }
+      } else if (sku.get('quantity') > 0) {
         prev = prev.update(retailer, x => x + 1)
       }
     })

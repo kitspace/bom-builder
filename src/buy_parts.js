@@ -61,28 +61,6 @@ function BuyParts(props) {
         />
       </div>
       <div style={{marginLeft: 20, minWidth: 70}}>Buy Parts:</div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          marginRight: 10
-        }}
-      >
-        <semantic.Popup
-          style={{zIndex: 10001}}
-          size="mini"
-          inverted
-          content="Enable buying mode"
-          verticalOffset={-20}
-          trigger={
-            <semantic.Radio
-              toggle
-              checked={props.previewBuy}
-              onChange={(e, data) => props.setPreviewBuy(data.checked)}
-            />
-          }
-        />
-      </div>
       <div>
         <semantic.Button
           disabled={!(props.previewBuy && props.extensionPresent)}

@@ -248,10 +248,7 @@ function makeRetailersSelector() {
   return reselect.createSelector(
     [selectors.lines, selectors.previewBuy, purchaseLinesSelector],
     (lines, previewBuy, purchaseLines) => {
-      if (previewBuy) {
-        return purchaseLines.map(l => l.get('retailers'))
-      }
-      return lines.map(l => l.get('retailers'))
+      return purchaseLines.map(l => l.get('retailers'))
     }
   )
 }
@@ -296,7 +293,7 @@ function makeHighlightSelector(
           ? 'red'
           : alwaysBuy
             ? 'darkblue'
-            : value ? 'blue' : nonPreviewValue ? 'lightblue' : 'blank'
+            : value ? 'blue' : 'blank'
     }
   )
 }
@@ -340,7 +337,7 @@ function mapStateToProps(state, props) {
   )
   return reselect.createSelector(
     [
-      value,
+      nonPreviewValue,
       active,
       suggestions,
       match,
@@ -354,7 +351,7 @@ function mapStateToProps(state, props) {
       noneSelected
     ],
     (
-      value,
+      nonPreviewValue,
       active,
       suggestions,
       match,
@@ -367,7 +364,7 @@ function mapStateToProps(state, props) {
       alwaysBuy,
       noneSelected
     ) => ({
-      value,
+      value: nonPreviewValue,
       active,
       suggestions,
       match,

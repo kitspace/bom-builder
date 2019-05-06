@@ -53,7 +53,7 @@ export const initialState = {
     suggestionsStatus: {},
     buyMultiplier: 1,
     alwaysBuySkus: {},
-    previewBuy: false
+    previewBuy: true
   }),
   suggestions: immutable.Map()
 }

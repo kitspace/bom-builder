@@ -266,6 +266,13 @@ function makeRetailerValueSelector(lineId, field, retailersSelector) {
   })
 }
 
+function makePreviewRetailerValueSelector(lineId, field, retailersSelector) {
+  const retailer = field.last()
+  return reselect.createSelector([retailersSelector], retailers => {
+    return retailers.getIn([lineId, retailer, 'part'])
+  })
+}
+
 function makeNoneSelectedSelector(lineId, retailersSelector) {
   return reselect.createSelector([retailersSelector], retailers => {
     return !retailers.get(lineId).some(x => x)
@@ -280,28 +287,20 @@ function makeHighlightSelector(
 ) {
   return reselect.createSelector(
     [
-      selectors.previewBuy,
       noneSelectedSelector,
       valueSelector,
       nonPreviewValueSelector,
       alwaysBuySelector
     ],
-    (previewBuy, noneSelected, value, nonPreviewValue, alwaysBuy) => {
-      return !previewBuy
-        ? 'blank'
-        : noneSelected
-          ? 'red'
-          : alwaysBuy
-            ? 'darkblue'
-            : value ? 'blue' : 'blank'
-    }
+    (noneSelected, value, nonPreviewValue, alwaysBuy) =>
+      noneSelected ? 'red' : alwaysBuy ? 'darkblue' : value ? 'blue' : 'blank'
   )
 }
 
 function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
   const retailers = makeRetailersSelector()
-  const value = makeRetailerValueSelector(props.lineId, props.field, retailers)
+  const value = makePreviewRetailerValueSelector(props.lineId, props.field, retailers)
   const nonPreviewRetailers = makeNonPreviewRetailerSelector()
   const nonPreviewValue = makeRetailerValueSelector(
     props.lineId,

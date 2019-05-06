@@ -168,7 +168,12 @@ function BuyParts(props) {
       ) : (
         <div style={{color: 'lightgrey', maxHeight: 38}}>
           Please install the{' '}
-          <a style={{color: 'grey'}} href="https://1clickBOM.com">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{color: 'grey'}}
+            href="https://1clickBOM.com"
+          >
             1-click BOM exension
           </a>{' '}
           to use this feature
@@ -180,7 +185,9 @@ function BuyParts(props) {
 
 function hasAutoFill(state) {
   const newState = autoFillSuggestions(state)
-  return !state.data.present.get('lines').equals(newState.data.present.get('lines'))
+  return !state.data.present
+    .get('lines')
+    .equals(newState.data.present.get('lines'))
 }
 
 function mapDispatchToProps(dispatch) {

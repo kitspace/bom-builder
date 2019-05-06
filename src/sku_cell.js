@@ -279,6 +279,26 @@ function makeNoneSelectedSelector(lineId, retailersSelector) {
   })
 }
 
+function makeDesiredQuantitySelector() {
+  return reselect.createSelector(
+    [selectors.line, selectors.buyMultiplier],
+    (line, buyMultiplier) => Math.ceil(line.get('quantity') * buyMultiplier)
+  )
+}
+
+function makeNotEnoughSelectedSelector(lineId, retailersSelector) {
+  const desiredQuantitySelector = makeDesiredQuantitySelector()
+  return reselect.createSelector(
+    [desiredQuantitySelector, retailersSelector],
+    (desiredQuantity, retailers) => {
+      return (
+        retailers.get(lineId).reduce((p, x) => p + x.get('quantity'), 0) !==
+        desiredQuantity
+      )
+    }
+  )
+}
+
 function makeHighlightSelector(
   noneSelectedSelector,
   valueSelector,
@@ -315,7 +335,7 @@ function mapStateToProps(state, props) {
     selected,
     matching
   )
-  const noneSelected = makeNoneSelectedSelector(props.lineId, retailers)
+  const notEnoughSelected = makeNotEnoughSelectedSelector(props.lineId, retailers)
   const suggestionCheck = makeSuggestionCheckSelector(
     suggestions,
     selected,
@@ -329,7 +349,7 @@ function mapStateToProps(state, props) {
   )
   const alwaysBuy = makeAlwaysBuyThisSelector()
   const highlight = makeHighlightSelector(
-    noneSelected,
+    notEnoughSelected,
     value,
     nonPreviewValue,
     alwaysBuy
@@ -347,7 +367,7 @@ function mapStateToProps(state, props) {
       selectors.previewBuy,
       highlight,
       alwaysBuy,
-      noneSelected
+      notEnoughSelected
     ],
     (
       nonPreviewValue,
@@ -361,7 +381,7 @@ function mapStateToProps(state, props) {
       previewBuy,
       highlight,
       alwaysBuy,
-      noneSelected
+      notEnoughSelected
     ) => ({
       value: nonPreviewValue,
       active,
@@ -374,7 +394,7 @@ function mapStateToProps(state, props) {
       previewBuy,
       highlight,
       alwaysBuy,
-      noneSelected
+      noneSelected: notEnoughSelected
     })
   )
 }

@@ -150,7 +150,6 @@ function BuyParts(props) {
           </div>
           <div
             style={{
-              display: 'flex',
               color: props.previewBuy ? '#2185d0' : '',
               marginLeft: 10
             }}

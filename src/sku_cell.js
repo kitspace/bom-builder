@@ -301,9 +301,11 @@ function makeHighlightSelector(
   return reselect.createSelector(
     [notEnoughStockSelector, valueSelector, alwaysBuySelector],
     (notEnoughStock, value, alwaysBuy) => {
-      return notEnoughStock
-        ? 'red'
-        : alwaysBuy ? 'darkblue' : value.get('quantity') > 0 ? 'blue' : 'blank'
+      return alwaysBuy
+        ? 'darkblue'
+        : value.get('quantity') > 0
+          ? notEnoughStock ? 'orange' : 'blue'
+          : notEnoughStock ? 'red' : 'blank'
     }
   )
 }

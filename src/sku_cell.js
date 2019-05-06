@@ -269,13 +269,7 @@ function makeRetailerValueSelector(lineId, field, retailersSelector) {
 function makePreviewRetailerValueSelector(lineId, field, retailersSelector) {
   const retailer = field.last()
   return reselect.createSelector([retailersSelector], retailers => {
-    return retailers.getIn([lineId, retailer, 'part'])
-  })
-}
-
-function makeNoneSelectedSelector(lineId, retailersSelector) {
-  return reselect.createSelector([retailersSelector], retailers => {
-    return !retailers.get(lineId).some(x => x)
+    return retailers.getIn([lineId, retailer])
   })
 }
 
@@ -286,7 +280,7 @@ function makeDesiredQuantitySelector() {
   )
 }
 
-function makeNotEnoughSelectedSelector(lineId, retailersSelector) {
+function makeNotEnoughStockSelector(lineId, retailersSelector) {
   const desiredQuantitySelector = makeDesiredQuantitySelector()
   return reselect.createSelector(
     [desiredQuantitySelector, retailersSelector],
@@ -300,27 +294,28 @@ function makeNotEnoughSelectedSelector(lineId, retailersSelector) {
 }
 
 function makeHighlightSelector(
-  noneSelectedSelector,
+  notEnoughStockSelector,
   valueSelector,
-  nonPreviewValueSelector,
   alwaysBuySelector
 ) {
   return reselect.createSelector(
-    [
-      noneSelectedSelector,
-      valueSelector,
-      nonPreviewValueSelector,
-      alwaysBuySelector
-    ],
-    (noneSelected, value, nonPreviewValue, alwaysBuy) =>
-      noneSelected ? 'red' : alwaysBuy ? 'darkblue' : value ? 'blue' : 'blank'
+    [notEnoughStockSelector, valueSelector, alwaysBuySelector],
+    (notEnoughStock, value, alwaysBuy) => {
+      return notEnoughStock
+        ? 'red'
+        : alwaysBuy ? 'darkblue' : value.get('quantity') > 0 ? 'blue' : 'blank'
+    }
   )
 }
 
 function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
   const retailers = makeRetailersSelector()
-  const value = makePreviewRetailerValueSelector(props.lineId, props.field, retailers)
+  const value = makePreviewRetailerValueSelector(
+    props.lineId,
+    props.field,
+    retailers
+  )
   const nonPreviewRetailers = makeNonPreviewRetailerSelector()
   const nonPreviewValue = makeRetailerValueSelector(
     props.lineId,
@@ -335,7 +330,7 @@ function mapStateToProps(state, props) {
     selected,
     matching
   )
-  const notEnoughSelected = makeNotEnoughSelectedSelector(props.lineId, retailers)
+  const notEnoughStock = makeNotEnoughStockSelector(props.lineId, retailers)
   const suggestionCheck = makeSuggestionCheckSelector(
     suggestions,
     selected,
@@ -348,12 +343,7 @@ function mapStateToProps(state, props) {
     suggestionCheck
   )
   const alwaysBuy = makeAlwaysBuyThisSelector()
-  const highlight = makeHighlightSelector(
-    notEnoughSelected,
-    value,
-    nonPreviewValue,
-    alwaysBuy
-  )
+  const highlight = makeHighlightSelector(notEnoughStock, value, alwaysBuy)
   return reselect.createSelector(
     [
       nonPreviewValue,
@@ -366,8 +356,7 @@ function mapStateToProps(state, props) {
       skuPopupExpanded,
       selectors.previewBuy,
       highlight,
-      alwaysBuy,
-      notEnoughSelected
+      alwaysBuy
     ],
     (
       nonPreviewValue,
@@ -380,8 +369,7 @@ function mapStateToProps(state, props) {
       skuPopupExpanded,
       previewBuy,
       highlight,
-      alwaysBuy,
-      notEnoughSelected
+      alwaysBuy
     ) => ({
       value: nonPreviewValue,
       active,
@@ -393,8 +381,7 @@ function mapStateToProps(state, props) {
       skuPopupExpanded,
       previewBuy,
       highlight,
-      alwaysBuy,
-      noneSelected: notEnoughSelected
+      alwaysBuy
     })
   )
 }

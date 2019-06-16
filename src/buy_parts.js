@@ -6,6 +6,7 @@ import oneClickBom from '1-click-bom'
 import {useDebouncedCallback} from 'use-debounce'
 
 import {actions} from './state'
+import {autoFillSuggestions} from './process_bom'
 
 const retailer_list = oneClickBom
   .getRetailers()
@@ -38,6 +39,8 @@ function BuyParts(props) {
           trigger={
             <semantic.Button
               loading={autoFilling}
+              disabled={!props.canAutoFill}
+              color={props.canAutoFill ? 'green' : 'grey'}
               onClick={() => {
                 window.nanobar.go(80)
                 setAutoFilling(true)
@@ -46,7 +49,6 @@ function BuyParts(props) {
                 window.nanobar.go(100)
               }}
               className="autoFillButton"
-              color="green"
               basic
             >
               <div>
@@ -61,10 +63,10 @@ function BuyParts(props) {
       <div style={{marginLeft: 20, minWidth: 70}}>Buy Parts:</div>
       <div>
         <semantic.Button
-          disabled={!props.extensionPresent}
+          disabled={!(props.previewBuy && props.extensionPresent)}
           loading={props.clearingCarts === 'clearing'}
           className="clearButton"
-          color={props.extensionPresent ? 'black' : 'grey'}
+          color={props.previewBuy && props.extensionPresent ? 'black' : 'grey'}
           onClick={() => props.setClearingCarts('start')}
           basic
         >
@@ -73,7 +75,7 @@ function BuyParts(props) {
           Clear
         </semantic.Button>
       </div>
-      <div>
+      <div style={{paddingRight: 4}}>
         <semantic.Popup
           style={{zIndex: 10001}}
           size="mini"
@@ -84,10 +86,12 @@ function BuyParts(props) {
           }
           trigger={
             <semantic.Button
-              disabled={!props.extensionPresent}
+              disabled={!props.extensionPresent || !props.previewBuy}
               loading={props.addingParts === 'adding'}
               className="buyPartsButton"
-              color={props.extensionPresent ? 'blue' : 'grey'}
+              color={
+                props.extensionPresent && props.previewBuy ? 'blue' : 'grey'
+              }
               onClick={() => props.setAddingParts('start')}
               basic
             >
@@ -106,12 +110,15 @@ function BuyParts(props) {
             style={{
               minWidth: 100,
               display: 'flex',
-              justifyContent: 'flex-end',
-              marginRight: 20
+              justifyContent: 'flex-end'
             }}
           >
             <div
-              style={{display: 'flex', alignItems: 'center', color: '#2185d0'}}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                color: props.previewBuy ? '#2185d0' : 'lightgrey'
+              }}
             >
               <semantic.Icon name="delete" />
             </div>
@@ -121,6 +128,7 @@ function BuyParts(props) {
                 style={{minWidth: 90}}
                 type="number"
                 value={multiplier}
+                disabled={!props.previewBuy}
                 onChange={e => {
                   cancelDebounced()
                   setMultiplier(e.target.value)
@@ -142,56 +150,30 @@ function BuyParts(props) {
           </div>
           <div
             style={{
-              fontWeight: 'normal',
-              height: '100%',
-              verticalAlign: 'middle',
-              color: '#2185D0',
-              minWidth: 315
+              color: props.previewBuy ? '#2185d0' : '',
+              marginLeft: 10
             }}
           >
-            Preferred retailer:{'  '}
+            Preferred retailer:
             <semantic.Dropdown
               inline
+              style={{marginLeft: 3}}
+              disabled={!props.previewBuy}
               value={props.preferredRetailer}
               options={retailer_list.map(r => ({key: r, text: r, value: r}))}
               onChange={(e, {value}) => props.setPreferredRetailer(value)}
-            />{' '}
-            <div
-              style={{
-                fontWeight: 'normal',
-                height: '100%',
-                verticalAlign: 'middle',
-                color: '#2185D0 !important',
-                minWidth: 160,
-                display: 'flex',
-                marginTop: 5
-              }}
-            >
-              <div style={{marginRight: 5}}> Preview: </div>
-              <semantic.Popup
-                style={{zIndex: 10001}}
-                size="mini"
-                inverted
-                content={
-                  'Preview which retailer parts will be selected ' +
-                  'to fill shopping carts'
-                }
-                verticalOffset={-20}
-                trigger={
-                  <semantic.Radio
-                    toggle
-                    checked={props.previewBuy}
-                    onChange={(e, data) => props.setPreviewBuy(data.checked)}
-                  />
-                }
-              />
-            </div>
+            />
           </div>
         </>
       ) : (
-        <div style={{color: 'lightgrey'}}>
+        <div style={{color: 'lightgrey', maxHeight: 38}}>
           Please install the{' '}
-          <a style={{color: 'grey'}} href="https://1clickBOM.com">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{color: 'grey'}}
+            href="https://1clickBOM.com"
+          >
             1-click BOM exension
           </a>{' '}
           to use this feature
@@ -199,6 +181,13 @@ function BuyParts(props) {
       )}
     </div>
   )
+}
+
+function hasAutoFill(state) {
+  const newState = autoFillSuggestions(state)
+  return !state.data.present
+    .get('lines')
+    .equals(newState.data.present.get('lines'))
 }
 
 function mapDispatchToProps(dispatch) {
@@ -214,6 +203,7 @@ function mapStateToProps(state) {
     clearingCarts: state.view.get('clearingCarts'),
     autoFilling: state.view.get('autoFilling'),
     buyMultiplier: state.view.get('buyMultiplier'),
+    canAutoFill: hasAutoFill(state),
     previewBuy: state.view.get('previewBuy')
   }
 }

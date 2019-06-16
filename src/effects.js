@@ -1,11 +1,11 @@
 import immutableDiff from 'immutable-diff'
 import immutable from 'immutable'
-import oneClickBom from '1-click-bom'
 import shortid from 'shortid'
 
 import {findSuggestions, searchDescription} from './find_suggestions'
 import {initialState, emptyPartNumber} from './state'
-import {getPurchaseLines, getInStockLines, getAllOffers} from './bom'
+import {getPurchaseLines, getInStockLines, getAllOffers} from './process_bom'
+import {emptyRetailers} from './state'
 
 const suggestionFields = immutable.List.of('partNumbers', 'retailers')
 
@@ -95,7 +95,7 @@ export function subscribeEffects(store, actions) {
         {
           from: 'page',
           message: 'bomBuilderAddToCart',
-          value: {tsv: getPurchaseTsv(state), id}
+          value: {purchase: getPurchase(state), id}
         },
         '*'
       )
@@ -121,7 +121,7 @@ export function subscribeEffects(store, actions) {
         {
           from: 'page',
           message: 'bomBuilderClearCarts',
-          value: {tsv: getPurchaseTsv(state), id}
+          value: {purchase: getPurchase(state), id}
         },
         '*'
       )
@@ -153,45 +153,55 @@ export function subscribeEffects(store, actions) {
   })
 }
 
-function getPurchaseTsv(state) {
+function getPurchase(state) {
   const offers = getAllOffers(state.suggestions)
   let lines = state.data.present.get('lines')
   const buyMultiplier = state.view.get('buyMultiplier')
   const alwaysBuySkus = state.view.get('alwaysBuySkus')
   lines = getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus)
   const preferred = state.view.get('preferredRetailer')
-  lines = getPurchaseLines(preferred, lines, alwaysBuySkus)
+  lines = getPurchaseLines(preferred, lines, alwaysBuySkus, buyMultiplier)
   const order = state.data.present.get('order')
-  const linesMap = lines
-    .map(line => line.set('partNumbers', immutable.List()))
-    .map(line => line.set('reference', line.get('reference') || ''))
-    .map(line =>
-      line.update('quantity', qty => {
-        qty = Math.ceil(qty * buyMultiplier)
-        const sku = line
-          .get('retailers')
-          .filter(p => p)
-          .map((part, vendor) => immutable.Map({part, vendor}))
-          .first()
-        if (sku == null) {
-          return qty
-        }
-        const offer = offers.get(sku)
-        if (offer == null) {
-          return qty
-        }
-        // adjust quantity if items are supplied in a multi pack
-        const multi = offer.get('multipack_quantity')
-        if (multi != null) {
-          qty = Math.ceil(qty / multi)
-        }
-        // raise to minimum order quantity
-        const moq = offer.get('moq')
-        qty = Math.max(moq, qty)
-
-        return qty
-      })
-    )
-  lines = order.map(lineId => linesMap.get(lineId).set('id', lineId)).toJS()
-  return oneClickBom.writeTSV(lines)
+  const linesMap = lines.map(line =>
+    line
+      .update('retailers', r =>
+        r.map((buy, vendor) => {
+          const sku = immutable.Map({part: buy.get('part'), vendor})
+          let quantity = buy.get('quantity')
+          if (quantity === 0) {
+            return buy
+          }
+          const offer = offers.get(sku)
+          if (offer != null) {
+            // adjust quantity if items are supplied in a multi pack
+            const multi = offer.get('multipack_quantity')
+            if (multi != null) {
+              quantity = Math.ceil(quantity / multi)
+            }
+            // raise to minimum order quantity
+            const moq = offer.get('moq')
+            quantity = Math.max(moq, quantity)
+          }
+          return buy.set('quantity', quantity)
+        })
+      )
+      .remove('partNumbers')
+      .remove('fitted')
+      .remove('quantity')
+      .remove('description')
+      .update('reference', r => r || '')
+  )
+  lines = order.map(lineId => linesMap.get(lineId).set('id', lineId))
+  let purchase = lines.reduce((prev, line) => {
+    line.get('retailers').forEach((buy, vendor) => {
+      if (buy.get('part') && buy.get('quantity') > 0) {
+        prev = prev.update(vendor, l =>
+          l.push(buy.set('reference', line.get('reference')))
+        )
+      }
+    })
+    return prev
+  }, emptyRetailers.map(v => immutable.List()))
+  purchase = purchase.filter(parts => parts.size > 0)
+  return purchase.toJS()
 }

@@ -8,7 +8,7 @@ import {actions} from './state'
 import {SkuPopup} from './popup'
 import * as selectors from './selectors'
 import EditableCell from './editable_cell'
-import {makePurchaseLinesSelector} from './bom'
+import {makePurchaseLinesSelector} from './process_bom'
 
 class SkuCell extends React.Component {
   shouldComponentUpdate(newProps) {
@@ -99,22 +99,45 @@ function retailerSuggestions(state, props) {
   return state.suggestions.getIn([props.lineId, 'retailers']) || immutable.Map()
 }
 
-function makeApplicableSuggestions() {
+function makeApplicableSuggestions(valueSelector) {
   return reselect.createSelector(
-    [retailerSuggestions, retailerSelector],
-    (retailerSuggestions, retailer) =>
-      retailerSuggestions.get(retailer) || immutable.List()
+    [retailerSuggestions, retailerSelector, valueSelector],
+    (retailerSuggestions, retailer, value) => {
+      let suggestions = retailerSuggestions.get(retailer) || immutable.List()
+      const sku = immutable.Map({vendor: retailer, part: value})
+      if (value && !suggestions.find(s => s.get('sku').equals(sku))) {
+        suggestions = suggestions.unshift(
+          immutable.Map({
+            sku,
+            checkColor: 'red',
+            partData: immutable.Map({
+              description: 'Sorry, no part information found'
+            })
+          })
+        )
+      }
+      return suggestions
+    }
   )
 }
 
 function makeMatchSelector(
   applicableSuggestionsSelector,
   valueSelector,
+  selectedSelector,
   suggestionCheckSelector
 ) {
   return reselect.createSelector(
-    [applicableSuggestionsSelector, valueSelector, suggestionCheckSelector],
-    (suggestions, value, suggestionCheck) => {
+    [
+      applicableSuggestionsSelector,
+      valueSelector,
+      selectedSelector,
+      suggestionCheckSelector
+    ],
+    (suggestions, value, selected, suggestionCheck) => {
+      if (selected >= 0) {
+        suggestions = suggestions.delete(selected)
+      }
       if (suggestionCheck) {
         return suggestions.getIn([0, 'type'])
       }
@@ -132,15 +155,24 @@ function makeSuggestionCheckSelector(
   selectedCheckSelector
 ) {
   return reselect.createSelector(
-    [applicableSuggestionsSelector, selectedSelector, selectedCheckSelector],
-    (suggestions, selected, selectedCheck) => {
+    [
+      selectors.value,
+      applicableSuggestionsSelector,
+      selectedSelector,
+      selectedCheckSelector
+    ],
+    (value, suggestions, selected, selectedCheck) => {
       if (!suggestions.first()) {
         return null
       }
       if (selected >= 0 && !selectedCheck) {
         return null
       }
-      const check = suggestions.first().get('checkColor')
+      if (selected >= 0) {
+        suggestions = suggestions.delete(selected)
+      }
+      const first = suggestions.first()
+      const check = first ? first.get('checkColor') : null
       if (check === 'red') {
         return null
       }
@@ -216,10 +248,7 @@ function makeRetailersSelector() {
   return reselect.createSelector(
     [selectors.lines, selectors.previewBuy, purchaseLinesSelector],
     (lines, previewBuy, purchaseLines) => {
-      if (previewBuy) {
-        return purchaseLines.map(l => l.get('retailers'))
-      }
-      return lines.map(l => l.get('retailers'))
+      return purchaseLines.map(l => l.get('retailers'))
     }
   )
 }
@@ -237,34 +266,46 @@ function makeRetailerValueSelector(lineId, field, retailersSelector) {
   })
 }
 
-function makeNoneSelectedSelector(lineId, retailersSelector) {
+function makePreviewRetailerValueSelector(lineId, field, retailersSelector) {
+  const retailer = field.last()
   return reselect.createSelector([retailersSelector], retailers => {
-    return !retailers.get(lineId).some(x => x)
+    return retailers.getIn([lineId, retailer])
   })
 }
 
+function makeDesiredQuantitySelector() {
+  return reselect.createSelector(
+    [selectors.line, selectors.buyMultiplier],
+    (line, buyMultiplier) => Math.ceil(line.get('quantity') * buyMultiplier)
+  )
+}
+
+function makeNotEnoughStockSelector(lineId, retailersSelector) {
+  const desiredQuantitySelector = makeDesiredQuantitySelector()
+  return reselect.createSelector(
+    [desiredQuantitySelector, retailersSelector],
+    (desiredQuantity, retailers) => {
+      return (
+        retailers.get(lineId).reduce((p, x) => p + x.get('quantity'), 0) !==
+        desiredQuantity
+      )
+    }
+  )
+}
+
 function makeHighlightSelector(
-  noneSelectedSelector,
+  notEnoughStockSelector,
   valueSelector,
-  nonPreviewValueSelector,
   alwaysBuySelector
 ) {
   return reselect.createSelector(
-    [
-      selectors.previewBuy,
-      noneSelectedSelector,
-      valueSelector,
-      nonPreviewValueSelector,
-      alwaysBuySelector
-    ],
-    (previewBuy, noneSelected, value, nonPreviewValue, alwaysBuy) => {
-      return !previewBuy
-        ? 'blank'
-        : noneSelected
-          ? 'red'
-          : alwaysBuy
-            ? 'darkblue'
-            : value ? 'blue' : nonPreviewValue ? 'lightblue' : 'blank'
+    [notEnoughStockSelector, valueSelector, alwaysBuySelector],
+    (notEnoughStock, value, alwaysBuy) => {
+      return alwaysBuy
+        ? 'darkblue'
+        : value.get('quantity') > 0
+          ? notEnoughStock ? 'orange' : 'blue'
+          : notEnoughStock ? 'red' : 'blank'
     }
   )
 }
@@ -272,14 +313,18 @@ function makeHighlightSelector(
 function mapStateToProps(state, props) {
   const active = selectors.makeActiveSelector()
   const retailers = makeRetailersSelector()
-  const value = makeRetailerValueSelector(props.lineId, props.field, retailers)
+  const value = makePreviewRetailerValueSelector(
+    props.lineId,
+    props.field,
+    retailers
+  )
   const nonPreviewRetailers = makeNonPreviewRetailerSelector()
   const nonPreviewValue = makeRetailerValueSelector(
     props.lineId,
     props.field,
     nonPreviewRetailers
   )
-  const suggestions = makeApplicableSuggestions()
+  const suggestions = makeApplicableSuggestions(nonPreviewValue)
   const selected = makeSelectedSelector(suggestions)
   const matching = selectors.makeSuggestionsMatching()
   const selectedCheck = makeSelectedCheckSelector(
@@ -287,23 +332,23 @@ function mapStateToProps(state, props) {
     selected,
     matching
   )
-  const noneSelected = makeNoneSelectedSelector(props.lineId, retailers)
+  const notEnoughStock = makeNotEnoughStockSelector(props.lineId, retailers)
   const suggestionCheck = makeSuggestionCheckSelector(
     suggestions,
     selected,
     selectedCheck
   )
-  const match = makeMatchSelector(suggestions, selectors.value, suggestionCheck)
-  const alwaysBuy = makeAlwaysBuyThisSelector()
-  const highlight = makeHighlightSelector(
-    noneSelected,
-    value,
-    nonPreviewValue,
-    alwaysBuy
+  const match = makeMatchSelector(
+    suggestions,
+    selectors.value,
+    selected,
+    suggestionCheck
   )
+  const alwaysBuy = makeAlwaysBuyThisSelector()
+  const highlight = makeHighlightSelector(notEnoughStock, value, alwaysBuy)
   return reselect.createSelector(
     [
-      value,
+      nonPreviewValue,
       active,
       suggestions,
       match,
@@ -313,11 +358,10 @@ function mapStateToProps(state, props) {
       skuPopupExpanded,
       selectors.previewBuy,
       highlight,
-      alwaysBuy,
-      noneSelected
+      alwaysBuy
     ],
     (
-      value,
+      nonPreviewValue,
       active,
       suggestions,
       match,
@@ -327,10 +371,9 @@ function mapStateToProps(state, props) {
       skuPopupExpanded,
       previewBuy,
       highlight,
-      alwaysBuy,
-      noneSelected
+      alwaysBuy
     ) => ({
-      value,
+      value: nonPreviewValue,
       active,
       suggestions,
       match,
@@ -340,8 +383,7 @@ function mapStateToProps(state, props) {
       skuPopupExpanded,
       previewBuy,
       highlight,
-      alwaysBuy,
-      noneSelected
+      alwaysBuy
     })
   )
 }

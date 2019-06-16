@@ -17,7 +17,7 @@ function Menu(props) {
       />
       <label className="item" htmlFor="uploadInput">
         <semantic.Icon name="folder open outline" />
-        Open
+        Import
       </label>
       <semantic.Menu.Item
         disabled={props.empty}

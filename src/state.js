@@ -3,6 +3,7 @@ import oneClickBom from '1-click-bom'
 import * as redux from 'redux'
 import * as reduxUndo from 'redux-undo-immutable-js'
 import {computeSuggestionsForRetailer} from './suggestions'
+import {autoFillSuggestions} from './process_bom'
 
 const retailer_list = oneClickBom
   .getRetailers()
@@ -52,12 +53,12 @@ export const initialState = {
     suggestionsStatus: {},
     buyMultiplier: 1,
     alwaysBuySkus: {},
-    previewBuy: false
+    previewBuy: true
   }),
   suggestions: immutable.Map()
 }
 
-function fitPartNumbers(lines) {
+export function fitPartNumbers(lines) {
   lines = lines.map(line =>
     line.update('partNumbers', ps =>
       ps
@@ -71,7 +72,7 @@ function fitPartNumbers(lines) {
         const partNumbers = line.get('partNumbers') || immutable.List()
         return partNumbers.findLastIndex(p => !p.equals(emptyPartNumber))
       })
-      .max() + 3
+      .max() + 2
   return lines.map(line => {
     return line.update('partNumbers', ps => {
       ps = ps || immutable.List()
@@ -89,7 +90,7 @@ const linesActions = {
   },
   addEmptyLine(state) {
     const id = makeId()
-    const lines = state.get('lines').set(id, emptyLine)
+    const lines = fitPartNumbers(state.get('lines').set(id, emptyLine))
     const order = state.get('order').push(id)
     return state.merge({lines, order})
   },
@@ -242,7 +243,9 @@ const viewActions = {
         })
       )
       if (!result.success && result.fails.length === 0) {
-        messages = messages.push(immutable.fromJS({retailer}))
+        messages = messages.push(
+          immutable.fromJS({sku: {vendor: retailer}, id: makeId()})
+        )
       }
       return messages
     })
@@ -317,7 +320,9 @@ const rootActions = {
     })
   },
   initializeLines(state, lines) {
-    lines = immutable.Map(lines.map(l => [makeId(), immutable.fromJS(l)]))
+    lines = immutable.OrderedMap(
+      lines.map(l => [makeId(), immutable.fromJS(l)])
+    )
     lines = fitPartNumbers(lines)
     if (lines.length < 1) {
       return state
@@ -353,54 +358,7 @@ const rootActions = {
     return {...state, view}
   },
   autoFillSuggestions(state) {
-    const present = state.data.present.update('lines', lines =>
-      fitPartNumbers(
-        lines.map((line, lineId) => {
-          const retailerSuggestions =
-            state.suggestions.getIn([lineId, 'retailers']) || immutable.Map()
-          line = line.update('retailers', retailers => {
-            return retailers.map((part, vendor) => {
-              const vendorSuggestions =
-                retailerSuggestions.get(vendor) || immutable.List()
-              if (part) {
-                const existing = vendorSuggestions.find(
-                  s => s.getIn(['sku', 'part']) === part
-                )
-                if (existing && existing.checkColor === 'green') {
-                  return part
-                }
-              }
-              const s = vendorSuggestions.first()
-              if (s && /match/.test(s.get('type'))) {
-                return s.getIn(['sku', 'part'])
-              }
-              return part
-            })
-          })
-          return line.update('partNumbers', ps => {
-            const suggestions = (
-              state.suggestions.getIn([lineId, 'data']) || immutable.List()
-            ).filter(s => !ps.find(p => p.equals(s.get('mpn'))))
-            return ps
-              .slice(0, -1)
-              .concat(
-                suggestions
-                  .filter(
-                    s =>
-                      s.get('type') === 'match' || s.get('type') === 'cpl_match'
-                  )
-                  .map(s => s.get('mpn'))
-              )
-          })
-        })
-      )
-    )
-    if (!present.equals(state.data.present)) {
-      const past = state.data.past.concat([state.data.present])
-      const data = Object.assign({}, state.data, {present, past, future: []})
-      return Object.assign({}, state, {data})
-    }
-    return state
+    return autoFillSuggestions(state)
   },
   setSuggestions(state, {lineId, suggestions}) {
     const line = state.data.present.getIn(['lines', lineId])
@@ -502,7 +460,7 @@ const rootActions = {
     let data = state.data
     let order = data.present.get('order')
     // add a line if needed (in an undoable way)
-    if (state.view.get('focus').first() + 1 >= order.size) {
+    if (state.view.get('focus').first() === order.last()) {
       const past = state.data.past.concat([data.present])
       const present = linesActions.addEmptyLine(data.present)
       data = Object.assign({}, state.data, {present, past})

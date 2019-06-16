@@ -273,6 +273,10 @@ label.item:hover {
   background: #fbdada !important;
 }
 
+.highlight.orange {
+  background: rgb(255, 219, 154) !important;
+}
+
 .highlight.lightblue {
   background: rgba(169, 208, 206, 0.28) !important;
 }

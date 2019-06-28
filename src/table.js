@@ -1,12 +1,22 @@
 import './buy_parts.css'
 import React from 'react'
+import * as redux from 'redux'
 import * as reactRedux from 'react-redux'
 import ReactDataGrid from 'react-data-grid'
 import * as immutable from 'immutable'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import Line from './line'
-import {emptyLine} from './state'
+import {actions} from './state'
+
+function mpnFormatter({value}) {
+  value = value || immutable.Map()
+  return (
+    <>
+      <div>{value.get('manufacturer')}</div>
+      <div>{value.get('part')}</div>
+    </>
+  )
+}
 
 const columns = [
   {
@@ -19,26 +29,12 @@ const columns = [
     editable: true,
     key: 'partNumber0',
     name: 'Part Numbers',
-    formatter: ({value}) => {
-      return (
-        <>
-          <div>{value.get('manufacturer')}</div>
-          <div>{value.get('part')}</div>
-        </>
-      )
-    }
+    formatter: mpnFormatter
   },
   {
     key: 'partNumber1',
     name: 'Part Numbers (2)',
-    formatter: ({value}) => {
-      return (
-        <>
-          <div>{value.get('manufacturer')}</div>
-          <div>{value.get('part')}</div>
-        </>
-      )
-    }
+    formatter: mpnFormatter
   },
   {key: 'Digikey', name: 'Digikey'},
   {key: 'Mouser', name: 'Mouser'},
@@ -46,31 +42,40 @@ const columns = [
   {key: 'Farnell', name: 'Farnell'}
 ].map(c => ({...c, editable: true}))
 
-function rowGetter(key) {}
-
-const onGridRowsUpdated = ({fromRow, toRow, updated}) => {
-  console.log({fromRow, toRow, updated})
-}
-
-function Table(props) {
-  return (
-    <div style={{flex: '1 1 auto'}}>
-      <AutoSizer disableWidth>
-        {({height}) => (
-          <ReactDataGrid
-            columns={columns}
-            rowGetter={i => props.lines.get(i)}
-            rowsCount={props.lines.size}
-            minHeight={height}
-            enableCellSelect={true}
-            onGridRowsUpdated={onGridRowsUpdated}
-            rowSelection={{showCheckbox: true}}
-            cellNavigationMode="changeRow"
-          />
-        )}
-      </AutoSizer>
-    </div>
-  )
+class Table extends React.Component {
+  onGridRowsUpdated = ({fromRow, toRow, updated}) => {
+    const line = this.props.lines.get(toRow)
+    const lineId = line.get('id')
+    console.log({fromRow, toRow, updated})
+    Object.keys(updated).forEach(k => {
+      this.props.setField({
+        lineId,
+        field: immutable.List.of(k),
+        value: updated[k]
+      })
+    })
+  }
+  render() {
+    const props = this.props
+    return (
+      <div style={{flex: '1 1 auto'}}>
+        <AutoSizer disableWidth>
+          {({height}) => (
+            <ReactDataGrid
+              columns={columns}
+              rowGetter={i => props.lines.get(i)}
+              rowsCount={props.lines.size}
+              minHeight={height}
+              enableCellSelect={true}
+              onGridRowsUpdated={this.onGridRowsUpdated}
+              rowSelection={{showCheckbox: true}}
+              cellNavigationMode="changeRow"
+            />
+          )}
+        </AutoSizer>
+      </div>
+    )
+  }
 }
 
 function mapStateToProps(state) {
@@ -93,4 +98,8 @@ function mapStateToProps(state) {
   }
 }
 
-export default reactRedux.connect(mapStateToProps)(Table)
+function mapDispatchToProps(dispatch) {
+  return redux.bindActionCreators(actions, dispatch)
+}
+
+export default reactRedux.connect(mapStateToProps, mapDispatchToProps)(Table)

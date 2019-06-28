@@ -27,32 +27,30 @@ const columns = [
   {key: 'description', name: 'Description', width: 300},
   {
     editable: true,
-    key: 'partNumber0',
+    key: 'partNumbers:0',
     name: 'Part Numbers',
     formatter: mpnFormatter
   },
   {
-    key: 'partNumber1',
+    key: 'partNumbers:1',
     name: 'Part Numbers (2)',
     formatter: mpnFormatter
   },
-  {key: 'Digikey', name: 'Digikey'},
-  {key: 'Mouser', name: 'Mouser'},
-  {key: 'RS', name: 'RS'},
-  {key: 'Farnell', name: 'Farnell'}
+  {key: 'retailers:Digikey', name: 'Digikey'},
+  {key: 'retailers:Mouser', name: 'Mouser'},
+  {key: 'retailers:RS', name: 'RS'},
+  {key: 'retailers:Farnell', name: 'Farnell'}
 ].map(c => ({...c, editable: true}))
 
 class Table extends React.Component {
   onGridRowsUpdated = ({fromRow, toRow, updated}) => {
     const line = this.props.lines.get(toRow)
     const lineId = line.get('id')
-    console.log({fromRow, toRow, updated})
     Object.keys(updated).forEach(k => {
-      this.props.setField({
-        lineId,
-        field: immutable.List.of(k),
-        value: updated[k]
-      })
+      const field = immutable.List(k.split(':'))
+      const value = updated[k]
+      console.log(field, value)
+      this.props.setField({lineId, field, value})
     })
   }
   render() {

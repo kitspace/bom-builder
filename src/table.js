@@ -1,5 +1,6 @@
 import './buy_parts.css'
 import React from 'react'
+import ReactDOM from 'react-dom'
 import * as redux from 'redux'
 import * as reactRedux from 'react-redux'
 import ReactDataGrid from 'react-data-grid'
@@ -18,6 +19,54 @@ function mpnFormatter({value}) {
   )
 }
 
+class MpnEditor extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {mpn: props.value || immutable.Map()}
+  }
+  getValue() {
+    // an object of key/value pairs to be merged back to the row
+    return {[this.props.column.key]: this.state.mpn}
+  }
+
+  getInputNode() {
+    return ReactDOM.findDOMNode(this).getElementsByClassName('partInput')[0]
+  }
+  disableContainerStyles() {
+    return true
+  }
+
+  handlePartChange = event => {
+    const value = event.target.value
+    this.setState(state => {
+      return {mpn: state.mpn.set('part', value)}
+    })
+  }
+
+  handleManufacturerChange = event => {
+    const value = event.target.value
+    this.setState(state => {
+      return {mpn: state.mpn.set('manufacturer', value)}
+    })
+  }
+
+  render() {
+    return (
+      <div style={{background: 'white'}}>
+        <input
+          onChange={this.handleManufacturerChange}
+          value={this.state.mpn.get('manufacturer')}
+        />
+        <input
+          className='partInput'
+          onChange={this.handlePartChange}
+          value={this.state.mpn.get('part')}
+        />
+      </div>
+    )
+  }
+}
+
 const columns = [
   {
     key: 'reference',
@@ -28,12 +77,14 @@ const columns = [
   {
     editable: true,
     key: 'partNumbers:0',
-    name: 'Part Numbers',
+    name: 'Part Number',
+    editor: MpnEditor,
     formatter: mpnFormatter
   },
   {
     key: 'partNumbers:1',
-    name: 'Part Numbers (2)',
+    name: 'Part Number (2)',
+    editor: MpnEditor,
     formatter: mpnFormatter
   },
   {key: 'retailers:Digikey', name: 'Digikey'},
@@ -49,7 +100,6 @@ class Table extends React.Component {
     Object.keys(updated).forEach(k => {
       const field = immutable.List(k.split(':'))
       const value = updated[k]
-      console.log(field, value)
       this.props.setField({lineId, field, value})
     })
   }
@@ -81,9 +131,11 @@ function mapStateToProps(state) {
     .get('lines')
     .map((line, id) => {
       const partNumbers = immutable.Map(
-        line.get('partNumbers').map((m, i) => [`partNumber${i}`, m])
+        line.get('partNumbers').map((m, i) => [`partNumbers:${i}`, m])
       )
-      const retailers = line.get('retailers')
+      const retailers = line
+        .get('retailers')
+        .mapEntries(([k, v]) => ['retailers:' + k, v])
       return line
         .merge(retailers)
         .merge(partNumbers)

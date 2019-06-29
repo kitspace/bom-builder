@@ -96,13 +96,15 @@ const columns = [
 
 class Table extends React.Component {
   onGridRowsUpdated = ({fromRow, toRow, updated}) => {
-    const line = this.props.lines.get(toRow)
-    const lineId = line.get('id')
-    Object.keys(updated).forEach(k => {
-      const field = immutable.List(k.split(':'))
-      const value = updated[k]
-      this.props.setField({lineId, field, value})
-    })
+    for (let row = fromRow; row <= toRow; row++) {
+      const line = this.props.lines.get(row)
+      const lineId = line.get('id')
+      Object.keys(updated).forEach(k => {
+        const field = immutable.List(k.split(':'))
+        const value = updated[k]
+        this.props.setField({lineId, field, value})
+      })
+    }
   }
   render() {
     const props = this.props

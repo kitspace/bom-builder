@@ -22,11 +22,11 @@ function mpnFormatter({value}) {
 class MpnEditor extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {mpn: props.value || immutable.Map()}
+    this.state = {mpn: props.value}
   }
   getValue() {
     // an object of key/value pairs to be merged back to the row
-    return {[this.props.column.key]: this.state.mpn}
+    return {[this.props.column.key]: this.state.mpn || this.props.value}
   }
 
   getInputNode() {
@@ -51,16 +51,17 @@ class MpnEditor extends React.Component {
   }
 
   render() {
+    const mpn = this.state.mpn || this.props.value
     return (
       <div style={{background: 'white'}}>
         <input
           onChange={this.handleManufacturerChange}
-          value={this.state.mpn.get('manufacturer')}
+          value={mpn.get('manufacturer')}
         />
         <input
-          className='partInput'
+          className="partInput"
           onChange={this.handlePartChange}
-          value={this.state.mpn.get('part')}
+          value={mpn.get('part')}
         />
       </div>
     )

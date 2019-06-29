@@ -5,6 +5,7 @@ import * as redux from 'redux'
 import * as reactRedux from 'react-redux'
 import ReactDataGrid from 'react-data-grid'
 import * as immutable from 'immutable'
+import * as semantic from 'semantic-ui-react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import {Grid, Input, Select} from 'react-spreadsheet-grid'
 
@@ -71,24 +72,21 @@ class MpnEditor extends React.Component {
 
 const columns = [
   {
+    id: 'reference',
     title: () => 'References',
     value: (row, {focus}) => {
       return <Input value={row.get('reference')} focus={focus} />
     }
   },
   {
+    id: 'quantity',
     title: () => 'Qty',
     value: (row, {focus}) => {
       return <Input value={row.get('quantity')} focus={focus} />
     }
   },
   {
-    title: () => 'Description',
-    value: (row, {focus}) => {
-      return <Input value={row.get('description')} focus={focus} />
-    }
-  },
-  {
+    id: 'description',
     title: () => 'Description',
     value: (row, {focus}) => {
       return <Input value={row.get('description')} focus={focus} />
@@ -109,7 +107,14 @@ const columns = [
   {
     title: () => 'Digikey',
     value: (row, {focus}) => {
-      return <Input value={row.getIn(['retailers', 'Digikey'])} focus={focus} />
+      const value = row.getIn(['retailers', 'Digikey'])
+      if (focus) {
+        return <Input value={value} focus={focus} />
+      }
+      if (value) {
+        return <semantic.Icon name="check" color="green" />
+      }
+      return null
     }
   },
   {
@@ -148,6 +153,7 @@ class Table extends React.Component {
     const props = this.props
     return (
       <Grid
+        columnWidthValues={{quantity: 7}}
         focusOnSingleClick={true}
         columns={columns}
         rows={this.props.lines.toArray()}

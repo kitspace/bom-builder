@@ -202,7 +202,7 @@ class Bom extends React.Component {
   render() {
     return (
       <reactRedux.Provider store={store}>
-        <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+        <div style={{height: '91%'}}>
           <div style={{display: 'flex'}}>
             <Menu
               downloadBom={downloadBom}

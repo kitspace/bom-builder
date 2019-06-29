@@ -6,6 +6,7 @@ import * as reactRedux from 'react-redux'
 import ReactDataGrid from 'react-data-grid'
 import * as immutable from 'immutable'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import {Grid, Input, Select} from 'react-spreadsheet-grid'
 
 import {actions} from './state'
 
@@ -70,29 +71,66 @@ class MpnEditor extends React.Component {
 
 const columns = [
   {
-    key: 'reference',
-    name: 'References'
-  },
-  {key: 'quantity', name: 'Qty', width: 60},
-  {key: 'description', name: 'Description', width: 300},
-  {
-    editable: true,
-    key: 'partNumbers:0',
-    name: 'Part Number',
-    editor: MpnEditor,
-    formatter: mpnFormatter
+    title: () => 'References',
+    value: (row, {focus}) => {
+      return <Input value={row.get('reference')} focus={focus} />
+    }
   },
   {
-    key: 'partNumbers:1',
-    name: 'Part Number (2)',
-    editor: MpnEditor,
-    formatter: mpnFormatter
+    title: () => 'Qty',
+    value: (row, {focus}) => {
+      return <Input value={row.get('quantity')} focus={focus} />
+    }
   },
-  {key: 'retailers:Digikey', name: 'Digikey'},
-  {key: 'retailers:Mouser', name: 'Mouser'},
-  {key: 'retailers:RS', name: 'RS'},
-  {key: 'retailers:Farnell', name: 'Farnell'}
-].map(c => ({...c, editable: true}))
+  {
+    title: () => 'Description',
+    value: (row, {focus}) => {
+      return <Input value={row.get('description')} focus={focus} />
+    }
+  },
+  {
+    title: () => 'Description',
+    value: (row, {focus}) => {
+      return <Input value={row.get('description')} focus={focus} />
+    }
+  },
+  {
+    title: () => 'Part Number',
+    value: (row, {focus}) => {
+      const mpn = row.getIn(['partNumbers', 0])
+      return (
+        <div>
+          <Input value={mpn.get('manufacturer')} />
+          <Input value={mpn.get('part')} focus={focus} />
+        </div>
+      )
+    }
+  },
+  {
+    title: () => 'Digikey',
+    value: (row, {focus}) => {
+      return <Input value={row.getIn(['retailers', 'Digikey'])} focus={focus} />
+    }
+  },
+  {
+    title: () => 'Mouser',
+    value: (row, {focus}) => {
+      return <Input value={row.getIn(['retailers', 'Mouser'])} focus={focus} />
+    }
+  },
+  {
+    title: () => 'RS',
+    value: (row, {focus}) => {
+      return <Input value={row.getIn(['retailers', 'RS'])} focus={focus} />
+    }
+  },
+  {
+    title: () => 'Farnell',
+    value: (row, {focus}) => {
+      return <Input value={row.getIn(['retailers', 'Farnell'])} focus={focus} />
+    }
+  }
+]
 
 class Table extends React.Component {
   onGridRowsUpdated = ({fromRow, toRow, updated}) => {
@@ -109,22 +147,12 @@ class Table extends React.Component {
   render() {
     const props = this.props
     return (
-      <div style={{flex: '1 1 auto'}}>
-        <AutoSizer disableWidth>
-          {({height}) => (
-            <ReactDataGrid
-              columns={columns}
-              rowGetter={i => props.lines.get(i)}
-              rowsCount={props.lines.size}
-              minHeight={height}
-              enableCellSelect={true}
-              onGridRowsUpdated={this.onGridRowsUpdated}
-              rowSelection={{showCheckbox: true}}
-              cellNavigationMode="changeRow"
-            />
-          )}
-        </AutoSizer>
-      </div>
+      <Grid
+        focusOnSingleClick={true}
+        columns={columns}
+        rows={this.props.lines.toArray()}
+        getRowKey={i => props.lines.getIn([i, 'id'])}
+      />
     )
   }
 }

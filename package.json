@@ -16,6 +16,7 @@
     "react-data-grid": "^6.1.0-0",
     "react-dom": "^16.8.2",
     "react-redux": "^6.0.1",
+    "react-spreadsheet-grid": "^1.4.3",
     "react-virtualized-auto-sizer": "^1.0.2",
     "redux": "^4.0.1",
     "redux-undo-immutable-js": "^1.0.0-beta9-1",

@@ -5885,6 +5885,11 @@ lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
 
+lodash.find@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.find/-/lodash.find-4.6.0.tgz#cb0704d47ab71789ffa0de8b97dd926fb88b13b1"
+  integrity sha1-ywcE1Hq3F4n/oN6Ll92Sb7iLE7E=
+
 lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
@@ -5898,6 +5903,11 @@ lodash.isarray@^3.0.0:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/lodash.isarray/-/lodash.isarray-3.0.4.tgz#79e4eb88c36a8122af86f844aa9bcd851b5fbb55"
 
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
+
 lodash.keys@^3.0.0:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/lodash.keys/-/lodash.keys-3.1.2.tgz#4dbc0472b156be50a0b286855d1bd0b0c656098a"
@@ -5909,6 +5919,11 @@ lodash.keys@^3.0.0:
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
+
+lodash.slice@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.slice/-/lodash.slice-4.2.0.tgz#85fb9d49223c64d9d5890f32322777c7416cac27"
+  integrity sha1-hfudSSI8ZNnViQ8yMid3x0FsrCc=
 
 lodash.sortby@^4.7.0:
   version "4.7.0"
@@ -7964,6 +7979,15 @@ react-scripts@^2.1.5:
     workbox-webpack-plugin "3.6.3"
   optionalDependencies:
     fsevents "1.2.4"
+
+react-spreadsheet-grid@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/react-spreadsheet-grid/-/react-spreadsheet-grid-1.4.3.tgz#cb7c9912c5656bac55437cfba831bcd39fef763c"
+  integrity sha512-ASfrqZkmnUi0yzJCvEZgYH+uwOuPwHwkdOzpR+0vobfd4f2WGGtGMxMhH0OGzCNthF/C5maKRNeIlo0IrsGnaA==
+  dependencies:
+    lodash.find "^4.6.0"
+    lodash.isequal "^4.5.0"
+    lodash.slice "^4.2.0"
 
 react-virtualized-auto-sizer@^1.0.2:
   version "1.0.2"

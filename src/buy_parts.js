@@ -8,6 +8,8 @@ import {useDebouncedCallback} from 'use-debounce'
 import {actions} from './state'
 import {autoFillSuggestions} from './process_bom'
 
+import './buy_parts.css'
+
 const retailer_list = oneClickBom
   .getRetailers()
   .filter(r => r !== 'Rapid' && r !== 'Newark')

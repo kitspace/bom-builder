@@ -1,4 +1,3 @@
-import './buy_parts.css'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import * as redux from 'redux'
@@ -9,6 +8,8 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import {Grid, Input, Select} from 'react-spreadsheet-grid'
 
 import {actions} from './state'
+
+import './table.css'
 
 const retailerRender = retailer => (row, {active, focus}) => {
   const value = row.getIn(['retailers', retailer])
@@ -61,7 +62,10 @@ class Table extends React.Component {
           const mpn = row.getIn(['partNumbers', 0])
           return (
             <div>
-              <Input value={mpn.get('manufacturer')} />
+              <input
+                className="manufacturerInput"
+                value={mpn.get('manufacturer')}
+              />
               <Input value={mpn.get('part')} focus={focus} />
             </div>
           )
@@ -89,7 +93,6 @@ class Table extends React.Component {
       },
     ]
     const props = this.props
-    console.log(this.state.columnWidths)
     return (
       <Grid
         onActiveChanged={({column: newColumn}, {column: prevColumn}) => {

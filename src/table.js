@@ -31,6 +31,7 @@ class Table extends React.Component {
       'retailers:RS': 7,
       'retailers:Farnell': 7,
     },
+    blurCurrentFocus: false,
   }
   render() {
     const columns = [
@@ -52,21 +53,45 @@ class Table extends React.Component {
         id: 'description',
         title: 'Description',
         value: (row, {focus}) => {
-          return <Input value={row.get('description')} focus={focus} />
+          const field = immutable.List.of('description')
+          const lineId = row.get('id')
+          return (
+            <Input
+              value={row.get('description')}
+              focus={focus}
+              onChange={value => {
+                this.props.setField({lineId, field, value})
+                this.setState({blurCurrentFocus: true})
+              }}
+            />
+          )
         },
       },
       {
         id: 'partNumbers:0',
         title: 'Part Number',
         value: (row, {focus}) => {
-          const mpn = row.getIn(['partNumbers', 0])
+          const field = immutable.List.of('partNumbers', 0)
+          const mpn = row.getIn(field)
+          const lineId = row.get('id')
           return (
             <div>
               <input
                 className="manufacturerInput"
                 value={mpn.get('manufacturer')}
+                onChange={e => {
+                  const value = mpn.set('manufacturer', e.target.value)
+                  this.props.setField({lineId, field, value})
+                }}
               />
-              <Input value={mpn.get('part')} focus={focus} />
+              <Input
+                value={mpn.get('part')}
+                focus={focus}
+                onChange={v => {
+                  const value = mpn.set('part', v)
+                  this.props.setField({lineId, field, value})
+                }}
+              />
             </div>
           )
         },
@@ -96,7 +121,6 @@ class Table extends React.Component {
     return (
       <Grid
         onActiveChanged={({column: newColumn}, {column: prevColumn}) => {
-          console.log({newColumn, prevColumn})
           if (/^retailers:/.test(prevColumn)) {
             this.setState(state => ({
               columnWidths: {...state.columnWidths, [prevColumn]: 7},
@@ -114,6 +138,7 @@ class Table extends React.Component {
         columns={columns}
         rows={this.props.lines.toArray()}
         getRowKey={i => props.lines.getIn([i, 'id'])}
+        blurCurrentFocus={this.state.blurCurrentFocus}
       />
     )
   }

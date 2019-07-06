@@ -15,61 +15,53 @@ import 'react-datasheet/lib/react-datasheet.css'
 
 const SheetRenderer = props => {
   const {
-    as: Tag,
-    headerAs: Header,
-    bodyAs: Body,
-    rowAs: Row,
-    cellAs: Cell,
     className,
     columns,
     selections,
     onSelectAllChanged,
   } = props
   return (
-    <Tag className={className}>
-      <Header className="data-header">
-        <Row>
-          <Cell className="action-cell cell">
+    <div className={className}>
+      <div className="data-header">
+        <div>
+          <div className="action-cell cell">
             <input type="checkbox" checked={false} />
-          </Cell>
+          </div>
           {columns.map(column => (
-            <Cell
+            <div
               className="cell"
               style={{width: column.width}}
               key={column.label}
             >
               {column.label}
-            </Cell>
+            </div>
           ))}
-        </Row>
-      </Header>
-      <Body className="data-body">{props.children}</Body>
-    </Tag>
+        </div>
+      </div>
+      <div className="data-body">{props.children}</div>
+    </div>
   )
 }
 
 const RowRenderer = props => {
   const {
-    as: Tag,
-    cellAs: Cell,
     className,
     row,
     selected,
     onSelectChanged,
   } = props
   return (
-    <Tag className={className}>
-      <Cell className="action-cell cell">
+    <div className={className}>
+      <div className="action-cell cell">
         <input type="checkbox" checked={selected} />
-      </Cell>
+      </div>
       {props.children}
-    </Tag>
+    </div>
   )
 }
 
 const CellRenderer = props => {
   const {
-    as: Tag,
     cell,
     row,
     col,
@@ -84,15 +76,15 @@ const CellRenderer = props => {
 
   const attributes = cell.attributes || {}
   // ignore default style handed to us by the component and roll our own
-  attributes.style = {width: (columns[col] || {}).width, overflow: 'hidden'}
+  attributes.style = {width: columns[col].width, overflow: 'hidden'}
   if (col === 0) {
     attributes.title = cell.label
   }
 
   return (
-    <Tag {...rest} {...attributes}>
+    <div {...rest} {...attributes}>
       {props.children}
-    </Tag>
+    </div>
   )
 }
 
@@ -100,11 +92,6 @@ class Table extends React.Component {
   sheetRenderer = props => {
     return (
       <SheetRenderer
-        as="div"
-        headerAs="div"
-        bodyAs="div"
-        rowAs="div"
-        cellAs="div"
         columns={this.props.columns}
         {...props}
       />
@@ -112,11 +99,11 @@ class Table extends React.Component {
   }
 
   rowRenderer = props => {
-    return <RowRenderer as="div" cellAs="div" className="data-row" {...props} />
+    return <RowRenderer className="data-row" {...props} />
   }
 
   cellRenderer = props => {
-    return <CellRenderer as="div" columns={this.props.columns} {...props} />
+    return <CellRenderer columns={this.props.columns} {...props} />
   }
   render() {
     const props = this.props

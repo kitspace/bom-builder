@@ -1,23 +1,49 @@
-.SpreadsheetGridContainer {
-  border-top: 1px solid rgba(37, 33, 40, 0.12);
+
+.custom-sheet {
+  box-sizing: border-box;
 }
 
-.SpreadsheetGrid__headCell {
-  background: rgb(249, 250, 251);
-  color: black;
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+.data-grid .data-header > div {
+  width: 100%;
+}
+
+.data-grid .data-header > div:after, .data-grid .data-body .data-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.data-grid .data-header > div > div {
+  float: left;
   font-weight: bold;
+  font-size: 12px;
+  padding: 2px;
+}
+
+.data-grid .data-header > div > div.action-cell,
+.data-grid .data-header > tr > .action-cell,
+.data-grid .data-body .data-row > div.action-cell {
+  width: 5%;
+}
+
+.data-grid .data-body .data-row > div {
+  float: left;
   font-size: 12px;
 }
 
-.manufacturerInput {
-  font-size: 10px !important;
+.data-grid .data-body .data-row > .cell > input.data-editor {
+  width: 100%;
+  height: 100%;
 }
 
-.SpreadsheetGrid__cell_active {
-  box-shadow: inset 0 0 0 1px #d4d4d4;
+.data-grid ul.data-body {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
-
-.SpreadsheetGrid__cell_focused::after {
-  box-shadow: none;
-}
-

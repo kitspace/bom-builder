@@ -6,139 +6,134 @@ import * as immutable from 'immutable'
 import * as semantic from 'semantic-ui-react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import {Grid, Input, Select} from 'react-spreadsheet-grid'
+import ReactDataSheet from 'react-datasheet'
 
 import {actions} from './state'
 
 import './table.css'
+import 'react-datasheet/lib/react-datasheet.css'
 
-const retailerRender = retailer => (row, {active, focus}) => {
-  const value = row.getIn(['retailers', retailer])
-  if (active) {
-    return <Input value={value} focus={focus} />
+const SheetRenderer = props => {
+  const {
+    as: Tag,
+    headerAs: Header,
+    bodyAs: Body,
+    rowAs: Row,
+    cellAs: Cell,
+    className,
+    columns,
+    selections,
+    onSelectAllChanged,
+  } = props
+  return (
+    <Tag className={className}>
+      <Header className="data-header">
+        <Row>
+          <Cell className="action-cell cell">
+            <input type="checkbox" checked={false} />
+          </Cell>
+          {columns.map(column => (
+            <Cell
+              className="cell"
+              style={{width: column.width}}
+              key={column.label}
+            >
+              {column.label}
+            </Cell>
+          ))}
+        </Row>
+      </Header>
+      <Body className="data-body">{props.children}</Body>
+    </Tag>
+  )
+}
+
+const RowRenderer = props => {
+  const {
+    as: Tag,
+    cellAs: Cell,
+    className,
+    row,
+    selected,
+    onSelectChanged,
+  } = props
+  return (
+    <Tag className={className}>
+      <Cell className="action-cell cell">
+        <input type="checkbox" checked={selected} />
+      </Cell>
+      {props.children}
+    </Tag>
+  )
+}
+
+const CellRenderer = props => {
+  const {
+    as: Tag,
+    cell,
+    row,
+    col,
+    columns,
+    attributesRenderer,
+    selected,
+    editing,
+    updated,
+    style,
+    ...rest
+  } = props
+
+  const attributes = cell.attributes || {}
+  // ignore default style handed to us by the component and roll our own
+  attributes.style = {width: (columns[col] || {}).width, overflow: 'hidden'}
+  if (col === 0) {
+    attributes.title = cell.label
   }
-  if (value) {
-    return <semantic.Icon name="check" color="green" />
-  }
-  return <div />
+
+  return (
+    <Tag {...rest} {...attributes}>
+      {props.children}
+    </Tag>
+  )
 }
 
 class Table extends React.Component {
-  state = {
-    columnWidths: {
-      quantity: 7,
-      'retailers:Digikey': 7,
-      'retailers:Mouser': 7,
-      'retailers:RS': 7,
-      'retailers:Farnell': 7,
-    },
-    blurCurrentFocus: false,
+  sheetRenderer = props => {
+    return (
+      <SheetRenderer
+        as="div"
+        headerAs="div"
+        bodyAs="div"
+        rowAs="div"
+        cellAs="div"
+        columns={this.props.columns}
+        {...props}
+      />
+    )
+  }
+
+  rowRenderer = props => {
+    return <RowRenderer as="div" cellAs="div" className="data-row" {...props} />
+  }
+
+  cellRenderer = props => {
+    return <CellRenderer as="div" columns={this.props.columns} {...props} />
   }
   render() {
-    const columns = [
-      {
-        id: 'reference',
-        title: 'References',
-        value: (row, {focus}) => {
-          return <Input value={row.get('reference')} focus={focus} />
-        },
-      },
-      {
-        id: 'quantity',
-        title: 'Qty',
-        value: (row, {focus}) => {
-          return <Input value={row.get('quantity')} focus={focus} />
-        },
-      },
-      {
-        id: 'description',
-        title: 'Description',
-        value: (row, {focus}) => {
-          const field = immutable.List.of('description')
-          const lineId = row.get('id')
-          return (
-            <Input
-              value={row.get('description')}
-              focus={focus}
-              onChange={value => {
-                this.props.setField({lineId, field, value})
-                this.setState({blurCurrentFocus: true})
-              }}
-            />
-          )
-        },
-      },
-      {
-        id: 'partNumbers:0',
-        title: 'Part Number',
-        value: (row, {focus}) => {
-          const field = immutable.List.of('partNumbers', 0)
-          const mpn = row.getIn(field)
-          const lineId = row.get('id')
-          return (
-            <div>
-              <input
-                className="manufacturerInput"
-                value={mpn.get('manufacturer')}
-                onChange={e => {
-                  const value = mpn.set('manufacturer', e.target.value)
-                  this.props.setField({lineId, field, value})
-                }}
-              />
-              <Input
-                value={mpn.get('part')}
-                focus={focus}
-                onChange={v => {
-                  const value = mpn.set('part', v)
-                  this.props.setField({lineId, field, value})
-                }}
-              />
-            </div>
-          )
-        },
-      },
-      {
-        id: 'retailers:Digikey',
-        title: 'Digikey',
-        value: retailerRender('Digikey'),
-      },
-      {
-        id: 'retailers:Mouser',
-        title: 'Mouser',
-        value: retailerRender('Mouser'),
-      },
-      {
-        id: 'retailers:RS',
-        title: 'RS',
-        value: retailerRender('RS'),
-      },
-      {
-        id: 'retailers:Farnell',
-        title: 'Farnell',
-        value: retailerRender('Mouser'),
-      },
-    ]
     const props = this.props
     return (
-      <Grid
-        onActiveChanged={({column: newColumn}, {column: prevColumn}) => {
-          if (/^retailers:/.test(prevColumn)) {
-            this.setState(state => ({
-              columnWidths: {...state.columnWidths, [prevColumn]: 7},
-            }))
-          }
-          if (/^retailers:/.test(newColumn)) {
-            this.setState(state => ({
-              columnWidths: {...state.columnWidths, [newColumn]: 20},
-            }))
-          }
+      <ReactDataSheet
+        data={this.props.lines.toArray()}
+        sheetRenderer={this.sheetRenderer}
+        rowRenderer={this.rowRenderer}
+        cellRenderer={this.cellRenderer}
+        valueRenderer={(cell, i, j) => cell.value}
+        onCellsChanged={changes => {
+          //const grid = this.state.grid.map(row => [...row])
+          //changes.forEach(({cell, row, col, value}) => {
+          //  grid[row][col] = {...grid[row][col], value}
+          //})
+          //this.setState({grid})
         }}
-        isColumnsResizable={true}
-        columnWidthValues={this.state.columnWidths}
-        focusOnSingleClick={false}
-        columns={columns}
-        rows={this.props.lines.toArray()}
-        getRowKey={i => props.lines.getIn([i, 'id'])}
-        blurCurrentFocus={this.state.blurCurrentFocus}
       />
     )
   }
@@ -150,10 +145,32 @@ function mapStateToProps(state) {
     .map((line, id) => {
       return line.merge({id})
     })
+    .map(line => {
+      return [
+        {value: line.get('reference')},
+        {value: line.get('quantity')},
+        {value: line.get('description')},
+        {value: line.getIn(['partNumbers', 0, 'part'])},
+        {value: line.getIn(['retailers', 'Digikey'])},
+        {value: line.getIn(['retailers', 'Mouser'])},
+        {value: line.getIn(['retailers', 'RS'])},
+        {value: line.getIn(['retailers', 'Farnell'])},
+      ]
+    })
     .toList()
   return {
     lines,
     order: state.data.present.get('order'),
+    columns: [
+      {label: 'References', width: '20%'},
+      {label: 'Qty', width: '5%'},
+      {label: 'Description', width: '30%'},
+      {label: 'Part Number', width: '20%'},
+      {label: 'Digikey', width: '5%'},
+      {label: 'Mouser', width: '5%'},
+      {label: 'RS', width: '5%'},
+      {label: 'Farnell', width: '5%'},
+    ],
   }
 }
 

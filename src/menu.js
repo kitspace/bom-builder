@@ -32,6 +32,10 @@ function Menu(props) {
         <semantic.Icon name="download" />
         Save
       </semantic.Menu.Item>
+      <semantic.Menu.Item disabled={props.empty} onClick={props.copyBom}>
+        <semantic.Icon name="copy" />
+        Copy
+      </semantic.Menu.Item>
       <semantic.Menu.Item disabled={!props.undosAvailable} onClick={props.undo}>
         <semantic.Icon name="undo" />
         Undo

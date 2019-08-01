@@ -70,7 +70,30 @@ async function findSuggestions(line, suggestions = immutable.List()) {
   return suggestions
 }
 
-export async function searchDescription(lineId, description, actions) {
+function componentFromReference(ref) {
+  if (/^C\d/.test(ref)) {
+    return 'capacitor'
+  }
+  if (/^R\d/.test(ref)) {
+    return 'resistor'
+  }
+  if (/^L\d/.test(ref)) {
+    return 'inductor'
+  }
+  if (/^D\d/.test(ref)) {
+    return 'diode'
+  }
+  if (/^LED\d/.test(ref)) {
+    return 'led'
+  }
+  return ''
+}
+
+export async function searchDescription(lineId, reference, description, actions) {
+  const componentType = componentFromReference(reference)
+  if (componentType) {
+    description = componentType + ' ' + description
+  }
   const suggestions = await fromDescription(description)
   if (suggestions) {
     actions.addSuggestions({lineId, suggestions})

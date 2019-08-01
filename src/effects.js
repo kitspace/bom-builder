@@ -140,7 +140,12 @@ export function subscribeEffects(store, actions) {
             lineId,
             'description'
           ])
-          await searchDescription(lineId, description, actions)
+          const reference = state.data.present.getIn([
+            'lines',
+            lineId,
+            'reference'
+          ])
+          await searchDescription(lineId, reference, description, actions)
           actions.setSuggestionsSearch({lineId, status: 'done'})
         }
       })

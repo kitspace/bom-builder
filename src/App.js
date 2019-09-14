@@ -11,7 +11,6 @@ import * as mousetrap from 'mousetrap'
 import * as copyToClipboard from 'copy-to-clipboard'
 import * as fileDownload from 'js-file-download'
 import Nanobar from 'nanobar'
-import * as netlifyIdentity from 'netlify-identity-widget'
 
 import Header from './header'
 import Body from './body'
@@ -212,29 +211,7 @@ window.addEventListener(
 )
 
 class Bom extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {height: window.innerHeight, user: null}
-  }
   render() {
-    if (!this.state.user) {
-      return (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh'
-          }}
-        >
-          <div>
-            <semantic.Button basic onClick={() => netlifyIdentity.open()}>
-              Login
-            </semantic.Button>
-          </div>
-        </div>
-      )
-    }
     return (
       <reactRedux.Provider store={store}>
         <div>
@@ -304,15 +281,6 @@ class Bom extends React.Component {
   }
   componentDidMount() {
     window.nanobar.go(10)
-    netlifyIdentity.on('login', user => {
-      this.setState({user})
-      netlifyIdentity.close()
-    })
-    const user = netlifyIdentity.currentUser()
-    this.setState({user})
-    if (user == null) {
-      netlifyIdentity.open()
-    }
     const storedData = localStorage.getItem('tsv') || initialStoredData
     const {lines} = oneClickBom.parseTSV(storedData)
     const buyExtraLines = JSON.parse(localStorage.getItem('buyExtraLines'))

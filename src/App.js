@@ -274,7 +274,12 @@ class Bom extends React.Component {
             basic
             icon={<semantic.Icon name="plus" />}
           />
-        </div>
+        </div>{' '}
+        <semantic.Container className="infoBox">
+          <semantic.Segment style={{fontSize: 18}}>
+            <a href="https://kitspace.org/bom-builder">See here</a> for more information and a demo video.
+          </semantic.Segment>
+        </semantic.Container>
         <Messages />
       </reactRedux.Provider>
     )

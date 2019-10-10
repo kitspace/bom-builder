@@ -18,7 +18,7 @@ function BuyExtraCell(props) {
       style={{cursor: 'pointer'}}
       className="buyExtraCell"
     >
-      {check}
+      <div style={{display: 'flex'}}>{check}</div>
     </semantic.Table.Cell>
   )
 }

@@ -1,3 +1,8 @@
 .buyExtraCell {
-  color: #2185D0 !important;
+  color: #2185d0 !important;
+}
+.buyExtraCell > div {
+  display: flex;
+  justify-content: center;
+  margin-top: -6px;
 }

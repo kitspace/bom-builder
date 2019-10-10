@@ -34,6 +34,7 @@ export const emptyLine = immutable.Map({
 export const initialState = {
   data: immutable.fromJS({
     lines: {},
+    buyExtraLines: {},
     order: [],
     sortedBy: [null, null]
   }),
@@ -93,7 +94,8 @@ const linesActions = {
     const id = makeId()
     const lines = fitPartNumbers(state.get('lines').set(id, emptyLine))
     const order = state.get('order').push(id)
-    return state.merge({lines, order})
+    const buyExtraLines = state.get('buyExtraLines').set(id, false)
+    return state.merge({lines, order, buyExtraLines})
   },
   removeField(state, focus) {
     const lineId = focus.get(0)
@@ -118,7 +120,12 @@ const linesActions = {
     let lines = state.get('lines').remove(lineId)
     const order = state.get('order').filter(x => x !== lineId)
     lines = fitPartNumbers(lines)
+    const buyExtraLines = state.get('buyExtraLines').delete(lineId)
     return state.merge({lines, order})
+  },
+  toggleBuyExtra(state, lineId) {
+    const buyExtraLines = state.get('buyExtraLines').update(lineId, x => !x)
+    return state.merge({buyExtraLines})
   },
   sortBy(state, header) {
     let lines = immutable.List(

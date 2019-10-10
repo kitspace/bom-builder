@@ -9,6 +9,7 @@ import * as reselect from 'reselect'
 import * as selectors from './selectors'
 import {actions} from './state'
 import SimpleCell from './simple_cell'
+import BuyExtraCell from './buy_extra_cell'
 import MpnCell from './mpn_cell'
 import SkuCell from './sku_cell'
 import Handle from './handle'
@@ -23,6 +24,7 @@ const retailer_list = oneClickBom
 const fields = immutable.Map({
   reference: immutable.List.of('reference'),
   quantity: immutable.List.of('quantity'),
+  buyExtra: immutable.List.of('buyExtra'),
   description: immutable.List.of('description'),
   partNumbers: immutable.Range(0, 100).map(i =>
     immutable.Map({
@@ -86,6 +88,11 @@ function Line(props) {
       <QuantityCell
         hidden={props.hidden}
         field={fields.get('quantity')}
+        lineId={lineId}
+      />
+      <BuyExtraCell
+        hidden={props.hidden}
+        field={fields.get('buyExtra')}
         lineId={lineId}
       />
       <DescriptionCell

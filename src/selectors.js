@@ -42,6 +42,10 @@ export function buyMultiplier(state) {
   return state.view.get('buyMultiplier')
 }
 
+export function buyExtraPercent(state) {
+  return state.view.get('buyExtraPercent')
+}
+
 export function value(state, props) {
   return state.data.present.getIn(['lines', props.lineId]).getIn(props.field)
 }
@@ -52,6 +56,10 @@ export function editingThis(editing, lineId, field) {
 
 export function makeActiveSelector() {
   return reselect.createSelector([editingSelector, lineId, field], editingThis)
+}
+
+export function buyExtra(state, props) {
+  return state.data.present.getIn(['buyExtraLines', props.lineId])
 }
 
 export function editingSelector(state) {

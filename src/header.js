@@ -101,6 +101,9 @@ class Header extends React.Component {
               Quantity
             </span>
           </th>
+          <th>
+            <span  style={{color: '#2185D0'}}>+ {props.buyExtraPercent}%</span>
+          </th>
           <th colSpan={2}>
             <div style={{minWidth: 88}}>
               <span
@@ -168,10 +171,11 @@ function getInStockPurchaseLines(state) {
   const alwaysBuySkus = state.view.get('alwaysBuySkus')
   lines = getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus)
   const preferred = state.view.get('preferredRetailer')
-  return getPurchaseLines(preferred, lines, alwaysBuySkus, buyMultiplier).map(line =>
-    line.update('retailers', r =>
-      r.map(v => (v.get('quantity') > 0 ? v.get('part') : ''))
-    )
+  return getPurchaseLines(preferred, lines, alwaysBuySkus, buyMultiplier).map(
+    line =>
+      line.update('retailers', r =>
+        r.map(v => (v.get('quantity') > 0 ? v.get('part') : ''))
+      )
   )
 }
 
@@ -192,6 +196,7 @@ function mapStateToProps(state) {
       ? getRetailerNumbers(state)
       : immutable.Map(),
     partNumbersExpanded,
+    buyExtraPercent: state.view.get('buyExtraPercent'),
     maxPartNumbers: first ? Math.max(first.get('partNumbers').size, 1) : 1
   }
 }

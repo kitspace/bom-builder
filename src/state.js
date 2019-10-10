@@ -52,6 +52,7 @@ export const initialState = {
     buyPartsMessages: [],
     suggestionsStatus: {},
     buyMultiplier: 1,
+    buyExtraPercent: 10,
     alwaysBuySkus: {},
     previewBuy: true
   }),
@@ -385,6 +386,20 @@ const rootActions = {
       return state
     }
     const view = state.view.set('buyMultiplier', n)
+    state = {...state, view}
+    state.data.present.get('order').forEach(lineId => {
+      state = this.computeRetailerSuggestions(state, {lineId})
+    })
+    return state
+  },
+  setBuyExtraPercent(state, n) {
+    if (n == null || n < 1 || isNaN(n)) {
+      n = 1
+    }
+    if (n === state.view.get('buyExtraPercent')) {
+      return state
+    }
+    const view = state.view.set('buyExtraPercent', n)
     state = {...state, view}
     state.data.present.get('order').forEach(lineId => {
       state = this.computeRetailerSuggestions(state, {lineId})

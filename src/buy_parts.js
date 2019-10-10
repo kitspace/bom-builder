@@ -14,14 +14,23 @@ const retailer_list = oneClickBom
 
 function BuyParts(props) {
   let [multiplier, setMultiplier] = React.useState(null)
+  let [extraPercent, setExtraPercent] = React.useState(null)
   let [autoFilling, setAutoFilling] = React.useState(null)
-  const [debouncedSetBuyMultiplier, cancelDebounced] = useDebouncedCallback(
+  const [debouncedSetBuyMultiplier, cancelBuyMultiplierDebounced] = useDebouncedCallback(
     value => {
       props.setBuyMultiplier(value)
     },
     500,
     [1]
   )
+  const [debouncedSetBuyExtra, cancelBuyExtraDebounced] = useDebouncedCallback(
+    value => {
+      props.setBuyExtraPercent(value)
+    },
+    500,
+    [10]
+  )
+  extraPercent = extraPercent == null ? props.buyExtraPercent : extraPercent
   multiplier = multiplier == null ? props.buyMultiplier : multiplier
   autoFilling =
     autoFilling == null ? props.autoFilling === 'filling' : autoFilling
@@ -130,12 +139,12 @@ function BuyParts(props) {
                 value={multiplier}
                 disabled={!props.previewBuy}
                 onChange={e => {
-                  cancelDebounced()
+                  cancelBuyMultiplierDebounced()
                   setMultiplier(e.target.value)
                   debouncedSetBuyMultiplier(e.target.value)
                 }}
                 onBlur={e => {
-                  cancelDebounced()
+                  cancelBuyMultiplierDebounced()
                   props.setBuyMultiplier(e.target.value)
                   setMultiplier(null)
                 }}
@@ -146,6 +155,58 @@ function BuyParts(props) {
                   }
                 }}
               />
+            </div>
+          </div>
+          <div
+            style={{
+              minWidth: 140,
+              display: 'flex',
+              justifyContent: 'flex-end'
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                color: props.previewBuy ? '#2185d0' : 'lightgrey'
+              }}
+            >
+              <semantic.Icon name="plus" />
+            </div>
+            <div>
+              <semantic.Input
+                className="buyMultiplierInput"
+                style={{minWidth: 90}}
+                type="number"
+                value={extraPercent}
+                disabled={!props.previewBuy}
+                onChange={e => {
+                  cancelBuyExtraDebounced()
+                  setExtraPercent(e.target.value)
+                  debouncedSetBuyExtra(e.target.value)
+                }}
+                onBlur={e => {
+                  cancelBuyExtraDebounced()
+                  props.setBuyExtraPercent(e.target.value)
+                  setExtraPercent(null)
+                }}
+                onKeyDown={e => {
+                  if (e.which === 13) {
+                    // enter key is pressed
+                    e.target.blur()
+                  }
+                }}
+              />
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                color: props.previewBuy ? '#2185d0' : 'lightgrey',
+                marginLeft: 5,
+              }}
+            >
+              <semantic.Icon name="percent" />
             </div>
           </div>
           <div
@@ -203,6 +264,7 @@ function mapStateToProps(state) {
     clearingCarts: state.view.get('clearingCarts'),
     autoFilling: state.view.get('autoFilling'),
     buyMultiplier: state.view.get('buyMultiplier'),
+    buyExtraPercent: state.view.get('buyExtraPercent'),
     canAutoFill: hasAutoFill(state),
     previewBuy: state.view.get('previewBuy')
   }

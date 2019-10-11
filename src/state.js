@@ -327,7 +327,7 @@ const rootActions = {
       suggestions
     })
   },
-  initializeLines(state, lines) {
+  initializeLines(state, {lines, buyExtraLines}) {
     lines = immutable.OrderedMap(
       lines.map(l => [makeId(), immutable.fromJS(l)])
     )
@@ -335,12 +335,19 @@ const rootActions = {
     if (lines.length < 1) {
       return state
     }
-    const buyExtraLines = lines.map(line => {
+    const extra = lines.map((line, index) => {
+      if (buyExtraLines && buyExtraLines[index] != null) {
+        return buyExtraLines[index]
+      }
       const ref = line.get('reference')
       return /^C\d|^R\d|^D\d/.test(ref)
     })
     const order = immutable.List(lines.keys())
-    const present = state.data.present.merge({lines, order, buyExtraLines})
+    const present = state.data.present.merge({
+      lines,
+      order,
+      buyExtraLines: extra
+    })
     const suggestions = immutable.Map(
       order.map(lineId => [
         lineId,

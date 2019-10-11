@@ -68,11 +68,22 @@ let previous_tsv
 let previous_state
 store.subscribe(() => {
   const state = store.getState().data.present
+  if (previous_state == null) {
+    previous_state = state
+  }
   if (state !== previous_state) {
     const tsv = getTsv()
     if (tsv !== previous_tsv) {
       localStorage.setItem('tsv', tsv)
       previous_tsv = tsv
+    }
+    const buyExtraLines = state.get('buyExtraLines')
+    const prev_buyExtraLines = previous_state.get('buyExtraLines')
+    if (buyExtraLines !== prev_buyExtraLines) {
+      localStorage.setItem(
+        'buyExtraLines',
+        JSON.stringify(buyExtraLines.valueSeq())
+      )
     }
     previous_state = state
   }
@@ -113,7 +124,7 @@ function handleFileInput(e) {
       if (r.warnings.length > 0) {
         console.warn(r.warnings)
       }
-      actions.initializeLines(r.lines)
+      actions.initializeLines({lines: r.lines})
       const state = store.getState()
       const lines = state.data.present.get('lines')
       const suggestions = state.suggestions
@@ -304,12 +315,13 @@ class Bom extends React.Component {
     }
     const storedData = localStorage.getItem('tsv') || initialStoredData
     const {lines} = oneClickBom.parseTSV(storedData)
+    const buyExtraLines = JSON.parse(localStorage.getItem('buyExtraLines'))
     lines.forEach(line => {
       delete line.retailers.Rapid
       delete line.retailers.Newark
     })
     window.nanobar.go(20)
-    actions.initializeLines(lines)
+    actions.initializeLines({lines, buyExtraLines})
     window.nanobar.go(30)
     findSuggestionsWorker.postMessage({
       type: 'replace',

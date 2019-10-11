@@ -169,7 +169,9 @@ function getInStockPurchaseLines(state) {
   let lines = state.data.present.get('lines')
   const buyMultiplier = state.view.get('buyMultiplier')
   const alwaysBuySkus = state.view.get('alwaysBuySkus')
-  lines = getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus)
+  const buyExtraPercent = state.view.get('buyExtraPercent')
+  const buyExtraLines = state.data.present.get('buyExtraLines')
+  lines = getInStockLines(lines, offers, buyExtraLines, buyExtraPercent, buyMultiplier, alwaysBuySkus)
   const preferred = state.view.get('preferredRetailer')
   return getPurchaseLines(preferred, lines, alwaysBuySkus, buyMultiplier).map(
     line =>

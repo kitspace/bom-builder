@@ -62,6 +62,11 @@ export function buyExtra(state, props) {
   return state.data.present.getIn(['buyExtraLines', props.lineId])
 }
 
+export function buyExtraLines(state, props) {
+  return state.data.present.get('buyExtraLines')
+}
+
+
 export function editingSelector(state) {
   return state.view.get('editable') ? state.view.get('focus') : null
 }

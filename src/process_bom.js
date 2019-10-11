@@ -144,28 +144,41 @@ export function reduceBom(
 }
 
 export function getAllOffers(suggestions) {
-  return suggestions.map(x => x.get('data')).reduce((offers, suggestions) => {
-    suggestions = suggestions || immutable.List()
-    return suggestions.reduce(
-      (offers, part) =>
-        part
-          .get('offers')
-          .reduce(
-            (offers, offer) => offers.set(offer.get('sku'), offer),
-            offers
-          ),
-      offers
-    )
-  }, immutable.Map())
+  return suggestions
+    .map(x => x.get('data'))
+    .reduce((offers, suggestions) => {
+      suggestions = suggestions || immutable.List()
+      return suggestions.reduce(
+        (offers, part) =>
+          part
+            .get('offers')
+            .reduce(
+              (offers, offer) => offers.set(offer.get('sku'), offer),
+              offers
+            ),
+        offers
+      )
+    }, immutable.Map())
 }
 
 export function makeAllOffersSelector(suggestionsSelector) {
-  return reselect.createSelector([suggestionsSelector], getAllOffers)
+  return reselect.createSelector(
+    [suggestionsSelector],
+    getAllOffers
+  )
 }
 
-export function getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus) {
-  return lines.map((line, lineId) =>
-    line.update('retailers', retailers =>
+export function getInStockLines(
+  lines,
+  offers,
+  buyExtraLines,
+  buyExtraPercent,
+  buyMultiplier,
+  alwaysBuySkus
+) {
+  return lines.map((line, lineId) => {
+    const buyExtra = buyExtraLines.get(lineId)
+    return line.update('retailers', retailers =>
       retailers.map((part, vendor) => {
         const sku = immutable.Map({part, vendor})
         const offer = offers.get(sku)
@@ -183,13 +196,16 @@ export function getInStockLines(lines, offers, buyMultiplier, alwaysBuySkus) {
           }
         }
         const quantity = Math.min(
-          Math.ceil(line.get('quantity') * buyMultiplier),
+          Math.ceil(
+            line.get('quantity') *
+              (buyMultiplier + (buyExtra ? buyExtraPercent / 100 : 0))
+          ),
           in_stock
         )
         return immutable.Map({part: part || '', quantity})
       })
     )
-  )
+  })
 }
 
 export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
@@ -197,6 +213,8 @@ export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
     [
       linesSelector,
       allOffersSelector,
+      selectors.buyExtraLines,
+      selectors.buyExtraPercent,
       selectors.buyMultiplier,
       selectors.alwaysBuySkus
     ],

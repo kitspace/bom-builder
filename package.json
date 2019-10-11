@@ -5,25 +5,25 @@
   "dependencies": {
     "1-click-bom": "git+https://github.com/kitspace/npm-1-click-bom.git",
     "copy-to-clipboard": "^3.0.8",
-    "immutable": "^3.8.1",
+    "immutable": "^4.0.0-rc.12",
     "immutable-diff": "^0.1.1",
     "js-file-download": "^0.4.1",
     "mousetrap": "^1.6.1",
     "nanobar": "^0.4.2",
     "netlify-identity-widget": "^1.4.14",
     "promise-rate-limit": "^0.0.1",
-    "ramda": "^0.24.1",
+    "ramda": "^0.26.1",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
-    "react-redux": "^6.0.1",
+    "react-redux": "^7.1.1",
     "redux": "^4.0.1",
     "redux-undo-immutable-js": "^1.0.0-beta9-1",
     "reselect": "^4.0.0",
     "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^0.86.0",
+    "semantic-ui-react": "^0.88.1",
     "shortid": "^2.2.14",
-    "superagent": "^3.5.2",
-    "use-debounce": "^1.1.1"
+    "superagent": "^5.1.0",
+    "use-debounce": "^3.1.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -39,10 +39,10 @@
   },
   "devDependencies": {
     "better-assert": "^1.0.2",
-    "mocha": "^3.4.2",
+    "mocha": "^6.2.1",
     "prettier": "^1.10.2",
     "react-app-rewired": "^2.1.0",
-    "react-scripts": "^2.1.5",
+    "react-scripts": "^3.2.0",
     "worker-loader": "^2.0.0"
   },
   "browserslist": [

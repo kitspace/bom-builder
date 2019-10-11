@@ -102,14 +102,20 @@ export function reduceBom(
   lines,
   preferred,
   alwaysBuySkus,
+  buyExtraLines,
+  buyExtraPercent,
   buyMultiplier,
   done = immutable.List()
 ) {
   return lines.map((line, lineId) => {
+    const buyExtra = buyExtraLines.get(lineId)
     const partAndQty = line.getIn(['retailers', preferred])
     const alwaysBuyThisLine =
       alwaysBuySkus.get(lineId) != null && alwaysBuySkus.get(lineId).size > 0
-    const desiredQuantity = Math.ceil(line.get('quantity') * buyMultiplier)
+    const desiredQuantity = Math.ceil(
+      line.get('quantity') *
+        (buyMultiplier + (buyExtra ? buyExtraPercent / 100 : 0))
+    )
     if (partAndQty != null && partAndQty.get('quantity') > 0) {
       return line.update('retailers', retailers => {
         return retailers.map((v, k) => {
@@ -226,9 +232,18 @@ export function getPurchaseLines(
   preferred,
   lines,
   alwaysBuySkus,
+  buyExtraLines,
+  buyExtraPercent,
   buyMultiplier
 ) {
-  lines = reduceBom(lines, preferred, alwaysBuySkus, buyMultiplier)
+  lines = reduceBom(
+    lines,
+    preferred,
+    alwaysBuySkus,
+    buyExtraLines,
+    buyExtraPercent,
+    buyMultiplier
+  )
   const priority = priorityOfRetailers(lines, alwaysBuySkus).filter(
     r => r !== preferred
   )
@@ -238,6 +253,8 @@ export function getPurchaseLines(
         reducedLines,
         retailer,
         alwaysBuySkus,
+        buyExtraLines,
+        buyExtraPercent,
         buyMultiplier,
         done
       )
@@ -265,12 +282,29 @@ export function makePurchaseLinesSelector(
       preferredSelector,
       inStockLinesSelector,
       previewBuySelector,
+      selectors.buyExtraLines,
+      selectors.buyExtraPercent,
       selectors.buyMultiplier,
       selectors.alwaysBuySkus
     ],
-    (preferred, lines, previewBuy, buyMultiplier, alwaysBuySkus) => {
+    (
+      preferred,
+      lines,
+      previewBuy,
+      buyExtraLines,
+      buyExtraPercent,
+      buyMultiplier,
+      alwaysBuySkus
+    ) => {
       if (previewBuy) {
-        return getPurchaseLines(preferred, lines, alwaysBuySkus, buyMultiplier)
+        return getPurchaseLines(
+          preferred,
+          lines,
+          alwaysBuySkus,
+          buyExtraLines,
+          buyExtraPercent,
+          buyMultiplier
+        )
       }
     }
   )

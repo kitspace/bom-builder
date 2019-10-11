@@ -89,7 +89,12 @@ function componentFromReference(ref) {
   return ''
 }
 
-export async function searchDescription(lineId, reference, description, actions) {
+export async function searchDescription(
+  lineId,
+  reference,
+  description,
+  actions
+) {
   const componentType = componentFromReference(reference)
   if (componentType) {
     description = componentType + ' ' + description

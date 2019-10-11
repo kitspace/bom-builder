@@ -115,14 +115,16 @@ function editingSelector(state) {
 }
 
 function makePartNumbersSelector(lineSelector) {
-  return reselect.createSelector([lineSelector], line =>
-    line.get('partNumbers')
+  return reselect.createSelector(
+    [lineSelector],
+    line => line.get('partNumbers')
   )
 }
 
 function makePartNumbersExpandedSelector() {
-  return reselect.createSelector([selectors.view], view =>
-    view.get('partNumbersExpanded')
+  return reselect.createSelector(
+    [selectors.view],
+    view => view.get('partNumbersExpanded')
   )
 }
 

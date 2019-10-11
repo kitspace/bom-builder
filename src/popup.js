@@ -149,8 +149,8 @@ class SkuPopup extends Popup {
             checkColor === 'red'
               ? 'Out of stock'
               : checkColor === 'orange'
-                ? 'Not enough stock or sub-optimal stock location'
-                : 'In stock'
+              ? 'Not enough stock or sub-optimal stock location'
+              : 'In stock'
           }
           trigger={
             <semantic.Icon
@@ -459,7 +459,9 @@ class SpecTable extends React.PureComponent {
         renderBodyRow={args => {
           return (
             <tr key={String(args)}>
-              {args.map(text => <td key={String(text)}>{text}</td>)}
+              {args.map(text => (
+                <td key={String(text)}>{text}</td>
+              ))}
             </tr>
           )
         }}
@@ -501,8 +503,8 @@ class Title extends React.PureComponent {
                 iconName === 'clone outline'
                   ? 'Suggestion matches an already selected part'
                   : iconColor === 'green'
-                    ? 'Suggestion is from the Common Parts Library and matches your description'
-                    : 'Suggestions is a search result'
+                  ? 'Suggestion is from the Common Parts Library and matches your description'
+                  : 'Suggestions is a search result'
               }
               trigger={
                 <semantic.Icon
@@ -548,20 +550,19 @@ class Buttons extends React.PureComponent {
           <semantic.Icon name={selected ? 'checkmark box' : 'square outline'} />
           {selected ? 'Selected' : 'Select'}
         </semantic.Button>
-        {previewBuy &&
-          selected && (
-            <semantic.Button
-              className="alwaysBuyButton"
-              onClick={toggleAlwaysBuy}
-            >
-              <div>
-                <semantic.Icon
-                  name={alwaysBuy ? 'checkmark box' : 'square outline'}
-                />
-                Definitely Buy
-              </div>
-            </semantic.Button>
-          )}
+        {previewBuy && selected && (
+          <semantic.Button
+            className="alwaysBuyButton"
+            onClick={toggleAlwaysBuy}
+          >
+            <div>
+              <semantic.Icon
+                name={alwaysBuy ? 'checkmark box' : 'square outline'}
+              />
+              Definitely Buy
+            </div>
+          </semantic.Button>
+        )}
         <semantic.Button
           disabled={disabled}
           icon="right chevron"

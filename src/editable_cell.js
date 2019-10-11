@@ -98,8 +98,8 @@ class Cell extends React.PureComponent {
                   props.match === 'match'
                     ? 'Suggestion that matches an already selected part is available'
                     : matchColor === 'green'
-                      ? 'Common Parts Library suggestion available'
-                      : 'Search result suggestion available'
+                    ? 'Common Parts Library suggestion available'
+                    : 'Search result suggestion available'
                 }
               />
             </span>
@@ -125,9 +125,9 @@ class Cell extends React.PureComponent {
                 props.suggestionCheck === 'red'
                   ? 'Suggestion is out of stock'
                   : props.suggestionCheck === 'orange'
-                    ? 'Suggestion does not have enough stock or location is' +
-                      ' sub-optimal'
-                    : 'Suggestion is in stock'
+                  ? 'Suggestion does not have enough stock or location is' +
+                    ' sub-optimal'
+                  : 'Suggestion is in stock'
               }
             />
           </span>

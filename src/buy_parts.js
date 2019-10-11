@@ -16,7 +16,10 @@ function BuyParts(props) {
   let [multiplier, setMultiplier] = React.useState(null)
   let [extraPercent, setExtraPercent] = React.useState(null)
   let [autoFilling, setAutoFilling] = React.useState(null)
-  const [debouncedSetBuyMultiplier, cancelBuyMultiplierDebounced] = useDebouncedCallback(
+  const [
+    debouncedSetBuyMultiplier,
+    cancelBuyMultiplierDebounced
+  ] = useDebouncedCallback(
     value => {
       props.setBuyMultiplier(parseFloat(value))
     },
@@ -203,7 +206,7 @@ function BuyParts(props) {
                 display: 'flex',
                 alignItems: 'center',
                 color: props.previewBuy ? '#2185d0' : 'lightgrey',
-                marginLeft: 5,
+                marginLeft: 5
               }}
             >
               <semantic.Icon name="percent" />

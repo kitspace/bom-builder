@@ -68,13 +68,15 @@ function parentField(_, props) {
 }
 
 function makeMpnSelector() {
-  return reselect.createSelector([selectors.line, parentField], (line, field) =>
-    line.getIn(field)
+  return reselect.createSelector(
+    [selectors.line, parentField],
+    (line, field) => line.getIn(field)
   )
 }
 
-const partNumbersSelector = reselect.createSelector([selectors.line], line =>
-  line.get('partNumbers')
+const partNumbersSelector = reselect.createSelector(
+  [selectors.line],
+  line => line.get('partNumbers')
 )
 
 function normalizeName(name) {
@@ -107,15 +109,17 @@ function makeOtherMpnsSelector(mpn) {
 }
 
 function makeEmptyMpnsSelector() {
-  return reselect.createSelector([partNumbersSelector], partNumbers =>
-    partNumbers
-      .map((m, index) => {
-        if (!m.get('part') || !m.get('manufacturer')) {
-          return index
-        }
-        return null
-      })
-      .filter(x => x != null)
+  return reselect.createSelector(
+    [partNumbersSelector],
+    partNumbers =>
+      partNumbers
+        .map((m, index) => {
+          if (!m.get('part') || !m.get('manufacturer')) {
+            return index
+          }
+          return null
+        })
+        .filter(x => x != null)
   )
 }
 
@@ -171,10 +175,13 @@ function isManufacturer(_, props) {
 }
 
 function makeSelectedSelector(suggestions, mpn) {
-  return reselect.createSelector([suggestions, mpn], (suggestions, mpn) => {
-    const index = suggestions.findIndex(s => similarEnough(s.get('mpn'), mpn))
-    return index
-  })
+  return reselect.createSelector(
+    [suggestions, mpn],
+    (suggestions, mpn) => {
+      const index = suggestions.findIndex(s => similarEnough(s.get('mpn'), mpn))
+      return index
+    }
+  )
 }
 
 function isExpanded(_, props) {

@@ -254,29 +254,47 @@ function makeRetailersSelector() {
 }
 
 function makeNonPreviewRetailerSelector() {
-  return reselect.createSelector([selectors.lines], lines => {
-    return lines.map(l => l.get('retailers'))
-  })
+  return reselect.createSelector(
+    [selectors.lines],
+    lines => {
+      return lines.map(l => l.get('retailers'))
+    }
+  )
 }
 
 function makeRetailerValueSelector(lineId, field, retailersSelector) {
   const retailer = field.last()
-  return reselect.createSelector([retailersSelector], retailers => {
-    return retailers.getIn([lineId, retailer])
-  })
+  return reselect.createSelector(
+    [retailersSelector],
+    retailers => {
+      return retailers.getIn([lineId, retailer])
+    }
+  )
 }
 
 function makePreviewRetailerValueSelector(lineId, field, retailersSelector) {
   const retailer = field.last()
-  return reselect.createSelector([retailersSelector], retailers => {
-    return retailers.getIn([lineId, retailer])
-  })
+  return reselect.createSelector(
+    [retailersSelector],
+    retailers => {
+      return retailers.getIn([lineId, retailer])
+    }
+  )
 }
 
 function makeDesiredQuantitySelector() {
   return reselect.createSelector(
-    [selectors.line, selectors.buyMultiplier],
-    (line, buyMultiplier) => Math.ceil(line.get('quantity') * buyMultiplier)
+    [
+      selectors.line,
+      selectors.buyMultiplier,
+      selectors.buyExtra,
+      selectors.buyExtraPercent
+    ],
+    (line, buyMultiplier, buyExtra, buyExtraPercent) =>
+      Math.ceil(
+        line.get('quantity') *
+          (buyMultiplier + (buyExtra ? buyExtraPercent / 100 : 0))
+      )
   )
 }
 
@@ -304,8 +322,12 @@ function makeHighlightSelector(
       return alwaysBuy
         ? 'darkblue'
         : value.get('quantity') > 0
-          ? notEnoughStock ? 'orange' : 'blue'
-          : notEnoughStock ? 'red' : 'blank'
+        ? notEnoughStock
+          ? 'orange'
+          : 'blue'
+        : notEnoughStock
+        ? 'red'
+        : 'blank'
     }
   )
 }

@@ -102,7 +102,7 @@ class Header extends React.Component {
             </span>
           </th>
           <th>
-            <span  style={{color: '#2185D0'}}>+ {props.buyExtraPercent}%</span>
+            <span style={{color: '#2185D0'}}>+ {props.buyExtraPercent}%</span>
           </th>
           <th colSpan={2}>
             <div style={{minWidth: 88}}>
@@ -171,13 +171,26 @@ function getInStockPurchaseLines(state) {
   const alwaysBuySkus = state.view.get('alwaysBuySkus')
   const buyExtraPercent = state.view.get('buyExtraPercent')
   const buyExtraLines = state.data.present.get('buyExtraLines')
-  lines = getInStockLines(lines, offers, buyExtraLines, buyExtraPercent, buyMultiplier, alwaysBuySkus)
+  lines = getInStockLines(
+    lines,
+    offers,
+    buyExtraLines,
+    buyExtraPercent,
+    buyMultiplier,
+    alwaysBuySkus
+  )
   const preferred = state.view.get('preferredRetailer')
-  return getPurchaseLines(preferred, lines, alwaysBuySkus, buyMultiplier).map(
-    line =>
-      line.update('retailers', r =>
-        r.map(v => (v.get('quantity') > 0 ? v.get('part') : ''))
-      )
+  return getPurchaseLines(
+    preferred,
+    lines,
+    alwaysBuySkus,
+    buyExtraLines,
+    buyExtraPercent,
+    buyMultiplier
+  ).map(line =>
+    line.update('retailers', r =>
+      r.map(v => (v.get('quantity') > 0 ? v.get('part') : ''))
+    )
   )
 }
 

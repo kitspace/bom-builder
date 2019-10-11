@@ -23,9 +23,12 @@ function BuyExtraCell(props) {
   )
 }
 function mapStateToProps() {
-  return reselect.createSelector([selectors.buyExtra], buyExtra => ({
-    buyExtra
-  }))
+  return reselect.createSelector(
+    [selectors.buyExtra],
+    buyExtra => ({
+      buyExtra
+    })
+  )
 }
 
 function mapDispatchToProps(dispatch) {

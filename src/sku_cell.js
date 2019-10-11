@@ -242,7 +242,6 @@ function makeRetailersSelector() {
   const purchaseLinesSelector = makePurchaseLinesSelector(
     preferredRetailerSelector,
     selectors.lines,
-    selectors.previewBuy,
     selectors.suggestions
   )
   return reselect.createSelector(

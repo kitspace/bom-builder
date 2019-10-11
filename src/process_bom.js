@@ -269,7 +269,6 @@ export function getPurchaseLines(
 export function makePurchaseLinesSelector(
   preferredSelector,
   linesSelector,
-  previewBuySelector,
   suggestionsSelector
 ) {
   const allOffersSelector = makeAllOffersSelector(suggestionsSelector)
@@ -281,31 +280,27 @@ export function makePurchaseLinesSelector(
     [
       preferredSelector,
       inStockLinesSelector,
-      previewBuySelector,
+      selectors.alwaysBuySkus,
       selectors.buyExtraLines,
       selectors.buyExtraPercent,
-      selectors.buyMultiplier,
-      selectors.alwaysBuySkus
+      selectors.buyMultiplier
     ],
     (
       preferred,
       lines,
-      previewBuy,
+      alwaysBuySkus,
       buyExtraLines,
       buyExtraPercent,
-      buyMultiplier,
-      alwaysBuySkus
+      buyMultiplier
     ) => {
-      if (previewBuy) {
-        return getPurchaseLines(
-          preferred,
-          lines,
-          alwaysBuySkus,
-          buyExtraLines,
-          buyExtraPercent,
-          buyMultiplier
-        )
-      }
+      return getPurchaseLines(
+        preferred,
+        lines,
+        alwaysBuySkus,
+        buyExtraLines,
+        buyExtraPercent,
+        buyMultiplier
+      )
     }
   )
 }

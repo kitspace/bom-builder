@@ -123,10 +123,6 @@ const linesActions = {
     const buyExtraLines = state.get('buyExtraLines').delete(lineId)
     return state.merge({lines, order})
   },
-  toggleBuyExtra(state, lineId) {
-    const buyExtraLines = state.get('buyExtraLines').update(lineId, x => !x)
-    return state.merge({buyExtraLines})
-  },
   sortBy(state, header) {
     let lines = immutable.List(
       state
@@ -424,16 +420,29 @@ const rootActions = {
     })
     return state
   },
+  toggleBuyExtra(state, lineId) {
+    let present = state.data.present
+    const past = state.data.past.concat([present])
+    present = present.updateIn(['buyExtraLines', lineId], x => !x)
+    const data = Object.assign({}, state.data, {present, past})
+    state = Object.assign({}, state, {data})
+    state = this.computeRetailerSuggestions(state, {lineId})
+    return state
+  },
   computeRetailerSuggestions(state, {lineId}) {
     const suggestions = state.suggestions.getIn([lineId, 'data'])
     const line = state.data.present.getIn(['lines', lineId])
     const buyMultiplier = state.view.get('buyMultiplier')
+    const buyExtraLines = state.data.present.get('buyExtraLines')
+    const buyExtra = buyExtraLines.get(lineId)
+    const buyExtraPercent = state.view.get('buyExtraPercent')
     const retailers = immutable.Map(
       retailer_list.map(retailer => {
         const s = computeSuggestionsForRetailer(
           suggestions,
           retailer,
           line,
+          buyExtra ? buyExtraPercent : 0,
           buyMultiplier
         )
         return [retailer, s]

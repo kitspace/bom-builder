@@ -18,7 +18,7 @@ function BuyParts(props) {
   let [autoFilling, setAutoFilling] = React.useState(null)
   const [debouncedSetBuyMultiplier, cancelBuyMultiplierDebounced] = useDebouncedCallback(
     value => {
-      props.setBuyMultiplier(value)
+      props.setBuyMultiplier(parseFloat(value))
     },
     500,
     [1]
@@ -140,12 +140,12 @@ function BuyParts(props) {
                 disabled={!props.previewBuy}
                 onChange={e => {
                   cancelBuyMultiplierDebounced()
-                  setMultiplier(e.target.value)
+                  setMultiplier(parseFloat(e.target.value))
                   debouncedSetBuyMultiplier(e.target.value)
                 }}
                 onBlur={e => {
                   cancelBuyMultiplierDebounced()
-                  props.setBuyMultiplier(e.target.value)
+                  props.setBuyMultiplier(parseFloat(e.target.value))
                   setMultiplier(null)
                 }}
                 onKeyDown={e => {

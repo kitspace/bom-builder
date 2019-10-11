@@ -335,8 +335,12 @@ const rootActions = {
     if (lines.length < 1) {
       return state
     }
+    const buyExtraLines = lines.map(line => {
+      const ref = line.get('reference')
+      return /^C\d|^R\d|^D\d/.test(ref)
+    })
     const order = immutable.List(lines.keys())
-    const present = state.data.present.merge({lines, order})
+    const present = state.data.present.merge({lines, order, buyExtraLines})
     const suggestions = immutable.Map(
       order.map(lineId => [
         lineId,

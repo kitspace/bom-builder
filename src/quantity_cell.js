@@ -9,10 +9,16 @@ import {actions} from './state'
 function mapStateToProps() {
   const active = selectors.makeActiveSelector()
   return reselect.createSelector(
-    [selectors.value, active, selectors.buyMultiplier],
-    (value, active, buyMultiplier) => ({
+    [
+      selectors.value,
+      active,
+      selectors.buyMultiplier,
+      selectors.buyExtraPercent,
+      selectors.buyExtra
+    ],
+    (value, active, buyMultiplier, buyExtraPercent, buyExtra) => ({
       value,
-      buyMultiplier,
+      buyMultiplier: buyMultiplier + (buyExtra ? buyExtraPercent / 100 : 0),
       active
     })
   )

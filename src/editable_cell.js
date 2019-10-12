@@ -51,6 +51,9 @@ class EditableCell extends React.Component {
     }
     return (
       <Cell
+        color={
+          type === 'number' && props.buyExtraPercent > 0 ? '#1564a0' : null
+        }
         active={active}
         value={value}
         contents={editInput}
@@ -165,7 +168,11 @@ class Cell extends React.PureComponent {
       <semantic.Table.Cell
         selectable={props.selectable}
         active={props.active}
-        style={{maxWidth: props.active ? '' : 100, minWidth: 50}}
+        style={{
+          maxWidth: props.active ? '' : 100,
+          minWidth: 50,
+          color: props.color
+        }}
         onClick={props.onClick}
         className={props.highlight ? 'highlight ' + props.highlight : ''}
         colSpan={props.colSpan}

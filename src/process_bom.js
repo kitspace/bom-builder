@@ -1,5 +1,6 @@
 import * as immutable from 'immutable'
 import * as reselect from 'reselect'
+import memoizeOne from 'memoize-one'
 
 import {emptyRetailers, fitPartNumbers} from './state'
 import * as selectors from './selectors'
@@ -149,8 +150,9 @@ export function reduceBom(
   })
 }
 
+let prevAllOffers
 export function getAllOffers(suggestions) {
-  return suggestions
+  const allOffers = suggestions
     .map(x => x.get('data'))
     .reduce((offers, suggestions) => {
       suggestions = suggestions || immutable.List()
@@ -165,6 +167,11 @@ export function getAllOffers(suggestions) {
         offers
       )
     }, immutable.Map())
+  if (prevAllOffers && allOffers.equals(prevAllOffers)) {
+    return prevAllOffers
+  }
+  prevAllOffers = allOffers
+  return allOffers
 }
 
 export function makeAllOffersSelector(suggestionsSelector) {
@@ -174,45 +181,49 @@ export function makeAllOffersSelector(suggestionsSelector) {
   )
 }
 
-export function getInStockLines(
-  lines,
-  offers,
-  buyExtraLines,
-  buyExtraPercent,
-  buyMultiplier,
-  alwaysBuySkus
-) {
-  return lines.map((line, lineId) => {
-    const buyExtra = buyExtraLines.get(lineId)
-    return line.update('retailers', retailers =>
-      retailers.map((part, vendor) => {
-        const sku = immutable.Map({part, vendor})
-        const offer = offers.get(sku)
-        let in_stock = 0
-        if (offer) {
-          in_stock = offer.get('in_stock_quantity')
-          if (offer.get('multipack_quantity') != null) {
-            in_stock *= offer.get('multipack_quantity')
+export const getInStockLines = memoizeOne(
+  (
+    lines,
+    offers,
+    buyExtraLines,
+    buyExtraPercent,
+    buyMultiplier,
+    alwaysBuySkus
+  ) => {
+    return lines.map((line, lineId) => {
+      const buyExtra = buyExtraLines.get(lineId)
+      return line.update('retailers', retailers =>
+        retailers.map((part, vendor) => {
+          const sku = immutable.Map({part, vendor})
+          const offer = offers.get(sku)
+          let in_stock = 0
+          if (offer) {
+            in_stock = offer.get('in_stock_quantity')
+            if (offer.get('multipack_quantity') != null) {
+              in_stock *= offer.get('multipack_quantity')
+            }
+            if (
+              !alwaysBuySkus.getIn([lineId, sku]) &&
+              offer.get('stock_location') === 'US'
+            ) {
+              in_stock = 0
+            }
           }
-          if (
-            !alwaysBuySkus.getIn([lineId, sku]) &&
-            offer.get('stock_location') === 'US'
-          ) {
-            in_stock = 0
-          }
-        }
-        const quantity = Math.min(
-          Math.ceil(
-            line.get('quantity') *
-              (buyMultiplier + (buyExtra ? buyExtraPercent / 100 : 0))
-          ),
-          in_stock
-        )
-        return immutable.Map({part: part || '', quantity})
-      })
-    )
-  })
-}
+          const quantity = Math.min(
+            Math.ceil(
+              line.get('quantity') *
+                (buyMultiplier + (buyExtra ? buyExtraPercent / 100 : 0))
+            ),
+            in_stock
+          )
+          return immutable.Map({part: part || '', quantity})
+        })
+      )
+    })
+  }
+)
+
+let prev, inStock
 
 export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
   return reselect.createSelector(
@@ -228,43 +239,45 @@ export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
   )
 }
 
-export function getPurchaseLines(
-  preferred,
-  lines,
-  alwaysBuySkus,
-  buyExtraLines,
-  buyExtraPercent,
-  buyMultiplier
-) {
-  lines = reduceBom(
-    lines,
+export const getPurchaseLines = memoizeOne(
+  (
     preferred,
+    lines,
     alwaysBuySkus,
     buyExtraLines,
     buyExtraPercent,
     buyMultiplier
-  )
-  const priority = priorityOfRetailers(lines, alwaysBuySkus).filter(
-    r => r !== preferred
-  )
-  const {reducedLines} = priority.reduce(
-    ({reducedLines, done}, retailer) => {
-      reducedLines = reduceBom(
-        reducedLines,
-        retailer,
-        alwaysBuySkus,
-        buyExtraLines,
-        buyExtraPercent,
-        buyMultiplier,
-        done
-      )
-      done = done.push(retailer)
-      return {reducedLines, done}
-    },
-    {reducedLines: lines, done: immutable.List.of(preferred)}
-  )
-  return reducedLines
-}
+  ) => {
+    lines = reduceBom(
+      lines,
+      preferred,
+      alwaysBuySkus,
+      buyExtraLines,
+      buyExtraPercent,
+      buyMultiplier
+    )
+    const priority = priorityOfRetailers(lines, alwaysBuySkus).filter(
+      r => r !== preferred
+    )
+    const {reducedLines} = priority.reduce(
+      ({reducedLines, done}, retailer) => {
+        reducedLines = reduceBom(
+          reducedLines,
+          retailer,
+          alwaysBuySkus,
+          buyExtraLines,
+          buyExtraPercent,
+          buyMultiplier,
+          done
+        )
+        done = done.push(retailer)
+        return {reducedLines, done}
+      },
+      {reducedLines: lines, done: immutable.List.of(preferred)}
+    )
+    return reducedLines
+  }
+)
 
 export function makePurchaseLinesSelector(
   preferredSelector,
@@ -285,22 +298,6 @@ export function makePurchaseLinesSelector(
       selectors.buyExtraPercent,
       selectors.buyMultiplier
     ],
-    (
-      preferred,
-      lines,
-      alwaysBuySkus,
-      buyExtraLines,
-      buyExtraPercent,
-      buyMultiplier
-    ) => {
-      return getPurchaseLines(
-        preferred,
-        lines,
-        alwaysBuySkus,
-        buyExtraLines,
-        buyExtraPercent,
-        buyMultiplier
-      )
-    }
+    getPurchaseLines
   )
 }

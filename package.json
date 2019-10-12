@@ -8,6 +8,7 @@
     "immutable": "^4.0.0-rc.12",
     "immutable-diff": "^0.1.1",
     "js-file-download": "^0.4.1",
+    "memoize-one": "^5.1.1",
     "mousetrap": "^1.6.1",
     "nanobar": "^0.4.2",
     "netlify-identity-widget": "^1.4.14",

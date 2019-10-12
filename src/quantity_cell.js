@@ -18,7 +18,8 @@ function mapStateToProps() {
     ],
     (value, active, buyMultiplier, buyExtraPercent, buyExtra) => ({
       value,
-      buyMultiplier: buyMultiplier + (buyExtra ? buyExtraPercent / 100 : 0),
+      buyMultiplier,
+      buyExtraPercent: buyExtra ? buyExtraPercent : 0,
       active
     })
   )

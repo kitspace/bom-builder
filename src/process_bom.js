@@ -109,13 +109,13 @@ export function reduceBom(
   done = immutable.List()
 ) {
   return lines.map((line, lineId) => {
-    const buyExtra = buyExtraLines.get(lineId)
     const partAndQty = line.getIn(['retailers', preferred])
     const alwaysBuyThisLine =
       alwaysBuySkus.get(lineId) != null && alwaysBuySkus.get(lineId).size > 0
+    const buyExtra = buyExtraLines.get(lineId) ? buyExtraPercent / 100 : 0
     const desiredQuantity = Math.ceil(
-      line.get('quantity') *
-        (buyMultiplier + (buyExtra ? buyExtraPercent / 100 : 0))
+      line.get('quantity') * buyMultiplier +
+        line.get('quantity') * buyMultiplier * buyExtra
     )
     if (partAndQty != null && partAndQty.get('quantity') > 0) {
       return line.update('retailers', retailers => {
@@ -191,7 +191,7 @@ export const getInStockLines = memoizeOne(
     alwaysBuySkus
   ) => {
     return lines.map((line, lineId) => {
-      const buyExtra = buyExtraLines.get(lineId)
+      const buyExtra = buyExtraLines.get(lineId) ? buyExtraPercent / 100 : 0
       return line.update('retailers', retailers =>
         retailers.map((part, vendor) => {
           const sku = immutable.Map({part, vendor})
@@ -209,13 +209,11 @@ export const getInStockLines = memoizeOne(
               in_stock = 0
             }
           }
-          const quantity = Math.min(
-            Math.ceil(
-              line.get('quantity') *
-                (buyMultiplier + (buyExtra ? buyExtraPercent / 100 : 0))
-            ),
-            in_stock
+          const desiredQuantity = Math.ceil(
+            line.get('quantity') * buyMultiplier +
+              line.get('quantity') * buyMultiplier * buyExtra
           )
+          const quantity = Math.min(desiredQuantity, in_stock)
           return immutable.Map({part: part || '', quantity})
         })
       )

@@ -22,7 +22,8 @@ export function computeSuggestionsForRetailer(
   buyMultiplier
 ) {
   const desiredQuantity = Math.ceil(
-    line.get('quantity') * (buyMultiplier + buyExtraPercent / 100)
+    line.get('quantity') * buyMultiplier +
+      line.get('quantity') * buyMultiplier * (buyExtraPercent / 100)
   )
   return (suggestions || immutable.List())
     .flatMap(s => {

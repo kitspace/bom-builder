@@ -32,7 +32,8 @@ class EditableCell extends React.Component {
       var type = 'number'
       if (!active) {
         value = Math.ceil(
-          (props.buyMultiplier + props.buyExtraPercent / 100) * value
+          value * props.buyMultiplier +
+            value * props.buyMultiplier * (props.buyExtraPercent / 100)
         )
       }
     }

@@ -289,11 +289,11 @@ function makeDesiredQuantitySelector() {
       selectors.buyExtra,
       selectors.buyExtraPercent
     ],
-    (line, buyMultiplier, buyExtra, buyExtraPercent) =>
-      Math.ceil(
-        line.get('quantity') *
-          (buyMultiplier + (buyExtra ? buyExtraPercent / 100 : 0))
-      )
+    (line, buyMultiplier, buyExtra, buyExtraPercent) => {
+      const q = line.get('quantity')
+      buyExtra = buyExtra ? buyExtraPercent / 100 : 0
+      return Math.ceil(q * buyMultiplier + q * buyMultiplier * buyExtra)
+    }
   )
 }
 

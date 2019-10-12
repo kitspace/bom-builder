@@ -407,8 +407,8 @@ const rootActions = {
     return state
   },
   setBuyExtraPercent(state, n) {
-    if (n == null || n < 1 || isNaN(n)) {
-      n = 1
+    if (n == null || n < 0 || isNaN(n)) {
+      n = 0
     }
     if (n === state.view.get('buyExtraPercent')) {
       return state

@@ -99,7 +99,7 @@ export async function searchDescription(
   actions
 ) {
   const componentType = componentFromReference(reference)
-  if (componentType) {
+  if (componentType && description != '') {
     description = componentType + ' ' + description
   }
   const suggestions = await fromDescription(description)

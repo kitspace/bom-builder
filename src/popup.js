@@ -18,6 +18,8 @@ function getSkuUrl(vendor, sku) {
       return 'https://uk.rs-online.com/web/c/?searchTerm=' + sku
     case 'Rapid':
       return 'https://www.rapidonline.com/Catalogue/Search?Query=' + sku
+    case 'LCSC':
+      return 'https://lcsc.com/search?q=' + sku
     default:
       return '#'
   }

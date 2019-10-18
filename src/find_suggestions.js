@@ -27,7 +27,7 @@ async function fromPartNumber(partNumber, suggestions) {
 
 function fromDescription(description) {
   if (!description) {
-    returm Promise.resolve([])
+    return Promise.resolve([])
   }
   return getPartinfo(description)
     .then(ps => ps || [])

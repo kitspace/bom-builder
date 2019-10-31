@@ -23,7 +23,7 @@ import {subscribeEffects} from './effects'
 import {mainReducer, initialState, actions as unboundActions} from './state'
 
 const initialStoredData =
-  'References\tQty\tDescription\tLCSC\tDigikey\tMouser\tRS\tNewark\tFarnell\tRapid\n\t1\t\t\t\t\t\t\t\t\n'
+  'References\tQty\tDescription\tDigikey\tMouser\tRS\tNewark\tFarnell\tRapid\n\t1\t\t\t\t\t\t\t\n'
 
 if (typeof windows !== undefined) {
   window.nanobar = new Nanobar({

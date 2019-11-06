@@ -218,7 +218,7 @@ function BuyParts(props) {
               marginLeft: 10
             }}
           >
-            Preferred retailer:
+            Preferred distributor:
             <semantic.Dropdown
               inline
               style={{marginLeft: 3}}

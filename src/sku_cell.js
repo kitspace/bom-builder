@@ -125,16 +125,21 @@ function makeMatchSelector(
   applicableSuggestionsSelector,
   valueSelector,
   selectedSelector,
-  suggestionCheckSelector
+  suggestionCheckSelector,
+  matchingSelector
 ) {
   return reselect.createSelector(
     [
       applicableSuggestionsSelector,
       valueSelector,
       selectedSelector,
-      suggestionCheckSelector
+      suggestionCheckSelector,
+      matchingSelector
     ],
-    (suggestions, value, selected, suggestionCheck) => {
+    (suggestions, value, selected, suggestionCheck, matching) => {
+      if (matching === 'loading') {
+        return 'loading'
+      }
       if (selected >= 0) {
         suggestions = suggestions.delete(selected)
       }
@@ -363,7 +368,8 @@ function mapStateToProps(state, props) {
     suggestions,
     selectors.value,
     selected,
-    suggestionCheck
+    suggestionCheck,
+    matching
   )
   const alwaysBuy = makeAlwaysBuyThisSelector()
   const highlight = makeHighlightSelector(notEnoughStock, value, alwaysBuy)

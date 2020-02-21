@@ -195,6 +195,13 @@ export const getInStockLines = memoizeOne(
       return line.update('retailers', retailers =>
         retailers.map((part, vendor) => {
           const sku = immutable.Map({part, vendor})
+          const desiredQuantity = Math.ceil(
+            line.get('quantity') * buyMultiplier +
+              line.get('quantity') * buyMultiplier * buyExtra
+          )
+          if (alwaysBuySkus.getIn([lineId, sku])) {
+            return immutable.Map({part: part || '', quantity: desiredQuantity})
+          }
           const offer = offers.get(sku)
           let in_stock = 0
           if (offer) {
@@ -202,17 +209,10 @@ export const getInStockLines = memoizeOne(
             if (offer.get('multipack_quantity') != null) {
               in_stock *= offer.get('multipack_quantity')
             }
-            if (
-              !alwaysBuySkus.getIn([lineId, sku]) &&
-              offer.get('stock_location') === 'US'
-            ) {
+            if (offer.get('stock_location') === 'US') {
               in_stock = 0
             }
           }
-          const desiredQuantity = Math.ceil(
-            line.get('quantity') * buyMultiplier +
-              line.get('quantity') * buyMultiplier * buyExtra
-          )
           const quantity = Math.min(desiredQuantity, in_stock)
           return immutable.Map({part: part || '', quantity})
         })

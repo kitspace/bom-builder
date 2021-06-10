@@ -4,7 +4,6 @@ import * as reactRedux from 'react-redux'
 import * as reselect from 'reselect'
 import * as semantic from 'semantic-ui-react'
 
-import EditableCell from './editable_cell'
 import * as selectors from './selectors'
 import {actions} from './state'
 

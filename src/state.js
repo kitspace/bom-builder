@@ -120,7 +120,6 @@ const linesActions = {
     let lines = state.get('lines').remove(lineId)
     const order = state.get('order').filter(x => x !== lineId)
     lines = fitPartNumbers(lines)
-    const buyExtraLines = state.get('buyExtraLines').delete(lineId)
     return state.merge({lines, order})
   },
   sortBy(state, header) {

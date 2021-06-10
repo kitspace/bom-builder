@@ -221,8 +221,6 @@ export const getInStockLines = memoizeOne(
   }
 )
 
-let prev, inStock
-
 export function makeInStockLinesSelector(linesSelector, allOffersSelector) {
   return reselect.createSelector(
     [

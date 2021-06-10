@@ -1,5 +1,4 @@
 import immutable from 'immutable'
-import oneClickBom from '1-click-bom'
 import * as redux from 'redux'
 import * as reduxUndo from 'redux-undo-immutable-js'
 import {computeSuggestionsForRetailer} from './suggestions'

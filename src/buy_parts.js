@@ -2,7 +2,6 @@ import React from 'react'
 import * as semantic from 'semantic-ui-react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
-import oneClickBom from '1-click-bom'
 import {useDebouncedCallback} from 'use-debounce'
 
 import {actions} from './state'

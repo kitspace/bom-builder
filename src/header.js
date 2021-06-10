@@ -3,7 +3,6 @@ import * as semantic from 'semantic-ui-react'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import * as immutable from 'immutable'
-import oneClickBom from '1-click-bom'
 
 import {actions} from './state'
 import {

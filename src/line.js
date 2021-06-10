@@ -1,6 +1,5 @@
 import React from 'react'
 import * as semantic from 'semantic-ui-react'
-import * as oneClickBom from '1-click-bom'
 import * as immutable from 'immutable'
 import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
@@ -15,12 +14,9 @@ import SkuCell from './sku_cell'
 import Handle from './handle'
 import DescriptionCell from './description_cell'
 import QuantityCell from './quantity_cell'
+import {getRetailerList} from './constants'
 
-const retailer_list = oneClickBom
-  .getRetailers()
-  .filter(
-    r => r !== 'Rapid' && r !== 'Newark' && r !== 'LCSC' && r !== 'JLC Assembly'
-  )
+const retailer_list = getRetailerList()
 
 //for passing shallow equality
 const fields = immutable.Map({
@@ -117,16 +113,14 @@ function editingSelector(state) {
 }
 
 function makePartNumbersSelector(lineSelector) {
-  return reselect.createSelector(
-    [lineSelector],
-    line => line.get('partNumbers')
+  return reselect.createSelector([lineSelector], line =>
+    line.get('partNumbers')
   )
 }
 
 function makePartNumbersExpandedSelector() {
-  return reselect.createSelector(
-    [selectors.view],
-    view => view.get('partNumbersExpanded')
+  return reselect.createSelector([selectors.view], view =>
+    view.get('partNumbersExpanded')
   )
 }
 

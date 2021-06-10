@@ -4,10 +4,9 @@ import * as redux from 'redux'
 import * as reduxUndo from 'redux-undo-immutable-js'
 import {computeSuggestionsForRetailer} from './suggestions'
 import {autoFillSuggestions} from './process_bom'
+import {getRetailerList} from './constants'
 
-const retailer_list = oneClickBom
-  .getRetailers()
-  .filter(r => r !== 'Rapid' && r !== 'Newark')
+const retailer_list = getRetailerList()
 
 function IdMaker() {
   this.id = 0

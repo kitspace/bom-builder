@@ -7,10 +7,10 @@ import {useDebouncedCallback} from 'use-debounce'
 
 import {actions} from './state'
 import {autoFillSuggestions} from './process_bom'
+import {getRetailerList} from './constants'
 
-const retailer_list = oneClickBom
-  .getRetailers()
-  .filter(r => r !== 'Rapid' && r !== 'Newark')
+const retailer_list = getRetailerList()
+
 
 function BuyParts(props) {
   let [multiplier, setMultiplier] = React.useState(null)

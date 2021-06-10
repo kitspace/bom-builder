@@ -12,10 +12,10 @@ import {
   getAllOffers,
   getPurchaseLines
 } from './process_bom'
+import {getRetailerList} from './constants'
 
-const retailer_list = oneClickBom
-  .getRetailers()
-  .filter(r => r !== 'Rapid' && r !== 'Newark')
+
+const retailer_list = getRetailerList()
 
 class Header extends React.Component {
   render() {

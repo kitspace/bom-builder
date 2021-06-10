@@ -18,7 +18,9 @@ import QuantityCell from './quantity_cell'
 
 const retailer_list = oneClickBom
   .getRetailers()
-  .filter(r => r !== 'Rapid' && r !== 'Newark')
+  .filter(
+    r => r !== 'Rapid' && r !== 'Newark' && r !== 'LCSC' && r !== 'JLC Assembly'
+  )
 
 //for passing shallow equality
 const fields = immutable.Map({

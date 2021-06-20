@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"1-click-bom@git+https://github.com/kitspace/npm-1-click-bom.git":
+"1-click-bom@https://github.com/kitspace/npm-1-click-bom":
   version "1.3.1"
-  resolved "git+https://github.com/kitspace/npm-1-click-bom.git#32295bab59e8c875a37d04f772704e9cb4b6549e"
+  resolved "https://github.com/kitspace/npm-1-click-bom#1cabd99e9036d9da51b4182c693776c3196cb3f1"
   dependencies:
     electro-grammar "https://github.com/kitspace/electro-grammar#dev2"
     s-expression "^3.0.3"

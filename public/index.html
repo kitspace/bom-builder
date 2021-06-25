@@ -20,24 +20,11 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>BOM Builder - Kitspace</title>
-    <!-- Matomo -->
-    <script type="text/javascript">
-      var _paq = _paq || [];
-      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-      _paq.push(["setCookieDomain", "*.kitspace.org"]);
-      _paq.push(["setDomains", ["*.kitspace.org"]]);
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="https://matomo.kitspace.org/";
-        _paq.push(['setTrackerUrl', u+'piwik.php']);
-        _paq.push(['setSiteId', '4']);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-    <!-- End Matomo Code -->
-
+    <script
+      defer
+      data-domain="bom-builder.kitspace.org"
+      src="https://plausible.io/js/plausible.outbound-links.js"
+    ></script>
   </head>
   <body>
     <noscript>

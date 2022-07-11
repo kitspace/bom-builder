@@ -4,18 +4,11 @@ import * as reactRedux from 'react-redux'
 import * as redux from 'redux'
 import './messages.css'
 
-import { actions } from './state'
+import {actions} from './state'
 
 function Messages(props) {
   return (
     <div className="messages">
-      <semantic.Message
-        key="octopart"
-        negative
-      >
-        <semantic.Message.Header>Octopart API is down</semantic.Message.Header>
-        <semantic.Message.Content>We apologise but the Octopart API seems to be down. The BOM Builder will not work without it. Please try again later.</semantic.Message.Content>
-      </semantic.Message>
       {props.buyPartsMessages.slice(0, 3).map(message => {
         const vendor = message.getIn(['sku', 'vendor'])
         const title = `Problem with adding part to ${vendor} cart`
